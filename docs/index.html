@@ -1261,6 +1261,17 @@ body.is-pjdrag{cursor:col-resize;user-select:none}
 .fbox.is-inline .fbox-r:hover{background:transparent}
 .fbox-dl.is-row{margin-right:var(--s3);border-color:transparent;background:transparent}
 .fbox-dl.is-row:hover{border-color:var(--line);background:var(--surface-2)}
+/* 选好的文件：**容器本身就是那张文件卡**，里面不再放一个带色的方块。
+   扩展名已经写在文件名末尾了，色块只是把同一件事说第二遍；
+   而且那块橙色的分量压过文件名本身，第一眼看过去先看到色，后看到名字。
+   去掉之后这一行才有层次可言：名字 14/600，元信息 12/400，✖ 在右端。 */
+.fbox.is-pick{display:flex;align-items:center;gap:0}
+.fbox.is-pick:hover{border-color:var(--line)}
+.fbox.is-pick .fbox-r{cursor:default}
+.fbox.is-pick .fbox-r:hover{background:transparent}
+/* 行数、列数、指纹、还有「这是随机抽的」这类话要看全，不能截断 */
+.fbox.is-pick .fbox-m{white-space:normal;overflow:visible;text-overflow:clip}
+.fbox.is-pick .icx{margin-right:var(--s2)}
 
 /* 说明类的折叠：一枚标签，不是一张卡。展开的正文也不进卡壳——
    它是一段注解，和底下那张数据表不是同一个分量。 */
@@ -3550,11 +3561,18 @@ FLD.switch=(c,f)=>`<div class="rngrow">
     data-ksw="${c.id}|${f.k}"><i></i></button>
   ${f.note?`<span class="t-sm mut">${esc(f.note)}</span>`:''}</div>`;
 /* 矩阵、VCF、图像。拖进来之后第一件事是认文件，不是填参数。 */
+/* 选好之后，这一行就是一张文件卡：名字在上，行列和指纹在下，右端一颗 ✖。
+   元信息（f.hint）收进卡里——它说的是这份文件，不是这个字段，
+   放在卡外面会变成一句无主的小字。 */
 FLD.file=(c,f)=>f.v
-  ? `<div class="krow">${kbTag(String(f.v))}
-     <span class="t-sm num grow" style="min-width:0;word-break:break-all">${esc(f.v)}</span>
-     <button class="btn btn-gh" type="button" data-kfx="${c.id}|${f.k}"
-       style="min-height:1.5rem;padding:0 8px;font-size:0.6875rem">换一个</button></div>`
+  ? `<div class="fbox is-pick">
+     <span class="fbox-r"><span class="fbox-t">
+       <span class="fbox-n">${esc(f.v)}</span>
+       ${f.hint?`<span class="fbox-m">${esc(f.hint)}</span>`:''}</span></span>
+     <button class="icx" type="button" data-kfx="${c.id}|${f.k}" aria-label="移掉 ${esc(f.v)}" title="移掉这个文件">
+       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"
+         stroke="currentColor" stroke-width="2" stroke-linecap="round"
+         ><path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5"/></svg></button></div>`
   : `<label class="drop">${esc(f.ph||'把文件拖到这里，或点击选择')}
      <input type="file" hidden data-kfile="${c.id}|${f.k}"${f.accept?` accept="${esc(f.accept)}"`:''}></label>`;
 /* 两边都是数据里来的，要对上：列→分组、结果字段→变体库字段。
@@ -3586,7 +3604,7 @@ function fieldHTML(c,f){
         style="min-height:1.375rem;padding:0 8px;font-size:0.6875rem;
         font-weight:400">${esc(a.n)}</button>`).join(''):''}</span>
     ${fn(c,f)}
-    ${f.hint?`<span class="t-xs mut2">${esc(f.hint)}</span>`:''}`;
+    ${f.hint&&!(fldType(f)==='file'&&f.v)?`<span class="t-xs mut2">${esc(f.hint)}</span>`:''}`;
   const cls='field'+(f.wide?' wide':'');
   return bare?`<div class="${cls}">${inner}</div>`:`<label class="${cls}">${inner}</label>`;
 }
@@ -4106,10 +4124,13 @@ V.labnew=()=>{
         <button class="btn-tool" type="button" data-act="nxtpl"
           style="margin-left:var(--s2);font-weight:400">下载模板</button></span>
         ${E.file
-          ? `<div class="krow">${kbTag(E.file)}
-             <span class="t-sm num grow" style="min-width:0;word-break:break-all">${esc(E.file)}</span>
-             <button class="btn btn-gh" type="button" data-act="nxfilex"
-               style="min-height:1.5rem;padding:0 8px;font-size:0.6875rem">换一个</button></div>`
+          ? `<div class="fbox is-pick">
+             <span class="fbox-r"><span class="fbox-t">
+               <span class="fbox-n">${esc(E.file)}</span></span></span>
+             <button class="icx" type="button" data-act="nxfilex" aria-label="移掉 ${esc(E.file)}" title="移掉这个文件">
+       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"
+         stroke="currentColor" stroke-width="2" stroke-linecap="round"
+         ><path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5"/></svg></button></div>`
           : `<label class="drop">把配方文件拖到这里，或点击选择（.md / .txt / .csv / .json）
              <input type="file" hidden id="nxfile" accept=".json,.md,.txt,.csv"></label>`}
         <span class="t-xs mut2">${E.file
@@ -4900,9 +4921,14 @@ V.dsnew=()=>{
             <td class="t-sm num">${x.uniq}</td></tr>`).join('')}</tbody></table></div>
         ${nums.length?'':`<span class="t-xs" style="color:var(--err)">一个数值列都没有——这一版只做回归，没有数值目标列就建不了可训练的数据集。</span>`}
       </div>`:'';
-  const readOut=NEWDS.err
-    ? `<span class="t-xs" style="color:var(--err)">读不出来：${esc(NEWDS.err)}</span>`
-    : q?`<span class="t-xs mut2 num">${esc(NEWDS.fileName)}　${n} 行 × ${q.cols.length} 列　指纹 ${esc(q.fp)}</span>`:'';
+  /* 本地上传那一支：文件名和行列指纹都在那张文件卡里，外面只留读不出来的报错，
+     否则同一个文件名会在上下两行各出现一次。
+     项目文件那一支是从列表里挑的，挑中哪一份要在下面报清楚。 */
+  const readMeta=q?(n+' 行 × '+q.cols.length+' 列　指纹 '+q.fp):'';
+  const readErr=NEWDS.err
+    ? `<span class="t-xs" style="color:var(--err)">读不出来：${esc(NEWDS.err)}</span>`:'';
+  const readOut=NEWDS.err?readErr
+    :(q?`<span class="t-xs mut2 num">${esc(NEWDS.fileName)}　${esc(readMeta)}</span>`:'');
 
   return `<div class="page">
   <div class="col" style="gap:6px">
@@ -4941,18 +4967,20 @@ V.dsnew=()=>{
       ${NEWDS.src==='up'
         ? `<div class="field wide"><span class="label">数据文件</span>
       ${NEWDS.fileName&&NEWDS.src==='up'
-        ? `<div class="krow">${fileSq(NEWDS.fileName)}
-            <span class="t-sm num grow" style="min-width:0;word-break:break-all">${esc(NEWDS.fileName)}</span>
-            <button class="icx" type="button" data-act="dsclear" aria-label="移除这份文件" title="移除">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                ><path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5"/></svg></button></div>`
+        ? `<div class="fbox is-pick">
+            <span class="fbox-r"><span class="fbox-t">
+              <span class="fbox-n">${esc(NEWDS.fileName)}</span>
+              ${readMeta?`<span class="fbox-m">${esc(readMeta)}</span>`:''}</span></span>
+            <button class="icx" type="button" data-act="dsclear" aria-label="移掉 ${esc(NEWDS.fileName)}" title="移掉这个文件">
+       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"
+         stroke="currentColor" stroke-width="2" stroke-linecap="round"
+         ><path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5"/></svg></button></div>`
         : `<label class="drop">把 .csv / .tsv 拖到这里，或点击选择
             <input type="file" hidden id="dsfile" accept=".csv,.tsv,.txt"></label>`}
           <div class="row wrap" style="gap:var(--s2);margin-top:var(--s2)">
             <button class="btn-tool" type="button" data-act="dstpl">下载模板</button>
             <button class="btn-tool" type="button" data-act="dsdemo">填入本项目变体表</button></div>
-          ${readOut}</div>`
+          ${readErr}</div>`
         : `<div class="field wide"><span class="label">选一份文件</span>
           ${PF.length?`<div class="col" style="gap:var(--s2)">${PF.map((e,i)=>
             `<button class="filerow" type="button" role="radio" data-dsf="${i}"
@@ -8633,7 +8661,7 @@ return `<section class="card">
     </div>
     <p class="hint">宿主与测定方法是受控词表，不接受自由填写。</p>
 <details class="why"><summary>为什么这样定</summary><div class="why-b">这两项是结果可比性的前提。自由文本会让同一个测定在统计时被拆成几种，聚合出来的数字就不能用了。</div></details>
-    
+
   </div></section>`}
 
 function batchPreview(B){
@@ -10932,7 +10960,7 @@ return `<div class="col" style="gap:var(--s5)">
         <button class="btn btn-gh btn-ic" type="button" data-fpage="${pg+1}" ${pg>=pages?'disabled':''} aria-label="下一页">›</button>
       </div>`:''})()}
     <div class="card-b" style="padding-top:var(--s4)">
-      
+
     </div></section>
 </div>`;
 }
@@ -12707,7 +12735,7 @@ function fltCount(){const f=S.flt;let n=0;
 
 /* M2-F02 公共库取回。先走真实接口，失败再回落到内置样本；错误区分三类 */
 /* PDB 取序列走 data.rcsb.org，不走 www.rcsb.org/fasta/entry/。
-   2026-11-12 从 https://okrabing.github.io 实测：四个公共接口里只有 www.rcsb.org 不发
+   2026-11-12 从一个 GitHub Pages 托管页实测：四个公共接口里只有 www.rcsb.org 不发
    CORS 头，托管页面调它必然 TypeError；data.rcsb.org、files.rcsb.org、rest.uniprot.org
    都放行。换接口比在界面上解释「线上用不了」正确。
    代价：要两跳（entry 拿实体号，再逐个实体拿序列），而且得自己拼 FASTA。 */
