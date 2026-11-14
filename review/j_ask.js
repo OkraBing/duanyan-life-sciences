@@ -54,10 +54,19 @@ const F='file://'+require('path').resolve(process.argv[2]||'index.html');
   await pg.fill('#ask','这一轮还能不能再往上推');
   await pg.keyboard.press('Enter');await pg.waitForTimeout(2600);
   const f3=await pg.textContent('.pjx-flow');
-  if(!/没送出去|什么都没改|归不了类/.test(f3))bad.push('连不上时没说清请求没送出去');
+  if(!/没有更改课题数据/.test(f3)||!/检查网络后重试/.test(f3))bad.push('统一代理断网时没有说明服务失败与数据未改动');
 
-  // 4. 没密钥：必须指路去设置，不能静默
-  await pg.evaluate(()=>{MC.setKey('');window.fetch=()=>Promise.reject(new TypeError('x'))});
+  // 统一代理 503：访客应得到服务状态，不应该被要求填写 API Key。
+  await pg.evaluate(()=>{window.fetch=async()=>({ok:false,status:503,
+    text:async()=>JSON.stringify({error:'Model proxy is not configured'})})});
+  await pg.fill('#ask','请谈谈这一轮的数据');await pg.keyboard.press('Enter');await pg.waitForTimeout(2200);
+  const managed503=await pg.textContent('.pjx-flow');
+  if(!/对话服务暂未就绪/.test(managed503)||/Model proxy is not configured/.test(managed503))
+    bad.push('对话中的 503 没有显示简明服务状态');
+
+  // 4. 本机直连没有密钥：必须指路去设置，不能静默
+  await pg.evaluate(()=>{window.DUANYAN_CONFIG={...window.DUANYAN_CONFIG,managedProxy:false};
+    MC.save({mode:'direct'});MC.setKey('');window.fetch=()=>Promise.reject(new TypeError('x'))});
   await pg.fill('#ask','你怎么看这个课题');
   await pg.keyboard.press('Enter');await pg.waitForTimeout(2200);
   const f4=await pg.textContent('.pjx-flow');

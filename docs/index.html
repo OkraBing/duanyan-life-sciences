@@ -7273,6 +7273,8 @@ function agentSend(){
     const L=convOf();L.pop();
     /* 这里不把 Failed to fetch 原样端出来：用户修不了它，
        他需要知道的是「我这句话没被送出去」和「换种说法还能走」。 */
+    if(MC.isManaged()){say(modelErr(e)+'这次没有更改课题数据。也可以直接说要做的计算：'
+      +ABIL.map(x=>x.n).join('、')+'。');return}
     if(String(e.message||e)==='NOKEY'){say(modelErr(e)
       +'不接也能走，说清楚要做哪件事就行：'+ABIL.map(x=>x.n).join('、')+'。');return}
     say((stray?'你挂的「'+stray+'」不是多段流程里的某一段，改不了路由。':'')
@@ -7338,6 +7340,8 @@ function freeAsk(txt,stray){
   }).catch(e=>{
     const L=convOf();L.pop();
     const m=String(e.message||e);
+    if(MC.isManaged()){say(modelErr(e)+'这次没有更改课题数据。也可以直接说要做的计算：'
+      +ABIL.map(x=>x.n).join('、')+'。');return}
     if(m==='NOPROXY'||m==='NOKEY'){say(modelErr(e)+'不接也能走，说清楚要做哪件事就行：'
       +ABIL.map(x=>x.n).join('、')+'。');return}
     say((stray?'你挂的「'+stray+'」不是多段流程里的某一段，改不了路由；':'')
@@ -7954,7 +7958,7 @@ function reviewSelfCheck(){
     /* 「没报错」不等于「成功过」。从没调用过的工具不能算自查通过——
        那正是把空白当成绿色，和被预先勾好的质检框一个毛病。 */
     tool:(function(){
-      const st=LS.get('mstat',null);          // {ok:bool, at:'…', msg:'…'}，连通性测试写入
+      const st=MC.testStatus();          // {ok:bool, at:'…', msg:'…'}，连通性测试写入
       if(!st)return {ok:false,say:'还没成功调用过基础模型——到「模型接入」里测一次'};
       return {ok:!!st.ok, say:st.ok?`最近一次调用成功（${st.at}）`:`最近一次调用失败：${st.msg||'未知错误'}`};
     })()
@@ -12815,18 +12819,24 @@ const MODELS={
 };
 /* GitHub Pages 仅托管静态页面。线上代理地址来自 site-config.js；
    DeepSeek 密钥仅保存在代理服务的 Secret 中。
-   浏览器直连为使用者自行配置的可选模式。 */
+   公开站点使用统一代理；本机配置可保留自行接入选项。 */
 const DS_MODELS=['deepseek-flash','deepseek-v4-pro'];
 const MC={
   ENDPOINT:window.DUANYAN_CONFIG?.proxyEndpoint || '',
   DIRECT:'https://api.deepseek.com/chat/completions',
-  cfg(){return {mode:LS.get('modelMode','proxy'),
-                endpoint:LS.get('modelEp',MC.ENDPOINT)||MC.ENDPOINT,
+  isManaged(){return window.DUANYAN_CONFIG?.managedProxy===true},
+  cfg(){const managed=MC.isManaged();return {mode:managed?'proxy':LS.get('modelMode','proxy'),
+                endpoint:managed?(window.DUANYAN_CONFIG?.proxyEndpoint||''):(LS.get('modelEp',MC.ENDPOINT)||MC.ENDPOINT),
                 name:LS.get('modelName','deepseek-flash')}},
+  connectionId(){const c=MC.cfg();return JSON.stringify([c.mode,c.endpoint,c.name,MC.isManaged()])},
+  testStatus(){const st=LS.get('mstat',null);
+    return !MC.isManaged()||st?.connection===MC.connectionId()?st:null},
   save(c){if(!c)return;
     if(c.name)LS.set('modelName',c.name);
-    if(c.mode)LS.set('modelMode',c.mode);
-    if(c.endpoint!=null)LS.set('modelEp',c.endpoint)},
+    if(!MC.isManaged()){
+      if(c.mode)LS.set('modelMode',c.mode);
+      if(c.endpoint!=null)LS.set('modelEp',c.endpoint)
+    }},
   /* 密钥单独走原生 localStorage，不经过 LS 那一层——LS 会把值塞进一个大对象里
      跟别的设置一起存，密钥不该和别的东西混在一个键里。 */
   key(){try{return localStorage.getItem('dy_life_ds_key')||''}catch(e){return ''}},
@@ -12866,6 +12876,12 @@ function sysPlan(){return `你是蛋白质工程平台的任务编排器。用�
 规则：候选数不得超过 ${plateCap()}（${plateNote()}）。置信度只能作为准入阈值，不要用它排序。信息不足时写进 missing，不要编造靶点或数值。`}
 function modelErr(e){
   const m=String(e.message||e);
+  if(MC.isManaged()){
+    if(m==='NOPROXY'||/HTTP 503/.test(m))return '对话服务暂未就绪，请稍后再试。无需填写密钥。';
+    if(m.indexOf('NET:')===0)return '暂时连不上对话服务，请检查网络后重试。';
+    if(/HTTP 429/.test(m))return '当前请求较多，请一分钟后再试。';
+    if(/HTTP [45]\d\d/.test(m))return '对话服务暂时无法回复，请稍后再试。';
+  }
   if(m==='NOPROXY')return 'DeepSeek 代理尚未配置。请在「模型接入」填写已部署的 HTTPS 代理地址。';
   if(m==='NOKEY')return '选了直连但还没填 API Key。到侧栏的「模型接入」里填一把——它只存在这台机器上。';
   if(m.indexOf('NET:')===0)
@@ -12882,7 +12898,7 @@ function modelErr(e){
    同一句「发布之后连不上」在本地和在沙箱里是两个结果，猜不得（R17）。 */
 V.set=()=>{
   const c=MC.cfg(), m=MODELS[c.name]||{label:c.name,note:'',ctx:'',price:''};
-  const st=LS.get('mstat',null);
+  const st=MC.testStatus();
   const mode=(id,n)=>`<button class="seg-i" type="button" role="radio" data-mmode="${id}"
     aria-checked="${c.mode===id?'true':'false'}">${n}</button>`;
   return `
@@ -12894,7 +12910,11 @@ V.set=()=>{
   </div>
 
   <section class="col" style="gap:var(--s4)">
-    <div class="sec-h"><strong>请求从哪儿发出去</strong></div>
+    ${MC.isManaged()
+      ? `<div class="sec-h"><strong>对话服务</strong></div>
+         <p class="t-sm mut" style="margin:0">站点统一提供，无需填写密钥。可直接在对话里提问。</p>
+         <p class="t-sm mut2" style="margin:0">点击「测一次」确认当前是否能收到回复。</p>`
+      : `<div class="sec-h"><strong>请求从哪儿发出去</strong></div>
     <div class="seg" role="radiogroup" aria-label="接入方式">${mode('proxy','后端代理')}${mode('direct','浏览器直连')}</div>
     ${c.mode==='direct'
       ? `<p class="t-sm mut" style="margin:0">这台浏览器直接请求 api.deepseek.com。密钥只写进这台机器的
@@ -12915,7 +12935,7 @@ V.set=()=>{
            <label class="label" for="mep">代理地址</label>
            <input id="mep" class="input" value="${esc(c.endpoint)}" spellcheck="false"
              placeholder="https://你的代理域名/api/model/chat">
-         </div>`}
+         </div>`}`}
   </section>
 
   <section class="col" style="gap:var(--s4)">
@@ -12932,8 +12952,7 @@ V.set=()=>{
     <div class="sec-h"><strong>通不通</strong></div>
     <div class="row wrap" style="gap:var(--s3);align-items:center">
       <button class="btn" type="button" data-act="mtest">测一次</button>
-      ${st?`<span class="t-sm mut">上次 ${esc(st.at)}　${st.ok?'成功':'失败'}</span>`
-          :`<span class="t-sm mut2">还没测过</span>`}
+      <span id="mtest-status" class="t-sm ${st?'mut':'mut2'}">${st?`上次 ${esc(st.at)}　${st.ok?'成功':'失败'}`:'还没测过'}</span>
     </div>
     <div id="mout"></div>
     <p class="t-sm mut2" style="margin:0">自查里的「工具执行」按这次结果判定：没成功调用过，那一维不算过。</p>
@@ -14525,18 +14544,20 @@ function act(a,el){
     render();toast('已存在这台机器上。测一次看通不通');return}
   if(a==='mkeyclr'){MC.setKey('');LS.set('mstat',null);render();
     toast('已从这台机器删掉');return}
-  if(a==='mtest'){const o=view.querySelector('#mout');
+  if(a==='mtest'){const o=view.querySelector('#mout'),connection=MC.connectionId(),status=view.querySelector('#mtest-status');
+    const mark=(ok,msg='')=>{const at=nowStamp();LS.set('mstat',{ok,at,msg,connection});
+      if(status){status.textContent='上次 '+at+'　'+(ok?'成功':'失败');status.className='t-sm mut'}};
     o.innerHTML='<div class="row t-md mut" style="gap:var(--s3)"><span class="skel" style="width:13px;height:0.8125rem;border-radius:50%"></span>正在请求…</div>';
     MC.chat([{role:'user',content:'只回答两个字：收到'}],{max:16}).then(r=>{
       /* 结果落盘，评审七维的「工具执行」要据此判定。
          不落盘的话那一维只能靠「没报错」猜，而从没调用过也是没报错。 */
-      LS.set('mstat',{ok:true,at:nowStamp(),msg:''});
+      mark(true);
       o.innerHTML=`<div class="card" style="box-shadow:none;border-color:var(--ok);background:var(--ok-soft)">
         <div class="card-b col" style="gap:4px"><strong class="t-md" style="color:var(--ok)">连通</strong>
         <span class="t-sm mut">返回「${esc(r.text.trim().slice(0,24))}」${r.usage?` · 本次 ${r.usage.total_tokens} token`:''}</span></div></div>`;
     }).catch(e=>{
-      LS.set('mstat',{ok:false,at:nowStamp(),msg:modelErr(e)});
-      const why=String(e.message||e).indexOf('NET:')===0
+      mark(false,modelErr(e));
+      const why=!MC.isManaged()&&String(e.message||e).indexOf('NET:')===0
         ? (MC.cfg().mode==='direct'
             ? '请求连对方的服务器都没到。可能是这个页面不许向 api.deepseek.com 发请求、网络不通，或者被中间的代理拦了。'
             : '请求连服务器都没到。可能是这个地址上没有服务、路径写错了，或者网络不通。')

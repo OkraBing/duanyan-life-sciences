@@ -1,11 +1,31 @@
 /* 设置页专项：两种模式各自的渲染、切换、密钥存删（不落盘到任何文件）、
    模型选择、连通性测试的失败路径。 */
-const {chromium}=require('../test-browser.cjs');
+const {chromium,testOutput}=require('../test-browser.cjs');
 const F='file://'+require('path').resolve(process.argv[2]||'index.html');
 (async()=>{
   const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1440,height:900}});
   const bad=[];pg.on('pageerror',e=>bad.push('JS: '+e.message));
-  const directRequests=[];
+  const directRequests=[],managedRequests=[];
+  let managedResult='success';
+  // Every proxy request is mocked. No test reaches the live hosted proxy or uses a real key.
+  await pg.route('**/api/model/chat',async route=>{
+    const request=route.request();
+    const headers={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Methods':'POST, OPTIONS',
+      'Access-Control-Allow-Headers':'Content-Type'};
+    if(request.method()==='OPTIONS')return route.fulfill({status:204,headers});
+    managedRequests.push({url:request.url(),auth:!!request.headers().authorization,
+      body:request.postDataJSON()});
+    if(managedResult==='network')return route.abort('failed');
+    return route.fulfill({status:managedResult==='503'?503:200,contentType:'application/json',headers,
+      body:JSON.stringify(managedResult==='503'?{error:'Model proxy is not configured'}:
+        {choices:[{message:{content:'收到'}}],usage:{total_tokens:12}})});
+  });
+  await pg.addInitScript(()=>{
+    localStorage.setItem('dy_life_modelMode',JSON.stringify('direct'));
+    localStorage.setItem('dy_life_modelEp',JSON.stringify('https://stale.example/api/model/chat'));
+    localStorage.setItem('dy_life_ds_key','TESTKEY-existing-local-credential');
+    localStorage.setItem('dy_life_mstat',JSON.stringify({ok:true,at:'旧的直连记录'}));
+  });
   // Deterministic credential rejection: no fake credential leaves this browser test.
   await pg.route('https://api.deepseek.com/chat/completions',async route=>{
     const request=route.request();
@@ -29,18 +49,57 @@ const F='file://'+require('path').resolve(process.argv[2]||'index.html');
 
   const txt=()=>pg.textContent('#view');
 
-  // 2. 默认代理模式：有代理地址，没有 API Key 字段
-  if(await pg.$('#mkey'))bad.push('默认（代理）模式下出现了 API Key 字段');
-  if(!await pg.$('#mep'))bad.push('代理模式下没有代理地址字段');
-  const ep=await pg.inputValue('#mep').catch(()=>'');
-  const defaultEp=await pg.evaluate(()=>MC.ENDPOINT);
-  if(ep!==defaultEp)bad.push('代理地址没有使用站点配置: '+ep);
-  if(defaultEp&&!/^https:\/\//.test(defaultEp))bad.push('线上默认代理地址不是 HTTPS');
-  if(!defaultEp){
-    await pg.click('[data-act="mtest"]');
-    await pg.waitForFunction(()=>document.querySelector('#mout')?.textContent.includes('未连通'));
-    if(!/代理尚未配置/.test(await pg.textContent('#mout')))bad.push('未配置代理时没有明确提示');
-  }
+  // 2. Public mode fixes the proxy and never asks visitors for credentials.
+  if(await pg.$('#mkey'))bad.push('公开模式出现了 API Key 字段');
+  if(await pg.$('#mep'))bad.push('公开模式出现了可编辑代理地址');
+  if(await pg.$('[data-mmode]'))bad.push('公开模式出现了接入方式切换');
+  if(!/站点统一提供，无需填写密钥/.test(await txt()))bad.push('公开模式没有说明访客无需填写密钥');
+  if(/旧的直连记录/.test(await txt()))bad.push('旧直连测试记录被当作统一代理连通记录');
+  const managed=await pg.evaluate(()=>{
+    const before=MC.cfg();MC.save({mode:'direct',endpoint:'https://changed.example/api/model/chat'});
+    return {active:MC.isManaged(),before,after:MC.cfg(),configured:window.DUANYAN_CONFIG.proxyEndpoint,
+      key:MC.key()};
+  });
+  if(!managed.active||managed.before.mode!=='proxy'||managed.after.mode!=='proxy')
+    bad.push('旧设置或 save() 能把公开模式切到直连');
+  if(managed.before.endpoint!==managed.configured||managed.after.endpoint!==managed.configured)
+    bad.push('旧设置或 save() 能改变统一代理地址');
+  if(!/^https:\/\//.test(managed.configured))bad.push('统一代理不是 HTTPS');
+  if(managed.key!=='TESTKEY-existing-local-credential')bad.push('公开模式擅自删除了已有本机密钥');
+
+  await pg.selectOption('#mn','deepseek-v4-pro');await pg.waitForTimeout(200);
+  if((await pg.evaluate(()=>MC.cfg().name))!=='deepseek-v4-pro')bad.push('统一代理模式无法选择模型');
+  await pg.click('[data-act="mtest"]');
+  await pg.waitForFunction(()=>document.querySelector('#mout')?.textContent.includes('返回「收到」'));
+  if(!await pg.evaluate(()=>MC.testStatus()?.ok))bad.push('有效回复未记录为当前连接成功');
+  if(managedRequests.length!==1||managedRequests[0].url!==managed.configured)
+    bad.push('统一代理请求未到已配置地址: '+JSON.stringify(managedRequests.map(x=>x.url)));
+  if(managedRequests.some(x=>x.auth)||directRequests.length)bad.push('统一代理请求携带客户端密钥或走了直连');
+  if(managedRequests[0]?.body?.thinking?.type!=='disabled')bad.push('统一代理短回答没有关闭思考模式');
+  if(managedRequests[0]?.body?.model!=='deepseek-v4-pro')bad.push('统一代理未使用所选模型');
+
+  managedResult='503';await pg.click('[data-act="mtest"]');
+  await pg.waitForFunction(()=>document.querySelector('#mout')?.textContent.includes('未连通'));
+  const notReady=await pg.textContent('#mout');
+  if(!/对话服务暂未就绪/.test(notReady)||/HTTP|Model proxy|https:/.test(notReady))
+    bad.push('服务未就绪时没有简明提示: '+notReady);
+  if(await pg.evaluate(()=>MC.testStatus()?.ok))bad.push('503 被记录成连通');
+  if(!/失败/.test(await pg.textContent('#mtest-status')))bad.push('完成测试后状态标签没有更新');
+  managedResult='network';await pg.click('[data-act="mtest"]');
+  await pg.waitForFunction(()=>document.querySelector('#mout')?.textContent.includes('检查网络后重试'));
+  const network=await pg.textContent('#mout');
+  if(/路径写错|api.deepseek.com|Failed to fetch/.test(network))bad.push('公开网络错误混入实现细节');
+  await pg.screenshot({path:testOutput('managed-model-settings.png'),fullPage:true});
+
+  // Locally served config explicitly disables managed mode; original direct-mode behavior remains.
+  await pg.evaluate(()=>{
+    window.DUANYAN_CONFIG={...window.DUANYAN_CONFIG,managedProxy:false};
+    MC.save({mode:'proxy',endpoint:'/api/model/chat'});MC.setKey('');LS.set('mstat',null);render();
+  });
+  if(await pg.evaluate(()=>MC.isManaged()))bad.push('本机配置无法关闭统一代理模式');
+  if(!await pg.$('#mep'))bad.push('本机代理模式没有可编辑地址');
+  if(!await pg.$('[data-mmode="direct"]'))bad.push('本机模式没有直连选项');
+  reqs.length=0;
 
   // 3. 切直连
   await pg.click('[data-mmode="direct"]');await pg.waitForTimeout(250);

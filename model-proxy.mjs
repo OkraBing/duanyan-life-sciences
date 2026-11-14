@@ -43,7 +43,7 @@ const send = (res, code, type, body) => {
 const server = http.createServer(async (req, res) => {
   if (req.method === 'GET' && req.url === '/site-config.js') {
     return send(res, 200, 'application/javascript; charset=utf-8',
-      'window.DUANYAN_CONFIG = Object.freeze({ proxyEndpoint: "/api/model/chat" });');
+      'window.DUANYAN_CONFIG = Object.freeze({ managedProxy: false, proxyEndpoint: "/api/model/chat" });');
   }
   if (req.method === 'POST' && req.url === '/api/model/chat') {
     let raw = '';
