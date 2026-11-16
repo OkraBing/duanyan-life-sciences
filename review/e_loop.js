@@ -4,8 +4,10 @@
    训练用的数据集版本 = 模型文件里记的那个版本；
    评测里的 n = 留出集条数；产出文件数 = 任务声明的输出数。 */
 const {chromium}=require('../test-browser.cjs');
+const {blockExternalNetwork}=require('./offline-network.cjs');
 (async()=>{
 const b=await chromium.launch();const p=await b.newPage({viewport:{width:1440,height:950}});
+await blockExternalNetwork(p);
 const errs=[];p.on('pageerror',e=>errs.push(e.message));
 await p.goto('file://'+process.argv[2]);await p.waitForTimeout(700);
 const bad=[];

@@ -2,6 +2,7 @@
    查：disabled 看不看得出来、switch/tab/radio 的 aria 对不对、
        焦点可不可见、Tab 顺序有没有陷阱、深色下有没有读不出的字。 */
 const {chromium}=require('../test-browser.cjs');
+const {blockExternalNetwork}=require('./offline-network.cjs');
 const V=['chat','chats','projects','project','lab','labdet','labnew','dsets','dsnew','mdl','trainnew','shelf','data','set'];
 const lum=c=>{const [r,g,b]=c.match(/\d+(\.\d+)?/g).slice(0,3).map(Number)
   .map(v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)});
@@ -10,6 +11,7 @@ const lum=c=>{const [r,g,b]=c.match(/\d+(\.\d+)?/g).slice(0,3).map(Number)
 const b=await chromium.launch();const bad=[];
 for(const scheme of ['light','dark']){
   const p=await b.newPage({viewport:{width:1440,height:950},colorScheme:scheme});
+await blockExternalNetwork(p);
   const errs=[];p.on('pageerror',e=>errs.push(e.message));
   await p.goto('file://'+process.argv[2]);await p.waitForTimeout(600);
   for(const v of V){

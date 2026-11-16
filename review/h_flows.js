@@ -2,6 +2,7 @@
    提问 → 卡片出来 → 点卡上的发起 → 跑完 → 产出文件能展开能下载。
    这一轮是为了抓「只在交互时才暴露」的问题——渲染扫不出来。 */
 const {chromium}=require('../test-browser.cjs');
+const {blockExternalNetwork}=require('./offline-network.cjs');
 const ASKS=[
  ['序列检索','检索和这条序列同源的条目'],
  ['结构预测','把这条序列折出来'],
@@ -86,6 +87,7 @@ const run=async(p,route,label,q,bad)=>{
 };
 (async()=>{
 const b=await chromium.launch();const p=await b.newPage({viewport:{width:1440,height:1000}});
+await blockExternalNetwork(p);
 p.on('pageerror',e=>p.evaluate(m=>{window.__e=window.__e||[];window.__e.push(m)},e.message).catch(()=>{}));
 await p.goto('file://'+process.argv[2]);await p.waitForTimeout(700);
 await p.evaluate(()=>{window.__e=[]});

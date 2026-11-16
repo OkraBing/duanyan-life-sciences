@@ -2,11 +2,13 @@
    现实里不会刚好是设计稿里那个数：名字会很长，数据集可能只有 1 行，
    候选可能一条都没有，数字可能是 1e9。还有：刷新之后人回到哪里。 */
 const {chromium}=require('../test-browser.cjs');
+const {blockExternalNetwork}=require('./offline-network.cjs');
 const V=['chat','chats','projects','project','lab','labdet','labnew','dsets','dsnew','mdl','trainnew','shelf','data'];
 (async()=>{
 const b=await chromium.launch();const bad=[];
 // —— 极端数据 ——
 {const p=await b.newPage({viewport:{width:1280,height:900}});
+await blockExternalNetwork(p);
  const errs=[];p.on('pageerror',e=>errs.push(e.message));
  await p.goto('file://'+process.argv[2]);await p.waitForTimeout(600);
  await p.evaluate(()=>{
@@ -37,6 +39,7 @@ const b=await chromium.launch();const bad=[];
 
 // —— 滚到底，粘性元素还在不在 ——
 {const p=await b.newPage({viewport:{width:1280,height:800}});
+await blockExternalNetwork(p);
  await p.goto('file://'+process.argv[2]);await p.waitForTimeout(600);
  for(const v of V){
    const r=await p.evaluate(async a=>{S.pid='p1';S.bind='p1';S.back=[];go(a);
@@ -63,6 +66,7 @@ const b=await chromium.launch();const bad=[];
 
 // —— 刷新恢复 ——
 {const p=await b.newPage({viewport:{width:1280,height:900}});
+await blockExternalNetwork(p);
  await p.goto('file://'+process.argv[2]);await p.waitForTimeout(600);
  for(const v of ['dsets','mdl','lab','project','shelf']){
    await p.evaluate(a=>{S.pid='p2';go(a)},v);

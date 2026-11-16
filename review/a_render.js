@@ -2,12 +2,13 @@
    把每个视图的每一种内部状态都走一遍：页签、筛选标签、选中项、有数据 / 没数据。
    查四件事：报错、内容为空、按钮点不动（没有绑定）、aria 对不上。 */
 const {chromium}=require('../test-browser.cjs');
+const {blockExternalNetwork}=require('./offline-network.cjs');
 const P=process.argv[2];
 const STATES=[];
 ['p1','p2','p3'].forEach(pid=>{
   ['chat','chats','projects','project','labnew','dsnew','trainnew','shelf','data','labdet'].forEach(v=>
     STATES.push({pid,v}));
-  [['mdl','mtab',['cur','base','job','eval']],
+  [['mdl','mtab',['cur','base','job','eval','set']],
    ['lab','ltab',['wet','proto']],
    ['dsets','dstab',['own','res']],
    ['project','pjtab',['kb','tool']]].forEach(([v,k,ks])=>
@@ -18,6 +19,7 @@ const STATES=[];
 (async()=>{
 const b=await chromium.launch();
 const p=await b.newPage({viewport:{width:1440,height:950}});
+await blockExternalNetwork(p);
 const errs=[];p.on('pageerror',e=>errs.push(e.message));
 await p.goto('file://'+P);await p.waitForTimeout(700);
 const bad=[];

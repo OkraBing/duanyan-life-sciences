@@ -1,12 +1,14 @@
 /* 第 23–34 轮 · 响应式
    七档宽度。查：横向溢出、谁溢出的、主操作在不在首屏、元素互相压住、触摸目标。 */
 const {chromium}=require('../test-browser.cjs');
+const {blockExternalNetwork}=require('./offline-network.cjs');
 const V=['chat','chats','projects','project','lab','labdet','labnew','dsets','dsnew','mdl','trainnew','shelf','data','set'];
 const W=[360,430,768,1024,1280,1440,1920];
 (async()=>{
 const b=await chromium.launch();const bad=[];
 for(const w of W){
   const p=await b.newPage({viewport:{width:w,height:860}});
+await blockExternalNetwork(p);
   const errs=[];p.on('pageerror',e=>errs.push(e.message));
   await p.goto('file://'+process.argv[2]);await p.waitForTimeout(600);
   for(const v of V){

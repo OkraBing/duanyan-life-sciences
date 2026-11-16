@@ -472,7 +472,16 @@ C(79,'D','启用状态能持久化',async(pg,h)=>{await h.go();
   await h.go();
   const on=await h.ev(i=>mdlOn(i),id);
   if(!on)return '刷新之后启用状态丢了';});
-C(80,'D','统一代理配置不可切换，本机模式和模型名能持久化',async(pg,h)=>{await h.go('#set');
+C(80,'D','模型接入的新旧入口一致，统一代理固定且本机配置可持久化',async(pg,h)=>{await h.go();
+  await h.nav('mdl');await pg.click('[data-mtab="set"]');
+  const entry=await h.ev(()=>({route:S.route,tab:S.mtab,
+    selected:document.querySelector('[data-mtab="set"]')?.getAttribute('aria-selected')}));
+  if(entry.route!=='mdl'||entry.tab!=='set'||entry.selected!=='true')
+    return '模型制备的子导航未进入模型接入';
+  await h.go('#set');
+  const bookmark=await h.ev(()=>({route:S.route,tab:S.mtab,hash:location.hash}));
+  if(bookmark.route!=='mdl'||bookmark.tab!=='set'||bookmark.hash!=='#mdl')
+    return '旧 #set 书签没有迁移到模型接入: '+JSON.stringify(bookmark);
   const wasManaged=await h.ev(()=>MC.isManaged());
   if(wasManaged){
     const config=await h.ev(()=>{const before=MC.cfg();

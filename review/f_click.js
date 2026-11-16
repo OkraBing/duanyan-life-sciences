@@ -3,9 +3,11 @@
    路由有没有跑到一个不存在的页、有没有弹窗关不掉。
    点完一个就复位，免得前一个的后果算到后一个头上。 */
 const {chromium}=require('../test-browser.cjs');
+const {blockExternalNetwork}=require('./offline-network.cjs');
 const V=['chat','chats','projects','project','lab','labdet','labnew','dsets','dsnew','mdl','trainnew','shelf','data','set'];
 (async()=>{
 const b=await chromium.launch();const p=await b.newPage({viewport:{width:1440,height:950}});
+await blockExternalNetwork(p);
 let errs=[];p.on('pageerror',e=>errs.push(e.message));
 p.on('dialog',d=>d.dismiss().catch(()=>{}));
 await p.goto('file://'+process.argv[2]);await p.waitForTimeout(700);

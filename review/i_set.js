@@ -42,12 +42,17 @@ const F='file://'+require('path').resolve(process.argv[2]||'index.html');
     if(/\/x\/model|chat\/completions|api\/model/.test(u))reqs.push('FAIL '+u)});
   await pg.goto(F);await pg.waitForTimeout(400);
 
-  // 1. 侧栏入口存在且能到
-  const navSet=await pg.$('.nav[data-navid="set"]');
-  if(!navSet)bad.push('侧栏没有「模型接入」入口');
-  else{await navSet.click();await pg.waitForTimeout(300);
-    const h=await pg.textContent('h1').catch(()=>'');
-    if(!/模型接入/.test(h))bad.push('点了入口没到设置页，h1='+h);}
+  // 1. 从侧栏「模型制备」进入「模型接入」子导航；旧书签仍到同一页。
+  await pg.click('.nav[data-navid="mdl"]');await pg.waitForTimeout(300);
+  await pg.click('[data-mtab="set"]');await pg.waitForTimeout(300);
+  const target=await pg.evaluate(()=>({route:S.route,tab:S.mtab,
+    selected:document.querySelector('[data-mtab="set"]')?.getAttribute('aria-selected'),
+    heading:document.querySelector('h1')?.textContent}));
+  if(target.route!=='mdl'||target.tab!=='set'||target.selected!=='true'||target.heading!=='模型制备')
+    bad.push('模型制备的子导航未打开模型接入: '+JSON.stringify(target));
+  await pg.evaluate(()=>{go('chat');location.hash='set'});
+  await pg.waitForFunction(()=>S.route==='mdl'&&S.mtab==='set'&&location.hash==='#mdl');
+  if(!await pg.$('#mn'))bad.push('旧 #set 书签没有打开模型配置');
 
   const txt=()=>pg.textContent('#view');
 
