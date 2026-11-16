@@ -1,10 +1,12 @@
 /* 不走流程的那一句话：ctxBrief 的数必须和界面上的数一致，
    模型答得出来要显示，连不上要说实话。 */
 const {chromium}=require('../test-browser.cjs');
+const {blockExternalNetwork}=require('./offline-network.cjs');
 const F='file://'+require('path').resolve(process.argv[2]||'index.html');
 (async()=>{
   const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1440,height:900}});
   const bad=[];pg.on('pageerror',e=>bad.push('JS: '+e.message));
+  const unmocked=await blockExternalNetwork(pg);
   await pg.goto(F);await pg.waitForTimeout(400);
 
   // 进 p1，右栏就是这个课题的对话
@@ -44,7 +46,11 @@ const F='file://'+require('path').resolve(process.argv[2]||'index.html');
   const sent=await pg.evaluate(()=>window.__sent);
   if(sent.length!==2)bad.push('请求次数不是 2（分类 + 自由问答）：'+sent.length);
   const sys=sent[1]&&sent[1].messages[0].content||'';
-  if(sys.indexOf('不许推测')<0)bad.push('自由问答没下「不许编」的约束');
+  /* 数不由模型产生、只许用给它的数、没有就说没有。 */
+  [['不产生任何数字','数不许由模型产生'],
+   ['只许根据这些数据回答','没下「只许用这些数」的约束'],
+   ['直接说这里没有这个数','没说「没有就说没有」']]
+    .forEach(([k,why])=>{if(sys.indexOf(k)<0)bad.push('自由问答提示词：'+why)});
   if(sys.indexOf('候选：')<0)bad.push('自由问答没把本机算的事实带上');
   if(sent[1]&&sent[1].messages[1].content!=='这一轮还能不能再往上推')
     bad.push('用户原话没原样送出去');
@@ -81,6 +87,7 @@ const F='file://'+require('path').resolve(process.argv[2]||'index.html');
   const n5=await pg.evaluate(()=>window.__sent.length);
   if(n5>0)bad.push('关键词已经能路由，却还是调了模型 '+n5+' 次');
 
+  if(unmocked.length)bad.push('拦截了未模拟的模型请求：'+unmocked.length+' 次');
   console.log(bad.length?'❌\n'+bad.join('\n'):'✅ j_ask 全过');
   await b.close();process.exit(bad.length?1:0);
 })();

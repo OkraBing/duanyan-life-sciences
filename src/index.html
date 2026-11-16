@@ -1204,6 +1204,7 @@ body.is-pjdrag{cursor:col-resize;user-select:none}
   width:2.125rem;height:2.125rem;border-radius:var(--r1);
   font-size:0.625rem;font-weight:700;letter-spacing:.02em;font-family:var(--mono);
   background:var(--surface-2);color:var(--ink-3);border:1px solid var(--line-2)}
+.fsq.is-long{font-size:0.5rem;letter-spacing:0}
 .fsq.is-dry{background:var(--dry-soft);color:var(--dry-ink);border-color:transparent}
 .fsq.is-wet{background:var(--wet-soft);color:var(--wet-ink);border-color:transparent}
 .fsq.is-ok{background:var(--ok-soft);color:var(--ok-ink);border-color:transparent}
@@ -1457,6 +1458,16 @@ body.is-pjdrag{cursor:col-resize;user-select:none}
 .ask-b{position:relative;display:flex;flex-direction:column;gap:var(--s3);padding:var(--s3) var(--s4)}
 /* 项目选择器待在工具条上，和附件、发送同一行：
    单独占一行的时候，空输入框要 183px 高，比它自己装得下的内容还高。 */
+/* 模型名**不能截**：两个 id 都以 deepseek- 开头，从左边截掉尾巴之后
+   「deeps…」谁也分不出是哪个，而这正是这个控件唯一要回答的问题。
+   所以让它按内容撑开，窄屏的挤压交给项目选择器去吸收——
+   项目名截一截还看得出是哪个课题，而且项目在页面别处也写着。 */
+.ask-bar>.ctl-mdl{flex:0 0 auto;min-width:0}
+.ctl-mdl .dd-v{overflow:visible;text-overflow:clip;white-space:nowrap}
+.ask-bar>.ctl-proj{flex:1 1 4rem;min-width:2.5rem}
+/* 窄栏里先让「打 @ 唤起技能」那句提示让位：它是可有可无的提示，
+   模型选择是一个真要改的控件。 */
+@media (max-width:40rem){.askhint{display:none}}
 .ctl-proj{width:17rem;flex:0 1 17rem;min-width:0;border-style:dashed;color:var(--ink-3)}
 .ctl-proj:hover{border-style:solid}
 .ctl-proj .dd-v{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -1481,6 +1492,13 @@ body.is-pjdrag{cursor:col-resize;user-select:none}
 .ask-bar>.ctl-ic,.ask-bar>.ctl-go,.ask-bar>.ctl-seg{flex:0 0 auto}
 .ask-bar>.ctl-dd{flex:0 1 auto;min-width:0}
 .ask-bar>.ctl-dd .dd-v{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* 手机宽度下这几个控件塞不进一行。与其把模型名截成「deeps…」，不如让工具条换行：
+   什么都不截，什么都不溢出，代价只是多占一行。 */
+@media (max-width:30rem){
+  .ask-bar{flex-wrap:wrap;row-gap:var(--s2)}
+  .ask-bar>.ctl-proj{flex:1 1 8rem}
+  .ask-bar>.grow{flex-basis:100%;height:0}
+}
 /* 能力芯片多，窄栏里会把工具条挤成两行。让它们自己横向滚动，工具条始终一行。 */
 .capbar{display:flex;align-items:center;gap:6px;min-width:0;flex:1 1 auto;
   overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
@@ -1508,7 +1526,9 @@ body.is-pjdrag{cursor:col-resize;user-select:none}
 .ctl-seg.is-lg .ctl-segi{min-height:2rem;padding:0 14px;font-size:0.8125rem}
 .ctl .dot{width:6px;height:0.375rem;border-radius:50%;background:var(--ink-4)}
 .ctl .dot.on{background:var(--dry)}
-.ctl .car{width:0;height:0;border-left:3.5px solid transparent;border-right:3.5px solid transparent;
+/* 小三角原先只在 .ctl 里才有形状，而 as-input 那一类下拉不是 .ctl，
+   于是全产品这类下拉都只是一个方框，看不出能点开。 */
+.ctl .car,.ctl-dd .car{width:0;height:0;border-left:3.5px solid transparent;border-right:3.5px solid transparent;
   border-top:4px solid var(--ink-4);margin-left:2px}
 /* 原生 select 的外观跟这套控件不是一种语言，去掉它自己的壳 */
 /* 下拉框统一三档宽度：标准 11.5rem，窄 8rem（表格里的），宽 18rem（内容本来就长的）。
@@ -2057,7 +2077,7 @@ const DB={
           constraints:[{k:'dev',cmp:'>=',v:0.60,n:'可开发性达标'},
                        {k:'cys',cmp:'==',v:0,n:'不引入游离半胱氨酸'}]},
      desc:'只动 barstar 这一侧，看在不改 barnase 的前提下能把结合做到多紧。'
-         +'只测 KD——这个体系的野生型已经在 SPR 量程之外，能不能分辨是这个项目的第一个问题。',
+         +'只测 KD。这个体系的野生型已经在 SPR 量程之外，能不能分辨是这个项目的第一个问题。',
      kb:['Nat. Commun. 2023, 14:3425.pdf'],
      tools:['ProteinMPNN','Adaptyv 送检'],
      arch:[],
@@ -2248,24 +2268,19 @@ function stateOf(k){return STATE_MAP[k]||['未知状态','c-mut']}
 const CAPS=[
  {id:'seq', sn:'序列解读', n:'蛋白质序列解读', go:'intake', hue:'dry',
   d:"M4 12h3l2-5 3 10 3-8 2 3h3", s:'解析序列，看保守性',
-  art:'seq', eg:'解析这条 barnase 序列，标出最保守的位点',
-  q:'解读这条序列：给出链数、长度与异常残基，再按同源比对标出保守位点和最该动的位点。我会粘贴 FASTA，或给一个 UniProt 登录号。'},
+  art:'seq'},
  {id:'func', sn:'功能预测',n:'蛋白质功能预测', go:'config', hue:'dry',
   d:"M4 18V8m5 10V5m5 13v-7m5 7V9", s:'ΔΔG 与可开发性',
-  art:'bars', eg:'预测 R59K 的 ΔΔG 与可开发性，并说明置信度',
-  q:'对这批变体做功能预测：ΔΔG、可开发性与零样本打分，按主目标与约束分别给结果，不要合成一个总分，并标明哪些是算出来的、哪些是查来的。'},
+  art:'bars'},
  {id:'str', sn:'结构', n:'蛋白质结构',     go:'viewer', hue:'dry',
   d:"M12 3.5 20 8v8l-8 4.5L4 16V8zM12 12l8-4.5M12 12v8.5M12 12 4 7.5", s:'取回或算一个结构',
-  art:'cube', eg:'取回 1BRS，看 ACE2 与 RBD 的界面残基',
-  q:'按编号取回结构，或为这条序列算一个结构。给出 pLDDT 与 PAE，并说明这是查到的实验结构还是预测出来的。'},
+  art:'cube'},
  {id:'des', sn:'设计', n:'蛋白质设计',     go:'loop', hue:'dry',
   d:"M14.5 4.5 19.5 9.5 9 20H4v-5z", s:'按容量生成候选',
-  art:'grid', eg:'按 96 孔容量生成 Round 5 的候选，并说明每条的来源',
-  q:'按本轮孔板容量生成一版候选：硬约束只排除不排序，排除后同路径补位，并说明每条候选的来源路径与它想验证的假设。'},
+  art:'grid'},
  {id:'wet', sn:'湿实验', n:'湿实验验证',     go:'wet', hue:'wet',
   d:"M9.5 3.5v6L4.5 18a2 2 0 0 0 1.8 3h11.4a2 2 0 0 0 1.8-3l-5-8.5v-6M8 3.5h8M7.5 14h9", s:'送检、回流与回收',
-  art:'flask', eg:'把这 88 条做成送检清单：板位、对照孔与报价',
-  q:'把这批候选做成送检清单：板位排布、对照孔、测定方法与重复数，并给出已知部分的报价与待报价项。'}];
+  art:'flask'}];
 
 /* 五张配图。不用外部图片：CSP 只放行 cdnjs 的脚本，图片一律进不来，
    而且外部图片一挂，这页就缺一块。都用内联 SVG 画。 */
@@ -2289,6 +2304,20 @@ function capIcon(c){
    参考 Codex 的做法：绑哪个项目、调哪些工具，是动笔之前要定的事。
    原先「绑定到项目」摆在输入框下沿的工具条里，和「提交」「模型」挤在一起——
    那一条是「写完之后干什么」，作用域放进去，等于写完才想起来问自己写给谁。 */
+/* 这一句用哪个模型，放在输入框里而不是设置页里——因为这个选择是**按句**发生的：
+   随手问一句 flash 就够，要它读一长段再答才值得切 pro。
+   埋进设置页的话，没人会为了一句话专门跑一趟。
+   名字用接口里的原名，不另起简称：设置页、这里、报错信息里说的得是同一个东西。 */
+function mdlBtn(){
+  const c=MC.cfg();
+  /* 用产品自己的下拉外壳 .ctl-sel：页面上有一段 JS（dressSelects）会把原生 select
+     换成自家按钮。不套这个壳的话，它会被当成孤立的 select 套上 .as-input——
+     那个样式是给表单里的整行输入用的，184px 宽，在 360px 的屏上直接把工具条撑破。 */
+  return `<span class="ctl ctl-sel ctl-mdl">
+    <select id="askmdl" aria-label="这一句用哪个模型" data-ic="model">${DS_MODELS.map(k=>
+      `<option value="${esc(k)}"${k===c.name?' selected':''}>${esc(k)}</option>`).join('')}</select>
+    <span class="car" aria-hidden="true"></span></span>`;
+}
 function projBtn(){
   const pn=S.bind?((DB.projects.find(x=>x.id===S.bind)||{}).name||''):'';
   return `<button class="ctl ctl-proj" type="button" data-act="bindproj"
@@ -2595,7 +2624,7 @@ const SITE_ANN={
   83: {struct:'barnase 侧界面残基', src:'COMBINE 界面突变分析'},
   87: {struct:'barnase 侧界面残基', src:'COMBINE 界面突变分析'},
   102:{struct:'与 barstar Tyr29 范德华堆积', src:'1B27 双突变循环研究',
-       func:'barstar 是 barnase 的抑制剂，靠占住活性位点起作用——界面残基与功能区高度重叠，改界面就有改坏功能的风险',
+       func:'barstar 是 barnase 的抑制剂，靠占住活性位点起作用。界面残基与功能区高度重叠，改界面就有改坏功能的风险',
        funcSrc:'同上'}},
  p2:{29:{struct:'与 barnase His102 范德华堆积',src:'1B27 双突变循环研究'},
      35:{struct:'与 barnase Lys27 远程静电作用',src:'1B27 双突变循环研究'},
@@ -2714,16 +2743,16 @@ function routeMatrix(pid){
       {n:'可分辨效应', ...(self&&det&&det.sigma!=null
         ? calc((det.log?('×'+det.fold.toFixed(2)):('±'+det.delta.toFixed(2)+(FIELD[pk].unit||''))),
                `主目标 ${FIELD[pk].n}，σ 取自本项目重复测量，n=3，α=0.05 双侧，功效 80%`)
-        : self?none((det&&det.why)||'这个项目还没有重复测量，算不出可分辨效应'):none(NOTRUN))},
+        : self?none((det&&det.why)||'要算可分辨效应，先得有重复测量'):none(NOTRUN))},
       {n:'单轮成本', ...(self&&nSel
         ? calc('$'+(Math.round(nSel*149)).toLocaleString('en-US'),
                `本项目已送检 ${nSel} 条 × 公开单价 $149 / 蛋白`)
-        : none(self?'这个项目还没有送检记录'
+        : none(self?'还没有送检记录'
                    :'成本随样本规模走，样本规模算不出，成本也算不出'))},
       {n:'周期', ...(function(){
         if(!self)return none(NOTRUN);
         const T=turnaround(id);
-        if(!T.n)return none('这个项目还没有走完过一个批次，没有真实周转可算');
+        if(!T.n)return none('走完一个批次才有周转数据');
         const run=BATCHES.filter(b=>b.pid===id&&b.status!=='done'&&b.status!=='canceled');
         const tail=run.length?`；在途 ${run.length} 个，最久的已走 ${fmtDays(Math.max.apply(null,run.map(batchAgeDays)))}`:'';
         return calc(fmtDays(T.med)+' / 轮',
@@ -2806,7 +2835,7 @@ const NAV=[
     ['lab','实验管理',"M9.5 3.5v6L4.5 18a2 2 0 0 0 1.8 3h11.4a2 2 0 0 0 1.8-3l-5-8.5v-6M8 3.5h8M7.5 14h9",'送出去的批次走到哪了，哪一步在等你']]],
   ['C','资源',[
     ['shelf','生命科学工具',"M5 6.5h14M5 12h14M5 17.5h9M17.5 15.5v4M15.5 17.5h4",'某个工具接没接、能不能在这儿跑'],
-    ['data','生命科学数据集',"M4.5 7c0-1.4 3.4-2.5 7.5-2.5S19.5 5.6 19.5 7s-3.4 2.5-7.5 2.5S4.5 8.4 4.5 7M4.5 7v10c0 1.4 3.4 2.5 7.5 2.5s7.5-1.1 7.5-2.5V7M4.5 12c0 1.4 3.4 2.5 7.5 2.5s7.5-1.1 7.5-2.5",'某个库接没接、许可是什么']]],
+    ['data','生命科学数据集',"M12 3.2 3.4 7.6l8.6 4.4 8.6-4.4zM3.4 12l8.6 4.4 8.6-4.4M3.4 16.4l8.6 4.4 8.6-4.4",'某个库接没接、许可是什么']]],
   /* 底部单独一格。它不是一个研究动作，所以不进 A/B/C 那三组；
      但「对话里那句话会不会被真的回答」取决于它，所以必须有入口（R16）。 */
   ['S','',[
@@ -2977,7 +3006,7 @@ function protoModal(x){
     <div class="field"><label class="label" for="pm_need">必填项</label>
       <input id="pm_need" class="input" value="${esc(((x&&x.need)||[]).join('、'))}"
         placeholder="顿号分开，例如 固定方式、浓度梯度、再生条件">
-      <span class="t-xs mut2">排实验的时候这几项会列成必填——缺一项就提交不了</span></div>
+      <span class="t-xs mut2">排实验时这几项必填</span></div>
     <div class="kform">
       <div class="field"><label class="label" for="pm_rep">重复数</label>
         <input id="pm_rep" class="input" value="${v('rep')||'n = 3'}"></div>
@@ -3352,48 +3381,58 @@ return `
    都带「设计」，只按词长打分，谁排在前面谁赢——「给我设计一对引物」会被判成蛋白质设计。
    对象词才说明这句话到底在做哪件事。 */
 const ABIL=[
- {id:'deg', n:'差异表达', hue:'dry', eg:'比一下处理组和对照组哪些基因变了',
+ {id:'deg', n:'差异表达', hue:'dry', when:'手上有两组表达量要比，想知道哪些基因变了。',
+ eg:'比一下处理组和对照组哪些基因变了',
   say:'我来做差异表达。',
   obj:['差异表达','deg','火山图','表达矩阵','rna-seq','转录组','倍数变化','log2fc','padj',
        '处理组','对照组'],
   kw:['上调','下调','比一比','比一下']},
- {id:'seek', n:'序列检索', hue:'dry', eg:'检索和这条序列同源的条目',
+ {id:'seek', n:'序列检索', hue:'dry', when:'手上有一条序列或一个登录号，要去公共库里找同源条目。',
+ eg:'检索和这条序列同源的条目',
   say:'我来检索同源序列。',
   obj:['同源','blast','uniprot','登录号'],
   kw:['检索','搜索','比对','找序列','相似','查一下','查查','查一查']},
- {id:'str', n:'结构预测', hue:'dry', eg:'把这条序列折出来，看看哪一段可信',
+ {id:'str', n:'结构预测', hue:'dry', when:'要把一条序列折成结构，或者问某一段可不可信。',
+ eg:'把这条序列折出来，看看哪一段可信',
   say:'我来折这条序列。',
   obj:['结构','构象','pdb','plddt','alphafold','esmfold'],
   kw:['折叠','折出来','预测结构','折一下']},
  /* 「亲和力」「热稳」是要测的性质，不是要设计——它们原先挂在设计上，
     于是「把这批候选送去测亲和力」被判成了设计。性质词归实验。
     「候选」也不留在设计的对象里：「排一下这批候选的实验」里它指的是实验的材料。 */
- {id:'des', n:'蛋白质设计', hue:'dry', eg:'在这个界面上设计一批结合蛋白',
+ {id:'des', n:'蛋白质设计', hue:'dry', when:'要生成一批新的序列或变体去试。',
+ eg:'在这个界面上设计一批结合蛋白',
   say:'我来生成一批候选。',
   obj:['binder','结合蛋白','结合剂','新的变体'],
   kw:['设计','生成候选','改造','序列设计']},
- {id:'lab', n:'实验管理', hue:'wet', eg:'把这批候选送去测亲和力',
+ {id:'lab', n:'实验管理', hue:'wet', when:'要把东西送去做湿实验，或者管已经在跑的批次、看回传结果。',
+ eg:'把这批候选送去测亲和力',
   say:'我来排这次实验。',
   obj:['实验','亲和力','热稳','配方','protocol','实验室','孔板','报价','ki','kd'],
   kw:['送检','送去','送','测','测定','实测','湿实验','外包','回流']},
- {id:'primer', n:'引物设计', hue:'dry', eg:'给这段模板设一对 PCR 引物',
+ {id:'primer', n:'引物设计', hue:'dry', when:'要给一段模板设计 PCR 引物。',
+ eg:'给这段模板设一对 PCR 引物',
   say:'我来设计引物。',
   obj:['引物','primer','pcr','扩增','退火','tm','正向引物','反向引物','引物对'],
   kw:[]},
- {id:'sgrna', n:'sgRNA 设计', hue:'dry', eg:'在这段序列上选 sgRNA',
+ {id:'sgrna', n:'sgRNA 设计', hue:'dry', when:'要在一段序列上选 CRISPR 向导 RNA。',
+ eg:'在这段序列上选 sgRNA',
   say:'我来选 sgRNA。',
   obj:['sgrna','grna','guide','crispr','cas9','cas12','pam','向导rna'],
   kw:['敲除','编辑','基因编辑']},
- {id:'train', n:'模型制备', hue:'dry', eg:'用这个项目的实测数据训一个打分模型',
+ {id:'train', n:'模型制备', hue:'dry', when:'要拿已有的实测数据训一个打分器出来。',
+ eg:'用这个项目的实测数据训一个打分模型',
   say:'我来准备训练。',
   obj:['打分模型','预测器','回归模型'],
   kw:['训练','训一个','模型制备','微调','回归','留出','训模型']},
- {id:'dset', n:'建数据集', hue:'ink', eg:'上传一份数据建成数据集',
+ {id:'dset', n:'建数据集', hue:'ink', when:'手上有一份表格或 CSV，要把它建成能用来训练的数据集。',
+ eg:'上传一份数据建成数据集',
   say:'我来把这份数据建成数据集。',
   /* 「训练集」比「训练」长，而且它是对象不是动作，所以带「训练集」的句子归这里。 */
   obj:['数据集','训练集','样本表','csv'],
   kw:['建数据集','上传数据','训练数据','导入表','建一个集','传上来','传一份','上传表']},
- {id:'file', n:'文件与资料', hue:'ink', eg:'这个项目里都有哪些文件',
+ {id:'file', n:'文件与资料', hue:'ink', when:'要找、看、下载这个项目里已经有的文件。',
+ eg:'这个项目里都有哪些文件',
   say:'我来找文件。',
   obj:['文件','资料','知识库','文献','产物'],
   kw:['上传','下载','归档']}];
@@ -3722,7 +3761,7 @@ CARD.track=c=>{
       <span><i class="tk-k is-tg"></i>目标 ${c.tg[0]}–${c.tg[1]}</span>
       <span><i class="tk-k is-r"></i>反向 ${c.rr[0]}–${c.rr[1]}</span>
       <span class="grow"></span><span class="num">产物 ${c.prod} bp</span></div>
-    <span class="t-xs mut2">产物把目标区间整段包住了——这正是引物对要做到的事。</span></div>`;
+    <span class="t-xs mut2">产物把目标区间整段包住了。这正是引物对要做到的事。</span></div>`;
 };
 
 /* 数据集卡。版本号、指纹、切分三样必须同时在——少一样就说不清这个模型训在哪一版上。 */
@@ -3931,10 +3970,14 @@ function composer(){
   const picked=S.useTools||[];
   const land=!convOf().length;
   const ph=(()=>{
-    const pr=PRJ();if(!pr)return '把这批候选送去测，n = 3';
+    /* 占位句就放一句真会被打出来的话：短、只说一件事。
+       原先那句「R6 这批里挑 24 条送去测 kcat，顺带看看还能不能再往上推」
+       是写给产品看的——用一句复合请求证明「我能处理复合请求」。
+       真人不这么打字，所以它一眼就是机器写的。 */
+    const pr=PRJ();if(!pr)return '挑一批候选送去测';
     const f=projFields(pr)[0], fn=(FIELD[f]||{}).n||f;
     const r=S.round||pr.rounds.length;
-    return 'R'+r+' 这批里挑 24 条送去测 '+fn+'，顺带看看还能不能再往上推';
+    return '从 R'+r+' 选 24 条测 '+fn;
   })();
   return `<div class="ask">
     <div class="ask-b">
@@ -3955,6 +3998,7 @@ function composer(){
           <svg width="15" height="15" style="width:0.9375rem;height:0.9375rem" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M18.4 11.3 12 17.7a4.1 4.1 0 0 1-5.8-5.8l7.1-7.1a2.7 2.7 0 1 1 3.9 3.9l-7.1 7.1a1.4 1.4 0 0 1-1.9-1.9l6.4-6.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         ${projBtn()}
         <span class="t-xs mut2 askhint">打 <kbd class="kbd">@</kbd> 唤起技能</span>
+        ${mdlBtn()}
         <span class="grow"></span>
         <button class="ctl ctl-go" type="button" data-act="chatsend">发送</button>
       </div>
@@ -4611,6 +4655,49 @@ const MDL_ACT={job:['新建训练任务','trainnew']};
 /* 训练任务的状态。bootcamp 里「异常」那一行照样显示它跑到的进度——
    这里同样：失败的任务留着，并且写清楚是在哪一步停的。 */
 const TRAIN_ST={done:['已完成','c-ok'],failed:['异常','c-err']};
+/* ---- 导入模型 ----
+   这个产品本来就会导出一份模型 JSON，但导出的文件里标准化常数只有一句话、
+   没有数，所以那份文件谁也用不了——包括它自己。补上数之后，再把读回来这一半接上：
+   同事发你一个打分器，你就能直接拿来给自己的候选排序。
+   **只认这个产品自己导出的格式**。PyTorch / ONNX 的权重这里跑不了，
+   与其装作能读，不如直接说不能。 */
+function importModel(txt,fname){
+  let j; try{ j=JSON.parse(txt) }catch(e){ return {ok:false,why:'不是合法的 JSON：'+e.message} }
+  const sc=j.scoring;
+  if(!sc)return {ok:false,why:'这个文件里没有 scoring 段，不是本产品导出的打分器。'
+    +'PyTorch、ONNX、safetensors 这类权重在浏览器里跑不了，这一版不收。'};
+  const st=sc.standardization||{};
+  const w=j.weights, mu=st.mean, sg=st.sd;
+  if(!Array.isArray(w)||!Array.isArray(mu)||!Array.isArray(sg))
+    return {ok:false,why:'weights / standardization.mean / standardization.sd 必须都是数组'};
+  if(w.length!==mu.length||w.length!==sg.length)
+    return {ok:false,why:'长度对不上：权重 '+w.length+'、均值 '+mu.length+'、标准差 '+sg.length};
+  if(!w.every(x=>isFinite(x))||!mu.every(x=>isFinite(x))||!sg.every(x=>isFinite(x)))
+    return {ok:false,why:'里面有不是数的值'};
+  const kind=sc.kind==='ds'?'ds':'proj';
+  if(kind==='proj'&&!Array.isArray(sc.site_columns))
+    return {ok:false,why:'这是按序列特征训的，但没带 site_columns，算不出特征'};
+  if(kind==='ds'&&!(Array.isArray(sc.feature_columns)&&sc.feature_columns.length))
+    return {ok:false,why:'这是按数据表列训的，但没带 feature_columns，不知道该取哪几列'};
+  const m=addModel(S.pid,{target:j.target||'（没写目标）',
+    name:(j.model||'导入')+'（导入）',
+    rho:j.holdout_metrics?j.holdout_metrics.spearman_rho:null,
+    rmse:j.holdout_metrics?j.holdout_metrics.rmse:null,
+    sd:j.holdout_metrics?j.holdout_metrics.holdout_sd:null,
+    nTrain:j.split?j.split.train:null,nTest:j.split?j.split.holdout:null,
+    lam:j.lambda==null?null:j.lambda,lamBy:j.lambda_chosen_by||null,
+    seed:j.seed==null?null:j.seed,
+    /* 来历照抄文件里写的，不替它补。指标也是文件里的，不是这儿重新评的——
+       这一点要让看的人知道，所以 src 里写明「来自导入的文件」。 */
+    src:'导入自 '+(fname||'一个文件')+(j.dataset?('　原训练数据 '+j.dataset):''),
+    imported:true,at:nowStamp(),
+    base:'—',method:'—',upd:'—',
+    kind:kind,w:w,mu:mu,sg:sg,
+    sites:kind==='proj'?sc.site_columns:null,
+    featK:kind==='ds'?sc.feature_columns:null,
+    cols:j.features||null});
+  return {ok:true,m:m,n:w.length};
+}
 function mdlCount(k){
   const L=PMODELS();
   return k==='job'?L.length:k==='base'?BASE_MODELS.length
@@ -4626,7 +4713,13 @@ V.mdl=()=>{
         <h1 style="font-size:1.625rem;letter-spacing:-.03em">模型制备</h1>
         <p class="mut t-md" style="margin:0;max-width:62ch">基于本项目实测数据训练打分模型，用于后续候选排序。</p>
       </div>
-      ${act?`<button class="btn btn-pri" type="button" data-nav="${esc(act[1])}">${esc(act[0])}</button>`:''}
+      <div class="row" style="gap:var(--s3)">
+        ${tab==='cur'?`<input type="file" id="mdlin" accept=".json" style="display:none"
+            aria-label="选择要导入的模型文件">
+          <button class="btn" type="button" data-act="mdlimport"
+            title="读入本产品导出的打分器 JSON">导入模型</button>`:''}
+        ${act?`<button class="btn btn-pri" type="button" data-nav="${esc(act[1])}">${esc(act[0])}</button>`:''}
+      </div>
     </div>
     <div class="tabs">
       ${MDL_TABS.map(([k,n])=>`<button class="tab${tab===k?' is-on':''}" type="button"
@@ -4685,7 +4778,7 @@ function mdlCur(){
           title="${canScore(m)
             ?(mdlOn(m.id)?'已启用：对话里 @ 得到，排序任务也能选它'
                          :'未启用。启用后对话里 @ 得到，排序任务也能选它')
-            :'这个模型是在数据集的列上训的，那些列和候选身上的计算量对不上，所以排不了候选序。要能排序，得用本项目实测那条路训。'
+            :whyNoScore(m)
           }"><i></i></button></td>
         <td><div class="row" style="gap:6px;justify-content:flex-end">
           <button class="btn btn-gh" type="button" data-mtabgo="eval"
@@ -4750,6 +4843,14 @@ function mdlWeightsJson(m){
     baselines:(m.bl||[]).map(x=>({name:x.n,rmse:+x.rmse.toFixed(4),
       spearman_rho:x.rho==null?null:+x.rho.toFixed(4)})),
     beats_all_baselines:(m.bl||[]).length?(m.bl||[]).every(x=>m.rmse<x.rmse):null,
+    /* 标准化常数要给**数**，不能只给一句话。只写「按训练集的均值与标准差标准化」，
+       拿到这个文件的人复现不出任何一次预测——一个叫「模型权重」的文件，
+       却不足以算出一个预测值，那它只是一份说明。 */
+    scoring:{kind:m.kind||'proj',
+      standardization:{mean:(m.mu||[]).map(x=>+(+x).toFixed(6)),
+                       sd:(m.sg||[]).map(x=>+(+x).toFixed(6))},
+      site_columns:m.sites||null,feature_columns:m.featK||null,
+      formula:'y = Σ wj · (xj − mean[j]) / sd[j]，j=0 是截距，x0=1。'},
     standardization:'除截距外各列按训练集的均值与标准差标准化，权重是标准化后的。',
     at:m.at},null,2);
 }
@@ -4947,7 +5048,7 @@ V.dsnew=()=>{
       <div class="field wide"><label class="label" for="dsdesc">数据集描述</label>
         <textarea id="dsdesc" class="input" rows="2" maxlength="200"
           placeholder="例如「R1–R4 SPR 实测，含两批复测，R3 第 7 孔已剔除」">${esc(NEWDS.desc)}</textarea>
-        <span class="t-xs mut2">写清这份数据的来处和已知问题——发布之后内容锁死，描述是唯一还能解释它的地方</span></div>
+        <span class="t-xs mut2">写清这份数据的来处和已知问题。发布之后内容锁死，描述是唯一还能解释它的地方</span></div>
     </div>
   </section>
 
@@ -5786,7 +5887,11 @@ function dsTrain(ds,opt){
   if(b1){const pp=te.map(q=>b1.a+b1.b*z(q.x)[b1.j]);
     if(pp.every(isFinite))base.push({n:'最好的单特征（'+F[b1.j-1]+'，在训练集上选的）',
       rmse:rmseOf(pp),rho:spearman(pp,ac)});}
+  /* mu / sg / F 本来就算出来了，以前没返回，于是用数据集训出来的模型
+     过不了 canScore，永远打不了分——建数据集 → 训练 → 给候选打分这条主闭环
+     到这里就断了。带出来。 */
   return {ok:true,n:tr.length+te.length,nTrain:tr.length,nTest:te.length,nSite:0,
+    mu:mu,sg:sg,featK:F.slice(),
     cols:['截距'].concat(F),w:w,rho:rho,rmse:rmse,sd:sd,lam:lam,cv:lamBy!=='手填',
     lamBy:lamBy,nVal:ds.split.val.length,
     featNote:'特征是 '+ds.id+' 里你选中的 '+F.length+' 个数值列：'+F.join('、')
@@ -6219,7 +6324,7 @@ FLOW.train=f=>{
     const cur=named?(named.id+'　'+named.name+'（'+named.rows.length+' 行）'):SELF;
     return [
       mkCard('note',{title:'训练集',
-        text:'留出集从头到尾不参与任何一步——标准化、λ、特征选择都只用训练集和验证集。'
+        text:'留出集从头到尾不参与任何一步：标准化、λ、特征选择都只用训练集和验证集。'
           +'评测的时候会和两条基线比：永远猜均值的，和只用一个特征的。'}),
       mkCard('form',{cap:'train',title:'模型制备',sub:'训一个打分器',
         fields:[
@@ -6808,7 +6913,7 @@ SUBMIT.train=(c,v)=>{
       const mdl=addModel(S.pid,Object.assign({target:ds.target,rho:r.rho,rmse:r.rmse,sd:r.sd,
         nTrain:r.nTrain,nTest:r.nTest,lam:r.lam,n:r.n,ds:ds.id,ms:ms,
         base:v.base,method:v.method,upd:v.upd,lamBy:r.lamBy,bl:r.base,
-        kind:'ds',w:r.w,cols:r.cols},verdictOf(r)));
+        kind:'ds',w:r.w,mu:r.mu,sg:r.sg,featK:r.featK,cols:r.cols},verdictOf(r)));
       cur.arts=emit(S.pid,[{name:'模型_'+mdl.id+'_'+slug(ds.target)+'_ridge.json',n:'模型权重',
         note:ds.id+'　留出 ρ='+r.rho.toFixed(3),kind:'dat',mime:'application/json',
         make:()=>JSON.stringify({model:mdl.id,kind:'ridge',
@@ -6822,6 +6927,10 @@ SUBMIT.train=(c,v)=>{
             rmse_over_sd:+(x.rmse/r.sd).toFixed(3),
             spearman_rho:x.rho==null?null:+x.rho.toFixed(4)})),
           beats_all_baselines:(r.base||[]).every(x=>r.rmse<x.rmse),
+          scoring:{kind:'ds',
+            standardization:{mean:r.mu.map(x=>+x.toFixed(6)),sd:r.sg.map(x=>+x.toFixed(6))},
+            feature_columns:r.featK,
+            formula:'y = Σ wj · (xj − mean[j]) / sd[j]，j=0 是截距，x0=1。'},
           standardization:'除截距外各列按训练集的均值与标准差标准化，权重是标准化后的。',
           note:'λ 在'+r.lamBy+'；留出集没有参与任何一步。',
           at:nowStamp()},null,2)}]);
@@ -6850,6 +6959,7 @@ SUBMIT.train=(c,v)=>{
     const mdl=addModel(S.pid,Object.assign({target:v.target,rho:r.rho,rmse:r.rmse,sd:r.sd,
       nTrain:r.nTrain,nTest:r.nTest,lam:r.lam,n:r.n,ms:ms,
       base:v.base,method:v.method,upd:v.upd,lamBy:r.lamBy,bl:r.base,
+      seed:+v.seed,src:'本项目已回流的实测值（'+r.n+' 条）',
       kind:'proj',w:r.w,mu:r.mu,sg:r.sg,sites:r.sites,cols:r.cols},verdictOf(r)));
     cur.arts=emit(S.pid,[{name:'模型_'+mdl.id+'_'+slug(v.target)+'_ridge.json',n:'模型权重',
       note:'留出 ρ='+r.rho.toFixed(3)+'　RMSE='+r.rmse.toFixed(3),kind:'dat',
@@ -6859,6 +6969,10 @@ SUBMIT.train=(c,v)=>{
         weights:r.w.map(x=>+x.toFixed(6)),
         feature_note:'features 与 weights 按列一一对应；位点列是 0/1，'
           +'位点表只从训练集统计（出现 ≥3 次，取前 10），其余突变归入「其它位点」。',
+        scoring:{kind:'proj',
+          standardization:{mean:r.mu.map(x=>+x.toFixed(6)),sd:r.sg.map(x=>+x.toFixed(6))},
+          site_columns:r.sites,
+          formula:'y = Σ wj · (xj − mean[j]) / sd[j]，j=0 是截距，x0=1。'},
         standardization:'除截距外各列按训练集的均值与标准差标准化，权重是标准化后的。',
         split:{train:r.nTrain,holdout:r.nTest,ratio:+(v.ratio||0.75)},
         lambda:r.lam,lambda_chosen_by:r.cv?'训练集内 5 折交叉验证':'手填',
@@ -6880,13 +6994,14 @@ SUBMIT.train=(c,v)=>{
   return run;
 };
 
+/* 这张卡以前是 12 行死文本：列出文件名，点不开、下载不了，
+   只能再打一句话。列一堆东西却一个都碰不到，等于把文件管理器画成了一张图。
+   现在每行就是对话里别处那张文件卡：点开出预览，页脚给大小、行数和下载。 */
 CARD.flist=c=>`<div class="kard-h"><strong class="t-md">${esc(c.title)}</strong>
     <span class="grow"></span><span class="t-xs mut2 num">${c.total} 个</span></div>
   <div class="kard-b col" style="gap:var(--s2)">
-    ${c.files.map(x=>`<div class="krow">${kbTag(x.name)}
-      <span class="col grow" style="gap:1px;min-width:0">
-        <span class="t-sm" style="word-break:break-all">${esc(x.name)}</span>
-        <span class="t-xs mut2">${esc(x.from||'')}</span></span></div>`).join('')}
+    ${c.files.map((x,i)=>fileBox({k:'fl.'+c.id+'.'+i,name:x.name,note:x.from,
+      make:fileMake(x),dl:'data-fldl="'+c.id+'.'+i+'"'})).join('')}
     ${c.total>c.files.length?`<span class="t-xs mut2">还有 ${c.total-c.files.length} 个，说「全部文件」看完整列表</span>`:''}
   </div>`;
 
@@ -6927,7 +7042,38 @@ CARD.struct3=c=>`<div class="kard-h"><strong class="t-md">${esc(c.title)}</stron
    项目内打分器的特征就是候选身上的那些量，所以能；
    上传数据集训的那些，特征是别人表里的列名，候选身上没有，所以不能——
    这种时候要说清楚为什么，而不是把它从列表里悄悄拿掉。 */
-function canScore(m){return m&&m.kind==='proj'&&m.w&&m.mu&&m.sg&&m.sites}
+/* 两种打分器，两套特征，不能混：
+     kind 'proj'——特征从序列和突变位点算出来，任何候选都能算。
+     kind 'ds'  ——特征是你在上传表里挑的那几个数值列。这些列不是算出来的，
+                  是测出来的，所以只有当这条候选把那几列都测过，才打得了分。
+   测不全就返回 null，不拿均值糊上去充数。 */
+function canScore(m){
+  if(!m||!m.w||!m.mu||!m.sg)return false;
+  if(m.kind==='proj')return !!m.sites;
+  if(m.kind==='ds')return !!(m.featK&&m.featK.length);
+  return false;
+}
+/* 上传表的列名和项目字段常常只差一个单位后缀（dTm_℃ ↔ dTm、kd_pM ↔ kd）。
+   按前缀对，长字段优先，不然 kd 会把 kdApp 也认领走。 */
+/* 有几列不是测量值，是候选自身的属性，而且两边名字不一样。
+   只列真的对得上的那几个：对不上就让它打不了分，
+   也不拿一个「差不多」的列顶上去——顶错了分数照样出得来，错得还看不出来。 */
+const COL_ALIAS={round:'firstRound'};
+function fieldOfCol(col){
+  const c=String(col||'').toLowerCase();
+  return Object.keys(FIELD).filter(k=>c.indexOf(String(k).toLowerCase())===0)
+    .sort((a,b)=>b.length-a.length)[0]||null;
+}
+/* 这个打分器为什么用不了——要能说出口，不能只是在界面上少一行。 */
+function whyNoScore(m){
+  if(!m)return '没有这个模型';
+  if(m.st==='failed')return m.why||'这一次训练没训出来';
+  if(!m.w)return '没有权重，训练没走完';
+  if(m.kind==='ds'&&!(m.featK&&m.featK.length))
+    return '这是用上传数据集训的，但没记下用了哪几列特征，补不回来';
+  if(m.kind!=='proj'&&m.kind!=='ds')return '训练方式没记全，认不出该怎么取特征';
+  return m.why||'缺少打分需要的参数';
+}
 /* 自己训出来的模型，启用之后就是一个可调用的打分器：
    对话里 @ 得到，设计任务排序时也能选它。
    能启用的前提是它真的能打分（canScore）——没有权重的模型挂上去只是个名字。
@@ -6947,6 +7093,25 @@ function MY_TOOLS(){
 }
 function scoreWith(m,c){
   if(!canScore(m))return null;
+  if(m.kind==='ds'){
+    const v=[1];
+    for(const k of m.featK){
+      const f=fieldOfCol(k);
+      let x=f?mv(c,f):null;
+      if(x==null&&c&&c[k]!=null)x=c[k];
+      if(x==null&&c&&COL_ALIAS[k]&&c[COL_ALIAS[k]]!=null)x=c[COL_ALIAS[k]];
+      if(x==null||!isFinite(+x))return null;      // 测不全就不打分
+      v.push(+x);
+    }
+    if(v.length!==m.w.length)return null;
+    let t=0;
+    for(let j=0;j<v.length;j++){
+      const zz=j?(v[j]-m.mu[j])/(m.sg[j]||1):1;
+      if(!isFinite(zz))return null;
+      t+=zz*m.w[j];
+    }
+    return isFinite(t)?t:null;
+  }
   const wt=PRJ_WT[m.pid||S.pid]||PRJ_WT[S.pid]||'';
   /* featOf 返回的就是特征数组本身。trainRun 里把它装进 {base:...} 是那边的包装，
      这里别跟着多取一层——取错了只会在打分时炸，训练时看不出来。 */
@@ -7235,10 +7400,74 @@ function abilForTool(n){
   }
   return null;
 }
+/* ---------------- 给模型的话 ----------------
+   两处用到模型：给这句话归类、以及归不了类时直接回答。两处共用一段「你是谁」。
+   开头那三条是这个产品和一个通用聊天机器人的全部区别，所以放最前面。
+
+   **提示词现场从 ABIL 拼，不手写副本。**
+   手写副本的下场已经吃过两次（R142、R153）：加一条能力、改一个名字，
+   提示词还停在上一版，模型按旧清单分类，错得还很自信。
+   所以「什么时候该选这条」那句话长在 ABIL 的 when 字段上——
+   加能力的人必须顺手写它，否则提示词里那一条就是空的，一眼看得见。
+
+   排列顺序也是有意的：一成不变的那一大段在前，随课题变的那一行在最后。
+   DeepSeek 对命中缓存的前缀便宜一个数量级，这么排等于每一轮少花一笔钱。 */
+const SYS_BASE=
+ '你是「端砚 · 生命科学」里的科研助手，面对的是正在做蛋白工程的研究员。\n'
++'三条硬规矩：\n'
++'1. 所有数字、统计量、打分结果都由本机程序算出。你不产生任何数字。\n'
++'2. 不知道就说不知道，并指出要先做哪一步才会知道。不推测，不补文献。\n'
++'3. 你不替研究员做决定，只把情况讲清楚。';
+
+/* 路由提示词。这是个**分类器**，不是聊天——所以温度必须是 0。
+   0.2 的温度下同一句话会落到不同能力上，用户看到的就是「定位点变来变去」。 */
+function sysRoute(){
+  return SYS_BASE+'\n\n'
+   +'现在只做一件事：把研究员这句话归到下面十条能力中的一条，或者归到 none。\n\n'
+   +ABIL.map(a=>'  '+a.id+'（'+a.n+'）：'+(a.when||'【这条能力还没写 when，按名字判】')
+       +'　例：「'+a.eg+'」').join('\n')+'\n'
+   +'  none：这句话不是要做上面任何一件事，而是在问这个课题现在怎么样、'
+   +'下一步该干什么、某个结果说明了什么。\n\n'
+   +'容易混的几对，按这几条判：\n'
+   +'  · 亲和力、热稳、KD、Tm 是要测的性质。出现它们通常是 lab（拿去测），不是 des（设计）。\n'
+   +'  · 「候选」出现在送检、排期、测一测这类句子里，指的是实验材料，不是要设计新的。\n'
+   +'  · 「数据集」「训练集」是对象，归 dset；「训一个」「微调」是动作，归 train。\n'
+   +'  · deg 是比较两组表达量，des 是生成新序列，dset 是把表格建成数据集。三者不要混。\n'
+   +'  · 问「有哪些文件」「把它下下来」归 file；问「这个课题现在怎么样」归 none。\n'
+   +'  · 拿不准的时候选 none。选错一条能力会弹出一张用不上的表单，\n'
+   +'    选 none 只是改成直接回答，代价小得多。\n\n'
+   +'只输出一个词：上面十个 id 之一，或者 none。不要解释，不要标点，不要引号。';
+}
+
+/* 归不了类的那一句，交给模型直接答。
+   和分类器用同一段人设，但多给它两样东西：本机算好的事实，以及能力清单——
+   研究员问的往往其实是「这件事能不能做」，答得出来就该顺手告诉他走哪条。 */
+function sysAsk(){
+  return SYS_BASE+'\n\n'
+   +'研究员这句话不对应任何一条流程，由你直接回答。\n'
+   +'下面是这个课题此刻的真实数据，全部由本机算出。只许根据这些数据回答；\n'
+   +'数据里没有的，直接说这里没有这个数，并指出要先做哪一步才会有。\n'
+   +'如果他其实是想做某件事，告诉他可以走哪条能力：'+ABIL.map(a=>a.n).join('、')+'。\n'
+   +'用中文，三到六句，不要列表，不要复述问题，不要客套话。\n\n'
+   +'【这个课题此刻的数据】\n'+ctxBrief();
+}
+/* 上一轮停在哪条能力上。「再跑一次」「换个参数」要靠它才有指代。 */
+function lastCap(){
+  const L=convOf();
+  /* 从最后一轮往回找，只翻到上一句用户发言为止——
+     再往前就是另一个话题了，拿它当指代反而把人带偏。 */
+  for(let i=L.length-1;i>=0;i--){
+    if(L[i].role==='ai'&&L[i].cap&&ABIL_OF(L[i].cap))return ABIL_OF(L[i].cap);
+    if(L[i].role==='me'&&i<L.length-1)break;
+  }
+  return null;
+}
+
 function agentSend(){
   const ta=document.getElementById('ask');
   const txt=((ta&&ta.value)||S.ask||'').trim();
   if(!txt){toast('先说一句话');if(ta)ta.focus();return}
+  const lc=lastCap(); // 先取上一轮，再加入当前发言，避免被当前消息截断。
   push({role:'me',text:txt});
   /* 挂在输入框上的技能要先读出来再清空。反过来写的话，
      @ 挂的技能永远是空的，挂了等于没挂。 */
@@ -7255,19 +7484,19 @@ function agentSend(){
   if(cap&&FLOW[cap]){
     const a=ABIL_OF(cap);
     render();scrollEnd();
-    say(a.say,FLOW[cap](r.fields),null,cotOf(txt,r,cap,forced,pinned,stray));
+    say(a.say,FLOW[cap](r.fields),null,cotOf(txt,r,cap,forced,pinned,stray)).cap=cap;
     return;
   }
   /* 关键词没分出胜负，才去问模型这句话归哪一类。 */
   push({role:'ai',text:'让我想一下这句话该归到哪条能力…'});
   render();scrollEnd();
-  MC.chat([{role:'system',content:'你是分类器。只输出一个词，必须是下面之一：'
-      +ABIL.map(a=>a.id).join('、')+'、none。不要解释。'},
-    {role:'user',content:txt}],{max:8}).then(res=>{
+  MC.chat([{role:'system',content:sysRoute()
+      +(lc?'\n\n（上一步他在做：'+lc.n+'。「再跑一次」「换个参数」多半还指这件事。）':'')},
+    {role:'user',content:txt}],{max:8,temp:0}).then(res=>{
     const L=convOf();L.pop();
     const k=String(res.text||'').trim().toLowerCase().replace(/[^a-z]/g,'');
     const a=ABIL_OF(k);
-    if(a&&FLOW[a.id])say(a.say,FLOW[a.id](r.fields));
+    if(a&&FLOW[a.id])say(a.say,FLOW[a.id](r.fields)).cap=a.id;
     else freeAsk(txt,stray);
   }).catch(e=>{
     const L=convOf();L.pop();
@@ -7325,13 +7554,8 @@ function ctxBrief(){
 function freeAsk(txt,stray){
   push({role:'ai',text:'这句话不走某一条流程，我拿这个课题现有的数答一下…'});
   render();scrollEnd();
-  MC.chat([
-    {role:'system',content:
-      '你是一个蛋白工程课题的科研助手。下面是这个课题此刻的真实数据，全部由本地程序算出。'
-      +'只许根据这些数据回答。不许推测，不许补任何没给你的数字、结论或文献；'
-      +'数据里没有的就直接说这里没有这个数，并指出要先做哪一步才会有。'
-      +'用中文，三到六句，不要列表，不要复述问题。\n\n'+ctxBrief()},
-    {role:'user',content:txt}],{max:520,temp:0.3}).then(res=>{
+  MC.chat([{role:'system',content:sysAsk()},
+    {role:'user',content:txt}],{max:520,temp:0.1}).then(res=>{
     const L=convOf();L.pop();
     const t=String(res.text||'').trim();
     if(!t){say('模型这次回了一句空的。换个说法，或者直接说要做哪件事：'
@@ -7380,7 +7604,7 @@ function bindChat(view){
          它正好也是用户最可能第一次拿来建集的那份东西。 */
       const txt=artVariantsCsv(S.pid,CANDS());
       const q=parseTable(txt,'variants.csv');
-      if(!q.ok){toast('这个项目还没有候选数据');return}
+      if(!q.ok){toast('还没有候选');return}
       f.v='本项目变体表.csv';f.text=txt;f.file=null;f.demo=0;
       f.hint=q.rows.length+' 行 × '+q.cols.length+' 列　指纹 '+q.fp
         +'　这是本项目自己的实测表';
@@ -7398,7 +7622,7 @@ function bindChat(view){
     }
     if(a==='btfill'){
       const bt=backTranslate(PRJ_WT[S.pid]||'');
-      if(!bt){toast('这个项目没有可回译的蛋白序列');return}
+      if(!bt){toast('没有可回译的蛋白序列');return}
       f.v=bt;
       const tg=fldOf(cid,'tgs');if(tg)tg.v=Math.max(0,Math.round(bt.length/2)-30);
       render();toast('已填入 '+bt.length+' bp 回译模板');
@@ -7470,6 +7694,11 @@ function bindChat(view){
     render();scrollEnd()}});
   q('[data-kdl]',b=>b.onclick=()=>{const [cid,i]=b.dataset.kdl.split('.');
     const c=cardById(cid);if(!c||!c.arts)return;docDl(c.arts[+i])});
+  q('[data-fldl]',b=>b.onclick=()=>{const [cid,i]=b.dataset.fldl.split('.');
+    const c=cardById(cid);if(!c||!c.files)return;
+    const e=c.files[+i], mk=fileMake(e);
+    if(!mk){toast('这一条只有登记，手上没有内容');return}
+    dl(e.name,String(mk()),(e.art&&e.art.mime)||'text/plain')});
   q('[data-kdoc]',b=>b.onclick=()=>{S.docPick=b.dataset.kdoc;go('project')});
 }
 
@@ -7883,7 +8112,7 @@ function deriveRound(roundNo,archived){
   if(!bs.every(b=>b.status==='done'))
     return {state:'assay',why:`${bs.filter(b=>b.status!=='done').length} 个批次未完成`};
   const rt=RETRAINS.find(r=>r.round===roundNo);
-  if(!rt)return {state:'reflux',why:'批次全部完成，重训尚未进行'};
+  if(!rt)return {state:'reflux',why:'批次都完成了，还没重训'};
   return {state:'reflux',why:'重训已完成，等待人工确认收口'};
 }
 
@@ -8540,7 +8769,7 @@ function parseRanges(str,maxLen){
     if(/^\d+$/.test(tok)){const n=+tok;
       if(maxLen&&n>maxLen){bad.push(tok+'（超出序列长度）');return}
       out.add(n);return}
-    bad.push(tok+'（格式无法识别）');
+    bad.push(tok+'（认不出格式）');
   });
   return {set:out,bad:bad};
 }
@@ -8856,20 +9085,20 @@ const ARTS={
    note:'PDBx/mmCIF。wwPDB 自 2014 起的归档格式；旧 PDB 格式自 2012-11-21 冻结，'
        +'且装不下超过 99999 个原子或 62 条链的结构。'},
  backbone:   {n:'主链骨架',ext:'pdb', mime:'chemical/x-pdb',
-   note:'只含主链原子（N / CA / C / O）的 PDB，没有侧链——侧链是下一步序列设计要填的。'},
+   note:'只含主链原子（N / CA / C / O）的 PDB，没有侧链。侧链是下一步序列设计要填的。'},
  msa:        {n:'多序列比对',ext:'a3m', mime:'text/plain',
    note:'a3m：小写字母表示相对查询序列的插入。'},
  plate:      {n:'板位表',  ext:'csv',  mime:'text/csv',
    note:'一行一个孔，孔位、内容、重复组。服务商按这张表排板。'},
  result_file:{n:'回传结果',ext:'csv',  mime:'text/csv',
-   note:'服务商回传的原始表，不做任何改动地留存——改过的那份另存。'},
+   note:'服务商回传的原始表，不做任何改动地留存。改过的那份另存。'},
  annotations:{n:'功能注释',ext:'json', mime:'application/json',
    note:'位点级注释与它的出处、编号基准。'},
  evidence:   {n:'证据链',  ext:'json', mime:'application/json',
    note:'一条结论 + 支撑它的来源清单。'},
  report:     {n:'轮次报告',ext:'md',  mime:'text/markdown',
    note:'人读的交付件。每一节都标明数据来自哪里，算不出的照实写「算不出」。'
-       +'报告记录的是一次决策，所以它是快照——产出即归档，不随数据变。'},
+       +'报告记录的是一次决策，所以它是快照：产出即归档，不随数据变。'},
  run:        {n:'运行记录',ext:'json', mime:'application/json',
    note:'这一次跑了什么：工具与版本、参数、随机种子、输入产物的指纹。'}};
 
@@ -8945,12 +9174,12 @@ function artRunJson(t){
     /* 没有记下参数的任务，这里就空着并说明——
        拿「当前配置」顶上会让三个月后的人以为那次就是这么跑的。 */
     provenance:t.params?Object.fromEntries(t.params.map(x=>[String(x[0]),String(x[1])])):null,
-    provenance_note:t.params?null:'这个任务没有留下参数记录，无法据此复现。',
+    provenance_note:t.params?null:'这个任务没留参数记录，复现不了。',
     inputs:t.in||null, outputs:t.out||null,
     note:'这一份是运行记录，不是结果。复现要连同输入产物一起带走。'},null,1);
 }
 function artAnnJson(pid){
-  const u=UNIP[pid];if(!u)return JSON.stringify({note:'这个项目没有登记 UniProt 记录'},null,1);
+  const u=UNIP[pid];if(!u)return JSON.stringify({note:'没有登记 UniProt 记录'},null,1);
   const off=unipOffset(pid);
   return JSON.stringify({
     accession:u.acc, name:u.name, fetched_at:UNIP_AT, source:'rest.uniprot.org',
@@ -9087,7 +9316,7 @@ function artCard(t){
             const S1='style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem"';
             return rec
               ?`<button class="btn btn-gh" type="button" data-archgo="${esc(rec.id)}" ${S1}
-                  title="${esc(rec.at)} 存入，指纹 ${esc(String(rec.hash))}——点开看归档件"
+                  title="${esc(rec.at)} 存入，指纹 ${esc(String(rec.hash))}"
                   >已存入 ${esc(rec.id)}</button>`
               :`<button class="btn btn-gh" type="button" data-artarch="${esc(t.id)}|${i}"
                   title="把这一刻的内容冻住，挂到项目上——报告、送检单这类要留证据的，存一份"
@@ -10231,7 +10460,7 @@ function wetBatch(){
 function wetETA(b){
   const T=turnaround(b?b.pid:S.pid);
   if(!b||b.status==='done'||b.status==='canceled')return null;
-  if(!T.n)return {med:null,why:'这个项目还没有走完过批次，给不出预计时间'};
+  if(!T.n)return {med:null,why:'走完一个批次才有预计时间'};
   const age=batchAgeDays(b), left=T.med-age;
   return {med:T.med,age:age,left:left,n:T.n,min:T.min,max:T.max,
     why:`按本项目 ${T.n} 个走完批次的中位周转 ${fmtDays(T.med)}（${fmtDays(T.min)}–${fmtDays(T.max)}）折算`};
@@ -12010,6 +12239,13 @@ const fileExt=x=>((String(x.name||'').split('.').pop()||'').toLowerCase());
 const FKIND={arch:['项目归档','var(--ink)'],art:['任务产出','var(--dry)'],
   out:['已下载','var(--ink-3)'],in:['服务商回传','var(--wet)'],kb:['上传','var(--ink-4)']};
 const fmtBytes=b=>b==null?'—':b<1024?b+' B':b<1048576?(b/1024).toFixed(1)+' KB':(b/1048576).toFixed(1)+' MB';
+/* 一条文件记录能不能真打开、真下载，取决于它有没有内容生成函数。
+   任务产物有（27 条里 21 条）；服务商回传和用户上传的原件没有——
+   那两类我们只有登记，手上没有字节。fileBox 会把下载键置灰并说明原因，
+   不临时编一份内容出来充数（R3）。 */
+function fileMake(e){
+  return (e&&e.art&&e.art.make)||(e&&e.arch&&e.arch.make)||(e&&e.make)||null;
+}
 function FILES(pid){
   const id=pid||null, out=[];
   /* ⓪ 项目归档：冻住的那一份。排在最前面——它是唯一有「当时那一版」的东西。 */
@@ -12094,8 +12330,11 @@ const KB_HUE={seq:'dry',str:'dry',tab:'wet',dat:'ink',doc:'ink',zip:'ink'};
 /* 一个方块就是一个文件：扩展名写在方块里。
    kbTag 是「图标 + 扩展名小标」两个元素并排，放在列表行里会把文件名挤到第二行。 */
 function fileSq(n){
-  const ext=kbExt(n), k=FEXT_K[ext]||'doc';
-  return `<span class="fsq is-${KB_HUE[k]||'ink'}">${esc((ext||'?').toUpperCase().slice(0,4))}</span>`;
+  const ext=kbExt(n), k=FEXT_K[ext]||'doc', t=(ext||'?').toUpperCase();
+  /* 以前是 slice(0,4)，于是 fasta 显示成 FAST——截出来的是另一个词，不是缩写。
+     改成整个扩展名都放进去，长的把字号压一档；再长（极少见）才截。 */
+  return `<span class="fsq is-${KB_HUE[k]||'ink'}${t.length>=5?' is-long':''}"
+    >${esc(t.slice(0,6))}</span>`;
 }
 function kbTag(n){
   const ext=kbExt(n), k=FEXT_K[ext]||'doc';
@@ -12567,7 +12806,7 @@ function dfWhy(k){
   if(k==='preview'){const g=gateRate();
     return g?`本项目 ${g.n} 条候选里 ${g.pass} 条过闸门（${Math.round(g.r*100)}%），`
             +`要让闸门之上期望有 ${PREVIEW_HITS} 条，至少生成 ${Math.ceil(PREVIEW_HITS/g.r)} 条`
-            :'本项目还没有过闸门的候选，算不出预览条数——自己填一个';}
+            :'没有过闸门的候选，先自己填一个条数——自己填一个';}
   return plateNote()+` → ${plateCap()} 条`;
 }
 /* 条数手填成别的数之后，模式名就不该再说「快速预览」或「完整批次」——
@@ -12647,7 +12886,7 @@ function designForm(){
     ${(function(){const E=desEst();
       return `<span class="t-sm mut2"><b class="num">${dfN()}</b> 条候选 · ${
         E?`预计 <b class="num">${fmtMin(E.min)}</b> · 约 <b class="num">${E.ink}</b> 墨点`
-         :'本项目还没有跑完过设计任务，给不出预计'}</span>`})()}
+         :'跑完一次设计任务才有预计'}</span>`})()}
   </div>`;
 }
 
@@ -12883,7 +13122,7 @@ function modelErr(e){
     if(/HTTP [45]\d\d/.test(m))return '对话服务暂时无法回复，请稍后再试。';
   }
   if(m==='NOPROXY')return 'DeepSeek 代理尚未配置。请在「模型接入」填写已部署的 HTTPS 代理地址。';
-  if(m==='NOKEY')return '选了直连但还没填 API Key。到侧栏的「模型接入」里填一把——它只存在这台机器上。';
+  if(m==='NOKEY')return '选了直连但还没填 API Key。到侧栏的「模型接入」里填一把。它只存在这台机器上。';
   if(m.indexOf('NET:')===0)
     return '连不上模型服务：'+m.slice(4)+'。请求没有送达，没有产生任何改动。';
   if(/HTTP 4\d\d/.test(m))return '模型服务拒绝了这次请求：'+m;
@@ -12899,66 +13138,62 @@ function modelErr(e){
 V.set=()=>{
   const c=MC.cfg(), m=MODELS[c.name]||{label:c.name,note:'',ctx:'',price:''};
   const st=MC.testStatus();
-  const mode=(id,n)=>`<button class="seg-i" type="button" role="radio" data-mmode="${id}"
+  const seg=(id,n)=>`<button class="seg-i" type="button" role="radio" data-mmode="${id}"
     aria-checked="${c.mode===id?'true':'false'}">${n}</button>`;
   return `
-<div class="page" style="max-width:46rem">
+<div class="page" style="max-width:40rem">
   <div class="col" style="gap:6px">
     <h1 style="font-size:1.625rem;letter-spacing:-.03em">模型接入</h1>
-    <p class="mut t-md" style="margin:0">对话里判断你这句话要做什么、把算出来的数说成人话，走这个模型。
-      打分、统计、设计都在本机算，不接也能用。</p>
+    <p class="mut t-md" style="margin:0">对话里的意图判断和成稿走这个模型。不接也能用。</p>
   </div>
 
-  <section class="col" style="gap:var(--s4)">
+  <div class="col" style="gap:var(--s5);max-width:26rem">
     ${MC.isManaged()
-      ? `<div class="sec-h"><strong>对话服务</strong></div>
-         <p class="t-sm mut" style="margin:0">站点统一提供，无需填写密钥。可直接在对话里提问。</p>
-         <p class="t-sm mut2" style="margin:0">点击「测一次」确认当前是否能收到回复。</p>`
-      : `<div class="sec-h"><strong>请求从哪儿发出去</strong></div>
-    <div class="seg" role="radiogroup" aria-label="接入方式">${mode('proxy','后端代理')}${mode('direct','浏览器直连')}</div>
-    ${c.mode==='direct'
-      ? `<p class="t-sm mut" style="margin:0">这台浏览器直接请求 api.deepseek.com。密钥只写进这台机器的
-           localStorage：不进代码、不随页面分发，别人打开同一个页面拿不到它。也因此它只在你自己这台机器上有效。</p>
-         <div class="field" style="max-width:26rem">
+      ? `<div class="field">
+           <span class="label">对话服务</span>
+           <span class="t-sm mut">站点统一提供，无需填写密钥。可直接在对话里提问。</span>
+         </div>`
+      : `<div class="field">
+           <span class="label">接入方式</span>
+           <div class="seg" role="radiogroup" aria-label="接入方式">${seg('proxy','后端代理')}${seg('direct','浏览器直连')}</div>
+         </div>`}
+
+    ${MC.isManaged() ? '' : c.mode==='direct'
+      ? `<div class="field">
            <label class="label" for="mkey">API Key</label>
            <input id="mkey" class="input" type="password" autocomplete="off" spellcheck="false"
-             placeholder="${MC.hasKey()?'已经存了一把，留空就不动它':'粘贴你在 DeepSeek 平台申请的那把'}">
+             placeholder="${MC.hasKey()?'已保存，留空不改':'粘贴 API Key'}">
+           <span class="t-xs mut2">只存在这台机器上，不随页面分发</span>
            <div class="row wrap" style="gap:var(--s3)">
              <button class="btn btn-pri" type="button" data-act="mkeysave">保存</button>
-             ${MC.hasKey()?`<button class="btn btn-gh" type="button" data-act="mkeyclr">删掉本机这把</button>`:``}
+             ${MC.hasKey()?`<button class="btn btn-gh" type="button" data-act="mkeyclr">删除</button>`:``}
            </div>
          </div>`
-      : `<p class="t-sm mut" style="margin:0">请求通过 HTTPS 代理发送给 DeepSeek，密钥由服务端保管。
-           代理模式下，页面不接收也不保存 DeepSeek 密钥。</p>
-         <p class="t-sm mut2" style="margin:0">${c.endpoint?'已填入站点的代理地址，可点击「测一次」确认当前是否连通。':'代理正在等待配置；其他本地功能可以正常使用。'}</p>
-         <div class="field" style="max-width:26rem">
-           <label class="label" for="mep">代理地址</label>
+      : `<div class="field">
+           <label class="label" for="mep">接口地址</label>
            <input id="mep" class="input" value="${esc(c.endpoint)}" spellcheck="false"
              placeholder="https://你的代理域名/api/model/chat">
-         </div>`}`}
-  </section>
+           <span class="t-xs mut2">填写已部署的 HTTPS 代理地址，密钥由后端保管。本机运行可使用同源接口。</span>
+         </div>`}
 
-  <section class="col" style="gap:var(--s4)">
-    <div class="sec-h"><strong>模型</strong></div>
-    <div class="field" style="max-width:20rem">
-      <label class="sr" for="mn">模型</label>
-      <select id="mn" class="input">${DS_MODELS.map(k=>`<option value="${esc(k)}"${k===c.name?' selected':''}>${esc(k)}</option>`).join('')}</select>
+    <div class="field">
+      <label class="label" for="mn">模型</label>
+      <select id="mn" class="input" data-ic="model">${DS_MODELS.map(k=>
+        `<option value="${esc(k)}"${k===c.name?' selected':''}>${esc(k)}</option>`).join('')}</select>
+      <span class="t-xs mut2">${esc(m.note)}　${esc(m.ctx)}　${esc(m.price)}（高峰、未命中缓存）</span>
     </div>
-    <p class="t-sm mut" style="margin:0">${esc(m.note)}　${esc(m.ctx)}　${esc(m.price)}<br>
-      <span class="mut2">官方价目里高峰时段、未命中缓存那一档。闲时半价，命中缓存另算。</span></p>
-  </section>
 
-  <section class="col" style="gap:var(--s4)">
-    <div class="sec-h"><strong>通不通</strong></div>
-    <div class="row wrap" style="gap:var(--s3);align-items:center">
-      <button class="btn" type="button" data-act="mtest">测一次</button>
-      <span id="mtest-status" class="t-sm ${st?'mut':'mut2'}">${st?`上次 ${esc(st.at)}　${st.ok?'成功':'失败'}`:'还没测过'}</span>
+    <div class="field">
+      <div class="row wrap" style="gap:var(--s3);align-items:center">
+        <button class="btn" type="button" data-act="mtest">测试连接</button>
+        <span id="mtest-status" class="t-sm ${st?'mut':'mut2'}">${st?`上次 ${esc(st.at)}　${st.ok?'成功':'失败'}`:'还没测过'}</span>
+      </div>
+      <div id="mout"></div>
     </div>
-    <div id="mout"></div>
-    <p class="t-sm mut2" style="margin:0">自查里的「工具执行」按这次结果判定：没成功调用过，那一维不算过。</p>
-  </section>
+  </div>
 </div>`;
 };
+
 
 /* ---------------- 下载 ---------------- */
 let DLCAP=undefined;
@@ -13362,6 +13597,20 @@ function render(){
      半截路径存下去，这中间任何一次请求都会打到一个不存在的地址。 */
   q('#mep',el=>el.onchange=()=>{const v=(el.value||'').trim()||MC.ENDPOINT;
     MC.save({endpoint:v});LS.set('mstat',null);render();toast('已改到 '+v)});
+  q('#mdlin',el=>el.onchange=()=>{
+    const f=el.files&&el.files[0]; if(!f)return;
+    const rd=new FileReader();
+    rd.onerror=()=>toast('读不了这个文件');
+    rd.onload=()=>{const r=importModel(String(rd.result||''),f.name);
+      el.value='';
+      if(!r.ok){toast('导入失败：'+r.why);return}
+      render();
+      toast('导入了 '+r.m.name+'　'+r.n+' 个权重'
+        +(canScore(r.m)?'，可以直接拿来打分':'，但还打不了分'))};
+    rd.readAsText(f)});
+  q('#askmdl',el=>el.onchange=()=>{MC.save({name:el.value});
+    LS.set('mstat',null);          // 换了模型，上一次的连通结论不再代表现在
+    toast('这段对话改用 '+el.value)});
   q('#dsproj',el=>el.onchange=()=>{S.dsProj=el.value;S.dsPick=null;render()});
   q('[data-dsproj]',b=>b.onclick=()=>{S.dsProj=b.dataset.dsproj;S.dsPick=null;render()});
   q('[data-fbox]',b=>b.onclick=()=>{S.fOpen=S.fOpen||{};
@@ -13485,11 +13734,6 @@ function render(){
     dl('评测报告_'+m.id+'_'+slug(m.target)+'.md',mdlReport(m),'text/markdown')
       .then(r=>toast(r==='saved'?'报告已保存':r==='declined'?'已取消':'下载失败'))});
   q('[data-nav]',b=>b.onclick=()=>go(b.dataset.nav));
-  q('[data-cap]',b=>b.onclick=()=>{const c=CAPS.find(x=>x.id===b.dataset.cap);if(!c)return;
-    if(S.capPick===c.id){S.capPick=null;S.ask='';}
-    else{S.capPick=c.id;S.ask=c.q;}
-    render();const t=document.getElementById('ask');if(t){t.focus();
-      t.setSelectionRange(t.value.length,t.value.length)}});
   q('[data-ati]',b=>{b.onmousedown=e=>{e.preventDefault();atPick(+b.dataset.ati)}});
   q('#ask',t=>{
     /* 面板的键盘处理挂在这一次渲染出来的输入框上。
@@ -14139,7 +14383,7 @@ function render(){
     const rd=new FileReader();
     rd.onload=()=>{const fmt=/\.cif$|\.mmcif$/i.test(f.name)?'cif':'pdb';
       loadStruct(rd.result,f.name,'本地文件',fmt);toast(`已载入 ${f.name}`)};
-    rd.onerror=()=>{VW.err={kind:'读文件失败',msg:'浏览器无法读取这个文件。'};render()};
+    rd.onerror=()=>{VW.err={kind:'读文件失败',msg:'浏览器读不了这个文件。'};render()};
     rd.readAsText(f)};
   const dz=view.querySelector('#drop');
   if(dz){['dragenter','dragover'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();
@@ -14156,7 +14400,7 @@ function render(){
   q('[data-acc]',b=>b.onclick=()=>{IN.acc=b.dataset.acc;render();act('fetchacc')});
   const accI=view.querySelector('#acc');
   if(accI)accI.oninput=()=>{IN.acc=accI.value;const h=accI.parentNode.querySelector('.hint');
-    if(h)h.textContent=idType(accI.value)?`已识别为 ${idType(accI.value)}`:'无法识别类型'};
+    if(h)h.textContent=idType(accI.value)?`已识别为 ${idType(accI.value)}`:'认不出类型'};
   const sq=view.querySelector('#seqin');if(sq)sq.oninput=()=>{IN.rawSeq=sq.value};
   const bq=view.querySelector('#bin');if(bq)bq.oninput=()=>{IN.rawBatch=bq.value};
   q('[data-act2="confirm"]',cb=>cb.onchange=()=>{IN.confirmed=cb.checked;render()});
@@ -14192,7 +14436,7 @@ function render(){
   const rin=view.querySelector('#res');
   if(rin)rin.onchange=()=>{const L=IN.parsed&&IN.parsed.chains[0].seq.length;
     const r=parseRanges(rin.value,L);
-    IN.resErr=r.bad.length?('无法解析：'+r.bad.join('、')):null;
+    IN.resErr=r.bad.length?('解析不了：'+r.bad.join('、')):null;
     IN.sel=r.set;render();const n=view.querySelector('#res');if(n){n.focus();n.setSelectionRange(n.value.length,n.value.length)}};
   q('[data-cx]',el=>el.onchange=()=>{roundCtx()[el.dataset.cx]=el.value;render()});
   q('[data-cxm]',el=>el.onchange=()=>{const k=el.dataset.cxm;const cur=asList(roundCtx()[k]);
@@ -14340,7 +14584,7 @@ function act(a,el){
     const mdl=addModel(S.pid,Object.assign({target:d?d.target:NEWTR.target,
       rho:r.rho,rmse:r.rmse,sd:r.sd,nTrain:r.nTrain,nTest:r.nTest,lam:r.lam,n:r.n,
       ms:ms,ds:d?d.id:null,lamBy:r.lamBy,bl:r.base,
-      kind:d?'ds':'proj',w:r.w,mu:r.mu,sg:r.sg,sites:r.sites,cols:r.cols},
+      kind:d?'ds':'proj',w:r.w,mu:r.mu,sg:r.sg,featK:r.featK,sites:r.sites,cols:r.cols},
       meta,verdictOf(r)));
     emit(S.pid,[{name:'模型_'+mdl.id+'_'+slug(mdl.target)+'_ridge.json',n:'模型权重',
       note:(mdl.name||mdl.id)+'　留出 ρ='+r.rho.toFixed(3),kind:'dat',
@@ -14351,7 +14595,7 @@ function act(a,el){
     dl(t.n,t.make(),'text/csv').then(r=>toast(
       r==='saved'?t.n+' 已保存，照着它的列改成你自己的数据':r==='declined'?'已取消':'下载失败'));return}
   if(a==='dsdemo'){const txt=artVariantsCsv(S.pid,CANDS());
-    if(!txt){toast('这个项目还没有候选数据');return}
+    if(!txt){toast('还没有候选');return}
     dsRead(txt,'本项目变体表.csv');render();
     toast('已填入本项目的变体表：'+(NEWDS.parsed?NEWDS.parsed.rows.length:0)+' 行');return}
   if(a==='dsclear'){NEWDS.fileName='';NEWDS.text='';NEWDS.parsed=null;NEWDS.err='';
@@ -14524,7 +14768,7 @@ function act(a,el){
         <input id="ski" class="input" placeholder="例如：序列"></div>
       <div class="field"><label class="label" for="sko">输出</label>
         <input id="sko" class="input" placeholder="例如：游离半胱氨酸位点列表"></div>
-      <p class="t-sm mut2">名称、输入与输出都必填——缺其中任何一项，这条能力都没法被任务编排调用。</p>
+      <p class="t-sm mut2">名称、输入、输出都必填，否则任务编排调不到这条能力。</p>
     </div>`,'创建',()=>{
       const g=id=>(document.getElementById(id).value||'').trim();
       const n=g('skn'),i=g('ski'),o=g('sko');
@@ -14535,6 +14779,7 @@ function act(a,el){
     });return}
   if(a==='askfile'){const el=document.getElementById('askfile');if(el)el.click();return}
   if(a==='side'){S.collapsed=S.collapsed?0:1;LS.set('collapsed',S.collapsed);render();return}
+  if(a==='mdlimport'){const el=view.querySelector('#mdlin');if(el)el.click();return}
   if(a==='mkeysave'){const el=view.querySelector('#mkey');if(!el)return;
     const v=(el.value||'').trim();
     /* 留空 = 不动已有的那把，不是「清空」。清空有单独的按钮。 */
@@ -14581,7 +14826,7 @@ function act(a,el){
             <div class="lbl">为什么</div>
             <p class="t-sm mut" style="margin-top:4px">${esc(d.why)}</p></div>
           <p class="hint">轮次状态由名下批次推导，不是一个可以手动拨的开关。</p>
-<details class="why"><summary>为什么这样定</summary><div class="why-b">批次还没跑完就把轮次拨成已归档，看板就开始骗人——后面所有基于轮次的统计都会跟着错。</div></details>
+<details class="why"><summary>为什么这样定</summary><div class="why-b">批次还没跑完就把轮次拨成已归档，看板就开始骗人。后面所有基于轮次的统计都会跟着错。</div></details>
         </div>`,'知道了');
       return}
     modal('确认收口',
@@ -14592,7 +14837,7 @@ function act(a,el){
           <span class="t-md mut grow num">${x.id}</span>
           <span class="t-md">${mapStatus(x.status)}　${RESULTS_STATUS[x.results]}</span></div>`).join('')}
         </div>
-        <p class="hint">收口是这条链上唯一保留人工的一步——「这一轮到此为止」是人的判断，数据推不出来。</p>
+        <p class="hint">收口是这条链上唯一保留人工的一步。「这一轮到此为止」是人的判断，数据推不出来。</p>
       </div>`,'确认收口',()=>{
         p.archivedRounds=p.archivedRounds||{};p.archivedRounds[r.i]=true;
         DB.acts.unshift({k:'dry',t:`Round ${r.i} 已确认收口`,r:r.i,p:p.name,at:nowStamp(),by:'我'});
@@ -14632,7 +14877,7 @@ function act(a,el){
       const kind=(document.getElementById('fk')||{}).value||FAIL_KINDS[0];
       const note=((document.getElementById('fn')||{}).value||'').trim();
       if(!/^V-\d{1,4}$/.test(id)){toast('变体编号要像 V-081 这样，不能留空');return false}
-      if(!note){toast('写一句观察到什么——没有观察记录的失败样本，三个月后没人用得上');return false}
+      if(!note){toast('写一句观察到什么。没有观察记录的失败样本，三个月后没人用得上');return false}
       const ex=DB.cands.find(c=>c.id===id);
       const before=ex?DISPOSITION[ex.disposition].n:'库里没有这条';
       if(ex){ex.disposition='failed';ex.failKind=kind;ex.failBy='人工录入';ex.note=note;
@@ -14679,10 +14924,10 @@ function act(a,el){
     const items=[
       ['plate','整板失败检查',ctlOk?`${OUR_CONTROLS.length} 类对照都有信号，不是整板失败`:'对照孔无信号，疑似整板失败',ctlOk],
       ['outlier','离群值',outliers.length?`${outliers.length} 条 ${FIELD[PK].n} 超出 3 倍中位绝对偏差（${outliers.slice(0,4).map(c=>c.id).join('、')}${outliers.length>4?' 等':''}）`:`没有 ${FIELD[PK].n} 超出 3 倍中位绝对偏差的测定值`,!outliers.length],
-      ['rep','重复一致性',!sdFields.length?'本项目的测定字段不带对数标准差，这一项无法自查'
+      ['rep','重复一致性',!sdFields.length?'本项目的测定字段不带对数标准差，这一项自查不了'
         :(noisy.length?`${noisy.length} 条的对数标准差大于 0.25，重复之间离散`:'全部变体的对数标准差都在 0.25 以内'),
         sdFields.length?!noisy.length:false],
-      ['miss','缺失原因可归因',unattrib.length?`${unattrib.length} 条测定失败无法从质量字段归因，要人工确认`:'每条测定失败都能从 expression / fit_quality / rmse 归因',!unattrib.length]];
+      ['miss','缺失原因可归因',unattrib.length?`${unattrib.length} 条测定失败，从质量字段看不出原因，要人工确认`:'每条测定失败都能从 expression / fit_quality / rmse 归因',!unattrib.length]];
     modal('回流前质检',
     `<div class="col" style="gap:var(--s4)">
       <div class="col" style="gap:var(--s3)">
@@ -14740,7 +14985,7 @@ function act(a,el){
     if(!IN.parsed||!IN.parsed.ok||!IN.confirmed){
       modal('还不能提交',`<div class="col" style="gap:var(--s3)">
         <p class="t-md">这一轮还没有确认过的起始序列。配置本身是算力开销，空跑一次没有产出。</p>
-        <p class="t-md mut">${!IN.parsed||!IN.parsed.ok?'尚未输入或解析序列。':'序列已解析，但回显还没确认。'}</p></div>`,
+        <p class="t-md mut">${!IN.parsed||!IN.parsed.ok?'还没有序列。':'序列已解析，但回显还没确认。'}</p></div>`,
         '去输入页',()=>go('intake'));return}
     const miss=CTX_REQ.filter(k=>!roundCtx()[k]);
     if(miss.length){
@@ -15009,7 +15254,7 @@ function act(a,el){
     return}
   if(a==='edittcp'){
     const P=PRJ();const t=tcpOf(P);
-    if(!t){toast('这个项目还没有结构化目标');return}
+    if(!t){toast('还没有结构化目标');return}
     const rows=[['primary',t.primary,'主目标']].concat(t.constraints.map((r,i)=>['c'+i,r,'约束：'+(r.n||ruleText(r))]));
     modal('改目标',`<div class="col" style="gap:var(--s4)">
       <p class="t-md mut">改目标会改变命中判定、逐项达成率、预期命中与轮次建议——
@@ -15136,18 +15381,25 @@ document.querySelectorAll('#side [data-nav],#top [data-nav]').forEach(
          配不到数据集的，走「项目实测」那条路——两条路都真实存在，
          硬让第二个模型也去用第一份数据集，名字就会和内容对不上。 */
       const d=pub[i]||null;
-      const r=d?dsTrain(d,{seed:20260113+i}):trainRun(p.id,k,0.75,null,20260113+i);
+      const seed=20260113+i;
+      const r=d?dsTrain(d,{seed:seed}):trainRun(p.id,k,0.75,null,seed);
       const ms=Math.round(now()-t0);
       if(!r.ok)return;
       const tgt=d?d.target:k;
       addModel(p.id,Object.assign({target:tgt,ds:(d?d.id:null),
+        /* 种子和数据来源要跟着模型走。少了它们，这个模型就复现不了，
+           而「每个模型都能追溯到它依据的数据集版本」是这个产品立项时写的话。 */
+        seed:seed,
+        src:d?(d.id+'　'+d.name):('本项目已回流的实测值（'+r.n+' 条）'),
+        kind:d?'ds':'proj',
+        mu:r.mu,sg:r.sg,featK:r.featK||null,
         rho:r.rho,rmse:r.rmse,sd:r.sd,
         nTrain:r.nTrain,nTest:r.nTest,lam:r.lam,n:r.n,ms:ms,lamBy:r.lamBy,bl:r.base,
         name:(()=>{const k2=String(tgt).replace(/_[^_]*$/,'');
           return ((FIELD[tgt]||FIELD[k2]||{}).n||k2)+' 打分器'})(),
         desc:d?('训在 '+d.id+'　'+d.name+' 上'):('用 '+p.name+' 已回流的实测值校准计算打分'),
         base:BASE_MODELS[0].n,method:TRAIN_METHOD[0].n,upd:'—',
-        kind:'proj',w:r.w,mu:r.mu,sg:r.sg,sites:r.sites,cols:r.cols},verdictOf(r)));
+        w:r.w,sites:r.sites||null,cols:r.cols},verdictOf(r)));
     });
   });
   S.pid=was;

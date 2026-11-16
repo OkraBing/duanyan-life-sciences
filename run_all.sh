@@ -1,7 +1,7 @@
 #!/bin/bash
 # 全量回归。跑在**打包产物**上——测的是用户拿到的那一个文件，不是源文件。
 # 用法：./run_all.sh          先 build 再全跑
-#      ./run_all.sh --quick  只跑 review/ 那十个评审脚本（约 2 分钟）
+#      ./run_all.sh --quick  只跑 review/ 评审脚本与 100 条测试
 set -u
 cd "$(dirname "$0")"
 P="$PWD/index.html"
@@ -16,8 +16,10 @@ run(){ local n="$1"; shift
   else FAIL=$((FAIL+1)); FAILED="$FAILED $n"; echo "❌ $n"; echo "$out" | tail -7 | sed 's/^/      /'; fi }
 
 # 评审脚本：渲染 / 空态 / 响应式 / 组件状态 / 数据闭环 / 全量点击 / 极端数据 / 端到端 / 模型接入 / 自由问答
-for f in a_render b_empty c_resp d_state e_loop f_click g_extreme h_flows i_set j_ask; do
+for f in a_render b_empty c_resp d_state e_loop f_click g_extreme h_flows i_set j_ask k_comp; do
   [ -f "review/$f.js" ] && run "review/$f" node "review/$f.js" "$P"; done
+# 100 条研究路线 / 数据上传 / 训练 / 部署调用 / 日常使用检查，详见 测试点清单.md
+[ -f review/t100.js ] && run "review/t100（100 条）" node review/t100.js "$P"
 [ "${1:-}" = "--quick" ] && { echo; echo "通过 $PASS　失败 $FAIL"; [ -z "$FAILED" ]; exit $?; }
 
 for f in symbols deadbtn contrast nocaps ddtest scroll svgzero r3 pipe \

@@ -1,10 +1,12 @@
 /* 设置页专项：两种模式各自的渲染、切换、密钥存删（不落盘到任何文件）、
    模型选择、连通性测试的失败路径。 */
 const {chromium,testOutput}=require('../test-browser.cjs');
+const {blockExternalNetwork}=require('./offline-network.cjs');
 const F='file://'+require('path').resolve(process.argv[2]||'index.html');
 (async()=>{
   const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1440,height:900}});
   const bad=[];pg.on('pageerror',e=>bad.push('JS: '+e.message));
+  const unmocked=await blockExternalNetwork(pg);
   const directRequests=[],managedRequests=[];
   let managedResult='success';
   // Every proxy request is mocked. No test reaches the live hosted proxy or uses a real key.
@@ -207,6 +209,7 @@ const F='file://'+require('path').resolve(process.argv[2]||'index.html');
   const ov=await pg.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
   if(ov>1)bad.push('400 宽横向溢出 '+ov+'px');
 
+  if(unmocked.length)bad.push('拦截了未模拟的模型请求：'+unmocked.length+' 次');
   console.log(bad.length?'❌\n'+bad.join('\n'):'✅ i_set 全过');
   await b.close();process.exit(bad.length?1:0);
 })();

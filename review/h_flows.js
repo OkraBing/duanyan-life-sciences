@@ -73,7 +73,10 @@ const run=async(p,route,label,q,bad)=>{
       if(!b)return '点了没展开';
       const pre=b.querySelector('.fbox-pre');
       if(!pre||pre.textContent.trim().length<2)return '展开了但正文是空的';
-      if(!b.querySelector('[data-docdl],[data-kdl]'))return '展开了但没有下载';
+      /* 按组件的下载控件查，兼容数据集、项目文件等不同文件来源。 */
+      const d=b.querySelector('.fbox-dl');
+      if(!d)return '展开了但没有下载';
+      if(d.disabled&&!d.getAttribute('title'))return '下载键置灰了却没说为什么';
       return null});
     if(r)bad.push([route,label,'产出文件：'+r]);
   }
