@@ -2185,17 +2185,10 @@ tbody tr.is-me>td{background:var(--dry-soft);font-weight:600}
    ===================================================================== */
 
 /* ---------- 外壳：侧栏是一整块墨，内容区是压在上面的一张纸 ---------- */
-#app{background:#0B0E13}
-#side{background:#0B0E13;color:#C9D0DA;
-  /* 侧栏在两种主题下都是近黑底，所以它里面的 token 就地改写一遍：
-     下面所有 .nav / .lbl / .bell 的既有规则照旧生效，只是取到的是这一套。 */
-  --paper:#0B0E13;--surface:#12161C;--surface-2:#141920;--surface-3:#1A2029;
-  --ink:#F2F5F9;--ink-2:#C9D0DA;--ink-3:#9AA3AF;--ink-4:#7F8894;
-  --line:#222933;--line-2:#1A2028;
-  --dry:#F2F5F9;--dry-soft:#1F2630;--dry-ink:#F2F5F9;
-  --focus:#8FB0FF;--on-pri:#0B0E13}
+#app{background:var(--surface-2)}
+#side{background:var(--surface-2);color:var(--ink-2)}
 #main{border-left:0;border-radius:.875rem 0 0 .875rem;
-  box-shadow:-1px 0 0 rgba(0,0,0,.25)}
+  box-shadow:0 0 0 1px var(--line)}
 @media (max-width:40rem){#main{border-radius:0}}
 .brand{padding:var(--s5) var(--s4) var(--s4)}
 .brand-home:hover{background:var(--surface-3)}
@@ -2204,14 +2197,14 @@ tbody tr.is-me>td{background:var(--dry-soft);font-weight:600}
 /* 一滴墨，里面是双螺旋的留白；旁边一点朱砂。 */
 .bm-a{fill:var(--ink)}.bm-b{fill:var(--seal)}.bm-s{stroke:var(--paper);fill:none}
 .brand-n{font-size:1.125rem;line-height:1.15;
-  font-weight:700;color:#FFFFFF;letter-spacing:.04em}
+  font-weight:700;color:var(--ink);letter-spacing:.04em}
 .brand-s{font-size:0.6875rem;line-height:1.2;color:var(--ink-3);letter-spacing:.12em;font-weight:500}
 .nav-group .lbl{color:var(--ink-4);letter-spacing:.08em;font-weight:500}
 .nav{min-height:2.0625rem;border-radius:.5rem;font-size:0.8125rem;font-weight:450}
 .nav svg{flex:0 0 1rem;width:1rem;height:1rem;opacity:.8}
 .nav[aria-current="page"]{color:var(--ink);background:var(--surface-3);font-weight:600}
 .nav[aria-current="page"]::before{left:0;top:.5rem;bottom:.5rem;width:3px;border-radius:0 3px 3px 0;
-  background:#4C7DFF}
+  background:var(--dry)}
 #side[data-collapsed="1"] .nav[aria-current="page"]::before{left:0}
 .nav-more{color:var(--ink-3)}
 .nav-n{background:var(--seal);color:var(--seal-on)}
@@ -2485,6 +2478,19 @@ body[data-route="me"] .acct-b{background:var(--surface-3)}
 
 /* 跨页一致：项目卡的圆角与其他卡片相同 */
 .pcard{border-radius:.75rem}
+
+/* 侧栏浅色之后的选中态与悬停 */
+.nav:hover{background:var(--surface-3)}
+.nav[aria-current="page"]{background:var(--surface);color:var(--ink);box-shadow:0 0 0 1px var(--line)}
+.nav-group.is-sep,.side-foot{border-color:var(--line)}
+/* 对话页右上角：产出文件、历史对话 */
+.outbar-b{border-radius:.5rem;font-size:0.78125rem;font-weight:500;color:var(--ink-2)}
+.outbar-b:not(:disabled){border-color:var(--dry-dim);color:var(--dry-ink);background:var(--dry-soft)}
+.outbar-b:not(:disabled) .num{background:var(--dry);color:var(--on-dry)}
+.outbar-hist{min-height:1.875rem;padding:0 11px;font-size:0.78125rem;gap:5px}
+body[data-route="chat"] #view{position:relative}
+.land-top{position:absolute;top:var(--s4);right:max(var(--s5),env(safe-area-inset-right,0px));display:flex;gap:var(--s2);z-index:2}
+@media(min-width:1000px){.land-top{right:var(--s7)}}
 </style>
 
 <div id="app">
@@ -3373,10 +3379,9 @@ function domOf(p){const x=p||PRJ();return DOMAINS.find(d=>d.k===(x&&x.dom))||DOM
    每一项的 title 写的是「哪个研究动作需要它」（R16）——
    原先 title 就是按钮名本身，等于把眼前的字再念一遍。 */
 const NAV=[
-  ['A','工作',[
+  ['A','研究',[
     ['chat','新建对话',"M5 6.5A2.5 2.5 0 0 1 7.5 4h9A2.5 2.5 0 0 1 19 6.5v7a2.5 2.5 0 0 1-2.5 2.5H11l-4 3.5V16A2.5 2.5 0 0 1 5 13.5zM12 7.5v5M9.5 10h5",'用一句话发起任务'],
-    ['projects','项目管理',"M3.5 7.5a2 2 0 0 1 2-2h3.6l2 2.2h7.4a2 2 0 0 1 2 2v7.8a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2zM7.5 13.5h9",'按课题管理多轮的数据、模型与实验'],
-    ['papers','论文工具',"M6.5 3.5h8l4 4v12a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1v-15a1 1 0 0 1 1-1zM14.5 3.5v4h4M9 12h6M9 15.5h6",'检索、精读和核验论文']]],
+    ['projects','项目管理',"M3.5 7.5a2 2 0 0 1 2-2h3.6l2 2.2h7.4a2 2 0 0 1 2 2v7.8a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2zM7.5 13.5h9",'按课题管理多轮的数据、模型与实验']]],
   ['B','干湿闭环',[
     ['lab','实验管理',"M9.5 3.5v5.6L4.7 17.6A2.2 2.2 0 0 0 6.6 21h10.8a2.2 2.2 0 0 0 1.9-3.4L14.5 9.1V3.5M8 3.5h8M7.3 14.5h9.4",'送出去的批次走到哪了，哪一步在等你']]],
   /* 资源是「我自己攒下来的」：我的数据集、我训的模型。
@@ -3469,6 +3474,8 @@ function paintNav(force){
   /* 历史放在资源下方：对话历史与项目历史各一小段。折叠态不列。
      这一段内容会变（改名、归档、新建），所以按签名判断变没变，没变就不重建。 */
   const H=document.getElementById('navH');
+  /* 最近对话不再占侧栏：入口在对话页右上角的「历史对话」，点开是全部对话页。 */
+  if(H){H.innerHTML='';H.hidden=true;return}
   /* 签名要带上置顶：不带的话，置顶完顺序变了，这一段却不重建。 */
   const sig=S.collapsed?'c':('o|'+S.sid+'|'+SESSIONS.filter(x=>!x.arch)
     .slice().sort((a,b)=>(b.pin?1:0)-(a.pin?1:0)).slice(0,5)
@@ -5330,7 +5337,7 @@ function toolDetail(n){
 const MDL_TABS=[['cur','我的模型'],['job','模型训练'],['eval','模型评测'],
   ['infer','在线推理'],['batch','批量推理']];
 const MDL_SUB={
-  cur:'用实测数据训练出的打分模型',
+  cur:'训练出的打分模型。部署后可在对话和排序任务中使用',
   job:'训练任务的进度与结果',
   eval:'模型在留出集上的评测结果',
   infer:'与已接入的模型对话，或并排比较回答',
@@ -5560,7 +5567,7 @@ function mdlCur(){
     ${L.length?`<div class="tbl-wrap is-list"><table>
       <caption class="vh">训出来的模型</caption>
       <thead><tr><th scope="col" class="c-nm">模型名称/ID</th>
-        <th scope="col">关联项目</th><th scope="col">启用</th>
+        <th scope="col">关联项目</th><th scope="col">部署</th>
         <th scope="col">预测目标</th>
         <!-- 基础模型从这张表上撑掉：每行都是 Descriptor Baseline，
              一列里每行都一样就不传达任何信息（R176），
@@ -5573,14 +5580,15 @@ function mdlCur(){
       <tbody>${L.map(m=>`<tr>
         ${nmCell(m.name||('打分器 · '+tgtName(m.target)),m.id)}
         ${projCell(m)}
-        <td><button class="sw" type="button" data-mdlen="${esc(m.id)}" role="switch"
+        <td><div class="row" style="gap:var(--s2)"><button class="sw" type="button" data-mdlen="${esc(m.id)}" role="switch"
           aria-checked="${mdlOn(m.id)}" ${canScore(m)?'':'disabled'}
-          aria-label="${mdlOn(m.id)?'停用':'启用'} ${esc(m.name||m.id)}"
+          aria-label="${mdlOn(m.id)?'下线':'部署'} ${esc(m.name||m.id)}"
           title="${canScore(m)
-            ?(mdlOn(m.id)?'已启用，可在对话和排序任务中使用'
-                         :'未启用。启用后可在对话和排序任务中使用')
+            ?(mdlOn(m.id)?'已部署，可在对话和排序任务中使用。点击下线'
+                         :'未部署。部署后可在对话和排序任务中使用')
             :whyNoScore(m)
-          }"><i></i></button></td>
+          }"><i></i></button>
+          <span class="t-xs ${mdlOn(m.id)?'c-ok':'mut2'}">${mdlOn(m.id)?'已部署':'未部署'}</span></div></td>
         <td class="t-sm num">${esc(tgtName(m.target))}</td>
         <td class="t-sm">${esc(m.method||'SFT')}</td>
         <td class="t-sm num">${dsLabel(m)}</td>
@@ -6340,6 +6348,10 @@ V.chat=()=>{
   /* 还没说过话的时候，输入框是这一页唯一要做的事，所以它居中、占主位；
      一旦开始对话，它就退到底部，把地方让给内容。两种形态，不是同一个布局硬撑。 */
   if(!L.length)return `<div class="page chat is-land">
+    <div class="land-top"><button class="btn outbar-hist" type="button" data-go="chats" title="历史对话">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor"
+        stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
+        ><circle cx="12" cy="12" r="8"/><path d="M12 7.5V12l3 2"/></svg>历史对话</button></div>
     <div class="land">
       <h1 class="greet" style="font-size:2.25rem;line-height:1.1;letter-spacing:-.04em">${greet()}</h1>
       <p class="mut t-md" style="margin:0">输入 <kbd class="kbd">@</kbd> 引用资料，
@@ -7473,8 +7485,12 @@ function outBar(inline){
         fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.7"
         stroke-linecap="round" stroke-linejoin="round">
         <path d="M13 4.5H7A1.5 1.5 0 0 0 5.5 6v12A1.5 1.5 0 0 0 7 19.5h10a1.5 1.5 0 0 0 1.5-1.5V10zM13 4.5V10h5.5"/></svg>
-      <span class="num">${L.length}</span></button>
-    ${inline?'':`<button class="btn btn-pri outbar-new" type="button" data-act="newchat" title="开一段新对话，这一段会留在「最近对话」里">
+      <span class="outbar-t">产出文件</span><span class="num">${L.length}</span></button>
+    ${inline?'':`<button class="btn outbar-hist" type="button" data-go="chats" title="历史对话">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor"
+        stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
+        ><circle cx="12" cy="12" r="8"/><path d="M12 7.5V12l3 2"/></svg>历史对话</button>
+    <button class="btn btn-pri outbar-new" type="button" data-act="newchat" title="开一段新对话，这一段会留在「最近对话」里">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"
         stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg>新建对话</button>`}
     ${L.length&&S.outOpen?`<div class="outbar-p">
@@ -10678,9 +10694,9 @@ return `<div class="page">
       <h1>公共工具</h1>
 
     </div>
-    <div class="field" style="width:auto"><label class="sr" for="skq2">搜索</label>
-      <input id="skq2" class="input" value="${esc(S.tq||'')}" placeholder="搜工具名、用途或输入类型"
-        style="width:220px;height:2rem;min-height:2rem"></div>
+    <label class="fbar-q"><span class="sr">搜索工具</span>${SEARCH_IC}
+      <input id="skq2" value="${esc(S.tq||'')}" placeholder="搜索工具名、用途或输入类型"></label>
+    <button class="btn" type="button" data-go="papers" title="检索、精读和核验论文">论文工具</button>
 
   </div>
 
@@ -16455,7 +16471,7 @@ function render(){
   q('[data-jobpick]',b=>b.onclick=()=>{S.jobPick=b.dataset.jobpick;render()});
   q('[data-mdlsync]',b=>b.onclick=()=>{const id=b.dataset.mdlsync;
     if(!syncLib(id)){toast('同步不了：找不到这一条');return}
-    S.mtab='cur';render();toast(id+' 已同步到「我的模型」，启用后可在对话中使用')});
+    S.mtab='cur';render();toast(id+' 已同步到「我的模型」，部署后可在对话中使用')});
   q('[data-prosp]',b=>b.onclick=()=>act('prosp',b));
   /* 复制一条训练任务：开新建表单，把这一条的参数带过去——不绕回对话。 */
   q('[data-trcopy]',b=>b.onclick=()=>{const m=mdlFind(b.dataset.trcopy);if(!m)return;
@@ -16465,7 +16481,7 @@ function render(){
       base:m.base||NEWTR.base,method:m.method||NEWTR.method,ds:m.ds||'self',target:m.target||NEWTR.target});
     go('trainnew');toast('已沿用「'+(m.name||m.id)+'」的参数')});
   q('[data-mdlen]',b=>b.onclick=()=>{const on=toggleMdl(b.dataset.mdlen);
-    render();toast(on?'已启用':'已停用')});
+    render();toast(on?'已部署':'已下线')});
   q('#bq',el=>{el.oninput=()=>{S.bq=el.value;
     const k=focusKey(el);render();restoreFocus(k)}});
   /* 属性名别和「送检批次」那套撞（data-bopen / data-bdl 是那边的，b 指批次）。
