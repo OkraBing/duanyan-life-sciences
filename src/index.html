@@ -2575,7 +2575,7 @@ const DB={
      /* 项目资源：挂在这个项目上的文献与工具。以前是空的，于是卡上永远写「还没有资源」。 */
      kb:['PNAS 2020, 117(31):18456.pdf','J. Mol. Biol. 2019, 431(4):812.pdf',
          'Protein Eng. Des. Sel. 2021, 34:gzab009.pdf','1BRS 界面残基清单.csv'],
-     tools:['ProteinMPNN','Protenix','ThermoMPNN','Adaptyv 送检'],
+     tools:['ProteinMPNN','Protenix','ThermoMPNN','自主实验网络'],
      state:'active',model:'v3',variants:312,returned:287,ink:1240,owner:'我',updated:'14:21',
      arch:[],   /* 归档件：冻住内容的那一份，由「存入项目」写入 */
      rounds:[
@@ -2599,7 +2599,7 @@ const DB={
      desc:'只动 barstar 这一侧，看在不改 barnase 的前提下能把结合做到多紧。'
          +'只测 KD。这个体系的野生型已经在 SPR 量程之外，能不能分辨是这个项目的第一个问题。',
      kb:['Nat. Commun. 2023, 14:3425.pdf'],
-     tools:['ProteinMPNN','Adaptyv 送检'],
+     tools:['ProteinMPNN','自主实验网络'],
      arch:[],
      state:'assay',model:'v1',variants:48,returned:0,ink:380,owner:'李',updated:'昨天',
      rounds:[
@@ -2637,8 +2637,8 @@ const DB={
     {k:'SKILL',n:'PDB 取结构',cap:'str',d:'生命科学',u:'数据库',s:'按编号拉取实验结构，解析链与残基数',i:'PDB 编号',o:'结构文件',kw:['晶体结构','实验结构','取结构']},
     {k:'SKILL',n:'可开发性描述符',cap:'func',d:'生命科学',u:'计算工具',s:'净电荷、疏水斑块面积、理论 pI、聚集倾向',i:'序列',o:'描述符数值',kw:['可开发性','聚集','溶解度','净电荷','疏水']},
     {k:'SKILL',n:'自洽回折校验',cap:'des',d:'生命科学',u:'计算工具',s:'用与设计不同的模型回折，输出自洽 RMSD',i:'设计序列',o:'自洽 RMSD',kw:['回折','自验证','RMSD','幻觉']},
-    {k:'SKILL',n:'委托单生成器',cap:'wet',appr:1,d:'生命科学',u:'湿实验操作',s:'批量下单，多服务商比价',i:'变体清单',o:'订单与批次号',kw:['送检','下单','比价','外包','委托单']},
-    {k:'SKILL',n:'回流解析器',cap:'wet',d:'生命科学',u:'湿实验操作',s:'解析服务商返回结果，写回对应变体',i:'服务商结果文件',o:'写回变体库',kw:['回流','实测','导入结果']},
+    {k:'SKILL',n:'委托单生成器',cap:'wet',appr:1,d:'生命科学',u:'湿实验操作',s:'生成实验任务单，提交到自主实验网络',i:'变体清单',o:'订单与批次号',kw:['送检','下单','比价','外包','委托单']},
+    {k:'SKILL',n:'回流解析器',cap:'wet',d:'生命科学',u:'湿实验操作',s:'解析实验节点返回的结果，写回对应变体',i:'实验结果文件',o:'写回变体库',kw:['回流','实测','导入结果']},
     {k:'SKILL',n:'孔板排布器',cap:'wet',d:'生命科学',u:'湿实验操作',s:'生成 96/192/384 孔板排布，含对照',i:'变体清单',o:'板位图',kw:['孔板','排板','对照','板位']},
     {k:'SCP',n:'ThermoMPNN',cap:'func',d:'生命科学',u:'模型服务',s:'预测单点与多点突变的 ΔΔG',
      i:'结构 + 突变',o:'ΔΔG',kw:['热稳定性','Tm','热变性','ΔΔG','稳定性']},
@@ -2664,7 +2664,7 @@ const DISPOSITION={
   deduped:{n:'查重排除',train:false,note:'与历史重复，不占板位也不花钱'},
   selected:{n:'已入选',train:false,note:'选上了，还没排板'},
   plated:{n:'已排板',train:false,note:'占了孔位，还没送检'},
-  ordered:{n:'已送检',train:false,note:'在服务商手里'},
+  ordered:{n:'已送检',train:false,note:'在实验节点执行'},
   measured:{n:'有结果',train:true,note:'有有效数值，参与重训'},
   failed:{n:'测定失败',train:true,note:'有信息的负样本，参与重训'},
   untested:{n:'未测',train:false,note:'没有任何信息，不参与重训'}};
@@ -2936,12 +2936,12 @@ const TASKS=[
   out2:[['已完成','30 / 88']]},
  {id:'T-115',cap:'wet', n:'B-2412 送检',            st:'running',pg:60, at:'11-10 09:12',pid:'p1',r:4,
   in:'96 条变体', out:'BLI 测定结果',
-  params:[['批次','B-2412'],['服务商','Adaptyv Bio'],['测定','SPR、DSF'],
+  params:[['批次','B-2412'],['实验节点','自动化蛋白表征平台'],['测定','SPR、DSF'],
           ['板位','96 孔'],['重复数','2'],['对照孔','8']],
   out2:[['已完成','58 / 96']]},
  {id:'T-114',cap:'wet', n:'B-2411 结果回流',        st:'done',   pg:100,at:'11-11 14:02',pid:'p1',r:4,
-  in:'服务商结果文件', out:'93 条写回变体库', took:'22 秒',
-  params:[['批次','B-2411'],['来源','服务商结果文件（CSV）'],['字段映射','variant → 变体编号，kd_pm → KD（pM）']],
+  in:'实验结果文件', out:'93 条写回变体库', took:'22 秒',
+  params:[['批次','B-2411'],['来源','实验结果文件（CSV）'],['字段映射','variant → 变体编号，kd_pm → KD（pM）']],
   out2:[['写回','93'],['测定失败','3'],['进训练集','96']]},
  {id:'T-113',cap:'seq', n:'Barnase–Barstar 结合界面 野生型序列解析',st:'done',   pg:100,at:'10-28 16:20',pid:'p1',r:1,
   in:'1 条 FASTA', out:'2 条链 · 保守性', took:'4 秒',
@@ -3295,11 +3295,11 @@ function routeMatrix(pid){
         ? calc((det.log?('×'+det.fold.toFixed(2)):('±'+det.delta.toFixed(2)+(FIELD[pk].unit||''))),
                `主目标 ${FIELD[pk].n}，σ 取自本项目重复测量，n=3，α=0.05 双侧，功效 80%`)
         : self?none((det&&det.why)||'要算可分辨效应，先得有重复测量'):none(NOTRUN))},
-      {n:'单轮成本', ...(self&&nSel
-        ? calc('$'+(Math.round(nSel*149)).toLocaleString('en-US'),
-               `本项目已送检 ${nSel} 条 × 公开单价 $149 / 蛋白`)
+      {n:'单轮板数', ...(self&&nSel
+        ? calc(Math.ceil(nSel*3/88)+' 块 96 孔板',
+               `本项目已送检 ${nSel} 条 × n=3，每板 88 个可用孔`)
         : none(self?'还没有送检记录'
-                   :'成本随样本规模走，样本规模算不出，成本也算不出'))},
+                   :'板数随样本规模走，样本规模算不出，板数也算不出'))},
       {n:'周期', ...(function(){
         if(!self)return none(NOTRUN);
         const T=turnaround(id);
@@ -4891,7 +4891,7 @@ V.labnew=()=>{
     <button class="btn btn-gh pg-back" type="button" data-go="lab">← 实验管理</button>
     <div class="col" style="gap:6px">
       <h1>发起新实验</h1>
-      <p class="mut t-md" style="margin:0;max-width:60ch">提交后生成一个批次，可在实验管理中跟踪进度与结果。</p></div>
+      <p class="mut t-md" style="margin:0;max-width:60ch">提交到自主实验网络后生成一个批次，可在实验管理中跟踪排期、执行进度与结果。</p></div>
   </div>
 
   <section class="fsec">
@@ -4917,11 +4917,11 @@ V.labnew=()=>{
             `<option value="${esc(x.n)}" ${x.n===E.proto?'selected':''}>${esc(x.n)}</option>`).join('')}</select>
             <span class="car" aria-hidden="true"></span></span>
           <span class="t-xs mut2">${esc(cur.d||'')}</span></label>
-        <label class="field"><span class="label">送到哪个实验室</span>
+        <label class="field"><span class="label">实验节点</span>
           <span class="ctl ctl-sel"><select data-nx="vendor">${LAB_LIST().map(x=>
             `<option value="${esc(x)}" ${x===E.vendor?'selected':''}>${esc(x)}</option>`).join('')}</select>
             <span class="car" aria-hidden="true"></span></span>
-          <span class="t-xs mut2">只有 ${esc(WIRED_LAB())} 是真接过单的</span></label>
+          <span class="t-xs mut2">提交到自主实验网络，由所选节点排期执行</span></label>
         <label class="field"><span class="label">送检条数</span>
           <input class="input num" data-nx="n" value="${esc(E.n)}" inputmode="numeric"
             placeholder="留空按板位容量">
@@ -4998,7 +4998,7 @@ function labCard(b){
   const pr=protoOf((b.ctx&&b.ctx.assay&&b.ctx.assay[0])||'BLI');
   return `<button class="scard is-click" type="button" data-labgo="${esc(b.id)}">
       <div class="scard-h">
-        <span class="scard-ic${st.phase==='生产'?' is-wet':''}">${
+        <span class="scard-ic${st.phase==='执行'?' is-wet':''}">${
           '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 3.5v6L4.5 18a2 2 0 0 0 1.8 3h11.4a2 2 0 0 0 1.8-3l-5-8.5v-6M8 3.5h8M7.5 14h9"/></svg>'}</span>
         <span class="col grow" style="gap:1px;min-width:0">
           <strong class="scard-n">${esc(b.name||(pr.n+' · Round '+b.round))}</strong>
@@ -5011,7 +5011,7 @@ function labCard(b){
         <span class="t-xs mut2">${esc(st.phase)}　·　已走 ${(b.log||[]).length} / ${EXP_STATUS.length} 步</span></div>
       <div class="dstats">
         <span><b>数据条数</b><i class="num">${b.n}</i></span>
-        <span><b>服务商</b><i class="num">${esc(b.vendor)}</i></span>
+        <span><b>实验节点</b><i>${esc(b.vendor)}</i></span>
         <span><b>轮次</b><i class="num">R${b.round}</i></span>
         <span><b>结果</b><i class="num ${b.results==='all'?'ok':'dim'}">${
           b.results==='none'?'未回':esc(RESULTS_STATUS[b.results]||b.results)}</i></span></div>
@@ -5083,7 +5083,7 @@ V.labdet=()=>{
        ['已走步数',(b.log||[]).length+' / '+EXP_STATUS.length,''],
        ['结果',b.results==='none'?'未回':(RESULTS_STATUS[b.results]||b.results),
         (b.results==='all'?'color:var(--ok);':'')+'font-size:1.0625rem;font-weight:600;font-family:var(--sans);line-height:1.9']]
-      .concat([[nx?(nx.who==='你'?'下一步 · 待你处理':'下一步 · 服务商处理中'):'下一步',nx?nx.act:'已结束',
+      .concat([[nx?(nx.who==='你'?'下一步 · 待你处理':'下一步 · 实验节点执行中'):'下一步',nx?nx.act:'已结束',
         (nx&&nx.who==='你'?'color:var(--wet-ink);':'')+'font-size:1.0625rem;font-weight:600;font-family:var(--sans);line-height:1.9']])
       .map(([k,v,stl])=>`<div><div class="t-sm">${k}</div><div class="v" style="${stl}">${esc(String(v))}</div></div>`).join('')}
   </div>
@@ -5107,7 +5107,7 @@ V.labdet=()=>{
         </div></section>
 
       <section class="card"><div class="card-h"><strong>实验上下文</strong>
-        <span class="grow"></span><span class="t-xs mut2">下单那一刻从计划复制过去，之后以它为准</span></div>
+        <span class="grow"></span><span class="t-xs mut2">提交时从计划复制，之后以此为准</span></div>
         <div class="card-b col" style="gap:var(--s2)">
           ${Object.keys(b.ctx||{}).map(k=>`<div class="krow">
             <span class="t-sm grow">${esc(CTXN[k]||k)}</span>
@@ -5136,7 +5136,7 @@ V.labdet=()=>{
             <span class="t-sm num mut2">${esc((b.ctx&&b.ctx.reps)||pr.rep||'—')}</span></div>
           <div class="krow"><span class="t-sm grow">周期</span>
             <span class="t-sm num mut2">${esc(pr.days||'—')}</span></div>
-          <span class="t-xs mut2">「复用配方」会沿用这份配方及本批的服务商、条数新建实验。</span>
+          <span class="t-xs mut2">「复用配方」会沿用这份配方及本批的实验节点、条数新建实验。</span>
         </div></section>
     </div>
   </div>
@@ -6012,7 +6012,7 @@ V.dsnew=()=>{
         </span>
         <span class="t-xs mut2">${NEWDS.src==='up'
           ?'从本机选一份 .csv / .tsv'
-          :'项目里已经有的表格文件：任务产物、服务商回传、归档，以及上传到知识库的'}</span></div>
+          :'项目里已有的表格文件：任务产物、实验回传、归档，以及上传到知识库的'}</span></div>
 
       ${NEWDS.src==='up'
         ? `<div class="field wide"><span class="label">数据文件</span>
@@ -6568,8 +6568,7 @@ function trainRun(pid,target,ratio,lam,seed){
    不往里塞没接过的公司名。 */
 /* 写成函数而不是常量：BATCHES 在这一段之后才声明，
    常量会在模块求值时就去读它，撞上暂时性死区。 */
-function WIRED_LAB(){return [...new Set(BATCHES.map(x=>x.vendor))].filter(Boolean)[0]||'—'}
-function LAB_LIST(){return [...new Set(BATCHES.map(x=>x.vendor))].filter(Boolean).concat(['自建实验室'])}
+function LAB_LIST(){return [...new Set(BATCHES.map(x=>x.vendor))].filter(Boolean).concat(['本地实验室'])}
 /* ---- 配方库：标准测定方法，不是某一家服务商的私货 ---- */
 const PROTO=[
  {id:'BLI', n:'BLI 亲和力测定', f:'kd', d:'生物膜干涉。固定一侧，梯度浓度测 kon/koff，拟合 KD。',
@@ -7327,14 +7326,14 @@ FLOW.lab=f=>{
   return [
     mkCard('note',{title:'这个项目要测的字段',
       text:fs.map(k=>(FIELD[k]||{}).n||k).join('、')+'　配方按字段匹配，下面默认选的是对得上的那一个。'}),
-    mkCard('form',{cap:'lab',title:'排一次实验',sub:'配方 + 实验室 + 条数',
+    mkCard('form',{cap:'lab',title:'排一次实验',sub:'配方 + 实验节点 + 条数',
       fields:[
         {k:'proto',label:'配方',v:P.n,ty:'sel',opts:protoAll().map(x=>x.n),hint:P.d},
         /* 这一栏填的是「送到哪儿做」，不是「用哪个工具生成单子」。
            原先错填成了注册表里的工具名，于是卡片上写着「提交给 委托单生成器」。
            产品里真正接过的服务商只有批次数据里出现过的那些，不另编公司名（R3）。 */
-        {k:'vendor',label:'送到哪个实验室',v:LAB_LIST()[0],ty:'sel',opts:LAB_LIST(),
-         hint:'只有 '+WIRED_LAB()+' 是真接过单的；自建实验室走内部流程，不计报价'},
+        {k:'vendor',label:'实验节点',v:LAB_LIST()[0],ty:'sel',opts:LAB_LIST(),
+         hint:'任务提交到自主实验网络，由所选节点排期执行'},
         {k:'n',label:'送检条数',v:Math.min(plateCap(),CANDS().length)||plateCap(),
          ty:'range',min:1,max:Math.max(plateCap(),8),stepv:1,unit:'条',
          hint:'板位容量 '+plateCap()+' 条'},
@@ -9407,7 +9406,7 @@ function pjExpTab(p){
       <span class="pjx-card-kv">
         <span><i>轮次</i><b class="num">R${b.round}</b></span>
         <span><i>条数</i><b class="num">${b.n}</b></span>
-        <span><i>服务商</i><b>${esc(b.vendor)}</b></span>
+        <span><i>实验节点</i><b>${esc(b.vendor)}</b></span>
       </span>
     </button>`};
   return `<div class="pjx-side-b pjx-exps">
@@ -9577,11 +9576,11 @@ function pjBatchDrawer(id){
         ${kv('批次编号','<span class="num">'+esc(b.id)+'</span>')}
         ${kv('轮次','<span class="num">R'+b.round+'</span>')}
         ${kv('数据条数','<span class="num">'+b.n+'</span>')}
-        ${kv('服务商',esc(b.vendor))}
+        ${kv('实验节点',esc(b.vendor))}
         ${kv('配方',esc(pr.n))}
         ${kv('结果',b.results==='none'?'未回':esc(RESULTS_STATUS[b.results]||b.results))}
         ${kv('下一步',nx?('<span style="'+(nx.who==='你'?'color:var(--wet-ink);font-weight:600':'')+'">'
-          +esc(nx.act)+'</span>　<span class="mut2">'+(nx.who==='你'?'待你处理':'服务商处理中')+'</span>'):'已结束')}
+          +esc(nx.act)+'</span>　<span class="mut2">'+(nx.who==='你'?'待你处理':'实验节点执行中')+'</span>'):'已结束')}
       </div>
       <div class="col" style="gap:5px">
         <div class="row" style="gap:var(--s2)"><span class="pbar grow"><i style="width:${pg}%"></i></span>
@@ -9704,20 +9703,20 @@ function docPreview(d){
 
 /* M9 假设页。一轮从「这一轮要回答什么问题」开始。 */
 const BATCHES=[
- {id:'B-2409',pid:'p1',round:3,vendor:'Adaptyv',status:'done',results:'all',n:72,
+ {id:'B-2409',pid:'p1',round:3,vendor:'自动化蛋白表征平台',status:'done',results:'all',n:72,
   log:[['draft','2026-09-16 10:20'],['quote_sent','2026-09-17 15:40'],
        ['waiting_for_materials','2026-09-18 09:05'],['in_queue','2026-09-22 11:30'],
        ['in_production','2026-09-26 08:15'],['data_analysis','2026-10-05 17:40'],
        ['in_review','2026-10-08 10:00'],['done','2026-10-09 16:25']],
   ctx:{host:'CHO',assay:['SPR','DSF'],reps:'n = 3',buffer:'HBS-EP+',temp:'25℃'}},
- {id:'B-2411',pid:'p1',round:4,vendor:'Adaptyv',status:'done',results:'partial',n:96,
+ {id:'B-2411',pid:'p1',round:4,vendor:'自动化蛋白表征平台',status:'done',results:'partial',n:96,
   log:[['draft','2026-10-12 14:10'],['quote_sent','2026-10-13 09:30'],
        ['waiting_for_materials','2026-10-14 10:00'],['in_queue','2026-10-20 13:45'],
        ['in_production','2026-10-26 09:20'],['data_analysis','2026-11-06 18:05'],
        ['in_review','2026-11-10 11:15'],['done','2026-11-11 13:50']],
   ctx:{host:'CHO',assay:['SPR','DSF'],reps:'n = 3',buffer:'PBS pH 7.4',temp:'25℃'}},
  /* 同一轮的第二个批次换了宿主——这正是上下文不能挂在轮次上的理由。 */
- {id:'B-2412',pid:'p1',round:4,vendor:'Adaptyv',status:'in_production',results:'none',n:96,
+ {id:'B-2412',pid:'p1',round:4,vendor:'自动化蛋白表征平台',status:'in_production',results:'none',n:96,
   log:[['draft','2026-10-28 16:00'],['quote_sent','2026-10-29 10:20'],
        ['waiting_for_materials','2026-10-30 09:00'],['in_queue','2026-11-03 14:30'],
        ['in_production','2026-11-07 08:40']],
@@ -10341,7 +10340,7 @@ DB.cands.forEach((c,i)=>{
   else if(c.firstRound===4)c.batch=(i%2?'B-2412':'B-2411')});
 /* 失败类型由质量字段推导，不预存。界面上的「推断依据」就是 inferFailure 实际用到的那一条。 */
 DB.cands.forEach(c=>{const f=inferFailure(c.qual);
-  c.failKind=f?f.k:'no_binding'; c.failBy=f?f.by:'服务商备注 + 人工确认'});
+  c.failKind=f?f.k:'no_binding'; c.failBy=f?f.by:'实验节点备注 + 人工确认'});
 
 
 /* M2-F02 标识符类型识别 */
@@ -10668,7 +10667,7 @@ V.shelf=()=>{
         <strong class="scard-n">${esc(t.n)}</strong>
         ${slug(t.n)!==t.n?`<span class="scard-slug num">${esc(slug(t.n))}</span>`:''}</span>
       ${pubOK(t.n)?'':'<span class="chip c-err">已停用</span>'}
-      ${t.appr?'<span class="chip c-wet" title="它生成的委托单要你批准报价之后才会真的下单">需批准报价</span>':''}
+      ${t.appr?'<span class="chip c-wet" title="它生成的任务单要你确认排期之后才会提交执行">需确认排期</span>':''}
     </div>
     <p class="scard-d">${esc(t.s)}</p>
     <div class="scard-tags${t.k==='MODEL'?'':' has-sw'}">
@@ -10760,8 +10759,8 @@ const C_RULES=[
  [/突变效应评分|零样本打分|评分|打分/,{f:'score',t:'number',n:'打分',v:'模型原始输出，未归一到 0–1'}],
  [/描述符数值/,               {f:'descriptors',t:'object',n:'描述符',v:'净电荷、理论 pI、疏水斑块面积、聚集倾向'}],
  [/RMSD/,                     {f:'rmsd',t:'number',n:'自洽 RMSD',v:'单位埃'}],
- [/订单与批次号/,             {f:'order',t:'object',n:'订单',v:'服务商、批次号、条数、报价'}],
- [/结果文件|^文件$/,          {f:'result_file',t:'file',n:'结果文件',v:'CSV 或服务商回传的原始表'}],
+ [/订单与批次号/,             {f:'order',t:'object',n:'订单',v:'实验节点、批次号、条数、排期'}],
+ [/结果文件|^文件$/,          {f:'result_file',t:'file',n:'结果文件',v:'CSV 或实验节点回传的原始表'}],
  [/结论/,                     {f:'claim',t:'string',n:'结论',v:'一句话判断，随附依据链接'}],
  [/注释/,                     {f:'annotations',t:'object',n:'注释',v:'功能、结构域、已知位点'}],
  [/板位图/,                   {f:'plate',t:'object',n:'板位图',v:'96 孔板的孔位分配'}],
@@ -10812,9 +10811,9 @@ const ARTS={
  msa:        {n:'多序列比对',ext:'a3m', mime:'text/plain',
    note:'a3m：小写字母表示相对查询序列的插入。'},
  plate:      {n:'板位表',  ext:'csv',  mime:'text/csv',
-   note:'一行一个孔，孔位、内容、重复组。服务商按这张表排板。'},
+   note:'一行一个孔，孔位、内容、重复组。实验节点按这张表排板。'},
  result_file:{n:'回传结果',ext:'csv',  mime:'text/csv',
-   note:'服务商回传的原始表，不做任何改动地留存。改过的那份另存。'},
+   note:'实验节点回传的原始表，原样留存。'},
  annotations:{n:'功能注释',ext:'json', mime:'application/json',
    note:'位点级注释与它的出处、编号基准。'},
  evidence:   {n:'证据链',  ext:'json', mime:'application/json',
@@ -10967,7 +10966,7 @@ const FIELD_SINK={
  seq:       [['library','序列检索的输入'],['viewer','序列轨道']],
  annotations:[['design','候选位点表的「功能」列']],
  result_file:[['wetlab','回流的字段映射与质量校验']],
- plate:     [['wetlab','排板与服务商下单']],
+ plate:     [['wetlab','排板与提交实验']],
  evidence:  [['hypo','假设的依据']],
  run:       [['task','复现包与运行出处']],
  structure: [['viewer','结构视图']]};
@@ -11190,7 +11189,7 @@ function artReportMd(pid,round){
   w('## 四 · 湿实验');
   w('');
   if(bs.length){
-    w('| 批次 | 服务商 | 条数 | 宿主 | 测定 | 重复 | 状态 | 周转 |');
+    w('| 批次 | 实验节点 | 条数 | 宿主 | 测定 | 重复 | 状态 | 周转 |');
     w('|---|---|---|---|---|---|---|---|');
     bs.forEach(b=>{const d=batchSpanDays(b);
       w('| '+b.id+' | '+b.vendor+' | '+b.n+' | '+(b.ctx||{}).host+' | '
@@ -11338,7 +11337,7 @@ function artsOf(t){
     if(b)out.push(artOf('result_file',tag+'_'+slug(b.id)+'_raw',
       [['批次',b.id],['结果',RESULTS_STATUS[b.results]]],
       ()=>artVariantsCsv(pid,L.filter(c=>c.batch===b.id)),
-      {warn:'这是从变体库回算的，不是服务商回传的那一份原始表'}));
+      {warn:'这是从变体库回算的，不是实验节点回传的原始表'}));
   }
   out.push(artOf('run',tag+'_run',[['任务',t.id],['状态',(JOB_ST[t.st]||['—'])[0]]],()=>artRunJson(t)));
   return out;
@@ -12134,14 +12133,14 @@ const FAIL_KINDS=Object.keys(FAIL_REASON);
    注意：我原先按「基因合成→表达→纯化→测定」设计阶段序列是编的——
    服务商把这些全压在 in_production 里，不单独暴露。 */
 const EXP_STATUS=[
- {k:'draft',n:'草稿',phase:'商务'},
- {k:'waiting_for_confirmation',n:'待确认',phase:'商务'},
- {k:'quote_sent',n:'报价已发',phase:'商务'},
- {k:'waiting_for_materials',n:'等待材料',phase:'商务'},
- {k:'in_queue',n:'排队中',phase:'生产'},
- {k:'in_production',n:'生产中',phase:'生产'},
- {k:'data_analysis',n:'数据分析',phase:'生产'},
- {k:'in_review',n:'复核中',phase:'生产'},
+ {k:'draft',n:'草稿',phase:'准备'},
+ {k:'waiting_for_confirmation',n:'待确认',phase:'准备'},
+ {k:'quote_sent',n:'已排期',phase:'准备'},
+ {k:'waiting_for_materials',n:'备样中',phase:'准备'},
+ {k:'in_queue',n:'排队中',phase:'执行'},
+ {k:'in_production',n:'执行中',phase:'执行'},
+ {k:'data_analysis',n:'数据分析',phase:'执行'},
+ {k:'in_review',n:'复核中',phase:'执行'},
  {k:'done',n:'已完成',phase:'终态'},
  {k:'canceled',n:'已取消',phase:'终态'}];
 const RESULTS_STATUS={none:'无结果',partial:'部分有结果',all:'全部有结果'};
@@ -12165,7 +12164,7 @@ function statusOf(raw){
   if(k)UNKNOWN_STATUS.add(k);
   /* 不认识的状态原样显示。原先一律返回「进行中」——等于给一个不认识的状态
      编了个看着合理的值，而界面上看不出这是编的。 */
-  return {n:k||'未知',phase:'生产',known:false,raw:k};
+  return {n:k||'未知',phase:'执行',known:false,raw:k};
 }
 const mapStatus=raw=>statusOf(raw).n;
 const WET={type:'affinity', status:'in_production', results:'partial',
@@ -12889,7 +12888,7 @@ return `<div class="col" style="gap:var(--s5)">
   </section>
 
   <section class="card"><div class="card-h"><strong>失败样本明细</strong>
-    <span class="grow"></span><span class="t-sm mut2">缺失原因是推断出来的，服务商不提供这个字段</span></div>
+    <span class="grow"></span><span class="t-sm mut2">缺失原因由质量字段推断</span></div>
     ${(function(){const per=8,tot=byDisp.failed.length,pages=Math.max(1,Math.ceil(tot/per));
       S.failPage=Math.min(S.failPage||1,pages);return ''})()}
     <div class="tbl-wrap">
@@ -12939,7 +12938,7 @@ const AUDIT=[
  {t:'2026-11-11 14:02',who:'我',act:'回流导入',obj:'批次 B-2411',from:'0 条',to:'93 条',r:4},
  {t:'2026-11-11 11:40',who:'李',act:'标记失败样本',obj:'V-077',from:'正常',to:'纯化失败',r:4},
  {t:'2026-11-10 17:35',who:'我',act:'变更准入阈值',obj:'Round 4',from:'ipTM ≥ 0.65',to:'ipTM ≥ 0.70',r:4},
- {t:'2026-11-10 09:12',who:'我',act:'批准送检',obj:'批次 B-2411 · 96 条',from:'待批',to:'已下单',r:4},
+ {t:'2026-11-10 09:12',who:'我',act:'批准送检',obj:'批次 B-2411 · 96 条',from:'待批',to:'已提交',r:4},
  {t:'2026-11-08 16:04',who:'我',act:'变更权限',obj:'外部合作方（某 CRO）',from:'无',to:'只读，不可导出',r:3},
  {t:'2026-11-08 15:50',who:'王',act:'切换设计模型',obj:'Round 3',from:'ProteinMPNN',to:'AbMPNN',r:3},
  {t:'2026-11-07 10:22',who:'李',act:'导出',obj:'Round 3 结果 · CSV',from:'—',to:'72 条',r:3}];
@@ -13043,16 +13042,16 @@ function expReport(b){
   return L.join('\n');
 }
 function nextStep(b){
-  if(b.status==='draft')      return {who:'你',act:'补全实验上下文并请报价',go:'wetlab'};
-  if(b.status==='quote_sent') return {who:'你',act:'批准报价并下单',go:'wetlab',money:1};
+  if(b.status==='draft')      return {who:'你',act:'补全实验上下文并申请排期',go:'wetlab'};
+  if(b.status==='quote_sent') return {who:'你',act:'确认排期并提交',go:'wetlab',money:1};
   if(b.status==='waiting_for_materials') return {who:'你',act:'确认材料已寄出',go:'wetlab'};
   if(b.status==='canceled')   return null;
   if(b.status==='done'){
     if(b.results==='all')     return {who:'你',act:'导入结果',go:'wetlab'};
     if(b.results==='partial') return {who:'你',act:'选择重测',go:'wetlab'};
-    return {who:'你',act:'联系服务商确认结果',go:'wetlab'};
+    return {who:'你',act:'联系实验节点确认结果',go:'wetlab'};
   }
-  return {who:'服务商',act:'等待'+(statusOf(b.status).n),go:null};
+  return {who:'实验节点',act:'等待'+(statusOf(b.status).n),go:null};
 }
 const DSV={acc:'',busy:false,sample:null,err:''};
 const DS_SAMPLE={'UniProtKB':{ph:'P00644',url:a=>`https://rest.uniprot.org/uniprotkb/${a}.json`,
@@ -13642,9 +13641,9 @@ const PIPE={
     工具名是干这件事的那个东西（委托单生成器 / 孔板排布器 / 回流解析器）。
     两边一字不差的时候，流程卡上「送检下单　用 送检下单」读起来像重复，
     看不出哪个是步骤、哪个是可换的工具。 */
- wet:[{id:'ord',n:'送检下单',need:['variants'],give:['order'],d:'变体清单 → 订单与批次号'},
+ wet:[{id:'ord',n:'提交实验',need:['variants'],give:['order'],d:'变体清单 → 订单与批次号'},
       {id:'plate',n:'板位生成',need:['variants'],give:['plate'],opt:1,d:'变体清单 → 板位图'},
-      {id:'back',n:'结果回流',need:['result_file'],give:['writeback'],d:'服务商结果文件 → 写回变体库'}]};
+      {id:'back',n:'结果回流',need:['result_file'],give:['writeback'],d:'实验结果文件 → 写回变体库'}]};
 /* 节点的执行主体。蛋白这条闭环里每一段都是「一个节点一个工具」，
    但基因组那条（highthroughput）不是：节点里跑的是 Agent，由它自己决定调哪几个工具。
    节点模型要能装下这件事，否则核酸包一做就会把蛋白这套撑变形。
@@ -13946,7 +13945,7 @@ const FTYPE={
   seq:['序列与功能','野生型序列、功能注释与证据'],
   str:['结构预测结果','结构、置信度'],
   des:['蛋白质设计结果','设计序列、变体表'],
-  wet:['实验验证结果','板位表、服务商回传、写回'],
+  wet:['实验验证结果','板位表、实验回传、写回'],
   rep:['轮次报告','人读的交付件，产出即冻结'],
   etc:['其他','没登记能力的文件']};
 function fileType(x){
@@ -13960,7 +13959,7 @@ function fileType(x){
 }
 const fileExt=x=>((String(x.name||'').split('.').pop()||'').toLowerCase());
 const FKIND={arch:['项目归档','var(--ink)'],art:['任务产出','var(--dry)'],
-  out:['已下载','var(--ink-3)'],in:['服务商回传','var(--wet)'],kb:['上传','var(--ink-4)']};
+  out:['已下载','var(--ink-3)'],in:['实验回传','var(--wet)'],kb:['上传','var(--ink-4)']};
 const fmtBytes=b=>b==null?'—':b<1024?b+' B':b<1048576?(b/1024).toFixed(1)+' KB':(b/1048576).toFixed(1)+' MB';
 /* 一条文件记录能不能真打开、真下载，取决于它有没有内容生成函数。
    任务产物有（27 条里 21 条）；服务商回传和用户上传的原件没有——
@@ -18252,7 +18251,7 @@ function act(a,el){
     const outliers=M.filter(c=>Math.abs(mv(c,PK)-m0)/mad>3);
     const sdFields=projFields().filter(k=>FIELD[k].sdKey);
     const noisy=CANDS().filter(c=>sdFields.some(k=>sdOf(c,k)!=null&&sdOf(c,k)>.25));
-    const unattrib=CANDS().filter(c=>c.disposition==='failed'&&c.failBy==='服务商备注 + 人工确认');
+    const unattrib=CANDS().filter(c=>c.disposition==='failed'&&c.failBy==='实验节点备注 + 人工确认');
     const ctlOk=OUR_CONTROLS.length>0;
     const items=[
       ['plate','整板失败检查',ctlOk?`${OUR_CONTROLS.length} 类对照都有信号，不是整板失败`:'对照孔无信号，疑似整板失败',ctlOk],
@@ -18482,32 +18481,31 @@ function act(a,el){
     LS.set('sel',[...S.sel]);
     go('wetlab');
     toast(bl.length?`已带 ${pk.length} 条到送检页，其中 ${bl.length} 条未通过准入，需先处理`
-                   :`已带 ${pk.length} 条到送检页，核对规格与报价后下单`);
+                   :`已带 ${pk.length} 条到送检页，核对规格后提交`);
     return}
   if(a==='order'){
     const pk=CANDS().filter(c=>S.sel.has(c.id));
     const bl=pk.filter(c=>c.iptm<S.gate);
     if(!pk.length){toast('还没有选中任何变体');return}
     if(bl.length){toast(`${bl.length} 条未通过准入闸门，不能送检`);return}
-    const c=pk.length*14900;   // 只算已知价的部分，额外重复待服务商报价
-    const extraN=Math.max(0,repsNow()-2);
-    modal('送检确认',`<p class="t-md">将 <strong class="num">${pk.length}</strong> 条送至 Adaptyv Bio，
-      实验类型 ${esc((EXP_TYPES.find(x=>x.k===WET.type)||{n:'—'}).n)}，n=${repsNow()}，
-      已知部分 <strong class="num">$${(c/100).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</strong>${extraN?`，另有每条 ${extraN} 次额外重复（共 ${extraN*pk.length} 次）待服务商报价`:''}。</p>
-      <p class="hint" style="margin-top:var(--s3)">单价取自官网公开价 $149 / 蛋白（含 2 次重复，查证于 2026-11-11），不是接口实时返回。周期由服务商在接单后给出。</p>`,
+    const reps=repsNow(), plates=Math.ceil(pk.length*reps/88);
+    modal('提交实验',`<p class="t-md">将 <strong class="num">${pk.length}</strong> 条提交到自主实验网络，
+      实验类型 ${esc((EXP_TYPES.find(x=>x.k===WET.type)||{n:'—'}).n)}，n=${reps}，
+      占用 <strong class="num">${plates}</strong> 块 96 孔板。</p>
+      <p class="hint" style="margin-top:var(--s3)">提交后进入实验节点的队列，执行时间由节点排期决定。</p>`,
       '确认',()=>{
         /* 下单这一刻才产生批次号，并把该轮的计划上下文复制成这个批次的事实上下文。
            复制而不是引用：之后改计划不应该追溯改写已经送出去的那一批。 */
         const no='B-'+(2412+BATCHES.filter(b=>b.id.indexOf('B-24')===0).length);
         const plan=roundCtx();
-        BATCHES.push({id:no,pid:S.pid,round:S.round,vendor:'Adaptyv',status:'in_queue',results:'none',
+        BATCHES.push({id:no,pid:S.pid,round:S.round,vendor:'自动化蛋白表征平台',status:'in_queue',results:'none',
           n:pk.length,ctx:{...plan}});
         pk.forEach(c=>{c.batch=no;c.disposition='ordered'});
         AUDIT.unshift({t:nowStamp(),who:'我',act:'送检批准',obj:no,
           from:'未送检',to:`${pk.length} 条 · ${plan.host||'—'} · ${plan.assay||'—'}`,r:S.round});
         DB.acts.unshift({k:'wet',t:`送检 ${pk.length} 条 · 批次 ${no}`,r:S.round,p:PRJ().name,at:'刚刚',by:'我'});
         S.sel.clear();LS.set('sel',[]);
-        toast(`已送检 ${pk.length} 条 · 批次 ${no}，上下文已随批次记录`);render()});return}
+        toast(`已提交 ${pk.length} 条，批次 ${no}`);render()});return}
   if(a==='editctx'){
     const p0=PRJ();const r=p0.rounds.find(x=>x.i===S.round)||p0.rounds[p0.rounds.length-1];
     /* 轮次持有的是「计划」(plan)，批次才有 ctx。两层上下文改造之后这里没跟着改，
