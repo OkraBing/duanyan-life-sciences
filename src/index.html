@@ -2448,6 +2448,43 @@ body[data-route="me"] .acct-b{background:var(--surface-3)}
 
 /* 钉在顶上的那一条要有底色：不然往上滚的内容会从返回键后面透出来 */
 .outbar:not(.is-inline){background:var(--paper);padding-bottom:var(--s3);margin-bottom:calc(var(--s3) * -1)}
+
+/* ---------- 论文工具 ---------- */
+.page.pp{max-width:62rem;margin-inline:auto;width:100%}
+.pp-top{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding-top:var(--s5)}
+.pp-top h1{font-size:2rem}
+.pp-ask .ask-t{min-height:3.5rem}
+.pp-h2{font-size:1.125rem;font-weight:650;letter-spacing:-.02em}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(22rem,1fr));gap:var(--s3)}
+@media(max-width:48rem){.pgrid{grid-template-columns:1fr}}
+.pcardx{display:flex;flex-direction:column;gap:var(--s2);align-items:stretch;text-align:left;min-width:0;
+  padding:var(--s4);border:1px solid var(--line);border-radius:.75rem;background:var(--surface);
+  cursor:pointer;font:inherit;color:inherit;transition:border-color .14s,box-shadow .14s}
+.pcardx:hover{border-color:var(--dry);box-shadow:0 6px 18px -12px rgba(11,15,20,.35)}
+.pcardx:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.pcardx-t{font-size:0.9375rem;font-weight:600;line-height:1.45;color:var(--ink);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pcardx-m{display:flex;gap:var(--s3);font-size:0.71875rem;color:var(--ink-3);min-width:0}
+.pcardx-c{margin-left:auto;flex:0 0 auto;color:var(--ink-4)}
+.pcardx-a{font-size:0.78125rem;line-height:1.65;color:var(--ink-2);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pcardx-tags{display:flex;flex-wrap:wrap;gap:6px;padding-top:var(--s2);border-top:1px dashed var(--line-2)}
+.prow{display:flex;align-items:center;gap:var(--s4);width:100%;text-align:left;padding:var(--s3) 0;
+  border:0;border-top:1px solid var(--line-2);background:transparent;cursor:pointer;font:inherit;color:inherit}
+.prow:first-child{border-top:0;padding-top:0}.prow:last-child{padding-bottom:0}
+.prow:hover .prow-t{color:var(--dry)}
+.prow.is-ro{cursor:default}
+.prow:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.prow-t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
+.pp-bar{display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap;position:sticky;top:0;z-index:6;
+  padding:var(--s4) 0 var(--s3);background:var(--paper)}
+.pp-bar .btn{gap:4px}
+.pp-hd{display:flex;flex-direction:column;gap:var(--s3)}
+.pp-hd h1{font-size:1.5rem;line-height:1.35}
+.pp-abs{margin:0;font-size:0.875rem;line-height:1.85;color:var(--ink-2);white-space:pre-wrap;word-break:break-word}
+
+/* 跨页一致：项目卡的圆角与其他卡片相同 */
+.pcard{border-radius:.75rem}
 </style>
 
 <div id="app">
@@ -3338,7 +3375,8 @@ function domOf(p){const x=p||PRJ();return DOMAINS.find(d=>d.k===(x&&x.dom))||DOM
 const NAV=[
   ['A','工作',[
     ['chat','新建对话',"M5 6.5A2.5 2.5 0 0 1 7.5 4h9A2.5 2.5 0 0 1 19 6.5v7a2.5 2.5 0 0 1-2.5 2.5H11l-4 3.5V16A2.5 2.5 0 0 1 5 13.5zM12 7.5v5M9.5 10h5",'用一句话发起任务'],
-    ['projects','项目管理',"M3.5 7.5a2 2 0 0 1 2-2h3.6l2 2.2h7.4a2 2 0 0 1 2 2v7.8a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2zM7.5 13.5h9",'按课题管理多轮的数据、模型与实验']]],
+    ['projects','项目管理',"M3.5 7.5a2 2 0 0 1 2-2h3.6l2 2.2h7.4a2 2 0 0 1 2 2v7.8a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2zM7.5 13.5h9",'按课题管理多轮的数据、模型与实验'],
+    ['papers','论文工具',"M6.5 3.5h8l4 4v12a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1v-15a1 1 0 0 1 1-1zM14.5 3.5v4h4M9 12h6M9 15.5h6",'检索、精读和核验论文']]],
   ['B','干湿闭环',[
     ['lab','实验管理',"M9.5 3.5v5.6L4.7 17.6A2.2 2.2 0 0 0 6.6 21h10.8a2.2 2.2 0 0 0 1.9-3.4L14.5 9.1V3.5M8 3.5h8M7.3 14.5h9.4",'送出去的批次走到哪了，哪一步在等你']]],
   /* 资源是「我自己攒下来的」：我的数据集、我训的模型。
@@ -3937,18 +3975,18 @@ return `
 const ABIL=[
  {id:'deg', n:'差异表达', hue:'dry', when:'手上有两组表达量要比，想知道哪些基因变了。',
  eg:'比一下处理组和对照组哪些基因变了',
-  say:'我来做差异表达。',
+  say:'请确认差异表达分析的设置。',
   obj:['差异表达','deg','火山图','表达矩阵','rna-seq','转录组','倍数变化','log2fc','padj',
        '处理组','对照组'],
   kw:['上调','下调','比一比','比一下']},
  {id:'seek', n:'序列检索', hue:'dry', when:'手上有一条序列或一个登录号，要去公共库里找同源条目。',
  eg:'检索和这条序列同源的条目',
-  say:'我来检索同源序列。',
+  say:'请确认检索设置。',
   obj:['同源','blast','uniprot','登录号'],
   kw:['检索','搜索','比对','找序列','相似','查一下','查查','查一查']},
  {id:'str', n:'结构预测', hue:'dry', when:'要把一条序列折成结构，或者问某一段可不可信。',
  eg:'把这条序列折出来，看看哪一段可信',
-  say:'我来折这条序列。',
+  say:'请确认结构预测的设置。',
   obj:['结构','构象','pdb','plddt','alphafold','esmfold'],
   kw:['折叠','折出来','预测结构','折一下']},
  /* 「亲和力」「热稳」是要测的性质，不是要设计——它们原先挂在设计上，
@@ -3956,17 +3994,17 @@ const ABIL=[
     「候选」也不留在设计的对象里：「排一下这批候选的实验」里它指的是实验的材料。 */
  {id:'des', n:'蛋白质设计', hue:'dry', when:'要生成一批新的序列或变体去试。',
  eg:'在这个界面上设计一批结合蛋白',
-  say:'我来生成一批候选。',
+  say:'请确认设计任务的设置。',
   obj:['binder','结合蛋白','结合剂','新的变体'],
   kw:['设计','生成候选','改造','序列设计']},
  {id:'lab', n:'实验管理', hue:'wet', when:'要把东西送去做湿实验，或者管已经在跑的批次、看回传结果。',
  eg:'把这批候选送去测亲和力',
-  say:'我来排这次实验。',
+  say:'请确认这次实验的安排。',
   obj:['实验','亲和力','热稳','配方','protocol','实验室','孔板','报价','ki','kd'],
   kw:['送检','送去','送','测','测定','实测','湿实验','外包','回流']},
  {id:'primer', n:'引物设计', hue:'dry', when:'要给一段模板设计 PCR 引物。',
  eg:'给这段模板设一对 PCR 引物',
-  say:'我来设计引物。',
+  say:'请确认引物设计的设置。',
   /* 不要 'tm'：这个产品里 'tm' 是别人的词。
      ΔTm（热稳定性，整个种子数据的主目标）和 ipTM（AlphaFold 界面置信度，
      结构预测的指标）里都含 'tm'，于是「训一个 ΔTm 打分器」路到了引物设计。
@@ -3975,13 +4013,13 @@ const ABIL=[
   kw:[]},
  {id:'sgrna', n:'sgRNA 设计', hue:'dry', when:'要在一段序列上选 CRISPR 向导 RNA。',
  eg:'在这段序列上选 sgRNA',
-  say:'我来选 sgRNA。',
+  say:'请确认 sgRNA 设计的设置。',
   obj:['sgrna','grna','guide','crispr','cas9','cas12','pam','向导rna'],
   kw:['敲除','编辑','基因编辑']},
  {id:'rank', n:'批量打分', hue:'dry',
   when:'已经有训好的打分器，要拿它给一批候选打分并排序，不是要训新的。',
  eg:'用 M-001 给这个项目的候选打一遍分',
-  say:'我来打分。',
+  say:'请选择模型和候选范围。',
   /* 「打分」两个字不能单独当关键词：「训一个打分器」里也有它，
      而那句话是要**训**一个，不是拿现成的去打。所以这里只收
      已经带了批量动作的词组，让「训／微调」那条路自己留住它的句子。 */
@@ -3995,18 +4033,18 @@ const ABIL=[
     短词做关键词要先问一句「它会不会是别的词的一截」。 */,
  {id:'train', n:'模型制备', hue:'dry', when:'要拿已有的实测数据训一个打分器出来。',
  eg:'用这个项目的实测数据训一个打分模型',
-  say:'我来准备训练。',
+  say:'请确认训练设置。',
   obj:['打分模型','预测器','回归模型'],
   kw:['训练','训一个','模型制备','微调','回归','留出','训模型']},
  {id:'dset', n:'建数据集', hue:'ink', when:'手上有一份表格或 CSV，要把它建成能用来训练的数据集。',
  eg:'上传一份数据建成数据集',
-  say:'我来把这份数据建成数据集。',
+  say:'请上传数据并确认数据集设置。',
   /* 「训练集」比「训练」长，而且它是对象不是动作，所以带「训练集」的句子归这里。 */
   obj:['数据集','训练集','样本表','csv'],
   kw:['建数据集','上传数据','训练数据','导入表','建一个集','传上来','传一份','上传表']},
  {id:'file', n:'文件与资料', hue:'ink', when:'要找、看、下载这个项目里已经有的文件。',
  eg:'这个项目里都有哪些文件',
-  say:'我来找文件。',
+  say:'以下是这个项目中的文件。',
   obj:['文件','资料','知识库','文献','产物'],
   kw:['上传','下载','归档']}];
 const ABIL_OF=id=>ABIL.find(a=>a.id===id)||null;
@@ -4841,13 +4879,13 @@ V.labnew=()=>{
   if(!E.proto)E.proto=P[0]?P[0].n:'';
   if(!E.vendor)E.vendor=LAB_LIST()[0];
   const cur=P.find(x=>x.n===E.proto)||P[0]||{};
-  return `<div class="page" style="max-width:52rem">
-  <button class="btn btn-gh" type="button" data-go="lab"
-    style="align-self:flex-start;min-height:1.625rem;padding:0 10px;font-size:0.75rem">← 实验管理</button>
-  <div class="col" style="gap:6px">
-    <h1>发起新实验</h1>
-    <p class="mut t-md" style="margin:0;max-width:60ch">提交后生成一个批次，可在实验管理中跟踪进度与结果。
-      </p></div>
+  return `<div class="page">
+  <div class="pg-hd">
+    <button class="btn btn-gh pg-back" type="button" data-go="lab">← 实验管理</button>
+    <div class="col" style="gap:6px">
+      <h1>发起新实验</h1>
+      <p class="mut t-md" style="margin:0;max-width:60ch">提交后生成一个批次，可在实验管理中跟踪进度与结果。</p></div>
+  </div>
 
   <section class="fsec">
     <div class="fsec-h">基本信息<span class="grow"></span>
@@ -5237,8 +5275,7 @@ function dsBody(){
             <td class="t-sm">${x.k===pick.target?'<span class="chip c-dry">目标</span>'
               :pick.feats.indexOf(x.k)>=0?'<span class="chip c-mut">特征</span>':'—'}</td>
           </tr>`).join('')}</tbody></table></div></div>
-      <span class="t-xs mut2">指纹 ${esc(pick.fp)}　对规范化后的正文算 FNV-1a，
-        只用来认是不是同一份，不是密码学哈希。${pick.st==='pub'?'已于 '+esc(pick.pubAt||pick.at)+' 发布锁定。':'还是草稿，内容可能再变。'}</span>
+      <span class="t-xs mut2">指纹 ${esc(pick.fp)}　为内容指纹（FNV-1a），用于判断内容是否相同，不是密码学哈希。${pick.st==='pub'?'已于 '+esc(pick.pubAt||pick.at)+' 发布锁定。':'当前为草稿，内容仍可修改。'}</span>
     </div>`}):''}`;
 }
 /* 数据源详情：看一眼就走的东西，用弹窗，不占一个路由。
@@ -5361,7 +5398,7 @@ function importFromUrl(nm,u){
     })
     .catch(e=>{
       say('<span class="t-sm" style="color:var(--err)">取不到：'+esc(e.message)
-        +'。浏览器直连第三方站点要对方允许跨域，这一条是当场测出来的，不是预设的结论。</span>');
+        +'。</span>');
       toast('取不到这个链接：'+e.message);
     });
 }
@@ -5555,8 +5592,7 @@ function mdlCur(){
           {n:'下载权重',attr:`data-mdl="${esc(m.id)}"`}
         ])}
       </tr>`).join('')}</tbody></table></div>
-      <span class="t-xs mut2">「排序准确度」是 Spearman ρ：只看候选排没排对，不看数值准不准。
-        和基线的对比在「模型评测」那一页。启用的模型，对话里 @ 得到，设计任务排序时也能选它。</span>`
+      <span class="t-xs mut2">「排序准确度」为 Spearman ρ，衡量候选排序是否正确。与基线的对比见「模型评测」。</span>`
     :(q?`<div class="empty" style="padding:var(--s6)"><div class="col" style="gap:4px">
        <strong class="t-md" style="color:var(--ink)">没有匹配的模型</strong>
        <span class="t-sm">换个关键词试试</span></div></div>`
@@ -5834,9 +5870,7 @@ function mdlEval(){
           {n:'下载报告',attr:`data-mrep="${esc(m.id)}"`}
         ])})()}
       </tr>`).join('')}</tbody></table></div>
-      <span class="t-xs mut2">「排序准确度」是 Spearman ρ，只看候选排没排对；「预测误差」是 RMSE，
-        单位和预测目标一样；「误差水平」是 RMSE 除以留出集标准差，小于 1 才说明比直接猜均值准。
-        和两条基线的对比在每一条的「查看报告」里。
+      <span class="t-xs mut2">「排序准确度」为 Spearman ρ；「预测误差」为 RMSE，单位与预测目标相同；「误差水平」为 RMSE ÷ 留出集标准差，小于 1 表示优于直接预测均值。与基线的对比见「查看报告」。
         「前瞻测试」是另一回事：留出集是从同一批数据里随机切的，分布和训练集一样；
         下一轮的候选是模型自己挑出来的，分布不一样。
         留出集上好看、下一轮崩掉，是定向进化里最常见的翻车方式——
@@ -6143,8 +6177,7 @@ V.trainnew=()=>{
           <i class="is-tr" style="flex:${d.split.train.length}"><b>${d.split.train.length} 训</b></i>
           ${d.split.val.length?`<i class="is-va" style="flex:${d.split.val.length}"><b>${d.split.val.length} 验</b></i>`:''}
           <i class="is-te" style="flex:${d.split.test.length}"><b>${d.split.test.length} 留出</b></i></div>
-        <span class="t-xs mut2">种子 ${d.seed}，建集那一刻定死——不然同一份数据的两次训练比出来的是切分的差，
-          不是模型的差。${d.split.val.length>=3?'λ 在这个验证集上选。':'验证集不足 3 行，λ 改在训练集内部做 5 折。'}</span></div>`
+        <span class="t-xs mut2">种子 ${d.seed}，建集时确定，之后不可修改。${d.split.val.length>=3?'λ 在验证集上选择。':'验证集不足 3 行，λ 改由训练集内 5 折交叉验证选择。'}</span></div>`
       :`<div class="field"><label class="label" for="trtgt">预测目标 <i style="color:var(--err);font-style:normal">*</i></label>
         ${fs.length?`<span class="ctl ctl-sel"><select id="trtgt" class="input">
           <option value="">${esc(PICK0)}</option>
@@ -6219,11 +6252,8 @@ V.chats=()=>{
         <path d="M10.4 10.4v6M13.6 10.4v6"/></svg></button>
   </div>`;
   return `<div class="page">
-  <div class="row wrap" style="align-items:flex-end">
-    <div class="col grow" style="gap:6px">
-      <h1>全部对话</h1>
-    </div>
-    <div class="row wrap" style="gap:var(--s3);align-items:center">
+  <div class="pg-hd"><div class="col" style="gap:6px"><h1>全部对话</h1></div></div>
+  <div class="row wrap" style="gap:var(--s3);align-items:center">
       <span class="ctl ctl-sel fbar-sel">
         <label class="sr" for="cproj">按项目筛选</label>
         <select id="cproj" data-ic="proj">
@@ -6234,7 +6264,6 @@ V.chats=()=>{
         </select><span class="car" aria-hidden="true"></span></span>
       <label class="fbar-q"><span class="sr">搜索对话</span>${SEARCH_IC}
         <input id="cq" value="${esc(S.cq||'')}" placeholder="搜索对话"></label>
-    </div>
   </div>
 
   <div class="col" style="gap:var(--s3)">
@@ -7598,8 +7627,8 @@ SUBMIT.dset=(c,v)=>{
     cur.arts=[];
     PEND[c.id]={parsed:q,name:v.name||String(fld.v).replace(/\.[^.]+$/,'')};
     if(!nums.length){
-      say(`读到 ${q.rows.length} 行 × ${q.cols.length} 列，但一个数值列都没有——这一版只做回归，`
-        +`没有数值目标列就建不了可训练的数据集。`,
+      say(`读到 ${q.rows.length} 行 × ${q.cols.length} 列，但没有数值列。`
+        +`训练需要至少一个数值目标列。`,
         [mkCard('table',{title:'文件里的列',note:q.cols.length+' 列',
           head:['列名','类型','缺失','不同值'],
           rows:q.cols.map(x=>[x.k,x.type,x.missPct.toFixed(0)+'%',String(x.uniq)])})]);
@@ -7607,8 +7636,8 @@ SUBMIT.dset=(c,v)=>{
     }
     const cand=nums.slice();
     say(`读到 ${q.rows.length} 行 × ${q.cols.length} 列，其中 ${nums.length} 列是数值。`
-      +`指纹 ${q.fp}。下面选目标列和特征列，切分在建集这一步就定死——`
-      +`不然同一份数据的两次训练比出来的是切分的差，不是模型的差。`,
+      +`指纹 ${q.fp}。请选择目标列和特征列。`
+      +`切分在建集时确定，之后不可修改。`,
       [mkCard('table',{title:'文件里的列',note:q.cols.length+' 列',
         head:['列名','类型','缺失','不同值'],
         rows:q.cols.map(x=>[x.k,x.type,x.missPct.toFixed(0)+'%',String(x.uniq)]),
@@ -7647,10 +7676,10 @@ SUBMIT.dsmap=(c,v)=>{
       rows:q.rows,cols:q.cols,target:v.target,feats:feats,task:'回归',
       split:sp,ratio:[tr,va,+(1-tr-va).toFixed(2)],seed:+v.seed||20260113,fp:q.fp});
     cur.arts=emit(S.pid,[dsManifest(ds,q,sp)]);
-    say(`${ds.id} 建好了：${q.rows.length} 行，目标 ${ds.target}，${feats.length} 个特征列，`
+    say(`${ds.id} 已建立：${q.rows.length} 行，目标 ${ds.target}，${feats.length} 个特征列，`
       +`切分 ${sp.train.length} / ${sp.val.length} / ${sp.test.length}（训/验/留出），种子 ${ds.seed}。`
-      +`现在是草稿——目标列和特征还能改。确认没问题就发布，发布之后锁死，训练只认已发布的；`
-      +`不锁死的话，同一个编号在两次训练之间悄悄变了，两个模型都说训在同一版上，其实不是。`,
+      +`当前为草稿，目标列和特征仍可修改。发布后内容锁定，才能用于训练。`
+      ,
       [mkCard('dscard',{dsid:ds.id})]);
   });
   return run;
@@ -7672,10 +7701,10 @@ SUBMIT.deg=(c,v)=>{
     const g0={};nums.forEach(k=>g0[k]=
       fld.demo?(/ctrl/.test(k)?'对照':'处理'):'不用');
     say(`读到 ${q.rows.length} 行 × ${q.cols.length} 列，其中 ${nums.length} 列是数值，`
-      +`可以当样本。基因 ID 取第一列「${q.cols[0].k}」。`
+      +`可作为样本。基因 ID 取第一列「${q.cols[0].k}」。`
       +(fld.demo
-        ?`这份矩阵是这里生成的，分组也是，所以已经填好了。`
-        :`下面把样本分到对照和处理——分组不替你猜，列名里的 ctrl/treat 只是习惯，猜反了整份结果都是反的。`),
+        ?`这是生成的示例矩阵，分组已填好。`
+        :`请把样本分到对照组和处理组。`),
       [mkCard('form',{cap:'degrun',title:'分组与阈值',sub:fld.v,src:c.id,
         fields:[
           {k:'map',label:'样本 → 分组',v:g0,ty:'map',wide:1,rows:nums,
@@ -7706,7 +7735,7 @@ SUBMIT.degrun=(c,v)=>{
     v.filt===false?'不做独立过滤':'按表达量做独立过滤','BH 校正 padj','按 padj 排序'],cur=>{
     const r=degRun(q.rows,q.cols,G,{padj:+v.padj||0.05,lfc:+v.lfc||0,
       filt:v.filt!==false,minCpm:+v.mincpm});
-    if(!r.ok){say('跑不出来：'+r.why+'。');return}
+    if(!r.ok){say('分析未完成：'+r.why+'。');return}
     const fmt=x=>x==null?'NA':(x<1e-4?x.toExponential(2):x.toFixed(4));
     const rows=r.sig.slice(0,8).map(x=>[x.id,x.base.toFixed(1),x.lfc.toFixed(2),
       x.t.toFixed(2),fmt(x.p),fmt(x.q)]);
@@ -7721,9 +7750,9 @@ SUBMIT.degrun=(c,v)=>{
         +'# 不是 DESeq2：DESeq2 用负二项 GLM 与离散度收缩，这里没有实现。\n'
         +'# padj 为 NA 的是被独立过滤剔掉的基因（baseMean < '+r.minCpm+' CPM），不是 1。\n'}]);
     say(`${r.sig.length} 个基因显著：上调 ${r.up}，下调 ${r.down}。`
-      +`口径是 padj < ${r.padj} 且 |log2FC| ≥ ${r.lfcT}。`
-      +`${r.filtered?`另有 ${r.filtered} 个基因因为表达量低于 ${r.minCpm} CPM 被独立过滤剔掉，它们的 padj 是 NA，不是 1。`:''}`
-      +`方法是 CPM 归一 + log2 + Welch t + BH——不是 DESeq2，所以列名也没有借它的。`,
+      +`阈值：padj < ${r.padj} 且 |log2FC| ≥ ${r.lfcT}。`
+      +`${r.filtered?`另有 ${r.filtered} 个基因表达量低于 ${r.minCpm} CPM，已被过滤（padj 记为 NA）。`:''}`
+      +`方法：CPM 归一 + log2 + Welch t 检验 + BH 校正（不是 DESeq2）。`,
       [mkCard('vol',{all:r.all,padj:r.padj,lfcT:r.lfcT,up:r.up,down:r.down,
         nC:r.nC,nT:r.nT,kept:r.kept}),
        mkCard('table',{title:'最显著的基因',note:r.sig.length+' 个显著',
@@ -7744,7 +7773,7 @@ SUBMIT.sgrna=(c,v)=>{
     '提取 '+(v.glen||20)+' nt protospacer','算 GC 与 poly-T 终止信号',
     '在这段序列里查近似匹配','按可算的指标排序'],cur=>{
     const r=sgrnaRun({seq:sq,pam:v.pam,glen:+v.glen||20,n:+v.n||10});
-    if(!r.ok){say('扫不出来：'+r.why+'。');return}
+    if(!r.ok){say('未找到可用位点：'+r.why+'。');return}
     const G=r.guides, clean=G.filter(x=>!x.polyT&&x.near[1]+x.near[2]===0);
     const rows=G.slice(0,6).map((h,i)=>[String(i+1),h.g,h.pam,h.strand,String(h.pos),
       h.gc.toFixed(1),h.polyT?'有':'无',String(h.near[1]),String(h.near[2]),String(h.near[3])]);
@@ -7757,9 +7786,9 @@ SUBMIT.sgrna=(c,v)=>{
           h.rk.toFixed(3)]))).join('\n')+'\n'
         +'# 近似匹配只在提交的这一段序列内统计，不是全基因组脱靶。\n'
         +'# 不含在靶打分：这里没有 Rule Set 2 / Azimuth 的权重。\n'}]);
-    say(`这段序列里有 ${r.nAll} 个 ${r.pam} 位点，去重后给了 ${G.length} 条。`
-      +`其中 ${clean.length} 条既没有 poly-T 终止信号，在这段序列里也没有 1–2 个错配的近似位点。`
-      +`在靶分没有：Rule Set 2 是训练出来的模型，这里没有它的权重，编一个分比不给分危险。`,
+    say(`这段序列里有 ${r.nAll} 个 ${r.pam} 位点，去重后 ${G.length} 条。`
+      +`其中 ${clean.length} 条无 poly-T 终止信号，且在这段序列内没有 1–2 个错配的近似位点。`
+      +`未提供在靶活性评分（需要 Rule Set 2 模型权重）。`,
       [mkCard('table',{title:'候选 guide',note:G.length+' 条',
         head:['排名','protospacer','PAM','链','位置','GC%','poly-T','≤1 错配','2 错配','3 错配'],
         rows:rows,
@@ -7784,8 +7813,8 @@ SUBMIT.primer=(c,v)=>{
       amp:amp.length?amp:[[150,250]],dTm:+v.dtm||1,polyX:+v.polyx||5,
       clamp:+v.clamp,mono:+v.mono,div:+v.div,dntp:+v.dntp});
     if(!r.ok){
-      say('设计不出来：'+r.why+'。'+(r.nL!=null?`左侧候选 ${r.nL} 条，右侧 ${r.nR} 条。`:'')
-        +'把 Tm 或产物长度放宽一点再试，或者换一段目标区间。');
+      say('未得到可用引物：'+r.why+'。'+(r.nL!=null?`左侧候选 ${r.nL} 条，右侧 ${r.nR} 条。`:'')
+        +'可放宽 Tm 或产物长度，或更换目标区间。');
       return;
     }
     const n=r.pairs.length;
@@ -7806,7 +7835,7 @@ SUBMIT.primer=(c,v)=>{
           csvRow([i+1,'R',q.r.sq,q.r.pos,q.r.len,q.r.tm.toFixed(2),q.r.gc.toFixed(1),
             q.prod,q.pen.toFixed(3),q.r.self,q.cross,q.r.clamp])])).join('\n')+'\n'}]);
     const b=r.pairs[0];
-    say(`出了 ${n} 对。罚分最低的是第 1 对，产物 ${b.prod} bp，左右 Tm 差 ${b.dTm.toFixed(1)} ℃。`
+    say(`共 ${n} 对。罚分最低的是第 1 对，产物 ${b.prod} bp，左右 Tm 差 ${b.dTm.toFixed(1)} ℃。`
       +`Tm 按 SantaLucia 1998 最近邻算，盐条件 ${r.cond.mono} mM 一价 + ${r.cond.div} mM 二价`
       +`（等效一价 ${(r.na*1000).toFixed(0)} mM）。`,
       [mkCard('track',{title:'第 1 对落在模板上的位置',len:r.tplLen,tg:r.tg,
@@ -7837,9 +7866,9 @@ SUBMIT.seek=(c,v)=>{
         note:hits.length+' 条命中',kind:'tab',mime:'text/csv',
         make:()=>['name,accession,identity_pct,aligned_aa,source']
           .concat(hits.map(h=>csvRow([h.n,h.acc,h.pct,h.aln,h.src]))).join('\n')+'\n'}]);
-      say(`比对完了，${hits.length} 条命中。一致度最高的是 ${hits[0].n}（${hits[0].pct}%）。`,
+      say(`比对完成，${hits.length} 条命中。一致度最高的是 ${hits[0].n}（${hits[0].pct}%）。`,
         [mkCard('hits',{title:'命中',hits:hits})]);
-    }else say('库里没有能对上的序列。换一个库，或把序列放长一点。');
+    }else say('没有命中。可更换序列库，或延长查询序列。');
   });
   return run;
 };
@@ -7899,11 +7928,10 @@ SUBMIT.des=(c,v)=>{
       {name:'variants_'+n+'.csv',n:'变体表',note:nt,kind:'tab',mime:'text/csv',
        make:()=>artVariantsCsv(S.pid,D)}]);
     say(mdl
-      ? `出了 ${L.length} 条，按 ${mdl.id} 的预测值从高到低排的（${scored} 条算得出预测值）。`
-        +`${mdl.winS?'这个模型的排序在留出集上赢过了基线，拿它排候选是有依据的。'
-          :'注意：这个模型的排序没赢过基线，所以这个顺序不一定比不用它更好——'
-           +'在模型制备页能看到它和基线的对比。'}`
-      : `出了 ${L.length} 条。下面按当前项目的准入闸门排了序——闸门之上的那几条可以直接接去实验。`,
+      ? `共 ${L.length} 条，按 ${mdl.id} 的预测值从高到低排序（${scored} 条有预测值）。`
+        +`${mdl.winS?'该模型的排序在留出集上优于基线。'
+          :'注意：该模型的排序在留出集上未优于基线，排序结果仅供参考。'}`
+      : `共 ${L.length} 条，按当前项目的准入闸门排序。通过闸门的候选可以送检。`,
       [mkCard('vtab',{title:'候选',rows:L.slice(0,10),total:L.length,
         pred:mdl?mdl.id:null,predT:mdl?((FIELD[mdl.target]||{}).n||mdl.target):null})]);
   });
@@ -7921,8 +7949,8 @@ SUBMIT.lab=(c,v)=>{
       make:()=>['variant_id,mutations,assay,vendor,replicates,protocol']
         .concat(pick.map(x=>csvRow([x.id,mutsOf(x).join(' '),P.n,v.vendor||'',
           v.reps||P.rep,P.id]))).join('\n')+'\n'}]);
-    say(`送检单好了：${P.n}，${n} 条，${v.reps||P.rep}。周期参考 ${P.days}。`
-      +`结果回来之后在这里说一句「导入结果」，我把它写回变体库。`,
+    say(`送检单已生成：${P.n}，${n} 条，${v.reps||P.rep}。周期参考 ${P.days}。`
+      +`结果返回后，说「导入结果」即可写回变体库。`,
       [mkCard('batch',{proto:P,vendor:v.vendor,n:n,reps:v.reps||P.rep})]);
   });
   return run;
@@ -7954,11 +7982,11 @@ SUBMIT.rank=(c,v)=>{
         r:x.firstRound||1,p:p,y:mv(x,tf),seen:!!seen[x.id]});
     });
     if(!rows.length){
-      say('一条都打不出分：'+pool.length+' 条候选里没有一条凑齐了这个打分器要的特征。'
+      say('无法打分：'+pool.length+' 条候选都缺少该模型需要的特征。'
         +(m.kind==='ds'
-          ?'它的特征是数据集的列（'+(m.featK||[]).join('、')+'），候选表里没有这些列。'
+          ?'所需特征（'+(m.featK||[]).join('、')+'）不在候选表中。'
           :'')
-        +'换一个打分器，或者先把缺的那几列补上。');
+        +'请更换模型，或补齐缺少的列。');
       return;
     }
     rows.sort((a,b)=>b.p-a.p);
@@ -7976,17 +8004,16 @@ SUBMIT.rank=(c,v)=>{
       '实测','训练时见过'];
     const tbl=rows.slice(0,topN).map((x,i)=>[String(i+1),x.id,x.muts||'—',
       'R'+x.r,x.p.toFixed(3),x.y==null?'—':(+x.y).toFixed(2),x.seen?'见过':'没见过']);
-    say(`${m.id} 给 ${rows.length} 条打了分`
-      +(noP?`，另有 ${noP} 条凑不齐特征，没打`:'')+`。`
-      +(nSeen?`其中 ${nSeen} 条它训练时见过——给这些打的分不是预测，CSV 里单独标了。`
-             :`这 ${rows.length} 条它训练时都没见过。`)
-      +(fresh.length?`没见过的那 ${fresh.length} 条里，分最高的是 ${fresh[0].id}。`:'')
-      +(m.prosp?`这个打分器在第 ${m.prosp.round} 轮上做过前瞻测试，ρ=${m.prosp.rho.toFixed(3)}（留出 ${m.rho.toFixed(3)}）。`
-               :`它还没做过前瞻测试——留出集上的 ρ=${m.rho.toFixed(3)} 不保证换一批候选还成立。`),
+    say(`${m.id} 已为 ${rows.length} 条候选打分`
+      +(noP?`，另有 ${noP} 条因缺少特征未打分`:'')+`。`
+      +(nSeen?`其中 ${nSeen} 条出现在训练集中，其分数不是预测值，已在 CSV 中标出。`
+             :`这 ${rows.length} 条均未出现在训练集中。`)
+      +(fresh.length?`未见过的 ${fresh.length} 条中，分数最高的是 ${fresh[0].id}。`:'')
+      +(m.prosp?`该模型已在第 ${m.prosp.round} 轮上做过前瞻测试，ρ=${m.prosp.rho.toFixed(3)}（留出 ${m.rho.toFixed(3)}）。`
+               :`该模型尚未做前瞻测试，留出集 ρ=${m.rho.toFixed(3)} 不代表在新一批候选上的表现。`),
       [mkCard('table',{title:'打分结果',note:rows.length+' 条，表里先看 '+Math.min(topN,rows.length)+' 条',
         head:head,rows:tbl,
-        foot:'分数是本机算的：特征→按训练集的均值与标准差标准化→代权重。'
-          +'它只在同一个打分器内部可比，换一个打分器就不是同一把尺。'
+        foot:'分数在本机计算，仅在同一模型内可比。'
           +'完整结果在产出文件里。'})]);
   });
   return run;
@@ -8000,8 +8027,7 @@ SUBMIT.train=(c,v)=>{
   const blocked=[['基础模型',bm],['训练方法',mt],['参数更新',pu]].filter(x=>!x[1].ok);
   if(blocked.length){
     say(blocked.map(([k,x])=>`${k}「${x.n}」未接入，无法运行：${x.why||'执行体未接入'}`).join('；')
-      +`。没有后端就只能排队，不能出指标——与其给一个假的，不如现在就说清楚。`
-      +`把这几栏换回能在浏览器里跑的那组，先训一个出来当底线。`,
+      +`。请改用可在本机运行的配置。`,
       [mkCard('note',{title:'这一组配置无法运行',
         text:blocked.map(([k,x])=>k+'：'+x.n+'——'+(x.why||x.d)).join('\n')})]);
     c.done=1;return null;
@@ -8023,9 +8049,9 @@ SUBMIT.train=(c,v)=>{
       const ms=Math.round(now()-t0);
       /* 没跑成的也记一条：训练任务那一屏要能回答「我上次训到底怎么了」，
          只留成功的话，失败就凭空消失了。 */
-      if(!r.ok){addModel(S.pid,{st:'failed',why:r.why||'训不出来',ms:ms,ds:ds.id,
+      if(!r.ok){addModel(S.pid,{st:'failed',why:r.why||'训练失败',ms:ms,ds:ds.id,
           target:ds.target,base:v.base,method:v.method,upd:v.upd});
-        say('训不出来：'+r.why+'。');render();return}
+        say('训练失败：'+r.why+'。');render();return}
       const mdl=addModel(S.pid,Object.assign({target:ds.target,rho:r.rho,rmse:r.rmse,sd:r.sd,
         nTrain:r.nTrain,nTest:r.nTest,lam:r.lam,n:r.n,ds:ds.id,ms:ms,
         /* 训练集里是哪几条候选。前瞻评测靠它分辨「这一轮它见没见过」 */
@@ -8070,9 +8096,9 @@ SUBMIT.train=(c,v)=>{
       addModel(S.pid,{st:'failed',ms:ms,target:v.target,base:v.base,method:v.method,upd:v.upd,
         why:r.why||('带实测值的候选只有 '+r.n+' 条，少于 8 条')});
       say(r.why
-        ?`训不出来：${r.why}。样本 ${r.n} 条。与其报一个看着合理的指标，不如直接说没算出来。`
-        :`训不了：这个项目只有 ${r.n} 条带实测值的候选，少于 8 条就没法留出评估。`
-          +`先把一批结果测回来，或者换一个数据多的项目。`);
+        ?`训练失败：${r.why}。样本 ${r.n} 条。`
+        :`无法训练：该项目只有 ${r.n} 条带实测值的候选，至少需要 8 条。`
+          +`请先回流一批实测结果，或更换数据更多的项目。`);
       return;
     }
     const mdl=addModel(S.pid,Object.assign({target:v.target,rho:r.rho,rmse:r.rmse,sd:r.sd,
@@ -8107,7 +8133,7 @@ SUBMIT.train=(c,v)=>{
           +'基线和模型用的是同一个留出集；单特征基线是在训练集上挑的，没有拿留出集挑。',
         at:nowStamp()},null,2)}]);
     say(`训练完成。留出集上 Spearman ρ=${r.rho.toFixed(3)}，RMSE=${r.rmse.toFixed(3)}。`
-      +`这两个数是在 ${r.nTest} 条没参与训练的候选上算出来的。`,
+      +`以上指标基于 ${r.nTest} 条未参与训练的候选。`,
       [mkCard('metric',{r:r}),
        mkCard('scat',{pred:r.pred,act:r.act,mean:r.trainMean,target:v.target})]);
   });
@@ -8402,7 +8428,7 @@ CARD.vol=c=>{
       <span>${yline!=null?`虚线＝padj &lt; ${c.padj} 与 |log2FC| ≥ ${c.lfcT}`
         :`没有基因过 padj &lt; ${c.padj}，所以画不出那条横线`}</span></div>
     <span class="t-xs mut2">图上只画进了 BH 校正的 ${c.kept} 个基因。
-      被独立过滤剔掉的那些没有 padj，画进来会被当成「只是不显著」。
+      被过滤的基因没有 padj，不在图中。
       ${over?`横轴按 99 分位定在 ±${xm.toFixed(1)}，有 ${over} 个点的 |log2FC| 超出这个范围，
         画在边界上并描了一圈边——它们的真值在产出文件里。`:''}</span>
   </div>`;
@@ -8708,7 +8734,7 @@ function agentSend(){
        他需要知道的是「我这句话没被送出去」和「换种说法还能走」。 */
     const hint='可以直接说要做的事，比如「检索和这条序列同源的条目」「从 R'+(S.round||1)+' 选 24 条送去测」「用实测数据训一个打分模型」。';
     if(String(e.message||e)==='NOKEY'){say(modelErr(e)+hint);return}
-    say((stray?'你挂的「'+stray+'」不是多段流程里的某一段，改不了路由。':'')
+    say((stray?'已选的「'+stray+'」不属于任何流程步骤，不影响任务分配。':'')
       +'这句话没送出去：模型服务暂时无法连接，未执行任何操作。'+hint);
   });
 }
@@ -8765,18 +8791,18 @@ function freeAsk(txt,stray){
     const L=convOf();L.pop();
     TRACE.cur=tr0;
     const t=String(res.text||'').trim();
-    if(!t){say('模型这次回了一句空的。换个说法，或者直接说要做哪件事：'
+    if(!t){say('模型没有返回内容。可以换个说法，或直接说要做的事：'
       +ABIL.map(x=>x.n).join('、')+'。');return}
     say(t);
   }).catch(e=>{
     const L=convOf();L.pop();
     TRACE.cur=tr0;
     const m=String(e.message||e);
-    if(m==='NOKEY'){say(modelErr(e)+'不接也能走，说清楚要做哪件事就行：'
+    if(m==='NOKEY'){say(modelErr(e)+'也可以直接说要做的事：'
       +ABIL.map(x=>x.n).join('、')+'。');return}
-    say((stray?'你挂的「'+stray+'」不是多段流程里的某一段，改不了路由；':'')
-      +'这句话没对上任何一条能力，想让模型直接答又没连上——请求没送出去，什么都没改。'
-      +'说清楚要做哪件事就不用它了：'+ABIL.map(x=>x.n).join('、')+'。');
+    say((stray?'已选的「'+stray+'」不属于任何流程步骤，不影响任务分配；':'')
+      +'这句话没送出去：模型服务暂时无法连接，未执行任何操作。'
+      +'可以直接说要做的事：'+ABIL.map(x=>x.n).join('、')+'。');
   });
 }
 
@@ -8963,14 +8989,290 @@ function grid(){
 }
 
 
+
+/* ================= 论文工具 =================
+   检索、详情、引用网络、引文核验的数据都是现取的（OpenAlex 的公开接口，用户点了才发），
+   这里一条论文都不预置：标题、作者、年份、被引数都以接口返回为准。
+   取不到就说取不到。精读里的回答由已接入的模型根据摘要生成。 */
+const PAPER={tab:'search',q:'',mode:'fast',dom:'all',hot:{},hotSt:'',res:null,resSt:'',resQ:'',
+  cur:null,store:{},net:'ref',netL:{},netSt:'',rel:{},ver:'',verR:null,verSt:'',readQ:'',readA:null,readSt:''};
+const PAPER_DOM=[['all','全部领域',''],['bio','生命科学','C86803240'],['chem','化学','C185592680'],
+  ['mat','材料科学','C192562407'],['phy','物理','C121332964'],['math','数学','C33923547'],
+  ['geo','地球科学','C127313418'],['neuro','神经科学','C169760540']];
+const OA='https://api.openalex.org/works';
+const OA_SEL='select=id,doi,title,publication_year,publication_date,authorships,primary_location,concepts,open_access,cited_by_count,abstract_inverted_index,type,referenced_works,related_works';
+function oaAbs(inv){if(!inv)return '';const out=[];
+  Object.keys(inv).forEach(w=>inv[w].forEach(p=>{out[p]=w}));return out.join(' ').replace(/\s+/g,' ').trim()}
+function oaNorm(w){
+  const src=(w.primary_location&&w.primary_location.source)||{};
+  const p={id:String(w.id||'').split('/').pop(),doi:String(w.doi||'').replace(/^https?:\/\/doi\.org\//,''),
+    title:w.title||'（无标题）',year:w.publication_year||'',date:w.publication_date||'',
+    authors:(w.authorships||[]).map(a=>(a.author||{}).display_name).filter(Boolean),
+    venue:src.display_name||'',concepts:(w.concepts||[]).slice(0,9).map(c=>c.display_name),
+    oa:!!(w.open_access&&w.open_access.is_oa),pdf:(w.open_access&&w.open_access.oa_url)||'',
+    type:w.type||'',cited:w.cited_by_count||0,abs:oaAbs(w.abstract_inverted_index).replace(/^abstract[\s:：.]*/i,''),
+    refs:(w.referenced_works||[]).map(x=>String(x).split('/').pop()),
+    rels:(w.related_works||[]).map(x=>String(x).split('/').pop())};
+  PAPER.store[p.id]=p;return p;
+}
+/* [LOADING_BY_CALLER] 只负责取数；挂起态由各个面板自己的 St 字段给。 */
+async function oaList(query){
+  const r=await fetch(OA+'?'+query+'&'+OA_SEL);
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  const d=await r.json();return (d.results||[]).map(oaNorm);
+}
+function paperErr(e){return /Failed to fetch|NetworkError|Load failed/i.test(String(e&&e.message||e))
+  ?'无法连接文献服务':'文献服务返回错误（'+String(e&&e.message||e).slice(0,40)+'）'}
+function paperHot(){
+  const k=PAPER.dom;if(PAPER.hot[k]||PAPER.hotSt==='load')return;
+  PAPER.hotSt='load';
+  const c=(PAPER_DOM.find(x=>x[0]===k)||[])[2];
+  const y=new Date().getFullYear()-1;
+  oaList('filter=type:article,has_abstract:true,from_publication_date:'+y+'-01-01'+(c?',concepts.id:'+c:'')
+    +'&sort=cited_by_count:desc&per-page=8')
+    .then(L=>{PAPER.hot[k]=L;PAPER.hotSt=''})
+    .catch(e=>{PAPER.hotSt=paperErr(e)})
+    .then(()=>{if(S.route==='papers')render()});
+}
+function paperSearch(){
+  const q=(PAPER.q||'').trim();
+  if(!q){toast('请输入研究主题');return}
+  PAPER.resSt='load';PAPER.res=null;PAPER.resQ=q;PAPER.cur=null;render();
+  const deep=PAPER.mode==='deep';
+  oaList('search='+encodeURIComponent(q)+'&per-page='+(deep?40:12)+(deep?'&sort=cited_by_count:desc':''))
+    .then(L=>{PAPER.res=L;PAPER.resSt=''})
+    .catch(e=>{PAPER.res=[];PAPER.resSt=paperErr(e)})
+    .then(()=>{if(S.route==='papers')render()});
+}
+function paperNet(p){
+  const k=p.id+'|'+PAPER.net;if(PAPER.netL[k]||PAPER.netSt==='load')return;
+  const q=PAPER.net==='ref'
+    ?(p.refs.length?'filter=openalex:'+p.refs.slice(0,12).join('|')+'&per-page=12':null)
+    :'filter=cites:'+p.id+'&sort=cited_by_count:desc&per-page=12';
+  if(!q){PAPER.netL[k]=[];return}
+  PAPER.netSt='load';
+  oaList(q).then(L=>{PAPER.netL[k]=L;PAPER.netSt=''})
+    .catch(e=>{PAPER.netL[k]=[];PAPER.netSt=paperErr(e)})
+    .then(()=>{if(S.route==='papers')render()});
+}
+function paperRel(p){
+  if(PAPER.rel[p.id]||!p.rels.length){if(!PAPER.rel[p.id])PAPER.rel[p.id]=[];return}
+  PAPER.rel[p.id]='load';
+  oaList('filter=openalex:'+p.rels.slice(0,6).join('|')+'&per-page=6')
+    .then(L=>{PAPER.rel[p.id]=L}).catch(()=>{PAPER.rel[p.id]=[]})
+    .then(()=>{if(S.route==='papers')render()});
+}
+function paperCite(p,style){
+  const au=p.authors, y=p.year||'n.d.';
+  if(style==='gbt'){const a=au.slice(0,3).join(', ')+(au.length>3?', 等':'');
+    return a+'. '+p.title+'[J]. '+(p.venue||'')+', '+y+'.'+(p.doi?' DOI: '+p.doi+'.':'')}
+  const a=au.length>2?au[0]+' et al.':au.join(' & ');
+  return a+' ('+y+'). '+p.title+'. '+(p.venue?p.venue+'. ':'')+(p.doi?'https://doi.org/'+p.doi:'');
+}
+function paperMeta(p){return [p.authors[0]?(p.authors[0]+(p.authors.length>1?' 等':'')):'',p.venue,p.year].filter(Boolean).join(' · ')}
+function paperCard(p){
+  return `<button class="pcardx" type="button" data-pp="open|${esc(p.id)}">
+    <strong class="pcardx-t">${esc(p.title)}</strong>
+    <span class="pcardx-m num">${esc(paperMeta(p))}<span class="pcardx-c">被引 ${p.cited}</span></span>
+    ${p.abs?`<span class="pcardx-a">${esc(p.abs.slice(0,220))}</span>`:''}
+    ${p.concepts.length?`<span class="pcardx-tags">${p.concepts.slice(0,4).map(c=>`<span class="tag">${esc(c)}</span>`).join('')}${
+      p.concepts.length>4?`<span class="tag">+${p.concepts.length-4}</span>`:''}</span>`:''}
+  </button>`;
+}
+function paperRow(p){
+  return `<button class="prow" type="button" data-pp="open|${esc(p.id)}">
+    <span class="col grow" style="gap:2px;min-width:0"><strong class="t-md prow-t">${esc(p.title)}</strong>
+      <span class="t-xs mut2 num">${esc(paperMeta(p))}</span></span>
+    <span class="t-xs mut2 num" style="flex:0 0 auto">被引 ${p.cited}</span></button>`;
+}
+const PAPER_LOAD='<div class="empty"><span class="skel" style="width:1rem;height:1rem;border-radius:50%"></span>正在获取</div>';
+function paperDetail(p){
+  paperNet(p);paperRel(p);
+  const nk=p.id+'|'+PAPER.net, NL=PAPER.netL[nk], RL=PAPER.rel[p.id];
+  return `<div class="page pp">
+  <div class="pp-bar">
+    <button class="btn" type="button" data-pp="back">← 返回</button>
+    <span class="grow"></span>
+    ${(p.pdf||p.doi)?`<a class="btn" href="${esc(p.pdf||('https://doi.org/'+p.doi))}" target="_blank" rel="noopener">${p.pdf?'获取 PDF':'查看原文'}</a>`
+      :'<button class="btn" type="button" disabled title="没有可用的全文链接">获取 PDF</button>'}
+    <button class="btn" type="button" data-pp="addproj|${esc(p.id)}">添加到项目
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 9.5 12 15l5.5-5.5"/></svg></button>
+    <button class="btn" type="button" data-pp="cite|${esc(p.id)}">引用格式</button>
+    <button class="btn btn-pri" type="button" data-pp="read|${esc(p.id)}">论文精读</button>
+  </div>
+  <div class="pp-hd">
+    <h1>${esc(p.title)}</h1>
+    <p class="t-md" style="margin:0;color:var(--ink-2)">${esc(p.authors.slice(0,12).join('，'))}${p.authors.length>12?' 等':''}</p>
+    <p class="t-sm mut2 num" style="margin:0">${esc([p.venue,p.date||p.year,p.doi?'DOI: '+p.doi:''].filter(Boolean).join(' · '))}</p>
+    <div class="row wrap" style="gap:6px">
+      ${p.concepts.map(c=>`<span class="tag">${esc(c)}</span>`).join('')}
+      ${p.oa?'<span class="chip c-ok">开放获取</span>':''}${p.type?`<span class="chip c-mut">${esc(p.type)}</span>`:''}
+    </div>
+  </div>
+  <section class="card"><div class="card-h"><strong>摘要</strong></div>
+    <div class="card-b"><p class="pp-abs">${p.abs?esc(p.abs):'<span class="mut2">该论文没有提供摘要</span>'}</p></div></section>
+  <section class="card"><div class="card-h"><strong>引用网络</strong><span class="grow"></span>
+    <div class="seg" role="radiogroup" aria-label="引用方向">
+      <button class="seg-i" type="button" role="radio" data-pp="net|ref" aria-checked="${PAPER.net==='ref'}">参考文献 ${p.refs.length}</button>
+      <button class="seg-i" type="button" role="radio" data-pp="net|cby" aria-checked="${PAPER.net==='cby'}">被引 ${p.cited}</button></div></div>
+    <div class="card-b col" style="gap:0">${!NL?PAPER_LOAD
+      :NL.length?NL.map(paperRow).join('')
+      :`<div class="empty">${PAPER.netSt||'暂无引用数据'}</div>`}</div></section>
+  <section class="card"><div class="card-h"><strong>相关论文</strong></div>
+    <div class="card-b col" style="gap:0">${RL==='load'||!RL?PAPER_LOAD
+      :RL.length?RL.map(paperRow).join(''):'<div class="empty">暂无相关论文</div>'}</div></section>
+</div>`;
+}
+V.papers=()=>{
+  const cur=PAPER.cur?PAPER.store[PAPER.cur]:null;
+  if(cur&&PAPER.tab==='search')return paperDetail(cur);
+  const tab=PAPER.tab;
+  const tabs=[['search','论文检索'],['read','论文精读'],['verify','引文核验']];
+  let body='';
+  if(tab==='search'){
+    paperHot();
+    const HL=PAPER.hot[PAPER.dom];
+    body=`
+    <div class="ask pp-ask"><div class="ask-b">
+      <label class="sr" for="ppq">研究主题</label>
+      <textarea id="ppq" class="ask-t" rows="2" placeholder="输入研究主题或检索要求">${esc(PAPER.q)}</textarea>
+      <div class="ask-bar">
+        <div class="seg" role="radiogroup" aria-label="检索方式">
+          <button class="seg-i" type="button" role="radio" data-pp="mode|fast" aria-checked="${PAPER.mode==='fast'}"
+            title="返回最相关的 12 篇">快速搜索</button>
+          <button class="seg-i" type="button" role="radio" data-pp="mode|deep" aria-checked="${PAPER.mode==='deep'}"
+            title="返回 40 篇，按被引数排序">深度搜索</button></div>
+        <span class="grow"></span>
+        <button class="ctl ctl-go" type="button" data-pp="search">开始检索</button>
+      </div></div></div>
+    ${PAPER.resSt==='load'?PAPER_LOAD
+     :PAPER.res?`<div class="col" style="gap:var(--s3)">
+        <div class="row"><strong class="t-md">「${esc(PAPER.resQ)}」的检索结果</strong>
+          <span class="t-sm mut2 num">${PAPER.res.length} 篇</span><span class="grow"></span>
+          <button class="lnk" type="button" data-pp="clear" style="min-height:1.5rem">清除结果</button></div>
+        ${PAPER.res.length?`<div class="pgrid">${PAPER.res.map(paperCard).join('')}</div>`
+          :`<div class="empty">${PAPER.resSt||'没有找到相关论文，换个关键词试试'}</div>`}</div>`
+     :`<div class="col" style="gap:var(--s3)">
+        <strong class="pp-h2">高热论文</strong>
+        <div class="row wrap" style="gap:var(--s2)">
+          ${PAPER_DOM.map(([k,n])=>`<button class="pill${PAPER.dom===k?' is-on':''}" type="button" data-pp="dom|${k}"
+            aria-pressed="${PAPER.dom===k}">${n}</button>`).join('')}</div>
+        ${HL?(HL.length?`<div class="pgrid">${HL.map(paperCard).join('')}</div>`:'<div class="empty">暂无数据</div>')
+          :(PAPER.hotSt&&PAPER.hotSt!=='load'?`<div class="empty">${esc(PAPER.hotSt)}
+              <button class="btn" type="button" data-pp="hotretry">重试</button></div>`:PAPER_LOAD)}
+      </div>`}`;
+  }else if(tab==='read'){
+    body=cur?`
+    <section class="card"><div class="card-h"><strong>${esc(cur.title)}</strong></div>
+      <div class="card-b col" style="gap:var(--s3)">
+        <span class="t-sm mut2 num">${esc(paperMeta(cur))}</span>
+        <p class="pp-abs">${cur.abs?esc(cur.abs):'<span class="mut2">该论文没有提供摘要</span>'}</p>
+      </div></section>
+    <div class="ask pp-ask"><div class="ask-b">
+      <label class="sr" for="pprq">关于这篇论文的问题</label>
+      <textarea id="pprq" class="ask-t" rows="2" placeholder="这篇论文用了什么方法">${esc(PAPER.readQ)}</textarea>
+      <div class="ask-bar"><span class="t-xs mut2 grow">回答依据论文摘要，由已接入的模型生成</span>
+        <button class="ctl ctl-go" type="button" data-pp="ask"${cur.abs?'':' disabled title="没有摘要，无法精读"'}>提问</button></div>
+    </div></div>
+    ${PAPER.readSt==='load'?PAPER_LOAD:PAPER.readA?`<section class="card"><div class="card-b">
+      <p class="pp-abs${PAPER.readA.err?' c-err':''}">${esc(PAPER.readA.t)}</p></div></section>`:''}`
+    :`<div class="empty" style="padding:var(--s8) var(--s5)"><strong class="t-md" style="color:var(--ink)">还没有选择论文</strong>
+        <span class="t-sm">在「论文检索」中打开一篇论文，点「论文精读」</span>
+        <button class="btn" type="button" data-pp="tab|search">去检索</button></div>`;
+  }else{
+    const R=PAPER.verR;
+    body=`
+    <div class="ask pp-ask"><div class="ask-b">
+      <label class="sr" for="ppv">要核验的引文</label>
+      <textarea id="ppv" class="ask-t" rows="3" placeholder="粘贴一条参考文献或 DOI">${esc(PAPER.ver)}</textarea>
+      <div class="ask-bar"><span class="t-xs mut2 grow">在文献库中查找对应的论文，核对标题、作者和年份</span>
+        <button class="ctl ctl-go" type="button" data-pp="verify">开始核验</button></div>
+    </div></div>
+    ${PAPER.verSt==='load'?PAPER_LOAD:R?(R.length?`<div class="col" style="gap:var(--s3)">
+        <strong class="t-md">找到 ${R.length} 条可能对应的论文</strong>
+        <div class="card"><div class="card-b col" style="gap:0">${R.map(x=>`<div class="prow is-ro">
+          <span class="col grow" style="gap:2px;min-width:0"><strong class="t-md prow-t">${esc(x.p.title)}</strong>
+            <span class="t-xs mut2 num">${esc(paperMeta(x.p))}${x.p.doi?'　DOI: '+esc(x.p.doi):''}</span></span>
+          <span class="chip ${x.s>=0.8?'c-ok':x.s>=0.5?'c-dry':'c-mut'}" title="引文与标题的词重合度">标题匹配 ${Math.round(x.s*100)}%</span>
+          <button class="alnk" type="button" data-pp="open|${esc(x.p.id)}">查看</button></div>`).join('')}</div></div></div>`
+      :`<div class="empty">${PAPER.verSt||'没有找到对应的论文，这条引文可能有误'}</div>`):''}`;
+  }
+  return `<div class="page pp">
+  <div class="pp-top"><h1>论文工具</h1>
+    <p class="mut t-md" style="margin:0">一句话描述需求，检索全领域相关论文</p></div>
+  <div class="tabs">${tabs.map(([k,n])=>`<button class="tab${tab===k?' is-on':''}" type="button"
+    data-pp="tab|${k}" aria-selected="${tab===k}">${n}</button>`).join('')}</div>
+  ${body}
+</div>`;
+};
+function paperAct(a,arg,el){
+  const sync=()=>{const q=document.getElementById('ppq');if(q)PAPER.q=q.value;
+    const v=document.getElementById('ppv');if(v)PAPER.ver=v.value;
+    const r=document.getElementById('pprq');if(r)PAPER.readQ=r.value};
+  sync();
+  if(a==='tab'){PAPER.tab=arg;render();return}
+  if(a==='mode'){PAPER.mode=arg;render();return}
+  if(a==='dom'){PAPER.dom=arg;if(PAPER.hotSt!=='load')PAPER.hotSt='';render();return}
+  if(a==='hotretry'){PAPER.hotSt='';render();return}
+  if(a==='search'){paperSearch();return}
+  if(a==='clear'){PAPER.res=null;PAPER.resSt='';render();return}
+  if(a==='open'){PAPER.cur=arg;PAPER.tab='search';PAPER.net='ref';PAPER.netSt='';render();view.scrollTop=0;return}
+  if(a==='back'){PAPER.cur=null;render();return}
+  if(a==='net'){PAPER.net=arg;PAPER.netSt='';render();return}
+  if(a==='read'){PAPER.cur=arg;PAPER.tab='read';PAPER.readA=null;PAPER.readQ='';render();return}
+  const p=PAPER.store[arg];
+  if(a==='addproj'&&p){
+    menu(el,'<div class="menu-l">添加到项目</div>'+DB.projects.map(x=>
+      `<button class="menu-i" type="button" data-pick="${esc(x.id)}"><span class="ck"></span>
+        <span><span class="nm">${esc(x.name)}</span></span></button>`).join(''),v=>{
+      const pr=DB.projects.find(x=>x.id===v);if(!pr)return;
+      const name=p.title.slice(0,80)+(p.doi?'（DOI '+p.doi+'）':'')+'.pdf';
+      pr.kb=pr.kb||[];
+      if(pr.kb.indexOf(name)>=0){toast('该项目中已有这篇论文');return}
+      pr.kb.unshift(name);toast('已添加到「'+pr.name+'」的知识库')});
+    return}
+  if(a==='cite'&&p){
+    modal('引用格式',`<div class="col" style="gap:var(--s4)">
+      ${[['gbt','GB/T 7714'],['apa','APA']].map(([k,n])=>`<div class="col" style="gap:var(--s2)">
+        <div class="row"><span class="lbl grow">${n}</span>${cpBtn('cite-'+k,paperCite(p,k))}</div>
+        <p class="t-sm" style="margin:0;line-height:1.7;word-break:break-word">${esc(paperCite(p,k))}</p></div>`).join('')}
+      <p class="t-xs mut2" style="margin:0">由文献库的元数据拼成，投稿前请对照期刊要求核对卷期页码。</p>
+    </div>`,'关闭',()=>{});
+    const d=document.getElementById('dlg');
+    if(d)d.querySelectorAll('[data-copy]').forEach(b=>b.onclick=e=>{e.preventDefault();
+      navigator.clipboard.writeText(COPYSRC[b.dataset.copy]||'')
+        .then(()=>toast('已复制')).catch(()=>toast('复制失败，请手动选中'))});
+    return}
+  if(a==='ask'){const q=(PAPER.readQ||'').trim(), c=PAPER.store[PAPER.cur];
+    if(!q){toast('请输入问题');return}
+    if(!c||!c.abs)return;
+    PAPER.readSt='load';PAPER.readA=null;render();
+    MC.chat([{role:'system',content:'你是论文阅读助手。只根据下面给出的标题和摘要回答，摘要里没有的信息要明确说明摘要未提及，不要补充。用中文回答。'},
+      {role:'user',content:'标题：'+c.title+'\n摘要：'+c.abs+'\n\n问题：'+q}],{max:700})
+      .then(r=>{PAPER.readA={t:r.text||'模型没有返回内容'}})
+      .catch(e=>{PAPER.readA={t:modelErr(e),err:1}})
+      .then(()=>{PAPER.readSt='';if(S.route==='papers')render()});
+    return}
+  if(a==='verify'){const t=(PAPER.ver||'').trim();
+    if(!t){toast('请粘贴引文或 DOI');return}
+    PAPER.verSt='load';PAPER.verR=null;render();
+    const doi=(t.match(/10\.\d{4,9}\/[^\s"<>]+/)||[])[0];
+    const words=x=>String(x).toLowerCase().replace(/[^a-z0-9一-龥]+/g,' ').split(' ').filter(w=>w.length>2);
+    const score=p2=>{const tw=words(p2.title);if(!tw.length)return 0;
+      const cw=new Set(words(t));return tw.filter(w=>cw.has(w)).length/tw.length};
+    oaList(doi?'filter=doi:'+encodeURIComponent(doi.replace(/[.,;]+$/,'')):'search='+encodeURIComponent(t.slice(0,300))+'&per-page=5')
+      .then(L=>{PAPER.verR=L.map(p2=>({p:p2,s:doi?1:score(p2)})).sort((x,y)=>y.s-x.s).slice(0,5);PAPER.verSt=''})
+      .catch(e=>{PAPER.verR=[];PAPER.verSt=paperErr(e)})
+      .then(()=>{if(S.route==='papers')render()});
+    return}
+}
 V.projects=()=>`
 <div class="page">
   <div class="row wrap" style="align-items:flex-end;gap:var(--s4)">
-    <div class="col grow" style="gap:6px"><h1>项目</h1>
+    <div class="col grow" style="gap:6px"><h1>项目管理</h1>
       <p class="mut t-md" style="margin:0">按靶点归档，跨轮累积</p></div>
-    <div class="field" style="width:auto"><label class="sr" for="pq">搜索项目</label>
-      <input id="pq" class="input" value="${esc(S.pq||'')}" placeholder="搜项目名、靶点或目标"
-        style="width:min(100%,240px);height:2.125rem;min-height:2.125rem"></div>
+    <label class="fbar-q"><span class="sr">搜索项目</span>${SEARCH_IC}
+      <input id="pq" value="${esc(S.pq||'')}" placeholder="搜索项目名、靶点或目标"></label>
     <button class="btn btn-pri" type="button" data-act="newproj">新建项目</button>
   </div>
   <section>
@@ -12225,9 +12527,7 @@ function seekBlocked(){
   ${seekHead()}
   <section class="card acc-wet"><div class="card-b col" style="gap:var(--s3)">
     <strong class="t-md">${esc(db.n)} 不支持序列相似性检索</strong>
-    <p class="t-md mut" style="margin:0">这类检索要在服务端建索引（BLAST、MMseqs2 之类）。
-      这里接的是它的取回接口：给编号能拿回序列与结构，给序列拿不回同源。
-      换成内置样本库可以做比对；要查 ${esc(db.n)} 的某一条，直接给编号。</p>
+    <p class="t-md mut" style="margin:0">该库只接入了按编号取回，不支持序列相似性检索。可改用内置样本库做比对；要查 ${esc(db.n)} 的某一条，直接给编号。</p>
     <div class="row wrap" style="gap:var(--s2)">
       <button class="btn btn-pri" type="button" data-seekdb="builtin">换内置样本库比对</button>
       <button class="btn" type="button" data-go="viewer">按编号取回</button>
@@ -12295,8 +12595,7 @@ function kwResult(){
   </div>`
   :`<section class="card"><div class="card-b col" style="gap:var(--s3)">
     <strong class="t-md">没有匹配的条目</strong>
-    <p class="t-md mut" style="margin:0">UniProtKB 对这条查询返回了零条。
-      名称拼写、物种限定（organism_id:9606）、是否只看审编条目（reviewed:true）都会影响结果。</p>
+    <p class="t-md mut" style="margin:0">UniProtKB 没有返回结果。请检查名称拼写、物种限定和是否仅限审编条目。</p>
     <div class="row"><button class="btn" type="button" data-act="seekback">改查询</button></div>
   </div></section>`}
 
@@ -12305,8 +12604,7 @@ function kwResult(){
     <p class="t-sm mut" style="margin:0">调 UniProtKB 的 search 接口，字段用
       <span class="num">${esc(KW_FIELDS)}</span> 显式点名，一次取 25 条。
       上面每个值都来自这次返回，接口没给的写「—」。</p>
-    <p class="t-sm mut2" style="margin:0">RCSB PDB 这一侧只接了按编号取回，
-      没接它的全文检索索引，所以关键词查不到 PDB 条目——给 PDB ID 可以直接取回。</p>
+    <p class="t-sm mut2" style="margin:0">RCSB PDB 只支持按编号取回，不支持关键词检索。请输入 PDB ID。</p>
   </div></section>
 </div>`;
 }
@@ -12420,11 +12718,8 @@ function seekResult(){
 
   <section class="card"><div class="card-b col" style="gap:var(--s2)">
     <div class="lbl">这次检索做了什么</div>
-    <p class="t-sm mut" style="margin:0">对库里每一条跑一次 Smith-Waterman 局部比对，
-      打分矩阵 BLOSUM62，空位开 11、延 1（BLAST 蛋白默认）。
-      Score 是比对原始得分，一致度 = 相同残基 ÷ 比对长度，两个数都是当场算的。</p>
-    <p class="t-sm mut2" style="margin:0">这里不给 E 值。E 值要用 Karlin-Altschul 的 λ 与 K，
-      这两个常数依赖打分矩阵与空位罚分的统计标定，本库没有标定过，照抄一个数就是编的。</p>
+    <p class="t-sm mut" style="margin:0">方法：Smith-Waterman 局部比对，BLOSUM62，空位罚分 11 / 1。Score 为比对原始得分，一致度 = 相同残基 ÷ 比对长度。</p>
+    <p class="t-sm mut2" style="margin:0">未提供 E 值：本库没有做 Karlin-Altschul 统计标定。</p>
     <p class="t-sm mut2" style="margin:0">本项目的变体只存突变记法（如 R59K），没有整条序列，
       拼不出序列就进不了比对库——要让它们可检索，得先补上野生型全长序列。</p>
   </div></section>
@@ -12460,8 +12755,7 @@ function designAssets(){
   if(!all.length)return `
     <section class="card"><div class="card-b col" style="gap:var(--s3)">
       <strong class="t-md">这个项目还没有任何变体</strong>
-      <p class="t-md mut">设计工程管的是整个项目跨轮累积的设计与实测结果。
-        跑完第一轮、结果回流之后，这里会开始有东西——包括测定失败的那些，它们是负样本，不是垃圾。</p>
+      <p class="t-md mut">这里汇总整个项目跨轮的设计与实测结果。第一轮结果回流后开始有数据，测定失败的样本也会保留。</p>
       <div class="row" style="gap:var(--s2)"><button class="btn btn-pri" type="button" data-go="intake">去输入序列</button>
         <button class="btn btn-gh" type="button" data-act="addfail">录入已有的失败样本</button></div>
     </div></section>`;
@@ -12768,7 +13062,7 @@ function regDataset(){
   const ver='v'+(REGD().filter(x=>x.pid===p.id).length+1)+'.'+String(p.rounds.length);
   modal('登记为可复用数据集',`<div class="col" style="gap:var(--s4)">
     <p class="t-md mut" style="margin:0">把「${esc(p.name)}」当前的训练集冻结成一个版本，登记进生命科学数据。
-      登记之后别人能看到它存在，能不能取用由可见范围决定。</p>
+      登记后其他成员可以看到，能否取用由可见范围决定。</p>
     <div class="fgrid">
       ${fRow('数据集名称',1,`<input id="rgn" class="input" maxlength="40" value="${esc(p.name)} 训练集">`)}
       ${fRow('冻结版本',0,`<span class="t-md num">${ver}</span>`,'按本项目已登记次数与轮次生成')}
@@ -14765,16 +15059,17 @@ V.set=()=>{
   return `
 <div class="page">
   <div class="pg-hd">
-    <div class="col" style="gap:6px">
-      <h1>模型接入</h1>
-      <p class="mut t-md" style="margin:0">管理对话与推理使用的外部模型</p>
-    </div>
-    <div class="row wrap" style="gap:var(--s3)">
-      <input id="msq" class="input" style="max-width:22rem" value="${esc(S.msq||'')}"
-        placeholder="搜索模型系列" aria-label="搜索模型系列">
-      <span class="grow"></span>
+    <div class="row wrap" style="align-items:flex-end">
+      <div class="col grow" style="gap:6px">
+        <h1>模型接入</h1>
+        <p class="mut t-md" style="margin:0">管理对话与推理使用的外部模型</p>
+      </div>
       <button class="btn btn-pri" type="button" data-act="msnew">接入外部大模型</button>
     </div>
+  </div>
+  <div class="row wrap" style="gap:var(--s3);align-items:center">
+    <label class="fbar-q"><span class="sr">搜索模型系列</span>${SEARCH_IC}
+      <input id="msq" value="${esc(S.msq||'')}" placeholder="搜索模型系列"></label>
   </div>
 
   <div class="card">
@@ -16134,6 +16429,8 @@ function render(){
   const q=(s,f)=>view.querySelectorAll(s).forEach(f);
   q('[data-go]',b=>b.onclick=e=>{e.preventDefault();go(b.dataset.go)});
   q('[data-projdw]',b=>b.onclick=()=>{S.projDw=b.dataset.projdw;render()});
+  q('[data-pp]',b=>b.onclick=()=>{const v=b.dataset.pp.split('|');paperAct(v[0],v.slice(1).join('|'),b)});
+  q('#ppq',t=>t.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();paperAct('search','',t)}}));
   q('[data-proj]',b=>b.onclick=()=>{const p=DB.projects.find(x=>x.id===b.dataset.proj);S.projDw=null;
     /* 进项目就折起导航：项目页自己有一整套二级导航（概览／假设／设计／结果／送检），
        外面那一列这时候只是占地方。 */
@@ -17894,8 +18191,7 @@ function act(a,el){
         <select id="fk" class="input">${FAIL_KINDS.map(k=>`<option value="${k}">${FAIL_REASON[k]}</option>`).join('')}</select></div>
       <div class="field"><label class="label" for="fn">观察到什么</label>
         <input id="fn" class="input" placeholder="如：柱上降解，未定量"></div>
-      <p class="hint">失败不是缺失。录入后这条变体的处置变为「测定失败」，进训练集，与成功数据分开标记；
-        它和「未测」不是一回事——未测什么信息都没有，不参与重训。</p>
+      <p class="hint">录入后该变体标记为「测定失败」，作为负样本进入训练集。「未测」的变体不参与重训。</p>
     </div>`,'录入',()=>{
       const id=((document.getElementById('fv')||{}).value||'').trim().toUpperCase();
       const kind=(document.getElementById('fk')||{}).value||FAIL_KINDS[0];
@@ -18219,7 +18515,7 @@ function act(a,el){
           <input class="input" id="cx_${k}" type="text" value="${esc(c[k]||'')}"
             placeholder="${k==='batch'?'B-2411':k==='buffer'?'PBS pH 7.4':k==='temp'?'25℃':''}"></div>`}).join('')}
       </div>
-      <p class="hint">宿主与测定方法是受控词表，不接受自由填写。改动会进审计日志。
+      <p class="hint">宿主与测定方法只能从词表中选择，修改会记入审计日志。
         这一份上下文属于 Round ${r.i}，输入页与这里改的是同一份。</p></div>`;
     modal(`Round ${r.i} 实验上下文`,body,'保存',()=>{
       const before=CTX_FIELDS.map(([k,l,v,req,multi])=>k+'='+(multi?asList(c[k]).join('+'):(c[k]==null?'':c[k]))).join(' ');
