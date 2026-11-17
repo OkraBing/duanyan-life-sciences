@@ -9042,7 +9042,9 @@ async function oaList(query){
 function paperErr(e){return /Failed to fetch|NetworkError|Load failed/i.test(String(e&&e.message||e))
   ?'无法连接文献服务':'文献服务返回错误（'+String(e&&e.message||e).slice(0,40)+'）'}
 function paperHot(){
-  const k=PAPER.dom;if(PAPER.hot[k]||PAPER.hotSt==='load')return;
+  /* 上一次取失败了就停在失败上，等人点「重试」。
+     不拦的话每次渲染都会再发一次，失败又触发渲染——断网时就成了死循环。 */
+  const k=PAPER.dom;if(PAPER.hot[k]||PAPER.hotSt)return;
   PAPER.hotSt='load';
   const c=PAPER_BIO;
   const y=new Date().getFullYear()-1;
@@ -18656,6 +18658,8 @@ function act(a,el){
 document.querySelectorAll('[data-act]').forEach(b=>b.onclick=()=>act(b.dataset.act,b));
 document.querySelectorAll('#side [data-nav],#top [data-nav]').forEach(
   b=>b.onclick=()=>go(b.dataset.nav));
+/* 侧栏里的 data-go（左下角的用户名）不在 #view 里，render() 那一轮绑不到它，这里单独绑一次。 */
+document.querySelectorAll('#side [data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));
 /* 开页时给每个项目种上数据集：内容就是这个项目自己的变体表——
    真行真列真指纹，不是造出来的数。一份发布（能拿去训），一份留草稿（演示锁定之前的状态）。 */
 (function seedDsets(){
