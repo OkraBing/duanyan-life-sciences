@@ -3337,18 +3337,18 @@ function domOf(p){const x=p||PRJ();return DOMAINS.find(d=>d.k===(x&&x.dom))||DOM
    原先 title 就是按钮名本身，等于把眼前的字再念一遍。 */
 const NAV=[
   ['A','工作',[
-    ['chat','新建对话',"M5 6.5A2.5 2.5 0 0 1 7.5 4h9A2.5 2.5 0 0 1 19 6.5v7a2.5 2.5 0 0 1-2.5 2.5H11l-4 3.5V16A2.5 2.5 0 0 1 5 13.5zM12 7.5v5M9.5 10h5",'有事就在这儿说一句，要填的参数会在回答里出现'],
-    ['projects','项目管理',"M3.5 7.5a2 2 0 0 1 2-2h3.6l2 2.2h7.4a2 2 0 0 1 2 2v7.8a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2zM7.5 13.5h9",'一个课题跨多轮攒下来的东西都在这里']]],
+    ['chat','新建对话',"M5 6.5A2.5 2.5 0 0 1 7.5 4h9A2.5 2.5 0 0 1 19 6.5v7a2.5 2.5 0 0 1-2.5 2.5H11l-4 3.5V16A2.5 2.5 0 0 1 5 13.5zM12 7.5v5M9.5 10h5",'用一句话发起任务'],
+    ['projects','项目管理',"M3.5 7.5a2 2 0 0 1 2-2h3.6l2 2.2h7.4a2 2 0 0 1 2 2v7.8a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2zM7.5 13.5h9",'按课题管理多轮的数据、模型与实验']]],
   ['B','干湿闭环',[
     ['lab','实验管理',"M9.5 3.5v5.6L4.7 17.6A2.2 2.2 0 0 0 6.6 21h10.8a2.2 2.2 0 0 0 1.9-3.4L14.5 9.1V3.5M8 3.5h8M7.3 14.5h9.4",'送出去的批次走到哪了，哪一步在等你']]],
   /* 资源是「我自己攒下来的」：我的数据集、我训的模型。
      市场是「外面有什么、接没接」：公共工具、公共数据库。
      两件事混在一组里，同一个词（数据集／数据库）指两样东西。 */
   ['C','资源',[
-    ['dsets','我的数据集',"M4.5 6A1.5 1.5 0 0 1 6 4.5h12A1.5 1.5 0 0 1 19.5 6v12a1.5 1.5 0 0 1-1.5 1.5H6A1.5 1.5 0 0 1 4.5 18zM4.5 9.5h15M4.5 14.5h15M10 9.5v10",'能拿来训模型的数据，建集时把列和切分定死'],
-    ['mdl','模型制备',"M6.5 5a2 2 0 1 1 0 4a2 2 0 0 1 0-4zM17.5 5a2 2 0 1 1 0 4a2 2 0 0 1 0-4zM12 15a2 2 0 1 1 0 4a2 2 0 0 1 0-4zM8.5 7h7M7.4 8.8l3.6 6.5M16.6 8.8 13 15.3",'训一个打分器，看它在留出集上到底行不行']]],
+    ['dsets','我的数据集',"M4.5 6A1.5 1.5 0 0 1 6 4.5h12A1.5 1.5 0 0 1 19.5 6v12a1.5 1.5 0 0 1-1.5 1.5H6A1.5 1.5 0 0 1 4.5 18zM4.5 9.5h15M4.5 14.5h15M10 9.5v10",'用于模型训练的数据集'],
+    ['mdl','模型制备',"M6.5 5a2 2 0 1 1 0 4a2 2 0 0 1 0-4zM17.5 5a2 2 0 1 1 0 4a2 2 0 0 1 0-4zM12 15a2 2 0 1 1 0 4a2 2 0 0 1 0-4zM8.5 7h7M7.4 8.8l3.6 6.5M16.6 8.8 13 15.3",'训练、评测打分模型，以及模型推理']]],
   ['D','市场',[
-    ['shelf','公共工具',"M4.5 4.5h6v6h-6zM13.5 4.5h6v6h-6zM4.5 13.5h6v6h-6zM16.5 13.5v6M13.5 16.5h6",'某个工具接没接、能不能在这儿跑'],
+    ['shelf','公共工具',"M4.5 4.5h6v6h-6zM13.5 4.5h6v6h-6zM4.5 13.5h6v6h-6zM16.5 13.5v6M13.5 16.5h6",'查看和启用工具'],
     ['data','公共数据库',"M5 7c0-1.7 3.1-3 7-3s7 1.3 7 3-3.1 3-7 3-7-1.3-7-3zM5 7v10c0 1.7 3.1 3 7 3s7-1.3 7-3V7M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3",'某个库接没接、许可是什么']]],
   /* 照 bootcamp：系统配置这一类钉在导航最下面、账户上面。
      它不是一个研究动作，所以不进上面那几组；但「对话里那句话会不会被真的回答」
@@ -3356,7 +3356,7 @@ const NAV=[
      在线推理和批量推理曾经也钉在这里，现在并进「模型制备」做页签了——
      导航不为每一件和模型有关的事各开一格。 */
   ['S','',[
-    ['set','模型接入',"M9 4v4M15 4v4M6.5 8h11v3.5a5.5 5.5 0 0 1-11 0zM12 17v3.5",'对话里的意图判断和成稿走哪个模型，在这儿接']]],
+    ['set','模型接入',"M9 4v4M15 4v4M6.5 8h11v3.5a5.5 5.5 0 0 1-11 0zM12 17v3.5",'管理外部模型的接入']]],
   /* 「模型接入」原先单独钉在底部。它不是一个研究动作，当时就不好归组；
      现在并进「模型制备」做一个标签页——那一页本来就是「模型这件事在哪儿办」，
      对话走哪个模型也是模型的事。底部那一格腾给账户。 */
@@ -4380,7 +4380,7 @@ CARD.dscard=c=>{
            <span class="grow"></span>
            <button class="btn btn-gh" type="button" data-askthis="在 ${esc(d.id)} 上训一个模型"
              style="min-height:1.5rem;padding:0 9px;font-size:0.6875rem">在这上面训一个</button>`
-        : `<span class="t-xs mut2">草稿。发布之后才能拿来训，发布后内容锁死</span>
+        : `<span class="t-xs mut2">草稿。发布后才能用于训练，发布后内容锁定</span>
            <span class="grow"></span>
            <button class="btn" type="button" data-dspub="${esc(d.id)}"
              style="min-height:1.5rem;padding:0 10px;font-size:0.6875rem">发布锁定</button>`}
@@ -4581,7 +4581,7 @@ function atPick(i){
   AT.open=false;render();
   const t2=document.getElementById('ask');
   if(t2){t2.focus();const p2=before.length;t2.setSelectionRange(p2,p2)}
-  toast('已挂上 '+x.n+'　发送时会连同这句话一起带出去');
+  toast('已选用 '+x.n);
 }
 /* 挂在这句话上的东西：/ 唤起的技能、@ 引用的资料、传上来的文件。
    都是输入框顶上的一排卡片，各带一个 ×——选中了什么、怎么拿掉，一眼看得见。 */
@@ -4846,7 +4846,7 @@ V.labnew=()=>{
     style="align-self:flex-start;min-height:1.625rem;padding:0 10px;font-size:0.75rem">← 实验管理</button>
   <div class="col" style="gap:6px">
     <h1>发起新实验</h1>
-    <p class="mut t-md" style="margin:0;max-width:60ch">提交之后会生成一个批次，进度和结果回流都在实验管理里跟。
+    <p class="mut t-md" style="margin:0;max-width:60ch">提交后生成一个批次，可在实验管理中跟踪进度与结果。
       </p></div>
 
   <section class="fsec">
@@ -4995,7 +4995,7 @@ V.lab=()=>{
     <div class="row wrap" style="align-items:flex-end">
       <div class="col grow" style="gap:6px">
         <h1>实验管理</h1>
-        <p class="mut t-md" style="margin:0">${run.length} 个在跑，${mine.length} 个等你处理。</p></div>
+        <p class="mut t-md" style="margin:0">${run.length} 个进行中，${mine.length} 个待你处理</p></div>
       <button class="btn btn-pri" type="button" data-act="labnew">发起新实验</button>
     </div>
   </div>
@@ -5091,7 +5091,7 @@ V.labdet=()=>{
             <span class="t-sm num mut2">${esc((b.ctx&&b.ctx.reps)||pr.rep||'—')}</span></div>
           <div class="krow"><span class="t-sm grow">周期</span>
             <span class="t-sm num mut2">${esc(pr.days||'—')}</span></div>
-          <span class="t-xs mut2">「复用配方」会把这一份配方和这一批的服务商、条数一起带到新建实验里，改完再提交。</span>
+          <span class="t-xs mut2">「复用配方」会沿用这份配方及本批的服务商、条数新建实验。</span>
         </div></section>
     </div>
   </div>
@@ -5121,7 +5121,7 @@ V.dsets=()=>{
       <div class="col grow" style="gap:6px">
         <h1>我的数据集</h1>
         <p class="mut t-md" style="margin:0;max-width:60ch"
-          >自己建的、可用于模型训练的数据集。跨项目列出，可按项目筛选。</p>
+          >用于模型训练的数据集，可按项目筛选</p>
       </div>
     </div>
   </div>
@@ -5192,9 +5192,9 @@ function dsBody(){
           {n:'详情',attr:`data-dspick="${esc(d.id)}"`},
           {n:'发布',attr:`data-dspub="${esc(d.id)}"`,
            off:d.st==='pub'?('已于 '+(d.pubAt||d.at)+' 发布锁定'):'',
-           tip:'发布后内容锁定，才能拿来训'},
+           tip:'发布后内容锁定，可用于训练'},
           {n:'删除',attr:`data-dsdel="${esc(d.id)}"`,
-           off:used?('有 '+used+' 个训练任务训在它上面，删了那些模型就说不清训在哪一版'):''}
+           off:used?('已被 '+used+' 个训练任务使用，不能删除'):''}
         ])}
       </tr>`}).join('')}</tbody></table></div>
 `
@@ -5256,7 +5256,7 @@ function srcDetail(ab){
       ${row('许可',d.lic,/未核实|Other/.test(d.lic))}
       ${row('接口',d.api,/未接入/.test(d.api))}
       ${row('接入状态',d.wired?'已接入':'未接入')}
-      ${row('本项目',d.wired?(dsSrcOn(d.ab)?'已启用':'未启用'):'接上之前拨不动')}
+      ${row('本项目',d.wired?(dsSrcOn(d.ab)?'已启用':'未启用'):'未接入')}
     </div>
     <span class="t-xs mut2">写「未核实」的格子，是我没有逐条核对过发布方的条款或口径，
       不是它没有——把任何一条数据用于训练或对外交付之前，请先核实。</span>
@@ -5293,11 +5293,11 @@ function toolDetail(n){
 const MDL_TABS=[['cur','我的模型'],['job','模型训练'],['eval','模型评测'],
   ['infer','在线推理'],['batch','批量推理']];
 const MDL_SUB={
-  cur:'用项目实测数据或数据集训出的打分模型，都收在这里。',
-  job:'用项目实测数据或数据集训出的打分模型，都收在这里。',
-  eval:'用项目实测数据或数据集训出的打分模型，都收在这里。',
-  infer:'接了几家模型，对话和成稿走哪一家，在这儿问一句试出来。',
-  batch:'挑一份已发布的数据集，指定一列当提示词，逐条跑完出一个结果文件。'};
+  cur:'用实测数据训练出的打分模型',
+  job:'训练任务的进度与结果',
+  eval:'模型在留出集上的评测结果',
+  infer:'与已接入的模型对话，或并排比较回答',
+  batch:'让模型逐条处理一份数据集，输出结果文件'};
 /* 训练这件事新手最常漏的是第三步：训出来的模型默认是停用的，
    不启用就 @ 不到、排序任务里也选不着，而界面上看不出「它还没被挂上去」。
    所以这三步里真正要写的是那一步。 */
@@ -5337,7 +5337,7 @@ function importFromFile(nm,file){
       why:'这一版只能跑本产品导出的打分器 JSON。'+(res&&res.why?('读的时候：'+res.why):''),
       imported:true});
     render();
-    toast(nm+' 已登记，但跑不了：'+(res&&res.why?res.why:'不是本产品导出的格式'));
+    toast(nm+' 已导入，但无法运行：'+(res&&res.why?res.why:'不是本产品导出的格式'));
   };
   r.onerror=()=>toast('这个文件读不出来');
   r.readAsText(file);
@@ -5357,7 +5357,7 @@ function importFromUrl(nm,u){
         why:'取到了模型卡，但权重要在后端跑——浏览器里没有推理后端，所以这里只是一条记录。'
           +(j.pipeline_tag?('任务类型 '+j.pipeline_tag+'。'):'')
           +(j.downloads!=null?('下载量 '+j.downloads+'。'):'')});
-      render();toast(nm+' 已登记：取到了模型卡，但这儿跑不了它的权重');
+      render();toast(nm+' 已导入模型卡，权重无法在本机运行');
     })
     .catch(e=>{
       say('<span class="t-sm" style="color:var(--err)">取不到：'+esc(e.message)
@@ -5375,7 +5375,7 @@ function importModel(txt,fname){
   let j; try{ j=JSON.parse(txt) }catch(e){ return {ok:false,why:'不是合法的 JSON：'+e.message} }
   const sc=j.scoring;
   if(!sc)return {ok:false,why:'这个文件里没有 scoring 段，不是本产品导出的打分器。'
-    +'PyTorch、ONNX、safetensors 这类权重在浏览器里跑不了，这一版不收。'};
+    +'暂不支持 PyTorch、ONNX、safetensors 格式的权重。'};
   const st=sc.standardization||{};
   const w=j.weights, mu=st.mean, sg=st.sd;
   if(!Array.isArray(w)||!Array.isArray(mu)||!Array.isArray(sg))
@@ -5560,7 +5560,7 @@ function mdlCur(){
     :(q?`<div class="empty" style="padding:var(--s6)"><div class="col" style="gap:4px">
        <strong class="t-md" style="color:var(--ink)">没有匹配的模型</strong>
        <span class="t-sm">换个关键词试试</span></div></div>`
-      :mdlEmpty('模型','还没有训出来的模型','训练跑完，模型会出现在这里。',
+      :mdlEmpty('模型','还没有模型','训练完成后，模型会出现在这里。',
          ALL_MODELS().filter(m=>m.st!=='failed').length))}
     </div></section>`;
 }
@@ -5622,7 +5622,7 @@ function mdlJob(){
         ${acts([
           {n:'详情',attr:`data-jobpick="${esc(m.id)}"`},
           {n:'同步到我的模型',attr:`data-mdlsync="${esc(m.id)}"`,
-           off:m.st==='failed'?'这一次没训出来，没有可同步的权重'
+           off:m.st==='failed'?'训练失败，没有可同步的权重'
              :(inLib(m)?'已经在「我的模型」里了':''),
            tip:'同步之后才能在「我的模型」里启用，启用了对话里才 @ 得到'},
           {n:'复制',attr:`data-trcopy="${esc(m.id)}"`,tip:'新建一条训练任务，沿用这一条的参数'},
@@ -5631,7 +5631,7 @@ function mdlJob(){
       </tr>`}).join('')}</tbody></table></div>
       <span class="t-xs mut2">指标是在你这台机器的浏览器里算出来的，换一台也复现得出来。
 </span>`
-    :mdlEmpty('训练任务','还没有训练任务','跑过的训练都会留在这里，成功的和没跑成的都留。',
+    :mdlEmpty('训练任务','还没有训练任务','训练任务会保留在这里，包括失败的任务。',
         ALL_MODELS().length)}
     </div></section>`;
 }
@@ -5725,9 +5725,9 @@ function jobDrawer(m){
         ${row('创建时间',esc(m.at))}
       </div>
       ${m.st==='failed'
-        ?`<div class="col" style="gap:4px"><span class="lbl">没跑成的原因</span>
+        ?`<div class="col" style="gap:4px"><span class="lbl">失败原因</span>
             <span class="t-md">${esc(m.why||'—')}</span>
-            <span class="t-xs mut2">没跑成的也留在列表里：训练那一屏要能回答「我上次训到底怎么了」。</span>
+            <span class="t-xs mut2">失败的任务也会保留，便于排查原因。</span>
           </div>`
         :`<div class="col" style="gap:4px">
             <span class="lbl">切分</span>
@@ -5941,7 +5941,7 @@ V.dsnew=()=>{
   return `<div class="page">
   <div class="col" style="gap:6px">
     <h1>新建数据集</h1>
-    <p class="mut t-md" style="margin:0;max-width:62ch">上传数据表并指定目标列。切分比例与随机种子在本步骤确定，
+    <p class="mut t-md" style="margin:0;max-width:62ch">上传数据表并指定目标列。切分比例与随机种子在此确定，
       此后每个模型均可追溯其所依据的数据集版本。</p>
   </div>
 
@@ -5999,7 +5999,7 @@ V.dsnew=()=>{
                 <span class="t-xs mut2">${esc(e.from)}</span></span>
               <span class="t-xs mut2 num" style="flex:0 0 auto">${esc(String(e.at))}</span>
             </button>`).join('')}</div>`
-          :`<span class="t-sm mut">这个项目里还没有能直接建集的表格文件。换成本地上传，或者先跑完一个会产出变体表的任务。</span>`}
+          :`<span class="t-sm mut">该项目还没有可用的表格文件。可改用本地上传。</span>`}
           ${readOut}</div>`}
 
       ${colList}
@@ -6046,7 +6046,7 @@ V.dsnew=()=>{
   </section>
 
   <div class="fbar">
-    <span class="t-sm mut2">${ready?'建完之后是草稿，发布锁定才能拿来训':'名称、文件、目标列都填完才能建'}</span>
+    <span class="t-sm mut2">${ready?'建立后为草稿，发布后才能用于训练':'请填写名称、文件和目标列'}</span>
     <span class="grow"></span>
     <button class="btn" type="button" data-act="dscancel">取消</button>
     <button class="btn btn-pri" type="button" data-act="dsmake" ${ready?'':'disabled'}>建立数据集</button>
@@ -6137,7 +6137,7 @@ V.trainnew=()=>{
 
       ${d?`<div class="field"><span class="label">预测目标</span>
         <div class="krow"><span class="t-md num grow">${esc(d.target)}</span>
-          <span class="t-xs mut2">建 ${esc(d.id)} 的时候就定了，这里改不了</span></div></div>
+          <span class="t-xs mut2">建 ${esc(d.id)} 时已确定，不可修改</span></div></div>
       <div class="field"><span class="label">切分</span>
         <div class="splitbar" style="max-width:26rem">
           <i class="is-tr" style="flex:${d.split.train.length}"><b>${d.split.train.length} 训</b></i>
@@ -6176,7 +6176,7 @@ V.trainnew=()=>{
   </section>
 
   <div class="fbar">
-    <span class="t-sm mut2">${ready?'跑完会在「模型评测」里和两条基线比一次'
+    <span class="t-sm mut2">${ready?'完成后可在「模型评测」中查看与基线的对比'
       :('还差：'+[[!NEWTR.name.trim(),'训练名称'],[!baseOkv,'一个能跑的基础模型'],
           [!mOk,'一个能跑的训练方法'],[!tgt,'预测目标'],
           [!(d||fs.length>0),'够训的实测数据']].filter(x=>x[0]).map(x=>x[1]).join('、'))}</span>
@@ -6242,7 +6242,7 @@ V.chats=()=>{
     ${live.length?`<div class="chcards">${live.map(card).join('')}</div>`
     :`<div class="empty" style="padding:var(--s5)"><div class="col" style="gap:4px">
        <strong class="t-md" style="color:var(--ink)">${q?'没有匹配的对话':'还没有对话'}</strong>
-       <span class="t-sm">${q?'换个关键词试试':'说一句话就开始了'}</span></div>
+       <span class="t-sm">${q?'换个关键词试试':'在首页输入一句话即可开始'}</span></div>
        ${q?'':'<button class="btn" type="button" data-nav="chat">去对话</button>'}</div>`}
   </div>
 
@@ -7134,7 +7134,7 @@ function SCORERS(){
 }
 function SCORER_HINT(){
   const all=PMODELS(), ok=all.filter(canScore);
-  if(!all.length)return '还没有训过模型。说「用这个项目的实测数据训一个打分模型」可以训一个';
+  if(!all.length)return '还没有模型。可以说「用这个项目的实测数据训一个打分模型」';
   const no=all.length-ok.length;
   const win=ok.filter(m=>m.winS).length;
   return (ok.length?ok.length+' 个能用于排序'+(win?('，其中 '+win+' 个排序赢过基线'):'，但没有一个排序赢过基线——用它排不一定比不用强'):'没有能用于排序的模型')
@@ -7314,7 +7314,7 @@ FLOW.rank=f=>{
       text:any.length
         ?('有 '+any.length+' 个训好的模型，但一个都没启用。去「模型制备 → 我的模型」'
           +'把要用的那个打开——启用之后这里和设计任务里才选得到它。')
-        :'先训一个出来：说「用这个项目的实测数据训一个打分模型」。'})];
+        :'请先训练一个模型，例如说「用这个项目的实测数据训一个打分模型」。'})];
   }
   const named=f.mdl&&T.find(m=>m.id===String(f.mdl).toUpperCase());
   const opts=T.map(m=>m.id+'　'+(m.name||tgtName(m.target))+'　'+(m._pn||''));
@@ -7349,7 +7349,7 @@ FLOW.train=f=>{
       mkCard('note',{title:'训练集',
         text:'留出集从头到尾不参与任何一步：标准化、λ、特征选择都只用训练集和验证集。'
           +'评测的时候会和两条基线比：永远猜均值的，和只用一个特征的。'}),
-      mkCard('form',{cap:'train',title:'模型制备',sub:'训一个打分器',
+      mkCard('form',{cap:'train',title:'模型制备',sub:'训练打分模型',
         fields:[
           {k:'ds',label:'数据集',v:cur,ty:'sel',opts:[SELF].concat(dsOpts),
            hint:nDraft?(nDraft+' 个草稿没列进来：草稿还能改，改完发布才能拿来训——'
@@ -7359,7 +7359,7 @@ FLOW.train=f=>{
            hint:'只对「本项目实测」生效；数据集的目标列在建集时就定了'},
           {k:'base',label:'基础模型',v:BASE_MODELS[0].n,ty:'sel',
            opts:BASE_MODELS.map(x=>x.n+(x.ok?'':'（未接入）')),
-           hint:'带「未接入」的选了也跑不了，会直接告诉你缺什么'},
+           hint:'标「未接入」的选项无法运行'},
           {k:'method',label:'训练方法',v:TRAIN_METHOD[0].n,ty:'sel',
            opts:TRAIN_METHOD.map(x=>x.n+(x.ok?'':'（未接入）')),
            hint:'训练方法和基础模型是两件事：换方法不等于换模型'},
@@ -7377,14 +7377,14 @@ FLOW.train=f=>{
   return [
     mkCard('note',{title:'训练集来自这个项目已经测出来的数据',
       text:'共 '+CANDS().length+' 条候选，其中有实测值的会进训练集。'}),
-    mkCard('form',{cap:'train',title:'模型制备',sub:'在本项目数据上训一个打分器',
+    mkCard('form',{cap:'train',title:'模型制备',sub:'用本项目数据训练打分模型',
       fields:[
         {k:'ds',label:'数据集',v:'本项目实测（'+pr.name+'）',ty:'sel',
          opts:['本项目实测（'+pr.name+'）'],
          hint:'还没有别的数据集。说「上传一份数据建成数据集」可以建一个'},
         {k:'base',label:'基础模型',v:BASE_MODELS[0].n,ty:'sel',
          opts:BASE_MODELS.map(x=>x.n+(x.ok?'':'（未接入）')),
-         hint:'带「未接入」的选了也跑不了，会直接告诉你缺什么'},
+         hint:'标「未接入」的选项无法运行'},
         {k:'method',label:'训练方法',v:TRAIN_METHOD[0].n,ty:'sel',
          opts:TRAIN_METHOD.map(x=>x.n+(x.ok?'':'（未接入）')),
          hint:'训练方法和基础模型是两件事：换方法不等于换模型'},
@@ -7866,7 +7866,7 @@ SUBMIT.str=(c,v)=>{
         '- 跑于：'+nowStamp(),'',
         '## 产出','- 结构引用：'+(v.model||'—')+' 对应条目与可取回地址',
         '- 置信度：逐条 ipTM 与自洽 RMSD',''].join('\n')}]);
-    say('跑完了。产出是结构引用和逐条置信度，都在上面的文件里。',
+    say('已完成。产出是结构引用和逐条置信度，见上方文件。',
       [mkCard('struct3',{title:'三维预览'})]);
   });
   return run;
@@ -7935,7 +7935,7 @@ SUBMIT.rank=(c,v)=>{
   const mid=String(v.mdl||'').match(/^M-\d+/);
   const m=mid?ALL_MODELS().find(x=>x.id===mid[0]):null;
   if(!m){toast('先选一个打分器');return null}
-  if(!canScore(m)){toast('这个打分器打不了分：'+whyNoScore(m));return null}
+  if(!canScore(m)){toast('该模型暂不能打分：'+whyNoScore(m));return null}
   const rm=String(v.who||'').match(/^第 (\d+) 轮/);
   const round=rm?+rm[1]:null;
   const topN=Math.max(1,Math.min(200,+v.n||10));
@@ -7999,10 +7999,10 @@ SUBMIT.train=(c,v)=>{
         pu=pickOf(PARAM_UPD,v.upd);
   const blocked=[['基础模型',bm],['训练方法',mt],['参数更新',pu]].filter(x=>!x[1].ok);
   if(blocked.length){
-    say(blocked.map(([k,x])=>`${k}「${x.n}」跑不了：${x.why||'这里没接这条路'}`).join('；')
+    say(blocked.map(([k,x])=>`${k}「${x.n}」未接入，无法运行：${x.why||'执行体未接入'}`).join('；')
       +`。没有后端就只能排队，不能出指标——与其给一个假的，不如现在就说清楚。`
       +`把这几栏换回能在浏览器里跑的那组，先训一个出来当底线。`,
-      [mkCard('note',{title:'这一组跑不了',
+      [mkCard('note',{title:'这一组配置无法运行',
         text:blocked.map(([k,x])=>k+'：'+x.n+'——'+(x.why||x.d)).join('\n')})]);
     c.done=1;return null;
   }
@@ -8053,7 +8053,7 @@ SUBMIT.train=(c,v)=>{
           standardization:'除截距外各列按训练集的均值与标准差标准化，权重是标准化后的。',
           note:'λ 在'+r.lamBy+'；留出集没有参与任何一步。',
           at:nowStamp()},null,2)}]);
-      say(`训完了。在 ${ds.id} 的留出集上 ρ=${r.rho.toFixed(3)}，RMSE=${r.rmse.toFixed(3)}。`
+      say(`训练完成。在 ${ds.id} 的留出集上 ρ=${r.rho.toFixed(3)}，RMSE=${r.rmse.toFixed(3)}。`
         +`λ=${r.lam}，${r.lamBy}。`,
         [mkCard('metric',{r:r}),
          mkCard('scat',{pred:r.pred,act:r.act,mean:r.trainMean,target:ds.target})]);
@@ -8106,7 +8106,7 @@ SUBMIT.train=(c,v)=>{
         note:'指标在留出集上算出，λ 在训练集内部选；标准化与位点表只用训练集统计。'
           +'基线和模型用的是同一个留出集；单特征基线是在训练集上挑的，没有拿留出集挑。',
         at:nowStamp()},null,2)}]);
-    say(`训完了。留出集上 Spearman ρ=${r.rho.toFixed(3)}，RMSE=${r.rmse.toFixed(3)}。`
+    say(`训练完成。留出集上 Spearman ρ=${r.rho.toFixed(3)}，RMSE=${r.rmse.toFixed(3)}。`
       +`这两个数是在 ${r.nTest} 条没参与训练的候选上算出来的。`,
       [mkCard('metric',{r:r}),
        mkCard('scat',{pred:r.pred,act:r.act,mean:r.trainMean,target:v.target})]);
@@ -8187,7 +8187,7 @@ function fieldOfCol(col){
 /* 这个打分器为什么用不了——要能说出口，不能只是在界面上少一行。 */
 function whyNoScore(m){
   if(!m)return '没有这个模型';
-  if(m.st==='failed')return m.why||'这一次训练没训出来';
+  if(m.st==='failed')return m.why||'训练失败';
   if(!m.w)return '没有权重，训练没走完';
   if(m.kind==='ds'&&!(m.featK&&m.featK.length))
     return '这是用上传数据集训的，但没记下用了哪几列特征，补不回来';
@@ -8652,7 +8652,7 @@ function lastCap(){
 function agentSend(){
   const ta=document.getElementById('ask');
   let txt=((ta&&ta.value)||S.ask||'').trim();
-  if(!txt){toast('先说一句话');if(ta)ta.focus();return}
+  if(!txt){toast('请输入内容');if(ta)ta.focus();return}
   /* @ 引用的资料接在这句话后面一起带出去 */
   if((S.useDocs||[]).length)txt+='　'+S.useDocs.map(n=>'「'+n+'」').join('');
   S.useDocs=[];
@@ -8709,7 +8709,7 @@ function agentSend(){
     const hint='可以直接说要做的事，比如「检索和这条序列同源的条目」「从 R'+(S.round||1)+' 选 24 条送去测」「用实测数据训一个打分模型」。';
     if(String(e.message||e)==='NOKEY'){say(modelErr(e)+hint);return}
     say((stray?'你挂的「'+stray+'」不是多段流程里的某一段，改不了路由。':'')
-      +'这句话没送出去：模型服务暂时连不上，没有执行任何操作。'+hint);
+      +'这句话没送出去：模型服务暂时无法连接，未执行任何操作。'+hint);
   });
 }
 
@@ -8802,7 +8802,7 @@ function bindChat(view){
       const t=TEMPLATES[a.slice(4)];
       if(!t){toast('没有这份模板');return}
       dl(t.n,t.make(),'text/csv').then(r=>toast(
-        r==='saved'?t.n+' 已保存，照着它的列改成你自己的数据':r==='declined'?'已取消':'下载失败'));
+        r==='saved'?t.n+' 已保存':r==='declined'?'已取消':'下载失败'));
       return;
     }
     if(a==='demotab'){
@@ -9013,7 +9013,7 @@ function pjOpener(p){
   if(running.length)bits.push(running.length+' 个批次在跑');
   if(waitMe.length)bits.push(waitMe.length+' 个批次等你处理（'+esc(waitMe[0].id)+'　'+esc((nextStep(waitMe[0])||{}).act||'')+'）');
   if(best)bits.push('有一个能用的打分器 '+esc(best.name||best.id)
-    +'（留出 ρ '+best.rho.toFixed(3)+(best.rho<=0?'，排反了，先别拿它挑候选':
+    +'（留出 ρ '+best.rho.toFixed(3)+(best.rho<=0?'，排序方向相反，暂不建议用于筛选':
       best.rho<0.3?'，偏弱':'')+'）');
   const asks=[];
   if(waitMe.length)asks.push('把 '+waitMe[0].id+' 的结果导进来');
@@ -9022,7 +9022,7 @@ function pjOpener(p){
   asks.push('这一轮还能不能再往上推');
   return `<div class="turn turn-ai"><span class="turn-g" aria-hidden="true"></span>
     <div class="turn-b">
-      <p class="turn-p">${esc(p.name)}，${esc(bits.join('；'))}。要从哪儿开始？</p>
+      <p class="turn-p">${esc(p.name)}，${esc(bits.join('；'))}。从哪一步开始？</p>
       <div class="row wrap" style="gap:6px;margin-top:var(--s3)">
         ${asks.slice(0,3).map(a=>`<button class="ch" type="button" data-askthis="${esc(a)}"
           >${esc(a)}</button>`).join('')}
@@ -9079,7 +9079,7 @@ function pjExpTab(p){
         <span><i>更新</i><b class="num">${esc(m.at||'—')}</b></span>
       </span>
       ${failed&&m.why?`<span class="t-xs" style="color:var(--err)">${esc(m.why)}</span>`
-        :(rho!=null&&rho<=0?'<span class="t-xs" style="color:var(--err)">排反了，先别拿它挑候选</span>':'')}
+        :(rho!=null&&rho<=0?'<span class="t-xs" style="color:var(--err)">排序方向相反，暂不建议用于筛选</span>':'')}
     </button>`};
   const bcard=b=>{const st=statusOf(b.status), nx=nextStep(b);
     const mine=nx&&nx.who==='你';
@@ -9100,14 +9100,12 @@ function pjExpTab(p){
       <span class="t-xs mut2 num">${M.length}</span><span class="grow"></span>
       ${add('trainnew','新建训练任务','data-nav="trainnew"')}</div>
     ${M.length?M.map(mcard).join('')
-      :`<span class="t-sm mut pjx-none">这个课题还没有训过模型。有了实测数据之后，
-          说一句「用这个项目的实测数据训一个打分模型」。</span>`}
+      :`<span class="t-sm mut pjx-none">还没有训练任务</span>`}
     <div class="pjx-sec"><span class="lbl">实验任务</span>
       <span class="t-xs mut2 num">${B.length}</span><span class="grow"></span>
       ${add('labnew','发起新实验','data-act="labnew"')}</div>
     ${L2.length?L2.map(bcard).join('')
-      :`<span class="t-sm mut pjx-none">这个课题还没有实验批次。
-          说一句「从 R${p.rounds.length} 选几条送去测」就能发起一批。</span>`}
+      :`<span class="t-sm mut pjx-none">还没有实验任务</span>`}
   </div>`;
 }
 V.project=()=>{
@@ -9129,7 +9127,7 @@ V.project=()=>{
     <span class="grow"></span>
     ${outBar(1)}
     <button class="btn btn-pri pjx-new" type="button" data-act="pjnew"
-      title="新开一段：当前这段会收进这个课题的对话列表">
+      title="新建对话">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"
         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
         ><path d="M12 5.5v13M5.5 12h13"/></svg>新建对话</button>
@@ -9309,7 +9307,7 @@ function docRail(p){
     </div>`
     :`<div class="empty" style="padding:var(--s5)"><div class="col" style="gap:4px">
        <strong class="t-md" style="color:var(--ink)">还没有文档</strong>
-       <span class="t-sm">在对话里跑完一次检索、预测、设计或实验，产出会自动存到这里</span></div>
+       <span class="t-sm">对话中产出的文件会自动保存到这里</span></div>
        <button class="btn" type="button" data-go="chat">去对话</button></div>`}
     ${cur?docPreview(cur):''}
   </aside>`;
@@ -12685,7 +12683,7 @@ function reuseTask(id,edit){
   }
   if(route){JOBV[route]='new';go(route);}
   else{S.ask=t.n;go('chat');}
-  toast(edit?'已带入参数，改完再提交':'已复用参数，确认后提交');
+  toast('已沿用参数');
 }
 
 /* 实验结论：把这一批从发起到回流写成一份能带走的 Markdown。
@@ -14374,7 +14372,7 @@ function inboxMenu(anchor){
         </span></button>`).join('')
       :`<div class="ib-empty">
           <strong class="t-md">没有在等你的事</strong>
-          <span class="t-sm mut">批次要你确认、结果等你审核、任务没跑成，都会出现在这里。</span>
+          <span class="t-sm mut">待确认的批次、待审核的结果和失败的任务会出现在这里。</span>
         </div>`}
   </div>`;
   menu(anchor,html,v=>{
@@ -14759,8 +14757,8 @@ V.set=()=>{
       ${acts([
         {n:'测试',attr:'data-mstest="'+esc(x.id)+'"',tip:'发一次真请求，按结果改授权状态'},
         {n:'模型管理',attr:'data-msmdl="'+esc(x.id)+'"'},
-        x.builtin?{n:'编辑',off:'内置的一条，改不了'}:{n:'编辑',attr:'data-msedit="'+esc(x.id)+'"'},
-        x.builtin?{n:'删除',off:'内置的一条，删不掉'}
+        x.builtin?{n:'编辑',off:'内置系列不可编辑'}:{n:'编辑',attr:'data-msedit="'+esc(x.id)+'"'},
+        x.builtin?{n:'删除',off:'内置系列不可删除'}
                  :{n:'删除',attr:'data-msdel="'+esc(x.id)+'"'}
       ])}
     </tr>`};
@@ -14769,7 +14767,7 @@ V.set=()=>{
   <div class="pg-hd">
     <div class="col" style="gap:6px">
       <h1>模型接入</h1>
-      <p class="mut t-md" style="margin:0">对话里的意图判断和成稿走这里接的模型。不接也能用。</p>
+      <p class="mut t-md" style="margin:0">管理对话与推理使用的外部模型</p>
     </div>
     <div class="row wrap" style="gap:var(--s3)">
       <input id="msq" class="input" style="max-width:22rem" value="${esc(S.msq||'')}"
@@ -14795,8 +14793,7 @@ V.set=()=>{
     </div>
   </div>
 
-  <p class="t-sm mut2" style="max-width:52ch">密钥只存在这台机器上，不随页面分发，也不会写进导出的任何文件。
-    「后端代理」那一条页面里一个字都没有，密钥由后端保管。</p>
+  <p class="t-sm mut2" style="max-width:52ch">密钥仅保存在本机，不会随页面或导出文件外传。</p>
   ${S.msDrawer?msDrawer(S.msDrawer):''}
 </div>`;
 };
@@ -14818,7 +14815,7 @@ function msCred(pv,exist){
         <label class="label" for="mcs">系列名称<span class="c-err">　*</span></label>
         <input id="mcs" class="input" maxlength="30" spellcheck="false"
           value="${esc(isEdit?(exist.sname||''):'')}" placeholder="组里自己部署的 vLLM">
-        <span class="t-xs mut2">这条服务在列表里叫什么</span>
+        <span class="t-xs mut2">显示在模型系列列表中的名称</span>
       </div>`:''}
       <div class="field">
         <label class="label" for="mcn">凭证名称</label>
@@ -14860,8 +14857,7 @@ function msCred(pv,exist){
         models:(pv.seed||[]).map(n=>({name:n,st:'untested'}))});}
       if(k)MC.setKeyOf(id,k);    // 留空 = 不改已存的那把
       render();
-      toast(isEdit?'已保存。改过之后状态回到未测试'
-        :'已接入。点「测试」看通不通');
+      toast(isEdit?'已保存，授权状态已重置为未测试':'已接入，请测试连接');
     });
 }
 
@@ -14885,8 +14881,8 @@ function msDrawer(sid){
         title="用这个模型发一次真请求，按结果改它的授权状态">测试</button></div></td>
     <td><div class="acts">
       ${x.builtin
-        ?`<button class="alnk" type="button" disabled title="内置的一条，模型跟随后端，改不了">编辑</button>
-          <button class="alnk" type="button" disabled title="内置的一条，删不掉">删除</button>`
+        ?`<button class="alnk" type="button" disabled title="内置系列不可编辑">编辑</button>
+          <button class="alnk" type="button" disabled title="内置系列不可删除">删除</button>`
         :`<button class="alnk" type="button" data-msmedit="${esc(sid)}|${esc(m.name)}">编辑</button>
           <button class="alnk" type="button" data-msmdel="${esc(sid)}|${esc(m.name)}">删除</button>`}
     </div></td></tr>`}).join('');
@@ -14896,10 +14892,10 @@ function msDrawer(sid){
         <table aria-label="${esc(x.label)} 下的模型"><thead><tr><th scope="col">模型名称</th>
           <th scope="col">授权状态</th><th scope="col">操作</th></tr></thead>
         <tbody>${rows||`<tr><td colspan="3"><div class="empty">
-          这个系列下还没有模型。模型名要跟服务商文档一字不差，所以不替你填。
+          还没有模型。模型名称需与服务商文档一致。
         </div></td></tr>`}</tbody></table>
       </div>
-      ${x.builtin?'<p class="t-sm mut2">内置的一条，模型列表跟随后端，这里改不了。</p>'
+      ${x.builtin?'<p class="t-sm mut2">内置系列的模型由后端提供，不可修改。</p>'
         :`<button class="btn" type="button" data-msmadd="${esc(sid)}">添加模型</button>`}
     </div>`});
 }
@@ -14974,9 +14970,9 @@ function infScan(v,d){
   if(d>6||!v||typeof v!=='object')return null;
   if(Array.isArray(v)){for(const y of v){const r=infScan(y,d+1);if(r)return r}return null}
   for(const k of Object.keys(v)){
-    if(INF_BAN.test(k))return '「'+k+'」这类凭证字段不能写在这儿，密钥在「模型接入」里管';
+    if(INF_BAN.test(k))return '不能在参数中填写凭证字段「'+k+'」，密钥请在「模型接入」中配置';
     if(typeof v[k]==='string'&&/^sk-\S{8}/.test(v[k]))
-      return '「'+k+'」的值看着是一把 API Key，别写在这儿';
+      return '「'+k+'」的值疑似 API Key，请在「模型接入」中配置';
     const r=infScan(v[k],d+1);if(r)return r;
   }
   return null;
@@ -15077,8 +15073,8 @@ function infHistDrawer(){
           <button class="alnk" type="button" data-infhdel="${esc(h.id)}">删除</button></div>`).join('')}
         <div class="empty" id="infhnone" hidden>没有匹配的会话</div>
       </div>`
-      :'<div class="empty">暂无历史记录。问过话之后点「新建对话」，上一段会收进这里。</div>'}
-      <p class="t-xs mut2" style="margin:0">只留最近 ${INF_HIST} 段，存在这台机器上。</p>
+      :'<div class="empty">暂无历史记录</div>'}
+      <p class="t-xs mut2" style="margin:0">保留最近 ${INF_HIST} 段，仅保存在本机</p>
     </div>`});
 }
 function inferBody(){
@@ -15102,7 +15098,7 @@ function inferBody(){
   <div class="inf-bar">
     <span class="t-sm mut2 grow">${cmp
       ?'同一条输入会同时发送给所有对比模型，每个模型可单独配置生成参数'
-      :'直接和模型对话，试提示词、看回答；右边的按钮调 System Prompt 和参数'}</span>
+      :'与单个模型对话，可配置 System Prompt 与生成参数'}</span>
     ${cmp?`<span class="t-sm mut2 num">已选模型 ${cols.length} / ${INF_MAX}</span>
     <button class="lnk inf-add" type="button" data-act="infadd"${
       cols.length>=INF_MAX?' disabled title="最多并排 '+INF_MAX+' 列"'
@@ -15127,7 +15123,7 @@ function inferBody(){
       </div>
     </div></div></div>
 
-  <p class="inf-foot">回答直接来自模型，没有经过校验，用进报告之前自己核一遍。</p>
+  <p class="inf-foot">内容由模型生成，未经校验，请谨慎使用</p>
   ${S.infPar?infParDrawer(S.infPar):''}
   ${S.infHist?infHistDrawer():''}
 </div>`;
@@ -15138,7 +15134,7 @@ function infParDrawer(k){
   const c=infFind(k);if(!c)return '';
   return drawer({title:'生成参数 · '+(c.name||'未选模型'), close:'infparx',
     body:`<div class="col" style="gap:var(--s5)">
-      <p class="t-sm mut2" style="margin:0">只作用于这一列之后发出去的请求，已经答过的那几条不动。</p>
+      <p class="t-sm mut2" style="margin:0">对该模型的后续请求生效，已有回答不变</p>
       <div class="field">
         <label class="label" for="infsys">System Prompt</label>
         <textarea id="infsys" class="input" rows="4" spellcheck="false"
@@ -15153,7 +15149,7 @@ function infParDrawer(k){
             style="min-height:1.5rem;display:inline-flex;align-items:center">填入现在生效的参数</button>
           ${cpBtn('infpar-'+k,c.par||infLive())}
         </div>
-        <span class="t-xs mut2">这些字段原样发给服务，平台不替你校兼容性：服务不认的参数会让这一次请求直接失败。</span>
+        <span class="t-xs mut2">参数原样传给模型服务，平台不校验兼容性</span>
       </div>
       <div class="col" style="gap:var(--s3)">
         <div id="inferr"></div>
@@ -15169,10 +15165,10 @@ function infParDrawer(k){
 function inferSend(){
   const x=INF(), ta=document.getElementById('infq');
   const txt=((ta&&ta.value)||x.q||'').trim();
-  if(!txt){toast('先写一句要问的话');return}
+  if(!txt){toast('请输入内容');return}
   const cols=infCols();
-  if(!cols.length){toast('一列都没有，先添一列');return}
-  if(cols.some(c=>c.busy)){toast('上一条还在回答，等它回来再发');return}
+  if(!cols.length){toast('请先添加模型');return}
+  if(cols.some(c=>c.busy)){toast('上一条还在回答');return}
   x.turns.push(txt);x.q='';
   /* 先裁再定下标。裁剪会把所有下标往左移，放到后面做的话，
      这一次在飞的答复回来时按老下标落座，落到别的问题那一行去。 */
@@ -15187,9 +15183,9 @@ function inferSend(){
       c.a[t]={t:m?('「'+(m.name||m.id)+'」是打分模型，预测目标是 '+tgtName(m.target)+'，留出集排序准确度 '
         +(typeof m.rho==='number'?m.rho.toFixed(3):'—')+'。它给候选打分，不做文本回答。'
         +'要用它，在对话里说「用 '+m.id+' 给这个项目的候选打一遍分」。')
-        :'这个模型已经不在「我的模型」里了，在上面换一个。',err:m?0:1};return null}
+        :'该模型已不在「我的模型」中，请重新选择。',err:m?0:1};return null}
     if(c.sid!=='proxy'&&c.sid!=='legacy'&&!msFind(c.sid)){
-      c.a[t]={t:'这一列的模型系列已经删掉了，在上面换一个模型。',err:1};return null}
+      c.a[t]={t:'该模型系列已删除，请重新选择模型。',err:1};return null}
     const raw=(c.par||'').trim();
     const v=raw?infParse(raw):{ok:true,v:null};
     if(!v.ok){c.a[t]={t:v.why+'（在这一列的「生成参数」里改）',err:1};return null}
@@ -15369,7 +15365,7 @@ async function bRun(id){
         if(String(e.message||e)==='NOKEY')break;
       }
     }
-    j.out[i]={i:i,ok:0,t:'',err:last||'没跑成',ms:0,tries:k};
+    j.out[i]={i:i,ok:0,t:'',err:last||'请求失败',ms:0,tries:k};
   };
   let p=0;
   const conc=Math.max(1,Math.min(B_CONC_MAX,j.conc|0||1));
@@ -15391,12 +15387,12 @@ async function bRun(id){
   else j.st='done';
   j.stop=false;
   bSave();render();
-  toast({done:'跑完了：'+c.ok+' 条全成',
-         part:'跑完了：'+c.ok+' 条成、'+c.bad+' 条没成',
-         fail:'一条都没跑成，去详情看原因',
-         stop:'已终止，已经跑完的 '+c.ok+' 条留着'}[j.st]);
+  toast({done:'已完成，'+c.ok+' 条全部成功',
+         part:'已完成，成功 '+c.ok+' 条，失败 '+c.bad+' 条',
+         fail:'全部失败，原因见任务详情',
+         stop:'已终止，已保留 '+c.ok+' 条结果'}[j.st]);
 }
-function bStop(id){const j=bFind(id);if(!j||j.st!=='run')return;j.stop=true;toast('正在收尾，已发出去的那几条等它回来')}
+function bStop(id){const j=bFind(id);if(!j||j.st!=='run')return;j.stop=true;toast('正在终止，等待已发出的请求返回')}
 
 /* ---- 结果文件 ---- */
 /* 逐行 JSONL：一行一个样本，按真实返回写。失败的那几行单出一个 badcase 文件，
@@ -15420,7 +15416,7 @@ function bJsonl(j,kind){
 function bDlModal(id){
   const j=bFind(id);if(!j)return;
   const c=bCount(j);
-  if(j.dropped){toast('这一条的结果没留住（存储满了），重跑一次');return}
+  if(j.dropped){toast('结果未保存（本机存储已满），请重跑');return}
   if(!c.done){toast('还没有结果');return}
   modal('下载推理结果',
     `<div class="col" style="gap:var(--s4)">
@@ -15467,7 +15463,7 @@ function batchBody(){
       <td class="t-sm num c-at">${esc(j.at||'—')}</td>
       ${acts([
         {n:'详情',attr:'data-bjob="'+esc(j.id)+'"'},
-        j.dropped?{n:'下载结果',off:'结果没留住（存储满了），重跑一次'}
+        j.dropped?{n:'下载结果',off:'结果未保存（本机存储已满），请重跑'}
           :(c.done?{n:'下载结果',attr:'data-bjdl="'+esc(j.id)+'"'}
                   :{n:'下载结果',off:'还没有结果'}),
         run?{n:'终止',attr:'data-bstop="'+esc(j.id)+'"'}
@@ -15498,8 +15494,7 @@ function batchBody(){
   :`<div class="card"><div class="card-b"><div class="empty" style="padding:var(--s8) var(--s5)">
       <strong class="t-md">还没有批量推理任务</strong>
       <p class="t-sm mut2" style="max-width:46ch;margin:0">
-        几百条候选要逐条让模型注释、分类或改写时走这里。先在「我的数据集」里把那份表建好并发布，
-        再回来挑它的哪一列当提示词。</p>
+        让模型逐条处理一份已发布的数据集，适合批量注释、分类或改写。</p>
       <div class="row wrap" style="gap:var(--s3);justify-content:center">
         ${bDsets().length
           ?'<button class="btn btn-pri" type="button" data-nav="bnew">新建批量推理任务</button>'
@@ -15548,8 +15543,8 @@ function bDrawer(id){
     ${j.dropped?`<p class="t-sm" style="margin:0;color:var(--err)">这一条的结果没留住：这台机器的存储满了，
       旧结果被丢掉了。重跑一次就有了。</p>`:''}
     ${fails.length?`<div class="col" style="gap:var(--s2)">
-      <span class="lbl">没跑成的 ${fails.length} 行</span>
-      <div class="tbl-wrap is-prev"><table aria-label="没跑成的行">
+      <span class="lbl">失败 ${fails.length} 行</span>
+      <div class="tbl-wrap is-prev"><table aria-label="失败的行">
         <thead><tr><th scope="col">行号</th><th scope="col">重试</th><th scope="col">原因</th></tr></thead>
         <tbody>${fails.slice(0,200).map(o=>`<tr>
           <td class="t-sm num">${o.i+1}</td>
@@ -15608,7 +15603,7 @@ V.bnew=()=>{
       <div class="field" style="max-width:34rem">
         <label class="label" for="bdesc">任务描述</label>
         <textarea id="bdesc" class="input" rows="2" maxlength="200"
-          placeholder="这一跑是干什么的，给以后的自己看">${esc(NEWB.desc)}</textarea>
+          placeholder="选填">${esc(NEWB.desc)}</textarea>
       </div>
       <div class="field" style="max-width:34rem">
         <span class="label">模型<span class="c-err">　*</span></span>
@@ -15624,7 +15619,7 @@ V.bnew=()=>{
           :`<button class="pick-add" type="button" data-act="bpickm">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg>添加模型</button>`}
-        <span class="t-xs mut2">从「模型接入」里已经接好的模型里选。没有想用的那个？
+        <span class="t-xs mut2">从已接入的模型中选择。
           <button class="lnk" type="button" data-go="set">新增模型</button></span>
       </div>
     </div>
@@ -15643,8 +15638,7 @@ V.bnew=()=>{
           :`<button class="pick-add" type="button" data-act="bpickd">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg>选择数据集</button>`}
-        <span class="t-xs mut2">只能选已发布的。发布之后内容锁死，这一跑才说得清跑的是哪一版。
-          还没有合适的？<button class="lnk" type="button" data-go="dsets">去上传</button></span>
+        <span class="t-xs mut2">仅可选择已发布的数据集。<button class="lnk" type="button" data-go="dsets">去上传</button></span>
       </div>
       ${d?`<div class="field" style="max-width:34rem">
         <label class="label" for="bcol">提示词列<span class="c-err">　*</span></label>
@@ -15652,7 +15646,7 @@ V.bnew=()=>{
           <option value=""${NEWB.col?'':' selected'}>选一列</option>
           ${cols.map(k=>`<option value="${esc(k)}"${NEWB.col===k?' selected':''}>${esc(k)}</option>`).join('')}
         </select>
-        <span class="t-xs mut2">这一列的每一行会当成一条用户消息发出去，一共 ${n} 条。</span>
+        <span class="t-xs mut2">该列每一行作为一条输入，共 ${n} 条</span>
       </div>`:''}
       ${NEWB.col?`<div class="col" style="gap:var(--s2);max-width:46rem">
         <span class="lbl">第 1 行会发出去的内容</span>
@@ -15669,7 +15663,7 @@ V.bnew=()=>{
         <label class="label" for="bsys">System Prompt</label>
         <textarea id="bsys" class="input" rows="3" spellcheck="false"
           placeholder="留空就不发 system 这一条">${esc(NEWB.sys)}</textarea>
-        <span class="t-xs mut2">每一条请求都带上它。要让模型只回一个词、或只输出 JSON，写在这里。</span>
+        <span class="t-xs mut2">随每条请求发送，用于约束输出格式</span>
       </div>
       <div class="field" style="max-width:46rem">
         <label class="label" for="bpar">生成参数</label>
@@ -15679,8 +15673,7 @@ V.bnew=()=>{
           <button class="lnk" type="button" data-act="bparlive"
             style="min-height:1.5rem;display:inline-flex;align-items:center">添加示例</button>
         </div>
-        <span class="t-xs mut2">「添加示例」填入的是不填时实际生效的那份默认值，按你的模型改。
-          原样发给服务，平台不替你校兼容性：服务不认的参数会让每一条都失败。</span>
+        <span class="t-xs mut2">参数原样传给模型服务，平台不校验兼容性</span>
       </div>
       <div class="col" style="gap:var(--s2)">
         <span class="lbl">执行参数</span>
@@ -15690,19 +15683,19 @@ V.bnew=()=>{
             <label class="label" for="bconc">并发请求数</label>
             <input id="bconc" class="input num" type="number" min="1" max="${B_CONC_MAX}"
               value="${esc(String(NEWB.conc))}">
-            <span class="t-xs mut2">1–${B_CONC_MAX}，越高越快但更容易被限流</span>
+            <span class="t-xs mut2">1–${B_CONC_MAX}，过高可能触发限流</span>
           </div>
           <div class="field">
             <label class="label" for="btmo">单请求超时（秒）</label>
             <input id="btmo" class="input num" type="number" min="${B_TMO[0]}" max="${B_TMO[1]}"
               value="${esc(String(NEWB.tmo))}">
-            <span class="t-xs mut2">${B_TMO[0]}–${B_TMO[1]}，到点掐断这一条</span>
+            <span class="t-xs mut2">${B_TMO[0]}–${B_TMO[1]} 秒</span>
           </div>
           <div class="field">
             <label class="label" for="bretry">失败自动重试</label>
             <input id="bretry" class="input num" type="number" min="0" max="${B_RETRY_MAX}"
               value="${esc(String(NEWB.retry))}">
-            <span class="t-xs mut2">0–${B_RETRY_MAX} 次，没密钥这类不会重试</span>
+            <span class="t-xs mut2">0–${B_RETRY_MAX} 次</span>
           </div>
         </div>
       </div>
@@ -15717,7 +15710,7 @@ V.bnew=()=>{
     <button class="lnk" type="button" data-act="boutsample"
       style="min-height:1.5rem;display:inline-flex;align-items:center">查看输出示例</button>
     <span class="grow"></span>
-    <span class="t-sm mut2">${n&&NEWB.col?('提交后会发出 '+n+' 条请求'):'选完数据集和列才知道会发多少条'}</span>
+    <span class="t-sm mut2">${n&&NEWB.col?('共 '+n+' 条请求'):''}</span>
   </div>
 </div>`;
 };
@@ -16168,7 +16161,7 @@ function render(){
   q('[data-jobpick]',b=>b.onclick=()=>{S.jobPick=b.dataset.jobpick;render()});
   q('[data-mdlsync]',b=>b.onclick=()=>{const id=b.dataset.mdlsync;
     if(!syncLib(id)){toast('同步不了：找不到这一条');return}
-    S.mtab='cur';render();toast(id+' 已同步到「我的模型」。要让对话 @ 得到，还得在那儿启用它')});
+    S.mtab='cur';render();toast(id+' 已同步到「我的模型」，启用后可在对话中使用')});
   q('[data-prosp]',b=>b.onclick=()=>act('prosp',b));
   /* 复制一条训练任务：开新建表单，把这一条的参数带过去——不绕回对话。 */
   q('[data-trcopy]',b=>b.onclick=()=>{const m=mdlFind(b.dataset.trcopy);if(!m)return;
@@ -16176,7 +16169,7 @@ function render(){
     trReset();
     Object.assign(NEWTR,{name:((m.name||'训练任务')+' 副本').slice(0,50),desc:m.desc||'',
       base:m.base||NEWTR.base,method:m.method||NEWTR.method,ds:m.ds||'self',target:m.target||NEWTR.target});
-    go('trainnew');toast('已带上「'+(m.name||m.id)+'」的参数')});
+    go('trainnew');toast('已沿用「'+(m.name||m.id)+'」的参数')});
   q('[data-mdlen]',b=>b.onclick=()=>{const on=toggleMdl(b.dataset.mdlen);
     render();toast(on?'已启用':'已停用')});
   q('#bq',el=>{el.oninput=()=>{S.bq=el.value;
@@ -16255,7 +16248,7 @@ function render(){
       if(!r.ok){toast('导入失败：'+r.why);return}
       render();
       toast('导入了 '+r.m.name+'　'+r.n+' 个权重'
-        +(canScore(r.m)?'，可以直接拿来打分':'，但还打不了分'))};
+        +(canScore(r.m)?'，可用于打分':'，暂不能打分'))};
     rd.readAsText(f)});
   q('#askmdl',el=>el.onchange=()=>{const v=el.value.split('|'),nm=v.slice(1).join('|');
     mUse(v[0],nm);
@@ -16314,7 +16307,7 @@ function render(){
   q('[data-protouse]',b=>b.onclick=()=>{const x=protoAll().find(y=>y.id===b.dataset.protouse);
     if(!x)return;
     Object.assign(NEWEXP,{name:'',desc:'',proto:x.n,vendor:'',n:'',file:null,fileText:null});
-    go('labnew');toast('已带入「'+x.n+'」，填完名称和条数就能提交')});
+    go('labnew');toast('已沿用「'+x.n+'」')});
   q('[data-protoed]',b=>b.onclick=()=>{const L=LS.get('protos',[]);
     const x=L.find(y=>y.id===b.dataset.protoed);if(!x)return;protoModal(x)});
   q('#trname',i=>i.oninput=()=>{NEWTR.name=i.value;
@@ -16542,14 +16535,14 @@ function render(){
     Object.assign(NEWEXP,{name:(x.name||protoOf(pid).n)+'（复用 '+x.id+'）',
       desc:x.desc||'',proto:protoOf(pid).n,vendor:x.vendor,n:String(x.n),
       pid:x.pid,file:null,fileText:null});
-    go('labnew');toast('已带入 '+x.id+' 的配方与参数，改完再提交')});
+    go('labnew');toast('已沿用 '+x.id+' 的配方与参数')});
   view.querySelectorAll('[data-dspick]').forEach(b=>b.onclick=()=>{
     S.dsPick=S.dsPick===b.dataset.dspick?null:b.dataset.dspick;render()});
   view.querySelectorAll('[data-dsdel]').forEach(b=>b.onclick=()=>{
     const h=dsFind(b.dataset.dsdel);if(!h)return;
     const L=DSETS(h.pid),i=L.findIndex(x=>x.id===h.d.id);
     if(i<0)return;
-    if(L[i].st==='pub'){toast('已发布的删不掉：已经有模型可能指向它');return}
+    if(L[i].st==='pub'){toast('已发布的数据集不能删除');return}
     const n=L[i].id;L.splice(i,1);
     if(S.dsPick===n)S.dsPick=null;
     render();toast(n+' 已删除');});
@@ -16620,7 +16613,7 @@ function render(){
   q('[data-dsuse]',b=>b.onclick=e=>{e.stopPropagation();
     const d=(DATASRC.concat(REGD())).find(x=>x.n===b.dataset.dsuse);
     if(!d)return;const r={seq:'library',str:'models',des:'design',func:'shelf',wet:'wet'}[d.cap]||'chat';
-    go(r);toast(`已带到${capName(d.cap)}，输入里可以选用 ${d.n}`)});
+    go(r);toast(`已选用 ${d.n}`)});
   q('#dsacc',el=>el.oninput=()=>{DSV.acc=el.value});
   q('[data-ib]',b=>b.onclick=()=>{const x=INBOX().find(y=>y.id===b.dataset.ib);
     if(!x)return;markRead(x.id);x.go();});
@@ -17248,7 +17241,7 @@ function act(a,el){
         target:d?d.target:NEWTR.target,
         why:r.why||('带实测值的候选只有 '+r.n+' 条，少于 8 条')},meta));
       S.mtab='job';go('mdl');
-      toast('没跑成：'+(r.why||('带实测值的候选只有 '+r.n+' 条'))+'。任务留在列表里了');return}
+      toast('训练失败：'+(r.why||('带实测值的候选只有 '+r.n+' 条')));return}
     const mdl=addModel(S.pid,Object.assign({target:d?d.target:NEWTR.target,
       rho:r.rho,rmse:r.rmse,sd:r.sd,nTrain:r.nTrain,nTest:r.nTest,lam:r.lam,n:r.n,
       ms:ms,ds:d?d.id:null,lamBy:r.lamBy,bl:r.base,trainIds:r.trainIds||null,
@@ -17259,10 +17252,10 @@ function act(a,el){
       note:(mdl.name||mdl.id)+'　留出 ρ='+r.rho.toFixed(3),kind:'dat',
       mime:'application/json',make:()=>mdlWeightsJson(mdl)}]);
     trReset();S.mtab='job';go('mdl');
-    toast('训完了：留出 ρ='+r.rho.toFixed(3)+'，'+(mdl.vd||'—'));return}
+    toast('训练完成，留出 ρ = '+r.rho.toFixed(3));return}
   if(a==='dstpl'){const t=TEMPLATES.tab;
     dl(t.n,t.make(),'text/csv').then(r=>toast(
-      r==='saved'?t.n+' 已保存，照着它的列改成你自己的数据':r==='declined'?'已取消':'下载失败'));return}
+      r==='saved'?t.n+' 已保存':r==='declined'?'已取消':'下载失败'));return}
   if(a==='dsdemo'){const txt=artVariantsCsv(S.pid,CANDS());
     if(!txt){toast('还没有候选');return}
     dsRead(txt,'本项目变体表.csv');render();
@@ -17285,7 +17278,7 @@ function act(a,el){
     emit(S.pid,[dsManifest(ds,q,sp)]);
     const nm=ds.id;dsReset();
     S.dsPick=nm;go('dsets');
-    toast('已建立 '+nm+'　还是草稿，发布锁定之后才能拿来训');return}
+    toast('已建立 '+nm+'，当前为草稿');return}
   /* 产出文件：去文件管理，并且先把视图锁到这个课题——
      从项目里点进去却看到全部课题的文件，等于把人丢出去了。 */
   if(a==='pjfiles'){const p=PRJ();S.fpid=p.id;go('files');return}
@@ -17303,12 +17296,12 @@ function act(a,el){
           <span class="sb">${esc(x.at||'')}${x.q?'　'+esc(String(x.q).slice(0,18)):''}</span></span>
         </button>`).join('')
        :'<div class="menu-i" style="cursor:default"><span class="ck"></span>'
-        +'<span><span class="nm">还只有当前这一段</span>'
-        +'<span class="sb">新开一段之后，旧的会收进来</span></span></div>')
+        +'<span><span class="nm">暂无其他对话</span>'
+        +'<span class="sb">新建对话后，原对话会保留在这里</span></span></div>')
       +'<div class="menu-sep"></div>'
       +'<button class="menu-i is-go" type="button" data-go="__new"><span class="ck"></span>'
-      +'<span><span class="nm">新开一段</span>'
-      +'<span class="sb">当前这段会先收进「全部对话」</span></span></button>';
+      +'<span><span class="nm">新建对话</span>'
+      +'<span class="sb">当前对话会保留在列表中</span></span></button>';
     menu(el,html,v=>{
       if(v==='__new'){act('pjnew',el);return}
       const x=SESSIONS.find(y=>y.id===v);if(!x)return;
@@ -17316,7 +17309,7 @@ function act(a,el){
          所以只改 S.sid 是切不过去的——点了没反应。
          做法是换内容：手上这段收进列表，挑中的那段搬到台上。 */
       const k=pjSid(p.id), curL=CONV[k]||[];
-      if(curL.some(m=>m._live)){toast('这一段还在回答，等它说完再切');return}
+      if(curL.some(m=>m._live)){toast('当前对话还在回答');return}
       const picked=CONV[x.id]||[];
       const i=SESSIONS.indexOf(x);if(i>=0)SESSIONS.splice(i,1);
       delete CONV[x.id];
@@ -17348,7 +17341,7 @@ function act(a,el){
       CONV[SESSIONS[0].id]=L;
     }
     CONV[k]=[];render();paintNav(1);
-    toast(L.length?'已收进「全部对话」，这一段重新开始':'已经是空的');return}
+    toast(L.length?'已存入对话列表':'当前对话为空');return}
   if(a==='pjchat'){const p=PRJ();
     S.bind=p.id;S.round=p.rounds[p.rounds.length-1].i;
     S.sid='s'+Date.now();CONV[S.sid]=[];go('chat');return}
@@ -17358,7 +17351,7 @@ function act(a,el){
   if(a==='dshelp'){S.dsHelp=S.dsHelp===0?1:0;render();return}
   if(a==='jobhelp'){S.jobHelp=!S.jobHelp;render();return}
   if(a==='dsclose'){S.dsPick=null;render();return}
-  if(a==='acctna'){toast('这一版没有接账号系统，这一项还不能用');return}
+  if(a==='acctna'){toast('暂未开放');return}
   if(a==='wipe'){
     modal('清除本机数据？',`<p class="t-md" style="margin:0">这台机器上存的对话记录、设置、接入的模型和它们的密钥会全部删掉，
       不能恢复。项目里的示例数据会回到初始状态。</p>`,'清除',()=>{
@@ -17383,7 +17376,7 @@ function act(a,el){
         <p class="t-md mut" style="margin:0">前瞻测试要拿模型<strong>没见过</strong>的一轮去验它。
           ${ALL.length?'已有的模型训练时都用到了每一轮已回流的数据，'
             +'所以挑不出没见过的那一轮。下一轮回流之后就能测了。'
-            :'先训一个模型出来。'}</p></div>`,'知道了',()=>{});
+            :'请先训练一个模型。'}</p></div>`,'知道了',()=>{});
       return}
     const pick0=(only&&usable.some(m=>m.id===only))?only:usable[0].id;
     const rowsOf=id=>{const m=usable.find(x=>x.id===id);
@@ -17448,7 +17441,7 @@ function act(a,el){
   if(a==='wquick'){
     const rr=document.getElementById('wq_r');
     if(rr)S.round=+rr.value;
-    go('wetlab');toast('已带到该轮的送检单，先核对板位与对照孔');return}
+    go('wetlab');toast('已加入该轮送检单');return}
   if(a==='qkdes'){
     if(!(DF.acc||'').trim()){toast('先给一个靶点编号');return}
     if(!VW.struct){act('dfload');return}
@@ -17523,7 +17516,7 @@ function act(a,el){
           <span style="color:var(--err)">*</span></label></div>
         <input id="imn" class="input" maxlength="50" placeholder="例：ΔTm 打分器（同事给的）"></div>
       <div class="field">
-        <span class="label">从哪儿导</span>
+        <span class="label">导入方式</span>
         <div class="seg" role="radiogroup" aria-label="导入方式">
           <button class="seg-i" type="button" role="radio" data-imw="file" aria-checked="true">权重文件</button>
           <button class="seg-i" type="button" role="radio" data-imw="url" aria-checked="false">模型链接</button>
@@ -17539,7 +17532,7 @@ function act(a,el){
         <input id="imu" class="input" spellcheck="false"
           placeholder="https://huggingface.co/facebook/esm2_t33_650M_UR50D">
         <span class="t-xs mut2">会去取一次这个链接的模型卡信息。取不到就照实说取不到——
-          能不能跨域取，只有点下去才知道，不在这儿先下结论。</span></div>
+          是否可跨域获取，以实际请求结果为准。</span></div>
       <div id="imout"></div>
     </div>`,'导入',()=>{
       const nm=((document.getElementById('imn')||{}).value||'').trim();
@@ -17583,7 +17576,7 @@ function act(a,el){
             <span class="t-xs mut2 num">我的模型　${esc(m.id)}</span></span>
           <span class="chip c-mut">打分模型</span></label>`).join('')}
       </div>
-      <span class="t-xs mut2">授权状态是上一次「测试」的结果。没测过的也能选，跑起来才知道通不通。</span>
+      <span class="t-xs mut2">授权状态取自最近一次连接测试</span>
     </div>`,'确定',()=>{
       const d=document.getElementById('dlg');
       const r=d&&d.querySelector('input[name="bpm"]:checked');
@@ -17602,7 +17595,7 @@ function act(a,el){
           <span class="col grow" style="gap:1px;min-width:0"><strong class="t-md">${esc(x.name)}</strong>
             <span class="t-xs mut2 num">${esc(x.id)}　${(x.rows||[]).length} 行　${(x.cols||[]).length} 列</span></span>
           <span class="chip c-ok">已发布</span></label>`).join('')}
-      </div>`:'<div class="empty">没有已发布的数据集。先到「我的数据集」建一份并发布。</div>'}
+      </div>`:'<div class="empty">没有已发布的数据集</div>'}
     </div>`,'确定',()=>{
       const d=document.getElementById('dlg');
       const r=d&&d.querySelector('input[name="bpd"]:checked');
@@ -17616,21 +17609,21 @@ function act(a,el){
   /* 输出示例：结果文件每一行有哪些字段。只列字段，不放编出来的数。 */
   if(a==='boutsample'){
     modal('输出示例',`<div class="col" style="gap:var(--s4)">
-      <p class="t-sm mut" style="margin:0">结果是逐行 JSONL，一行对应数据集里的一行。成功的行和没跑成的行分两个文件下载。</p>
+      <p class="t-sm mut" style="margin:0">结果是逐行 JSONL，一行对应数据集里的一行。成功和失败的行分两个文件下载。</p>
       <div class="col" style="gap:var(--s2)"><span class="lbl">推理结果 _result.jsonl</span>
       <pre class="kbpre num" style="margin:0;font-size:0.6875rem">{"i": &lt;行号，从 0 起&gt;, "input": "&lt;提示词列里这一行的原文&gt;",
  "output": "&lt;模型返回的文本&gt;", "ms": &lt;这一条用时，毫秒&gt;,
  "usage": {"prompt_tokens": &lt;入&gt;, "completion_tokens": &lt;出&gt;},
  "tries": &lt;重试过才有，第几次成的&gt;}</pre></div>
       <div class="col" style="gap:var(--s2)"><span class="lbl">Badcase _badcase.jsonl</span>
-      <pre class="kbpre num" style="margin:0;font-size:0.6875rem">{"i": &lt;行号&gt;, "input": "&lt;原文&gt;", "error": "&lt;没跑成的原因&gt;", "tries": &lt;试了几次&gt;}</pre></div>
-      <p class="t-xs mut2" style="margin:0">usage 只有服务回报了用量才有。行号两个文件都留着，合起来才是这一跑的全部。</p>
+      <pre class="kbpre num" style="margin:0;font-size:0.6875rem">{"i": &lt;行号&gt;, "input": "&lt;原文&gt;", "error": "&lt;失败原因&gt;", "tries": &lt;试了几次&gt;}</pre></div>
+      <p class="t-xs mut2" style="margin:0">usage 仅在模型服务返回用量时出现。两个文件都保留行号。</p>
     </div>`,'知道了',()=>{});
     return}
   if(a==='bparlive'){const el=document.getElementById('bpar');
     if(el){el.value=infLive();NEWB.par=el.value;el.focus()}return}
   if(a==='bsaveonly'){const j=bMake();if(!j)return;
-    bReset();go('batch');toast('存成草稿了，想跑的时候在列表里点「提交」');return}
+    bReset();go('batch');toast('已保存为草稿');return}
   if(a==='bsubmit'){const j=bMake();if(!j)return;
     bReset();go('batch');bRun(j.id);return}
   if(a==='brun'){const id=el.dataset.brun;bRun(id);return}
@@ -17653,7 +17646,7 @@ function act(a,el){
   if(a==='infhistx'){S.infHist=null;render();return}
   if(a==='infopen'){const h=infHist().find(y=>y.id===el.dataset.infopen);if(!h)return;
     const x=INF();
-    if(infCols().some(c=>c.busy)){toast('上一条还在回答，等它回来再切');return}
+    if(infCols().some(c=>c.busy)){toast('上一条还在回答');return}
     infArchive();                                    // 手上这一段先收起来，不丢
     LS.set('inferHist',infHist().filter(y=>y.id!==h.id));
     x.mode=h.mode==='cmp'?'cmp':'single';
@@ -17662,16 +17655,16 @@ function act(a,el){
     if(!x.cols.length)x.cols=[infCol(null)];
     x.q='';S.infHist=null;infSave();render();toast('已打开「'+(h.title||'这一段')+'」');return}
   if(a==='infhdel'){LS.set('inferHist',infHist().filter(y=>y.id!==el.dataset.infhdel));
-    render();toast('这一段删了');return}
+    render();toast('已删除');return}
   if(a==='infnew'){const x=INF();
     const kept=infArchive();
     x.turns=[];x.cols.forEach(c=>{c.a={};c.from=0;c.busy=false});x.q='';
     /* 生成参数不跟着清：那是「这一列怎么调」，不是这次对话的内容。 */
-    infSave();render();toast(kept?'上一段收进了「历史会话」，生成参数留着':'记录清了，生成参数留着');return}
+    infSave();render();toast(kept?'已存入历史会话':'已清空');return}
   if(a==='infadd'){const x=INF();
     if(x.cols.length>=INF_MAX){toast('最多并排 '+INF_MAX+' 列');return}
     const ps=msPairs();
-    if(ps.length<2){toast('只接到一个模型，先去「模型接入」再接一家');return}
+    if(ps.length<2){toast('只接入了一个模型，对比需要至少两个');return}
     /* 新列默认挑一个还没用上的：添一列又跟旁边那列同一个模型，对比不出东西。 */
     const used=x.cols.map(c=>c.sid+'|'+c.name);
     const pick=ps.find(y=>used.indexOf(y.sid+'|'+y.name)<0)||ps[0];
@@ -17684,7 +17677,7 @@ function act(a,el){
     if(el){el.value=infLive();el.focus()}
     return}
   if(a==='infparreset'){const c=infFind(S.infPar);if(!c)return;
-    c.sys='';c.par='';infSave();render();toast('这一列的生成参数清了');return}
+    c.sys='';c.par='';infSave();render();toast('已重置生成参数');return}
   if(a==='infparok'){const c=infFind(S.infPar);if(!c)return;
     const sys=(document.getElementById('infsys')||{}).value||'';
     const par=((document.getElementById('infjson')||{}).value||'').trim();
@@ -17694,14 +17687,14 @@ function act(a,el){
       if(!v.ok){if(box)box.innerHTML='<p class="t-sm" style="margin:0;color:var(--err)">'
         +esc(v.why)+'</p>';return}}
     c.sys=sys;c.par=par;S.infPar=null;infSave();render();
-    toast(par||sys.trim()?'这一列之后的请求按新参数发':'这一列回到默认参数');return}
+    toast(par||sys.trim()?'已应用，对后续请求生效':'已恢复默认参数');return}
   if(a==='infparx'){S.infPar=null;render();return}
   if(a==='msqclr'){S.msq='';render();return}
   /* 接入外部大模型：先选服务商，再填凭证（bootcamp 12.02 → 12.03） */
   if(a==='msnew'){
     modal('接入外部大模型',
       `<div class="col" style="gap:var(--s3)">
-        <span class="t-sm mut">选一个服务商。接口地址会预填，可以改。</span>
+        <span class="t-sm mut">选择服务商</span>
         <div class="provs" role="radiogroup" aria-label="服务商">
         ${PROVIDERS.map(x=>`<label class="prov">
           <input type="radio" name="prov" value="${esc(x.id)}"${x.id==='deepseek'?' checked':''}>
@@ -17725,7 +17718,7 @@ function act(a,el){
     modal('删掉「'+x.label+'」？',
       `<p class="t-md">连它的密钥一起从这台机器上删掉，不能恤复。
        ${(x.models||[]).length?'底下的 '+(x.models||[]).length+' 个模型也跟着没。':''}</p>`,
-      '删除',()=>{msDel(x.id);S.msDrawer=null;render();toast('已删掉，密钥也从这台机器上清了')});
+      '删除',()=>{msDel(x.id);S.msDrawer=null;render();toast('已删除，密钥已从本机清除')});
     return}
   /* 添加模型：只收名字。模型名要跟服务商文档一字不差，不替用户编（R3）。 */
   if(a==='msmadd'){const sid=el.dataset.msmadd,x=msFind(sid);if(!x)return;
@@ -17733,7 +17726,7 @@ function act(a,el){
       `<div class="col" style="gap:var(--s4)">
        <div class="field"><label class="label" for="msmn">模型名称<span class="c-err">　*</span></label>
        <input id="msmn" class="input num" spellcheck="false" placeholder="跟服务商文档上的写法一致">
-       <span class="t-xs mut2">打错一个字就调不通，所以这里不给候选。</span></div>
+       <span class="t-xs mut2">需与服务商文档中的模型名称一致</span></div>
        <label class="row" style="gap:var(--s3);min-height:1.75rem;cursor:pointer">
          <input type="checkbox" id="msmown">
          <span class="col" style="gap:1px"><span class="t-md">使用独立密钥</span>
@@ -17758,7 +17751,7 @@ function act(a,el){
         msSet(x.id,{models:(x.models||[]).concat([{name:v,st:'untested'}])});
         if(own&&k)MC.setKeyOfM(x.id,v,k);
         if(kEl)kEl.value='';
-        render();toast('已添加。点「测试」看通不通');});
+        render();toast('已添加，请测试连接');});
     {const d=document.getElementById('dlg'), cb=d&&d.querySelector('#msmown'), w=d&&d.querySelector('#msmkw');
      if(cb&&w)cb.onchange=()=>{w.hidden=!cb.checked;if(cb.checked){const i=w.querySelector('input');if(i)i.focus()}}}
     return}
@@ -17770,7 +17763,7 @@ function act(a,el){
       `<div class="col" style="gap:var(--s4)">
        <div class="field"><label class="label" for="msmn">模型名称<span class="c-err">　*</span></label>
        <input id="msmn" class="input num" spellcheck="false" value="${esc(nm)}">
-       <span class="t-xs mut2">要跟服务商文档上的写法一致。改了名字，授权状态回到未测试。</span></div>
+       <span class="t-xs mut2">需与服务商文档一致。修改后授权状态重置为未测试</span></div>
        <label class="row" style="gap:var(--s3);min-height:1.75rem;cursor:pointer">
          <input type="checkbox" id="msmown"${has?' checked':''}>
          <span class="col" style="gap:1px"><span class="t-md">使用独立密钥</span>
@@ -17800,7 +17793,7 @@ function act(a,el){
           ?Object.assign({},m,{name:v},changed?{st:'untested'}:{}):m)});
         const ac=mActive();if(ac.sid===sid&&ac.name===nm&&v!==nm)mUse(sid,v);
         if(kEl)kEl.value='';
-        render();toast(changed?'已保存。改过之后状态回到未测试':'已保存')});
+        render();toast(changed?'已保存，授权状态已重置为未测试':'已保存')});
     {const d=document.getElementById('dlg'), cb=d&&d.querySelector('#msmown'), w=d&&d.querySelector('#msmkw');
      if(cb&&w)cb.onchange=()=>{w.hidden=!cb.checked}}
     return}
@@ -17809,7 +17802,7 @@ function act(a,el){
     msSet(sid,{models:(x.models||[]).filter(m=>m.name!==nm)});
     MC.setKeyOfM(sid,nm,'');        // 它自己的那把密钥跟着走
     const ac=mActive();if(ac.sid===sid&&ac.name===nm)LS.set('mactive',{});
-    render();toast('已删掉 '+nm);return}
+    render();toast('已删除 '+nm);return}
   /* 测试：发一次真请求，按结果改授权状态。
      不测就永远是「未测试」——不替它写「已授权」（R17）。 */
   if(a==='msmtest'){const [sid,nm]=el.dataset.msmtest.split('|');
@@ -17818,13 +17811,13 @@ function act(a,el){
     const mark=st=>{if(!x.builtin)msSet(sid,{models:(msFind(sid).models||[]).map(m=>
       m.name===nm?Object.assign({},m,{st:st,at:nowStamp()}):m)})};
     MC.chat([{role:'user',content:'只回答两个字：收到'}],{max:16,on:{sid:sid,name:nm}})
-      .then(r=>{mark('ok');render();toast(nm+' 通了：返回「'+r.text.trim().slice(0,12)+'」')})
-      .catch(e=>{mark('fail');render();toast(nm+' 没通：'+modelErr(e))});
+      .then(r=>{mark('ok');render();toast(nm+' 连接成功')})
+      .catch(e=>{mark('fail');render();toast(nm+' 连接失败：'+modelErr(e))});
     return}
   if(a==='mstest'){const sid=el.dataset.mstest,x=msFind(sid);if(!x)return;
     const was=mActive();
     const nm=((x.models||[])[0]||{}).name;
-    if(!nm&&!x.builtin){toast('这个系列下还没有模型，先在「模型管理」里添一个');return}
+    if(!nm&&!x.builtin){toast('该系列下还没有模型，请先添加');return}
     el.disabled=true;el.textContent='测试中';
     /* 原先靠「切到这一条 → 发请求 → 切回去」来指定系列。
        那是全局状态：连点两条测试，第二条会把第一条的现场改掉。
@@ -17835,7 +17828,7 @@ function act(a,el){
         models:(x.models||[]).map(m=>m.name===nm?Object.assign({},m,{st:'ok'}):m)});
       LS.set('mstat',{ok:true,at:nowStamp(),msg:''});
       render();
-      toast('通了：返回「'+r.text.trim().slice(0,12)+'」');
+      toast('连接成功');
     }).catch(e=>{
       if(!x.builtin)msSet(sid,{st:'fail',at:nowStamp(),
         models:(x.models||[]).map(m=>m.name===nm?Object.assign({},m,{st:'fail'}):m)});
