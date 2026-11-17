@@ -2491,6 +2491,10 @@ body[data-route="me"] .acct-b{background:var(--surface-3)}
 body[data-route="chat"] #view{position:relative}
 .land-top{position:absolute;top:var(--s4);right:max(var(--s5),env(safe-area-inset-right,0px));display:flex;gap:var(--s2);z-index:2}
 @media(min-width:1000px){.land-top{right:var(--s7)}}
+
+/* 模型接入钉在侧栏最下面、账户上面：最近对话那一段撤掉之后，没有东西把它顶下去了 */
+#navS{margin-top:auto}
+#navS+.side-foot,#navAcct{margin-top:0}
 </style>
 
 <div id="app">
