@@ -877,6 +877,7 @@ th[aria-sort] .sort-i{opacity:1}
 .lnk{border:0;background:transparent;padding:0;cursor:pointer;color:var(--dry);
   font:inherit;text-underline-offset:2px;text-decoration:underline}
 .lnk:hover{color:var(--ink)}
+.lnk{display:inline-block;min-height:1.5rem;line-height:1.5rem;vertical-align:middle}
 /* 高级参数面板不再是一整块米色板：它是框里的一段，给一条分隔线就够了 */
 /* 高级参数展开后是一张子卡，和下面每一段流程卡同级、同样的处理（见 .pstep,.advb-b）：
    它改的是这一次怎么跑，和「这一次分几段跑」是同一类事。
@@ -2442,39 +2443,9 @@ body[data-route="me"] .acct-b{background:var(--surface-3)}
 /* 钉在顶上的那一条要有底色：不然往上滚的内容会从返回键后面透出来 */
 .outbar:not(.is-inline){background:var(--paper);padding-bottom:var(--s3);margin-bottom:calc(var(--s3) * -1)}
 
-/* ---------- 论文工具 ---------- */
-.page.pp{max-width:62rem;margin-inline:auto;width:100%}
-.pp-top{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding-top:var(--s5)}
-.pp-top h1{font-size:2rem}
-.pp-ask .ask-t{min-height:3.5rem}
-.pp-h2{font-size:1.125rem;font-weight:650;letter-spacing:-.02em}
+/* 项目卡片网格 */
 .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(22rem,1fr));gap:var(--s3)}
 @media(max-width:48rem){.pgrid{grid-template-columns:1fr}}
-.pcardx{display:flex;flex-direction:column;gap:var(--s2);align-items:stretch;text-align:left;min-width:0;
-  padding:var(--s4);border:1px solid var(--line);border-radius:.75rem;background:var(--surface);
-  cursor:pointer;font:inherit;color:inherit;transition:border-color .14s,box-shadow .14s}
-.pcardx:hover{border-color:var(--dry);box-shadow:0 6px 18px -12px rgba(11,15,20,.35)}
-.pcardx:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
-.pcardx-t{font-size:0.9375rem;font-weight:600;line-height:1.45;color:var(--ink);
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.pcardx-m{display:flex;gap:var(--s3);font-size:0.71875rem;color:var(--ink-3);min-width:0}
-.pcardx-c{margin-left:auto;flex:0 0 auto;color:var(--ink-4)}
-.pcardx-a{font-size:0.78125rem;line-height:1.65;color:var(--ink-2);
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.pcardx-tags{display:flex;flex-wrap:wrap;gap:6px;padding-top:var(--s2);border-top:1px dashed var(--line-2)}
-.prow{display:flex;align-items:center;gap:var(--s4);width:100%;text-align:left;padding:var(--s3) 0;
-  border:0;border-top:1px solid var(--line-2);background:transparent;cursor:pointer;font:inherit;color:inherit}
-.prow:first-child{border-top:0;padding-top:0}.prow:last-child{padding-bottom:0}
-.prow:hover .prow-t{color:var(--dry)}
-.prow.is-ro{cursor:default}
-.prow:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
-.prow-t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
-.pp-bar{display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap;position:sticky;top:0;z-index:6;
-  padding:var(--s4) 0 var(--s3);background:var(--paper)}
-.pp-bar .btn{gap:4px}
-.pp-hd{display:flex;flex-direction:column;gap:var(--s3)}
-.pp-hd h1{font-size:1.5rem;line-height:1.35}
-.pp-abs{margin:0;font-size:0.875rem;line-height:1.85;color:var(--ink-2);white-space:pre-wrap;word-break:break-word}
 
 /* 跨页一致：项目卡的圆角与其他卡片相同 */
 .pcard{border-radius:.75rem}
@@ -3382,6 +3353,8 @@ function domOf(p){const x=p||PRJ();return DOMAINS.find(d=>d.k===(x&&x.dom))||DOM
      资源     —— 外面现成的，不是你攒的
    每一项的 title 写的是「哪个研究动作需要它」（R16）——
    原先 title 就是按钮名本身，等于把眼前的字再念一遍。 */
+/* 子页面没有自己的导航项：亮它所属的那一项，不然进了项目或表单页，侧栏上一处都不亮 */
+const NAV_PARENT={project:'projects',labdet:'lab',labnew:'lab',dsnew:'dsets',trainnew:'mdl',bnew:'mdl'};
 const NAV=[
   ['A','研究',[
     ['chat','新建对话',"M5 6.5A2.5 2.5 0 0 1 7.5 4h9A2.5 2.5 0 0 1 19 6.5v7a2.5 2.5 0 0 1-2.5 2.5H11l-4 3.5V16A2.5 2.5 0 0 1 5 13.5zM12 7.5v5M9.5 10h5",'用一句话发起任务'],
@@ -3461,7 +3434,7 @@ function paintNav(force){
       /* 正在看一段旧对话时，亮的是「最近对话」里的那一条，不是「新建对话」——
          两处同时亮，看不出自己在哪儿。 */
       const cur=id.indexOf('pw:')===0?(S.route==='pw'&&S.pid===id.slice(3))
-        :(S.route===id&&!(id==='chat'&&SESSIONS.some(x=>x.id===S.sid&&!x.arch)));
+        :((S.route===id||NAV_PARENT[S.route]===id)&&!(id==='chat'&&SESSIONS.some(x=>x.id===S.sid&&!x.arch)));
       b.setAttribute('aria-current',cur?'page':'false');
       /* 四个能力的名字跟当前项目的研究对象走：蛋白是「结构预测」，
          小分子就该是「构象与对接」。动作不变，名词由领域包给。 */
@@ -3912,7 +3885,7 @@ function toolIc(t){
    这两块真正该出现的地方是「这一轮要回答什么」：决定走哪条路线、凭什么这么定，
    本来就是定假设的那一步在做的事。
 
-   文献这一层不自建：端砚平台已经有论文工具，这里只登记本项目引用了什么、支撑了哪些位点。 */
+   文献这一层不自建，这里只登记本项目引用了什么、支撑了哪些位点。 */
 function litRows(pid){
   const L=CANDS(pid).filter(c=>c.src==='文献推断'&&c.ref);
   const by={};
@@ -3959,7 +3932,6 @@ return `
         <span class="t-md num grow">${esc(x.ref)}</span>
         <span class="t-sm mut2">支撑 ${x.n} 条变体 · 位点 ${x.pos.join('、')}</span>
       </div>`).join('')}
-      <span class="t-sm mut2">这里只记本项目引用过的文献。检索与精读在端砚的论文工具里做。</span>
     </div>`:''}
   </div></section>`;
 }
@@ -9009,281 +8981,6 @@ function grid(){
 
 
 
-/* ================= 论文工具 =================
-   检索、详情、引用网络、引文核验的数据都是现取的（OpenAlex 的公开接口，用户点了才发），
-   这里一条论文都不预置：标题、作者、年份、被引数都以接口返回为准。
-   取不到就说取不到。精读里的回答由已接入的模型根据摘要生成。 */
-const PAPER={tab:'search',q:'',mode:'fast',dom:'bio',hot:{},hotSt:'',res:null,resSt:'',resQ:'',
-  cur:null,store:{},net:'ref',netL:{},netSt:'',rel:{},ver:'',verR:null,verSt:'',readQ:'',readA:null,readSt:''};
-/* 高热论文只看生命科学：这个产品只做这一个领域。 */
-const PAPER_BIO='C86803240';
-const OA='https://api.openalex.org/works';
-const OA_SEL='select=id,doi,title,publication_year,publication_date,authorships,primary_location,concepts,open_access,cited_by_count,abstract_inverted_index,type,referenced_works,related_works';
-function oaAbs(inv){if(!inv)return '';const out=[];
-  Object.keys(inv).forEach(w=>inv[w].forEach(p=>{out[p]=w}));return out.join(' ').replace(/\s+/g,' ').trim()}
-function oaNorm(w){
-  const src=(w.primary_location&&w.primary_location.source)||{};
-  const p={id:String(w.id||'').split('/').pop(),doi:String(w.doi||'').replace(/^https?:\/\/doi\.org\//,''),
-    title:w.title||'（无标题）',year:w.publication_year||'',date:w.publication_date||'',
-    authors:(w.authorships||[]).map(a=>(a.author||{}).display_name).filter(Boolean),
-    venue:src.display_name||'',concepts:(w.concepts||[]).slice(0,9).map(c=>c.display_name),
-    oa:!!(w.open_access&&w.open_access.is_oa),pdf:(w.open_access&&w.open_access.oa_url)||'',
-    type:w.type||'',cited:w.cited_by_count||0,abs:oaAbs(w.abstract_inverted_index).replace(/^abstract[\s:：.]*/i,''),
-    refs:(w.referenced_works||[]).map(x=>String(x).split('/').pop()),
-    rels:(w.related_works||[]).map(x=>String(x).split('/').pop())};
-  PAPER.store[p.id]=p;return p;
-}
-/* [LOADING_BY_CALLER] 只负责取数；挂起态由各个面板自己的 St 字段给。 */
-async function oaList(query){
-  const r=await fetch(OA+'?'+query+'&'+OA_SEL);
-  if(!r.ok)throw new Error('HTTP '+r.status);
-  const d=await r.json();return (d.results||[]).map(oaNorm);
-}
-function paperErr(e){return /Failed to fetch|NetworkError|Load failed/i.test(String(e&&e.message||e))
-  ?'无法连接文献服务':'文献服务返回错误（'+String(e&&e.message||e).slice(0,40)+'）'}
-function paperHot(){
-  /* 上一次取失败了就停在失败上，等人点「重试」。
-     不拦的话每次渲染都会再发一次，失败又触发渲染——断网时就成了死循环。 */
-  const k=PAPER.dom;if(PAPER.hot[k]||PAPER.hotSt)return;
-  PAPER.hotSt='load';
-  const c=PAPER_BIO;
-  const y=new Date().getFullYear()-1;
-  oaList('filter=type:article,has_abstract:true,from_publication_date:'+y+'-01-01'+(c?',concepts.id:'+c:'')
-    +'&sort=cited_by_count:desc&per-page=8')
-    .then(L=>{PAPER.hot[k]=L;PAPER.hotSt=''})
-    .catch(e=>{PAPER.hotSt=paperErr(e)})
-    .then(()=>{if(S.route==='papers')render()});
-}
-function paperSearch(){
-  const q=(PAPER.q||'').trim();
-  if(!q){toast('请输入研究主题');return}
-  PAPER.resSt='load';PAPER.res=null;PAPER.resQ=q;PAPER.cur=null;render();
-  const deep=PAPER.mode==='deep';
-  /* 检索也只在生命科学领域里找 */
-  oaList('search='+encodeURIComponent(q)+'&filter=concepts.id:'+PAPER_BIO+'&per-page='+(deep?40:12)+(deep?'&sort=cited_by_count:desc':''))
-    .then(L=>{PAPER.res=L;PAPER.resSt=''})
-    .catch(e=>{PAPER.res=[];PAPER.resSt=paperErr(e)})
-    .then(()=>{if(S.route==='papers')render()});
-}
-function paperNet(p){
-  const k=p.id+'|'+PAPER.net;if(PAPER.netL[k]||PAPER.netSt==='load')return;
-  const q=PAPER.net==='ref'
-    ?(p.refs.length?'filter=openalex:'+p.refs.slice(0,12).join('|')+'&per-page=12':null)
-    :'filter=cites:'+p.id+'&sort=cited_by_count:desc&per-page=12';
-  if(!q){PAPER.netL[k]=[];return}
-  PAPER.netSt='load';
-  oaList(q).then(L=>{PAPER.netL[k]=L;PAPER.netSt=''})
-    .catch(e=>{PAPER.netL[k]=[];PAPER.netSt=paperErr(e)})
-    .then(()=>{if(S.route==='papers')render()});
-}
-function paperRel(p){
-  if(PAPER.rel[p.id]||!p.rels.length){if(!PAPER.rel[p.id])PAPER.rel[p.id]=[];return}
-  PAPER.rel[p.id]='load';
-  oaList('filter=openalex:'+p.rels.slice(0,6).join('|')+'&per-page=6')
-    .then(L=>{PAPER.rel[p.id]=L}).catch(()=>{PAPER.rel[p.id]=[]})
-    .then(()=>{if(S.route==='papers')render()});
-}
-function paperCite(p,style){
-  const au=p.authors, y=p.year||'n.d.';
-  if(style==='gbt'){const a=au.slice(0,3).join(', ')+(au.length>3?', 等':'');
-    return a+'. '+p.title+'[J]. '+(p.venue||'')+', '+y+'.'+(p.doi?' DOI: '+p.doi+'.':'')}
-  const a=au.length>2?au[0]+' et al.':au.join(' & ');
-  return a+' ('+y+'). '+p.title+'. '+(p.venue?p.venue+'. ':'')+(p.doi?'https://doi.org/'+p.doi:'');
-}
-function paperMeta(p){return [p.authors[0]?(p.authors[0]+(p.authors.length>1?' 等':'')):'',p.venue,p.year].filter(Boolean).join(' · ')}
-function paperCard(p){
-  return `<button class="pcardx" type="button" data-pp="open|${esc(p.id)}">
-    <strong class="pcardx-t">${esc(p.title)}</strong>
-    <span class="pcardx-m num">${esc(paperMeta(p))}<span class="pcardx-c">被引 ${p.cited}</span></span>
-    ${p.abs?`<span class="pcardx-a">${esc(p.abs.slice(0,220))}</span>`:''}
-    ${p.concepts.length?`<span class="pcardx-tags">${p.concepts.slice(0,4).map(c=>`<span class="tag">${esc(c)}</span>`).join('')}${
-      p.concepts.length>4?`<span class="tag">+${p.concepts.length-4}</span>`:''}</span>`:''}
-  </button>`;
-}
-function paperRow(p){
-  return `<button class="prow" type="button" data-pp="open|${esc(p.id)}">
-    <span class="col grow" style="gap:2px;min-width:0"><strong class="t-md prow-t">${esc(p.title)}</strong>
-      <span class="t-xs mut2 num">${esc(paperMeta(p))}</span></span>
-    <span class="t-xs mut2 num" style="flex:0 0 auto">被引 ${p.cited}</span></button>`;
-}
-const PAPER_LOAD='<div class="empty"><span class="skel" style="width:1rem;height:1rem;border-radius:50%"></span>正在获取</div>';
-function paperDetail(p){
-  paperNet(p);paperRel(p);
-  const nk=p.id+'|'+PAPER.net, NL=PAPER.netL[nk], RL=PAPER.rel[p.id];
-  return `<div class="page pp">
-  <div class="pp-bar">
-    <button class="btn" type="button" data-pp="back">← 返回</button>
-    <span class="grow"></span>
-    ${(p.pdf||p.doi)?`<a class="btn" href="${esc(p.pdf||('https://doi.org/'+p.doi))}" target="_blank" rel="noopener">${p.pdf?'获取 PDF':'查看原文'}</a>`
-      :'<button class="btn" type="button" disabled title="没有可用的全文链接">获取 PDF</button>'}
-    <button class="btn" type="button" data-pp="addproj|${esc(p.id)}">添加到项目
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 9.5 12 15l5.5-5.5"/></svg></button>
-    <button class="btn" type="button" data-pp="cite|${esc(p.id)}">引用格式</button>
-    <button class="btn btn-pri" type="button" data-pp="read|${esc(p.id)}">论文精读</button>
-  </div>
-  <div class="pp-hd">
-    <h1>${esc(p.title)}</h1>
-    <p class="t-md" style="margin:0;color:var(--ink-2)">${esc(p.authors.slice(0,12).join('，'))}${p.authors.length>12?' 等':''}</p>
-    <p class="t-sm mut2 num" style="margin:0">${esc([p.venue,p.date||p.year,p.doi?'DOI: '+p.doi:''].filter(Boolean).join(' · '))}</p>
-    <div class="row wrap" style="gap:6px">
-      ${p.concepts.map(c=>`<span class="tag">${esc(c)}</span>`).join('')}
-      ${p.oa?'<span class="chip c-ok">开放获取</span>':''}${p.type?`<span class="chip c-mut">${esc(p.type)}</span>`:''}
-    </div>
-  </div>
-  <section class="card"><div class="card-h"><strong>摘要</strong></div>
-    <div class="card-b"><p class="pp-abs">${p.abs?esc(p.abs):'<span class="mut2">该论文没有提供摘要</span>'}</p></div></section>
-  <section class="card"><div class="card-h"><strong>引用网络</strong><span class="grow"></span>
-    <div class="seg" role="radiogroup" aria-label="引用方向">
-      <button class="seg-i" type="button" role="radio" data-pp="net|ref" aria-checked="${PAPER.net==='ref'}">参考文献 ${p.refs.length}</button>
-      <button class="seg-i" type="button" role="radio" data-pp="net|cby" aria-checked="${PAPER.net==='cby'}">被引 ${p.cited}</button></div></div>
-    <div class="card-b col" style="gap:0">${!NL?PAPER_LOAD
-      :NL.length?NL.map(paperRow).join('')
-      :`<div class="empty">${PAPER.netSt||'暂无引用数据'}</div>`}</div></section>
-  <section class="card"><div class="card-h"><strong>相关论文</strong></div>
-    <div class="card-b col" style="gap:0">${RL==='load'||!RL?PAPER_LOAD
-      :RL.length?RL.map(paperRow).join(''):'<div class="empty">暂无相关论文</div>'}</div></section>
-</div>`;
-}
-V.papers=()=>{
-  const cur=PAPER.cur?PAPER.store[PAPER.cur]:null;
-  if(cur&&PAPER.tab==='search')return paperDetail(cur);
-  const tab=PAPER.tab;
-  const tabs=[['search','论文检索'],['read','论文精读'],['verify','引文核验']];
-  let body='';
-  if(tab==='search'){
-    paperHot();
-    const HL=PAPER.hot[PAPER.dom];
-    body=`
-    <div class="ask pp-ask"><div class="ask-b">
-      <label class="sr" for="ppq">研究主题</label>
-      <textarea id="ppq" class="ask-t" rows="2" placeholder="输入研究主题或检索要求">${esc(PAPER.q)}</textarea>
-      <div class="ask-bar">
-        <div class="seg" role="radiogroup" aria-label="检索方式">
-          <button class="seg-i" type="button" role="radio" data-pp="mode|fast" aria-checked="${PAPER.mode==='fast'}"
-            title="返回最相关的 12 篇">快速搜索</button>
-          <button class="seg-i" type="button" role="radio" data-pp="mode|deep" aria-checked="${PAPER.mode==='deep'}"
-            title="返回 40 篇，按被引数排序">深度搜索</button></div>
-        <span class="grow"></span>
-        <button class="ctl ctl-go" type="button" data-pp="search">开始检索</button>
-      </div></div></div>
-    ${PAPER.resSt==='load'?PAPER_LOAD
-     :PAPER.res?`<div class="col" style="gap:var(--s3)">
-        <div class="row"><strong class="t-md">「${esc(PAPER.resQ)}」的检索结果</strong>
-          <span class="t-sm mut2 num">${PAPER.res.length} 篇</span><span class="grow"></span>
-          <button class="lnk" type="button" data-pp="clear" style="min-height:1.5rem">清除结果</button></div>
-        ${PAPER.res.length?`<div class="pgrid">${PAPER.res.map(paperCard).join('')}</div>`
-          :`<div class="empty">${PAPER.resSt||'生命科学领域没有找到相关论文，换个关键词试试'}</div>`}</div>`
-     :`<div class="col" style="gap:var(--s3)">
-        <div class="row" style="align-items:baseline"><strong class="pp-h2">高热论文</strong>
-          <span class="t-sm mut2">生命科学领域近两年被引最多</span></div>
-        ${HL?(HL.length?`<div class="pgrid">${HL.map(paperCard).join('')}</div>`:'<div class="empty">暂无数据</div>')
-          :(PAPER.hotSt&&PAPER.hotSt!=='load'?`<div class="empty">${esc(PAPER.hotSt)}
-              <button class="btn" type="button" data-pp="hotretry">重试</button></div>`:PAPER_LOAD)}
-      </div>`}`;
-  }else if(tab==='read'){
-    body=cur?`
-    <section class="card"><div class="card-h"><strong>${esc(cur.title)}</strong></div>
-      <div class="card-b col" style="gap:var(--s3)">
-        <span class="t-sm mut2 num">${esc(paperMeta(cur))}</span>
-        <p class="pp-abs">${cur.abs?esc(cur.abs):'<span class="mut2">该论文没有提供摘要</span>'}</p>
-      </div></section>
-    <div class="ask pp-ask"><div class="ask-b">
-      <label class="sr" for="pprq">关于这篇论文的问题</label>
-      <textarea id="pprq" class="ask-t" rows="2" placeholder="这篇论文用了什么方法">${esc(PAPER.readQ)}</textarea>
-      <div class="ask-bar"><span class="t-xs mut2 grow">回答依据论文摘要，由已接入的模型生成</span>
-        <button class="ctl ctl-go" type="button" data-pp="ask"${cur.abs?'':' disabled title="没有摘要，无法精读"'}>提问</button></div>
-    </div></div>
-    ${PAPER.readSt==='load'?PAPER_LOAD:PAPER.readA?`<section class="card"><div class="card-b">
-      <p class="pp-abs${PAPER.readA.err?' c-err':''}">${esc(PAPER.readA.t)}</p></div></section>`:''}`
-    :`<div class="empty" style="padding:var(--s8) var(--s5)"><strong class="t-md" style="color:var(--ink)">还没有选择论文</strong>
-        <span class="t-sm">在「论文检索」中打开一篇论文，点「论文精读」</span>
-        <button class="btn" type="button" data-pp="tab|search">去检索</button></div>`;
-  }else{
-    const R=PAPER.verR;
-    body=`
-    <div class="ask pp-ask"><div class="ask-b">
-      <label class="sr" for="ppv">要核验的引文</label>
-      <textarea id="ppv" class="ask-t" rows="3" placeholder="粘贴一条参考文献或 DOI">${esc(PAPER.ver)}</textarea>
-      <div class="ask-bar"><span class="t-xs mut2 grow">在文献库中查找对应的论文，核对标题、作者和年份</span>
-        <button class="ctl ctl-go" type="button" data-pp="verify">开始核验</button></div>
-    </div></div>
-    ${PAPER.verSt==='load'?PAPER_LOAD:R?(R.length?`<div class="col" style="gap:var(--s3)">
-        <strong class="t-md">找到 ${R.length} 条可能对应的论文</strong>
-        <div class="card"><div class="card-b col" style="gap:0">${R.map(x=>`<div class="prow is-ro">
-          <span class="col grow" style="gap:2px;min-width:0"><strong class="t-md prow-t">${esc(x.p.title)}</strong>
-            <span class="t-xs mut2 num">${esc(paperMeta(x.p))}${x.p.doi?'　DOI: '+esc(x.p.doi):''}</span></span>
-          <span class="chip ${x.s>=0.8?'c-ok':x.s>=0.5?'c-dry':'c-mut'}" title="引文与标题的词重合度">标题匹配 ${Math.round(x.s*100)}%</span>
-          <button class="alnk" type="button" data-pp="open|${esc(x.p.id)}">查看</button></div>`).join('')}</div></div></div>`
-      :`<div class="empty">${PAPER.verSt||'没有找到对应的论文，这条引文可能有误'}</div>`):''}`;
-  }
-  return `<div class="page pp">
-  <div class="pp-top"><h1>论文工具</h1>
-    <p class="mut t-md" style="margin:0">一句话描述需求，检索生命科学领域的论文</p></div>
-  <div class="tabs">${tabs.map(([k,n])=>`<button class="tab${tab===k?' is-on':''}" type="button"
-    data-pp="tab|${k}" aria-selected="${tab===k}">${n}</button>`).join('')}</div>
-  ${body}
-</div>`;
-};
-function paperAct(a,arg,el){
-  const sync=()=>{const q=document.getElementById('ppq');if(q)PAPER.q=q.value;
-    const v=document.getElementById('ppv');if(v)PAPER.ver=v.value;
-    const r=document.getElementById('pprq');if(r)PAPER.readQ=r.value};
-  sync();
-  if(a==='tab'){PAPER.tab=arg;render();return}
-  if(a==='mode'){PAPER.mode=arg;render();return}
-  if(a==='hotretry'){PAPER.hotSt='';render();return}
-  if(a==='search'){paperSearch();return}
-  if(a==='clear'){PAPER.res=null;PAPER.resSt='';render();return}
-  if(a==='open'){PAPER.cur=arg;PAPER.tab='search';PAPER.net='ref';PAPER.netSt='';render();view.scrollTop=0;return}
-  if(a==='back'){PAPER.cur=null;render();return}
-  if(a==='net'){PAPER.net=arg;PAPER.netSt='';render();return}
-  if(a==='read'){PAPER.cur=arg;PAPER.tab='read';PAPER.readA=null;PAPER.readQ='';render();return}
-  const p=PAPER.store[arg];
-  if(a==='addproj'&&p){
-    menu(el,'<div class="menu-l">添加到项目</div>'+DB.projects.map(x=>
-      `<button class="menu-i" type="button" data-pick="${esc(x.id)}"><span class="ck"></span>
-        <span><span class="nm">${esc(x.name)}</span></span></button>`).join(''),v=>{
-      const pr=DB.projects.find(x=>x.id===v);if(!pr)return;
-      const name=p.title.slice(0,80)+(p.doi?'（DOI '+p.doi+'）':'')+'.pdf';
-      pr.kb=pr.kb||[];
-      if(pr.kb.indexOf(name)>=0){toast('该项目中已有这篇论文');return}
-      pr.kb.unshift(name);toast('已添加到「'+pr.name+'」的知识库')});
-    return}
-  if(a==='cite'&&p){
-    modal('引用格式',`<div class="col" style="gap:var(--s4)">
-      ${[['gbt','GB/T 7714'],['apa','APA']].map(([k,n])=>`<div class="col" style="gap:var(--s2)">
-        <div class="row"><span class="lbl grow">${n}</span>${cpBtn('cite-'+k,paperCite(p,k))}</div>
-        <p class="t-sm" style="margin:0;line-height:1.7;word-break:break-word">${esc(paperCite(p,k))}</p></div>`).join('')}
-      <p class="t-xs mut2" style="margin:0">由文献库的元数据拼成，投稿前请对照期刊要求核对卷期页码。</p>
-    </div>`,'关闭',()=>{});
-    const d=document.getElementById('dlg');
-    if(d)d.querySelectorAll('[data-copy]').forEach(b=>b.onclick=e=>{e.preventDefault();
-      navigator.clipboard.writeText(COPYSRC[b.dataset.copy]||'')
-        .then(()=>toast('已复制')).catch(()=>toast('复制失败，请手动选中'))});
-    return}
-  if(a==='ask'){const q=(PAPER.readQ||'').trim(), c=PAPER.store[PAPER.cur];
-    if(!q){toast('请输入问题');return}
-    if(!c||!c.abs)return;
-    PAPER.readSt='load';PAPER.readA=null;render();
-    MC.chat([{role:'system',content:'你是论文阅读助手。只根据下面给出的标题和摘要回答，摘要里没有的信息要明确说明摘要未提及，不要补充。用中文回答。'},
-      {role:'user',content:'标题：'+c.title+'\n摘要：'+c.abs+'\n\n问题：'+q}],{max:700})
-      .then(r=>{PAPER.readA={t:r.text||'模型没有返回内容'}})
-      .catch(e=>{PAPER.readA={t:modelErr(e),err:1}})
-      .then(()=>{PAPER.readSt='';if(S.route==='papers')render()});
-    return}
-  if(a==='verify'){const t=(PAPER.ver||'').trim();
-    if(!t){toast('请粘贴引文或 DOI');return}
-    PAPER.verSt='load';PAPER.verR=null;render();
-    const doi=(t.match(/10\.\d{4,9}\/[^\s"<>]+/)||[])[0];
-    const words=x=>String(x).toLowerCase().replace(/[^a-z0-9一-龥]+/g,' ').split(' ').filter(w=>w.length>2);
-    const score=p2=>{const tw=words(p2.title);if(!tw.length)return 0;
-      const cw=new Set(words(t));return tw.filter(w=>cw.has(w)).length/tw.length};
-    oaList(doi?'filter=doi:'+encodeURIComponent(doi.replace(/[.,;]+$/,'')):'search='+encodeURIComponent(t.slice(0,300))+'&per-page=5')
-      .then(L=>{PAPER.verR=L.map(p2=>({p:p2,s:doi?1:score(p2)})).sort((x,y)=>y.s-x.s).slice(0,5);PAPER.verSt=''})
-      .catch(e=>{PAPER.verR=[];PAPER.verSt=paperErr(e)})
-      .then(()=>{if(S.route==='papers')render()});
-    return}
-}
 V.projects=()=>`
 <div class="page">
   <div class="row wrap" style="align-items:flex-end;gap:var(--s4)">
@@ -10701,7 +10398,6 @@ return `<div class="page">
     </div>
     <label class="fbar-q"><span class="sr">搜索工具</span>${SEARCH_IC}
       <input id="skq2" value="${esc(S.tq||'')}" placeholder="搜索工具名、用途或输入类型"></label>
-    <button class="btn" type="button" data-go="papers" title="检索、精读和核验论文">论文工具</button>
 
   </div>
 
@@ -16447,8 +16143,6 @@ function render(){
   const q=(s,f)=>view.querySelectorAll(s).forEach(f);
   q('[data-go]',b=>b.onclick=e=>{e.preventDefault();go(b.dataset.go)});
   q('[data-projdw]',b=>b.onclick=()=>{S.projDw=b.dataset.projdw;render()});
-  q('[data-pp]',b=>b.onclick=()=>{const v=b.dataset.pp.split('|');paperAct(v[0],v.slice(1).join('|'),b)});
-  q('#ppq',t=>t.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();paperAct('search','',t)}}));
   q('[data-proj]',b=>b.onclick=()=>{const p=DB.projects.find(x=>x.id===b.dataset.proj);S.projDw=null;
     /* 进项目就折起导航：项目页自己有一整套二级导航（概览／假设／设计／结果／送检），
        外面那一列这时候只是占地方。 */
@@ -16858,9 +16552,14 @@ function render(){
     const L=DSETS(h.pid),i=L.findIndex(x=>x.id===h.d.id);
     if(i<0)return;
     if(L[i].st==='pub'){toast('已发布的数据集不能删除');return}
-    const n=L[i].id;L.splice(i,1);
-    if(S.dsPick===n)S.dsPick=null;
-    render();toast(n+' 已删除');});
+    const d0=L[i], n=d0.id;
+    modal('删除数据集',`<div class="col" style="gap:var(--s3)">
+      <strong class="t-md">${esc(d0.name||n)}　${esc(n)}</strong>
+      <p class="t-md mut" style="margin:0">删除后无法恢复。已经用它训练出的模型不受影响。</p></div>`,'删除',()=>{
+      const j=L.indexOf(d0);if(j>=0)L.splice(j,1);
+      if(S.dsPick===n)S.dsPick=null;
+      setTimeout(render,0);toast(n+' 已删除')});
+    const ok=document.querySelector('#dlg [value="ok"]');if(ok){ok.classList.remove('btn-pri');ok.classList.add('btn-danger')}});
   view.querySelectorAll('[data-dspub]').forEach(b=>b.onclick=()=>{
     const d=dsPublish(b.dataset.dspub);
     if(!d){toast('找不到这个数据集');return}
@@ -17969,8 +17668,12 @@ function act(a,el){
     x.cols=(h.cols||[]).slice(0,INF_MAX).map(infCol);
     if(!x.cols.length)x.cols=[infCol(null)];
     x.q='';S.infHist=null;infSave();render();toast('已打开「'+(h.title||'这一段')+'」');return}
-  if(a==='infhdel'){LS.set('inferHist',infHist().filter(y=>y.id!==el.dataset.infhdel));
-    render();toast('已删除');return}
+  if(a==='infhdel'){const hid=el.dataset.infhdel, h0=infHist().find(y=>y.id===hid);if(!h0)return;
+    modal('删除推理记录',`<div class="col" style="gap:var(--s3)">
+      <strong class="t-md">${esc(h0.title||'这一段推理')}</strong>
+      <p class="t-md mut" style="margin:0">删除后无法恢复。</p></div>`,'删除',()=>{
+      LS.set('inferHist',infHist().filter(y=>y.id!==hid));setTimeout(render,0);toast('已删除')});
+    const ok=document.querySelector('#dlg [value="ok"]');if(ok){ok.classList.remove('btn-pri');ok.classList.add('btn-danger')};return}
   if(a==='infnew'){const x=INF();
     const kept=infArchive();
     x.turns=[];x.cols.forEach(c=>{c.a={};c.from=0;c.busy=false});x.q='';
@@ -18114,10 +17817,15 @@ function act(a,el){
     return}
   if(a==='msmdel'){const [sid,nm]=el.dataset.msmdel.split('|');
     const x=msFind(sid);if(!x)return;
-    msSet(sid,{models:(x.models||[]).filter(m=>m.name!==nm)});
-    MC.setKeyOfM(sid,nm,'');        // 它自己的那把密钥跟着走
-    const ac=mActive();if(ac.sid===sid&&ac.name===nm)LS.set('mactive',{});
-    render();toast('已删除 '+nm);return}
+    modal('删除模型',`<div class="col" style="gap:var(--s3)">
+      <strong class="t-md">${esc(nm)}</strong>
+      <p class="t-md mut" style="margin:0">删除后对话和推理里不能再选它，它单独配置的密钥也会从本机清除。</p></div>`,'删除',()=>{
+      const y=msFind(sid);if(!y)return;
+      msSet(sid,{models:(y.models||[]).filter(m=>m.name!==nm)});
+      MC.setKeyOfM(sid,nm,'');        // 它自己的那把密钥跟着走
+      const ac=mActive();if(ac.sid===sid&&ac.name===nm)LS.set('mactive',{});
+      setTimeout(render,0);toast('已删除 '+nm)});
+    const ok=document.querySelector('#dlg [value="ok"]');if(ok){ok.classList.remove('btn-pri');ok.classList.add('btn-danger')};return}
   /* 测试：发一次真请求，按结果改授权状态。
      不测就永远是「未测试」——不替它写「已授权」（R17）。 */
   if(a==='msmtest'){const [sid,nm]=el.dataset.msmtest.split('|');
