@@ -8994,11 +8994,10 @@ function grid(){
    检索、详情、引用网络、引文核验的数据都是现取的（OpenAlex 的公开接口，用户点了才发），
    这里一条论文都不预置：标题、作者、年份、被引数都以接口返回为准。
    取不到就说取不到。精读里的回答由已接入的模型根据摘要生成。 */
-const PAPER={tab:'search',q:'',mode:'fast',dom:'all',hot:{},hotSt:'',res:null,resSt:'',resQ:'',
+const PAPER={tab:'search',q:'',mode:'fast',dom:'bio',hot:{},hotSt:'',res:null,resSt:'',resQ:'',
   cur:null,store:{},net:'ref',netL:{},netSt:'',rel:{},ver:'',verR:null,verSt:'',readQ:'',readA:null,readSt:''};
-const PAPER_DOM=[['all','全部领域',''],['bio','生命科学','C86803240'],['chem','化学','C185592680'],
-  ['mat','材料科学','C192562407'],['phy','物理','C121332964'],['math','数学','C33923547'],
-  ['geo','地球科学','C127313418'],['neuro','神经科学','C169760540']];
+/* 高热论文只看生命科学：这个产品只做这一个领域。 */
+const PAPER_BIO='C86803240';
 const OA='https://api.openalex.org/works';
 const OA_SEL='select=id,doi,title,publication_year,publication_date,authorships,primary_location,concepts,open_access,cited_by_count,abstract_inverted_index,type,referenced_works,related_works';
 function oaAbs(inv){if(!inv)return '';const out=[];
@@ -9026,7 +9025,7 @@ function paperErr(e){return /Failed to fetch|NetworkError|Load failed/i.test(Str
 function paperHot(){
   const k=PAPER.dom;if(PAPER.hot[k]||PAPER.hotSt==='load')return;
   PAPER.hotSt='load';
-  const c=(PAPER_DOM.find(x=>x[0]===k)||[])[2];
+  const c=PAPER_BIO;
   const y=new Date().getFullYear()-1;
   oaList('filter=type:article,has_abstract:true,from_publication_date:'+y+'-01-01'+(c?',concepts.id:'+c:'')
     +'&sort=cited_by_count:desc&per-page=8')
@@ -9153,10 +9152,8 @@ V.papers=()=>{
         ${PAPER.res.length?`<div class="pgrid">${PAPER.res.map(paperCard).join('')}</div>`
           :`<div class="empty">${PAPER.resSt||'没有找到相关论文，换个关键词试试'}</div>`}</div>`
      :`<div class="col" style="gap:var(--s3)">
-        <strong class="pp-h2">高热论文</strong>
-        <div class="row wrap" style="gap:var(--s2)">
-          ${PAPER_DOM.map(([k,n])=>`<button class="pill${PAPER.dom===k?' is-on':''}" type="button" data-pp="dom|${k}"
-            aria-pressed="${PAPER.dom===k}">${n}</button>`).join('')}</div>
+        <div class="row" style="align-items:baseline"><strong class="pp-h2">高热论文</strong>
+          <span class="t-sm mut2">生命科学领域近两年被引最多</span></div>
         ${HL?(HL.length?`<div class="pgrid">${HL.map(paperCard).join('')}</div>`:'<div class="empty">暂无数据</div>')
           :(PAPER.hotSt&&PAPER.hotSt!=='load'?`<div class="empty">${esc(PAPER.hotSt)}
               <button class="btn" type="button" data-pp="hotretry">重试</button></div>`:PAPER_LOAD)}
@@ -9199,7 +9196,7 @@ V.papers=()=>{
   }
   return `<div class="page pp">
   <div class="pp-top"><h1>论文工具</h1>
-    <p class="mut t-md" style="margin:0">一句话描述需求，检索全领域相关论文</p></div>
+    <p class="mut t-md" style="margin:0">一句话描述需求，检索相关论文</p></div>
   <div class="tabs">${tabs.map(([k,n])=>`<button class="tab${tab===k?' is-on':''}" type="button"
     data-pp="tab|${k}" aria-selected="${tab===k}">${n}</button>`).join('')}</div>
   ${body}
@@ -9212,7 +9209,6 @@ function paperAct(a,arg,el){
   sync();
   if(a==='tab'){PAPER.tab=arg;render();return}
   if(a==='mode'){PAPER.mode=arg;render();return}
-  if(a==='dom'){PAPER.dom=arg;if(PAPER.hotSt!=='load')PAPER.hotSt='';render();return}
   if(a==='hotretry'){PAPER.hotSt='';render();return}
   if(a==='search'){paperSearch();return}
   if(a==='clear'){PAPER.res=null;PAPER.resSt='';render();return}
