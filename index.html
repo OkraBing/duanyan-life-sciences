@@ -9038,7 +9038,8 @@ function paperSearch(){
   if(!q){toast('请输入研究主题');return}
   PAPER.resSt='load';PAPER.res=null;PAPER.resQ=q;PAPER.cur=null;render();
   const deep=PAPER.mode==='deep';
-  oaList('search='+encodeURIComponent(q)+'&per-page='+(deep?40:12)+(deep?'&sort=cited_by_count:desc':''))
+  /* 检索也只在生命科学领域里找 */
+  oaList('search='+encodeURIComponent(q)+'&filter=concepts.id:'+PAPER_BIO+'&per-page='+(deep?40:12)+(deep?'&sort=cited_by_count:desc':''))
     .then(L=>{PAPER.res=L;PAPER.resSt=''})
     .catch(e=>{PAPER.res=[];PAPER.resSt=paperErr(e)})
     .then(()=>{if(S.route==='papers')render()});
@@ -9150,7 +9151,7 @@ V.papers=()=>{
           <span class="t-sm mut2 num">${PAPER.res.length} 篇</span><span class="grow"></span>
           <button class="lnk" type="button" data-pp="clear" style="min-height:1.5rem">清除结果</button></div>
         ${PAPER.res.length?`<div class="pgrid">${PAPER.res.map(paperCard).join('')}</div>`
-          :`<div class="empty">${PAPER.resSt||'没有找到相关论文，换个关键词试试'}</div>`}</div>`
+          :`<div class="empty">${PAPER.resSt||'生命科学领域没有找到相关论文，换个关键词试试'}</div>`}</div>`
      :`<div class="col" style="gap:var(--s3)">
         <div class="row" style="align-items:baseline"><strong class="pp-h2">高热论文</strong>
           <span class="t-sm mut2">生命科学领域近两年被引最多</span></div>
@@ -9196,7 +9197,7 @@ V.papers=()=>{
   }
   return `<div class="page pp">
   <div class="pp-top"><h1>论文工具</h1>
-    <p class="mut t-md" style="margin:0">一句话描述需求，检索相关论文</p></div>
+    <p class="mut t-md" style="margin:0">一句话描述需求，检索生命科学领域的论文</p></div>
   <div class="tabs">${tabs.map(([k,n])=>`<button class="tab${tab===k?' is-on':''}" type="button"
     data-pp="tab|${k}" aria-selected="${tab===k}">${n}</button>`).join('')}</div>
   ${body}
