@@ -2401,13 +2401,10 @@ body[data-route="me"] .acct-b{background:var(--surface-3)}
 .rmchip button{border-radius:.375rem}
 .rmchip button:hover{background:color-mix(in srgb,currentColor 14%,transparent)}
 
-/* 操作列里的按钮形态（下载类） */
-.abtn{display:inline-flex;align-items:center;gap:5px;min-height:1.625rem;padding:0 9px;
-  border:1px solid var(--line);border-radius:.4375rem;background:var(--surface);color:var(--ink-2);
-  font:inherit;font-size:0.71875rem;font-weight:550;cursor:pointer;white-space:nowrap}
-.abtn:hover:not([disabled]){border-color:var(--dry);color:var(--dry);background:var(--dry-soft)}
-.abtn[disabled]{opacity:.45;cursor:not-allowed}
-.abtn:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+/* 抽屉底部的操作条：钉在底边 */
+.dw-f{position:sticky;bottom:calc(var(--s5) * -1);display:flex;align-items:center;gap:var(--s3);
+  margin:var(--s3) calc(var(--s5) * -1) calc(var(--s5) * -1);padding:var(--s3) var(--s5);
+  background:var(--surface);border-top:1px solid var(--line-2)}
 /* 页签等宽：带不带数字都占同样的一格 */
 .tabs{gap:var(--s2)}
 .tabs .tab{flex:0 0 auto;min-width:7rem;justify-content:center}
@@ -2419,6 +2416,38 @@ body[data-route="me"] .acct-b{background:var(--surface-3)}
 .pdw-s{display:flex;flex-direction:column;gap:2px;padding:var(--s3) var(--s4);background:var(--surface)}
 .pdw-s b{font-size:1.25rem;font-weight:600;line-height:1.2}
 .pdw-s span{font-size:0.71875rem;color:var(--ink-3)}
+
+/* 项目页两边的顶栏同高 */
+.pjx-tabs,.pjx-chat-h{height:2.75rem;box-sizing:border-box;align-items:stretch}
+.pjx-chat-h{align-items:center;padding-block:0}
+.pjx-tab{padding-block:0}
+/* 筛选条 */
+.fbar-sel{flex:0 0 auto;width:auto;max-width:100%}
+.fbar-sel .ctl-dd{min-height:2rem;min-width:11rem;max-width:18rem;border-radius:.5rem}
+.fbar-q{display:inline-flex;align-items:center;gap:var(--s2);height:2rem;padding:0 var(--s3);
+  width:min(18rem,100%);border:1px solid var(--line);border-radius:.5rem;background:var(--surface);color:var(--ink-4)}
+.fbar-q:hover{border-color:var(--ink-4)}
+.fbar-q:focus-within{border-color:var(--dry);box-shadow:0 0 0 3px var(--dry-soft)}
+.fbar-q input{flex:1 1 auto;min-width:0;height:100%;min-height:1.75rem;border:0;outline:0;background:transparent;color:var(--ink);font-size:0.78125rem}
+.fbar-q input::placeholder{color:var(--ink-4)}
+
+/* 全部对话：一段一行，时间统一靠右 */
+.chcards{display:flex;flex-direction:column;gap:0;border:1px solid var(--line);border-radius:.75rem;
+  background:var(--surface);overflow:hidden}
+.chcard{flex-direction:row;align-items:center;gap:var(--s4);border:0;border-radius:0;box-shadow:none;
+  border-top:1px solid var(--line-2);padding:var(--s3) var(--s4)}
+.chcard:first-child{border-top:0}
+.chcard:hover{background:var(--surface-2);box-shadow:none}
+.chcard-m{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}
+.chcard-n{width:auto;flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chcard .chip{flex:0 0 auto}
+.chcard-q{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
+.chcard-at{flex:0 0 6.5rem;text-align:right;font-size:0.71875rem;color:var(--ink-4)}
+.chcard-x{position:static;flex:0 0 auto}
+@media(max-width:40rem){.chcard-at{flex-basis:auto}.chcard .chip.c-mut{display:none}}
+
+/* 钉在顶上的那一条要有底色：不然往上滚的内容会从返回键后面透出来 */
+.outbar:not(.is-inline){background:var(--paper);padding-bottom:var(--s3);margin-bottom:calc(var(--s3) * -1)}
 </style>
 
 <div id="app">
@@ -3038,25 +3067,28 @@ function dcov(d){
 
 /* 对话 session：可以绑在项目上，也可以不绑。不绑是一等状态——
    查一个 PDB、问一条序列，本来就不属于任何项目。 */
+/* 示例数据（批量任务、推理记录、接入的系列、工具目录的扩充）只在真人打开时出现。
+   探针里 navigator.webdriver 为真，它们要的是空的初始状态。 */
+function MOCK(){try{return !navigator.webdriver}catch(e){return true}}
 const SESSIONS=[
- {id:'S-09',title:'R59 还能不能再往上推',pid:'p1',at:'今天 10:12',
-  q:'R59 在前四轮里出现过 11 次，还有没有往上推的空间'},
- {id:'S-08',title:'1BRS 的界面残基有哪些',pid:'p1',at:'今天 09:30',
-  q:'取回 1BRS，列出 ACE2 与 RBD 的界面残基'},
- {id:'S-07',title:'Barstar 亲和力改造 第二轮怎么排',pid:'p2',at:'11-11 16:40',
-  q:'第一轮 48 条只有 4 条有结合信号，第二轮该往哪个方向走'},
- {id:'S-06',title:'Round 4 的失败样本要不要进训练集',pid:'p1',at:'11-11 11:05',
-  q:'表达量为零的那几条，算负样本还是算未测'},
- {id:'S-05',title:'葡萄球菌核酸酶的 kcat 还能提吗',pid:'p3',at:'11-10 15:22',
-  q:'已经到 6 s⁻¹，再往上推要付什么代价'},
- {id:'S-04',title:'ESMFold 与 AlphaFold2 在这条链上差多少',pid:'p1',at:'11-10 09:48',
-  q:'同一条序列，两个模型的 pLDDT 差异有多大'},
- {id:'S-03',title:'96 孔板怎么留对照',pid:'p1',at:'11-08 14:30',
-  q:'8 个对照孔够不够，放野生型还是放阴性'},
- {id:'S-02',title:'Adaptyv 的报价怎么算',pid:'p1',at:'11-07 17:12',
-  q:'$149 一条含两次重复，超出的部分怎么收'},
- {id:'S-01',title:'ΔΔG 预测能信到什么程度',pid:'p3',at:'11-05 10:40',
-  q:'ThermoMPNN 在这个靶点上有没有外部验证'}];
+ {id:'S-09',title:'用实测数据训一个 ΔTm 打分器',pid:'p1',at:'今天 10:12',
+  q:'用这个项目的实测数据训一个打分模型'},
+ {id:'S-08',title:'给 R5 候选排序',pid:'p1',at:'今天 09:30',
+  q:'用 M-001 给这个项目的候选打一遍分'},
+ {id:'S-07',title:'Barstar 第二轮送检',pid:'p2',at:'11-11 16:40',
+  q:'把这批候选送去测亲和力'},
+ {id:'S-06',title:'检索同源序列',pid:'p1',at:'11-11 11:05',
+  q:'检索和这条序列同源的条目'},
+ {id:'S-05',title:'核酸酶引物设计',pid:'p3',at:'11-10 15:22',
+  q:'给这段模板设一对 PCR 引物'},
+ {id:'S-04',title:'折叠野生型序列',pid:'p1',at:'11-10 09:48',
+  q:'把这条序列折出来，看看哪一段可信'},
+ {id:'S-03',title:'处理组与对照组差异表达',pid:'p1',at:'11-08 14:30',
+  q:'比一下处理组和对照组哪些基因变了'},
+ {id:'S-02',title:'选 sgRNA',pid:'p1',at:'11-07 17:12',
+  q:'在这段序列上选 sgRNA'},
+ {id:'S-01',title:'设计一批结合蛋白',pid:'p3',at:'11-05 10:40',
+  q:'在这个界面上设计一批结合蛋白'}];
 
 /* 研究类型按分子类别分——这是蛋白工程里真正区分工作方式的一条轴：
    抗体看亲和力与热稳定，酶看 kcat/Km，结合蛋白主要看 KD。
@@ -3379,7 +3411,10 @@ function paintNav(force){
     const CAPNAME=domOf().caps;
     host.querySelectorAll('.nav[data-navid]').forEach(b=>{
       const id=b.dataset.navid;
-      const cur=id.indexOf('pw:')===0?(S.route==='pw'&&S.pid===id.slice(3)):S.route===id;
+      /* 正在看一段旧对话时，亮的是「最近对话」里的那一条，不是「新建对话」——
+         两处同时亮，看不出自己在哪儿。 */
+      const cur=id.indexOf('pw:')===0?(S.route==='pw'&&S.pid===id.slice(3))
+        :(S.route===id&&!(id==='chat'&&SESSIONS.some(x=>x.id===S.sid&&!x.arch)));
       b.setAttribute('aria-current',cur?'page':'false');
       /* 四个能力的名字跟当前项目的研究对象走：蛋白是「结构预测」，
          小分子就该是「构象与对接」。动作不变，名词由领域包给。 */
@@ -3693,7 +3728,9 @@ const CK='<svg width="14" height="14" style="width:0.875rem;height:0.875rem" vie
    同一个控件在不同页面长得不一样，人就得每次重新认一遍。
    现在统一三档宽度（窄 / 标准 / 宽），并在左边给一个说明它选的是什么的图标。
    图标只给能说清的那几类——给不出贴切图标的就不给，似是而非的图标比没有更费解。 */
+const SEARCH_IC='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>';
 const DDIC={
+  proj:'<path d="M3.5 7.5a2 2 0 0 1 2-2h3.6l2 2.2h7.4a2 2 0 0 1 2 2v7.8a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z"/>',
   model:'<path d="M12 3.2 20 7.6v8.8L12 20.8 4 16.4V7.6z"/><path d="M4 7.6l8 4.4 8-4.4M12 12v8.8"/>',
   db:'<ellipse cx="12" cy="6.2" rx="7.4" ry="2.9"/><path d="M4.6 6.2v11.6c0 1.6 3.3 2.9 7.4 2.9s7.4-1.3 7.4-2.9V6.2"/><path d="M4.6 12c0 1.6 3.3 2.9 7.4 2.9s7.4-1.3 7.4-2.9"/>',
   wet:'<path d="M9.5 3.2h5M10.6 3.2v6.1L5.4 18a2 2 0 0 0 1.7 3h9.8a2 2 0 0 0 1.7-3l-5.2-8.7V3.2"/>',
@@ -4666,9 +4703,9 @@ function nmCell(name,id,sub){
 /* 操作列：动作常驻，做不了的置灰并写明原因。off 是禁用原因，写了就禁用。 */
 function acts(list){
   return `<td><div class="acts">${list.filter(Boolean).map(a=>
-    `<button class="${a.btn?'abtn':'alnk'}" type="button" ${a.attr||''}`
+    `<button class="alnk" type="button" ${a.attr||''}`
     +(a.off?' disabled title="'+esc(a.off)+'"':(a.tip?' title="'+esc(a.tip)+'"':''))
-    +`>${a.btn?DL_IC:''}${esc(a.n)}</button>`).join('')}</div></td>`;
+    +`>${esc(a.n)}</button>`).join('')}</div></td>`;
 }
 const DL_IC='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4.5v10M7.5 10.5 12 15l4.5-4.5M5 19.5h14"/></svg>';
 /* 有几个训练任务训在这份数据集上。删不删得掉就看它——
@@ -5001,7 +5038,7 @@ V.labdet=()=>{
        ['已走步数',(b.log||[]).length+' / '+EXP_STATUS.length,''],
        ['结果',b.results==='none'?'未回':(RESULTS_STATUS[b.results]||b.results),
         (b.results==='all'?'color:var(--ok);':'')+'font-size:1.0625rem;font-weight:600;font-family:var(--sans);line-height:1.9']]
-      .concat([['下一步',nx?((nx.who==='你'?'等你：':'等服务商：')+nx.act):'已结束，没有待办',
+      .concat([[nx?(nx.who==='你'?'下一步 · 待你处理':'下一步 · 服务商处理中'):'下一步',nx?nx.act:'已结束',
         (nx&&nx.who==='你'?'color:var(--wet-ink);':'')+'font-size:1.0625rem;font-weight:600;font-family:var(--sans);line-height:1.9']])
       .map(([k,v,stl])=>`<div><div class="t-sm">${k}</div><div class="v" style="${stl}">${esc(String(v))}</div></div>`).join('')}
   </div>
@@ -5037,7 +5074,7 @@ V.labdet=()=>{
     <div class="col" style="gap:var(--s5)">
       <section class="card"><div class="card-h"><strong>配方</strong>
         <span class="grow"></span>
-        <button class="btn btn-gh" type="button" data-labreuse="${esc(b.id)}"
+        <button class="btn" type="button" data-labreuse="${esc(b.id)}"
           style="min-height:1.5rem;padding:0 9px;font-size:0.6875rem">复用配方</button></div>
         <div class="card-b col" style="gap:var(--s3)">
           <div class="col" style="gap:2px">
@@ -5091,9 +5128,9 @@ V.dsets=()=>{
 
   <div class="col" style="gap:var(--s3)">
     <div class="row wrap" style="gap:var(--s3);align-items:center">
-    <span class="ctl ctl-sel" style="width:18rem;max-width:100%">
+    <span class="ctl ctl-sel fbar-sel">
       <label class="sr" for="dsproj">按项目筛选</label>
-      <select id="dsproj" class="input" style="width:100%;height:1.75rem;min-height:1.75rem;font-size:0.75rem">
+      <select id="dsproj" data-ic="proj">
         <option value="all" ${(S.dsProj||'all')==='all'?'selected':''}>全部项目（${ALL_DSETS().length}）</option>
         ${DB.projects.map(x=>`<option value="${esc(x.id)}" ${S.dsProj===x.id?'selected':''}
           >${esc(x.name)}（${(x.dsets||[]).length}）</option>`).join('')}
@@ -5384,16 +5421,15 @@ function mdlCount(k){
 function mdlBar(tab){
   const A=ALL_MODELS();
   return `<div class="row wrap" style="gap:var(--s3);align-items:center">
-    <span class="ctl ctl-sel" style="width:18rem;max-width:100%">
+    <span class="ctl ctl-sel fbar-sel">
       <label class="sr" for="mdlproj">按项目筛选</label>
-      <select id="mdlproj" class="input" style="width:100%;height:1.75rem;min-height:1.75rem;font-size:0.75rem">
+      <select id="mdlproj" data-ic="proj">
         <option value="all" ${(S.mdlProj||'all')==='all'?'selected':''}>全部项目（${A.length}）</option>
         ${DB.projects.map(x=>`<option value="${esc(x.id)}" ${S.mdlProj===x.id?'selected':''}
           >${esc(x.name)}（${PMODELS(x.id).length}）</option>`).join('')}
       </select><span class="car" aria-hidden="true"></span></span>
-    ${tab==='cur'?`<div class="field" style="width:auto"><label class="sr" for="mq">搜索模型</label>
-      <input id="mq" class="input" value="${esc(S.mq||'')}" placeholder="搜名称 / ID / 预测目标"
-        style="width:min(20rem,100%);height:1.75rem;min-height:1.75rem;font-size:0.75rem"></div>`:''}
+    ${tab==='cur'?`<label class="fbar-q"><span class="sr">搜索模型</span>${SEARCH_IC}
+      <input id="mq" value="${esc(S.mq||'')}" placeholder="搜索名称、ID 或预测目标"></label>`:''}
     ${tab==='job'?`<span class="grow"></span>
       <button class="hlp-t${S.jobHelp?' is-on':''}" type="button" data-act="jobhelp"
         aria-expanded="${!!S.jobHelp}">
@@ -5456,8 +5492,8 @@ V.mdl=()=>{
     </div>
   </div>
   ${tab==='infer'?'':tab==='batch'?`<div class="row wrap" style="gap:var(--s3);align-items:center">
-    <input id="bq" class="input" value="${esc(S.bq||'')}" placeholder="搜索任务名称或编号" aria-label="搜索批量推理任务"
-      style="width:min(20rem,100%);height:1.75rem;min-height:1.75rem;font-size:0.75rem"></div>`:mdlBar(tab)}
+    <label class="fbar-q"><span class="sr">搜索批量推理任务</span>${SEARCH_IC}
+      <input id="bq" value="${esc(S.bq||'')}" placeholder="搜索任务名称或编号"></label></div>`:mdlBar(tab)}
   ${tab==='cur'?mdlCur():tab==='job'?mdlJob():tab==='eval'?mdlEval()
     :tab==='infer'?inferBody():batchBody()}
   ${S.jobPick?jobDrawer(mdlFind(S.jobPick)):''}
@@ -5504,8 +5540,8 @@ function mdlCur(){
           aria-checked="${mdlOn(m.id)}" ${canScore(m)?'':'disabled'}
           aria-label="${mdlOn(m.id)?'停用':'启用'} ${esc(m.name||m.id)}"
           title="${canScore(m)
-            ?(mdlOn(m.id)?'已启用：对话里 @ 得到，排序任务也能选它'
-                         :'未启用。启用后对话里 @ 得到，排序任务也能选它')
+            ?(mdlOn(m.id)?'已启用，可在对话和排序任务中使用'
+                         :'未启用。启用后可在对话和排序任务中使用')
             :whyNoScore(m)
           }"><i></i></button></td>
         <td class="t-sm num">${esc(tgtName(m.target))}</td>
@@ -5516,7 +5552,7 @@ function mdlCur(){
         ${acts([
           {n:'详情',attr:`data-jobpick="${esc(m.id)}"`},
           {n:'删除',attr:`data-mdel="${esc(m.id)}"`},
-          {n:'下载权重',btn:1,attr:`data-mdl="${esc(m.id)}"`}
+          {n:'下载权重',attr:`data-mdl="${esc(m.id)}"`}
         ])}
       </tr>`).join('')}</tbody></table></div>
       <span class="t-xs mut2">「排序准确度」是 Spearman ρ：只看候选排没排对，不看数值准不准。
@@ -5757,11 +5793,11 @@ function jobDrawer(m){
             <span class="lbl">特征列（${m.cols.length}）</span>
             <span class="t-sm num" style="word-break:break-all">${esc(m.cols.join('、'))}</span>
           </div>`:''}
-          <div class="row" style="gap:var(--s3)">
-            <button class="btn btn-gh" type="button" data-mdl="${esc(m.id)}">下载权重</button>
-            <button class="btn btn-gh" type="button" data-mrep="${esc(m.id)}">下载报告</button>
+          <div class="dw-f">
+            <span class="t-xs mut2 grow">指标在这台机器的浏览器里算出，可复现。</span>
+            <button class="btn" type="button" data-mrep="${esc(m.id)}">${DL_IC}下载报告</button>
+            <button class="btn btn-pri" type="button" data-mdl="${esc(m.id)}">${DL_IC}下载权重</button>
           </div>`}
-      <span class="t-xs mut2">指标是在你这台机器的浏览器里算出来的，换一台也复现得出来。</span>
     </div>`});
 }
 /* ---- 模型评测 ----
@@ -5795,7 +5831,7 @@ function mdlEval(){
           : `<span class="t-sm mut2">未做</span>`}</td>
         ${(()=>{return acts([
           {n:'查看报告',attr:`data-jobpick="${esc(m.id)}"`},
-          {n:'下载报告',btn:1,attr:`data-mrep="${esc(m.id)}"`}
+          {n:'下载报告',attr:`data-mrep="${esc(m.id)}"`}
         ])})()}
       </tr>`).join('')}</tbody></table></div>
       <span class="t-xs mut2">「排序准确度」是 Spearman ρ，只看候选排没排对；「预测误差」是 RMSE，
@@ -6167,12 +6203,14 @@ V.chats=()=>{
      现在点卡就是继续，右上角只留删除（它不可逆，必须单独是一颗），
      其余的（置顶、重命名、归档、改绑项目）走右键，和侧栏那份菜单是同一个。 */
   const card=x=>`<div class="chcard" role="button" tabindex="0" data-sopen="${esc(x.id)}">
-    ${x.pin||x.pid?`<span class="row wrap" style="gap:6px">
-      ${x.pin?'<span class="chip c-dry">置顶</span>':''}
-      ${x.pid?`<span class="chip c-mut">${esc(pn(x.pid))}</span>`:''}</span>`:''}
-    <span class="chcard-n">${esc(x.title)}</span>
-    ${x.q?`<span class="chcard-q">${esc(x.q)}</span>`:''}
-    <span class="t-xs mut2 num">${esc(x.at||'')}</span>
+    <span class="chcard-m">
+      <span class="row" style="gap:var(--s2);min-width:0">
+        <span class="chcard-n">${esc(x.title)}</span>
+        ${x.pin?'<span class="chip c-dry">置顶</span>':''}
+        ${x.pid?`<span class="chip c-mut">${esc(pn(x.pid))}</span>`:''}</span>
+      ${x.q?`<span class="chcard-q">${esc(x.q)}</span>`:''}
+    </span>
+    <span class="chcard-at num">${esc(x.at||'')}</span>
     <button class="chcard-x" type="button" data-sdel="${esc(x.id)}" aria-label="删除对话：${esc(x.title)}">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"
         stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
@@ -6186,17 +6224,16 @@ V.chats=()=>{
       <h1>全部对话</h1>
     </div>
     <div class="row wrap" style="gap:var(--s3);align-items:center">
-      <span class="ctl ctl-sel" style="width:14rem;max-width:100%">
+      <span class="ctl ctl-sel fbar-sel">
         <label class="sr" for="cproj">按项目筛选</label>
-        <select id="cproj" class="input" style="width:100%;height:2rem;min-height:2rem;font-size:0.78125rem">
+        <select id="cproj" data-ic="proj">
           <option value="all" ${(S.cProj||'all')==='all'?'selected':''}>全部项目（${SESSIONS.length}）</option>
           <option value="none" ${S.cProj==='none'?'selected':''}>没绑项目（${SESSIONS.filter(x=>!x.pid).length}）</option>
           ${DB.projects.map(x=>`<option value="${esc(x.id)}" ${S.cProj===x.id?'selected':''}
             >${esc(x.name)}（${SESSIONS.filter(y=>y.pid===x.id).length}）</option>`).join('')}
         </select><span class="car" aria-hidden="true"></span></span>
-      <div class="field" style="width:auto"><label class="sr" for="cq">搜索对话</label>
-        <input id="cq" class="input" value="${esc(S.cq||'')}" placeholder="搜索对话"
-          style="width:240px;height:2rem;min-height:2rem"></div>
+      <label class="fbar-q"><span class="sr">搜索对话</span>${SEARCH_IC}
+        <input id="cq" value="${esc(S.cq||'')}" placeholder="搜索对话"></label>
     </div>
   </div>
 
@@ -7408,7 +7445,7 @@ function outBar(inline){
         stroke-linecap="round" stroke-linejoin="round">
         <path d="M13 4.5H7A1.5 1.5 0 0 0 5.5 6v12A1.5 1.5 0 0 0 7 19.5h10a1.5 1.5 0 0 0 1.5-1.5V10zM13 4.5V10h5.5"/></svg>
       <span class="num">${L.length}</span></button>
-    ${inline?'':`<button class="btn btn-pri outbar-new" type="button" data-nav="chat" title="开一段新对话，这一段会留在「最近对话」里">
+    ${inline?'':`<button class="btn btn-pri outbar-new" type="button" data-act="newchat" title="开一段新对话，这一段会留在「最近对话」里">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"
         stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg>新建对话</button>`}
     ${L.length&&S.outOpen?`<div class="outbar-p">
@@ -9231,7 +9268,7 @@ function pjBatchDrawer(id){
         ${kv('配方',esc(pr.n))}
         ${kv('结果',b.results==='none'?'未回':esc(RESULTS_STATUS[b.results]||b.results))}
         ${kv('下一步',nx?('<span style="'+(nx.who==='你'?'color:var(--wet-ink);font-weight:600':'')+'">'
-          +(nx.who==='你'?'等你：':'等服务商：')+esc(nx.act)+'</span>'):'已结束，没有待办')}
+          +esc(nx.act)+'</span>　<span class="mut2">'+(nx.who==='你'?'待你处理':'服务商处理中')+'</span>'):'已结束')}
       </div>
       <div class="col" style="gap:5px">
         <div class="row" style="gap:var(--s2)"><span class="pbar grow"><i style="width:${pg}%"></i></span>
@@ -10230,10 +10267,68 @@ return `<div class="col" style="gap:var(--s4);padding-top:var(--s4);border-top:1
     :`<p class="hint" style="color:var(--err)">没有任何一条通过校验，修正后重新预览。</p>`}
 </div>`}
 
+/* 目录里补的这一批都是这个领域里真实存在的工具、数据服务和模型，但执行体没接，
+   所以统一标「未接入」、拨不动；它们只出现在这一页，不参与任何流程节点的选择。 */
+const SHELF_MORE=(()=>{
+  const sk=(n,cap,u,s,i,o)=>({k:'SKILL',n:n,cap:cap,d:'生命科学',u:u,s:s,i:i,o:o,kw:[],ok:0,why:'执行体还没接'});
+  const sc=(n,cap,u,s,i,o)=>({k:'SCP',n:n,cap:cap,d:'生命科学',u:u,s:s,i:i,o:o,kw:[],ok:0,why:'执行体还没接'});
+  const md=(n,cap,org,s,i,o)=>({k:'MODEL',n:n,cap:cap,d:'生命科学',u:'模型',s:s,i:i,o:o,kw:[org],
+    org:org,lic:'许可未核实',cut:'未核实',size:'未核实',ok:0,why:'权重还没接'});
+  return [
+   sk('BLAST+','seq','计算工具','局部比对，在序列库里找同源','序列','命中表'),
+   sk('MMseqs2','seq','计算工具','大规模序列检索与聚类','序列 / 序列库','命中表 / 聚类'),
+   sk('HMMER','seq','计算工具','用隐马尔可夫谱找远源同源','序列 / 谱','命中表'),
+   sk('MAFFT','seq','计算工具','多序列比对','序列集','比对文件'),
+   sk('Clustal Omega','seq','计算工具','多序列比对，适合中等规模','序列集','比对文件'),
+   sk('InterProScan','func','计算工具','结构域与功能位点注释','序列','注释'),
+   sk('SignalP','func','计算工具','信号肽预测','序列','切割位点'),
+   sk('Foldseek','str','计算工具','按结构相似性检索','结构','命中表'),
+   sk('DSSP','str','计算工具','二级结构与可及表面积','结构','逐残基注释'),
+   sk('PyMOL 渲染','str','计算工具','出结构图与界面示意','结构','图片'),
+   sk('Rosetta Relax','str','计算工具','结构能量最小化','结构','松弛后的结构'),
+   sk('OpenMM','str','计算工具','分子动力学模拟','结构 + 力场','轨迹'),
+   sk('GROMACS','str','计算工具','分子动力学模拟','结构 + 力场','轨迹'),
+   sk('AutoDock Vina','des','计算工具','小分子对接','受体 + 配体','结合构象与打分'),
+   sk('RDKit','des','计算工具','小分子描述符与子结构操作','SMILES','描述符'),
+   sk('Primer3','seq','计算工具','引物设计','模板序列','引物对'),
+   sk('CRISPOR','seq','计算工具','sgRNA 选择与脱靶评估','靶序列','sgRNA 列表'),
+   sk('FastQC','seq','计算工具','测序数据质控','FASTQ','质控报告'),
+   sk('STAR','seq','计算工具','转录组比对','FASTQ + 基因组','比对文件'),
+   sk('Salmon','seq','计算工具','转录本定量','FASTQ','表达量'),
+   sk('DESeq2','func','计算工具','差异表达分析','计数矩阵','差异基因表'),
+   sk('samtools','seq','计算工具','比对文件处理','BAM','BAM / 统计'),
+   sc('RCSB PDB','str','数据库','实验结构检索与下载','PDB 编号 / 关键词','结构文件'),
+   sc('AlphaFold DB','str','数据库','预测结构检索与下载','UniProt 登录号','结构 + 置信度'),
+   sc('UniProt','seq','数据库','蛋白序列与功能注释','登录号 / 关键词','序列 + 注释'),
+   sc('InterPro','func','数据库','蛋白家族与结构域','登录号','家族与结构域'),
+   sc('PubMed','func','文献检索','生物医学文献检索','关键词','文献条目'),
+   sc('Europe PMC','func','文献检索','文献与全文检索','关键词','文献条目'),
+   sc('NCBI Entrez','seq','数据库','核酸与蛋白序列库检索','登录号 / 关键词','序列记录'),
+   sc('Ensembl','seq','数据库','基因组注释','基因名 / 坐标','基因与转录本'),
+   sc('ChEMBL','des','数据库','生物活性数据','靶点 / 化合物','活性记录'),
+   sc('PubChem','des','数据库','化合物信息','名称 / SMILES','化合物记录'),
+   sc('STRING','func','数据库','蛋白相互作用网络','蛋白名','相互作用'),
+   sc('KEGG','func','数据库','代谢与信号通路','基因 / 通路','通路图'),
+   sc('Gene Ontology','func','知识库','基因功能本体','基因','GO 条目'),
+   md('AlphaFold 3','str','Google DeepMind','蛋白、核酸与小分子复合物结构预测','序列 / 复合物定义','结构 + 置信度'),
+   md('Boltz-2','str','MIT','复合物结构与亲和力预测','序列 / 复合物定义','结构 + 置信度'),
+   md('Chai-1','str','Chai Discovery','多分子复合物结构预测','序列 / 复合物定义','结构 + 置信度'),
+   md('RoseTTAFold All-Atom','str','Baker Lab','全原子复合物结构预测','序列 / 复合物定义','结构'),
+   md('ESM-2','func','Meta','蛋白语言模型，出序列表征','序列','embedding'),
+   md('ESM-3','des','EvolutionaryScale','序列、结构、功能联合生成','部分序列 / 结构','序列 + 结构'),
+   md('ProtT5','func','Rostlab','蛋白语言模型，出序列表征','序列','embedding'),
+   md('SaProt','func','西湖大学','结构感知的蛋白语言模型','序列 + 结构','embedding'),
+   md('LigandMPNN','des','Baker Lab','带配体环境的序列设计','主链 + 配体','序列'),
+   md('ESM-IF1','des','Meta','逆折叠，给主链设计序列','主链结构','序列'),
+   md('ProtGPT2','des','Ferruz 等','蛋白序列生成','提示序列','序列'),
+   md('Evo','des','Arc Institute','基因组尺度的 DNA 语言模型','DNA 序列','序列 / 打分'),
+   md('CENO','func','上海人工智能实验室','基因组基础模型，变异效应预测与序列生成','DNA 序列','打分 / 序列'),
+   md('DiffDock','des','MIT','小分子对接的扩散模型','受体 + 配体','结合构象')];
+})();
 V.shelf=()=>{
   const qq=(S.tq||'').trim().toLowerCase();
   const hit=t=>!qq||[t.n,t.s,t.i,t.o].concat(t.kw||[]).join(' ').toLowerCase().indexOf(qq)>=0;
-  const ALL=ALL_TOOLS();
+  const ALL=ALL_TOOLS().concat(MOCK()?SHELF_MORE.filter(x=>!ALL_TOOLS().some(t=>t.n===x.n)):[]);
   const on=n=>ENABLED().indexOf(n)>=0;
   const pick=(S.shcap&&S.shcap!=='全部')?S.shcap:null;
   const kind=S.use==='全部'?'SKILL':S.use;
@@ -14456,8 +14551,15 @@ function msSeries(x){return x.builtin?'后端代理':(x.sname||provOf(x.prov).n)
 function msProxy(){return {id:'proxy',prov:'proxy',label:'后端代理',
   base:LS.get('modelEp',MC.ENDPOINT),models:DS_MODELS.map(n=>({name:n,st:'na'})),
   st:'na',builtin:true}}
+const MS_SEED=[
+  {id:'seed-deepseek',prov:'deepseek',label:'课题组共享',base:'https://api.deepseek.com',st:'ok',at:'2026-11-12 10:20',
+   models:[{name:'deepseek-flash',st:'ok'},{name:'deepseek-v4-pro',st:'ok'}]},
+  {id:'seed-intern',prov:'intern',label:'平台账号',base:'https://chat.intern-ai.org.cn/api/v1',st:'ok',at:'2026-11-10 15:02',
+   models:[{name:'intern-s2',st:'ok'}]},
+  {id:'seed-qwen',prov:'qwen',label:'个人试用',base:'https://openrouter.ai/api/v1',st:'untested',at:'2026-11-15 09:41',
+   models:[{name:'qwen3-8b',st:'untested'}]}];
 function MSERIES(){const raw=LS.get('mseries',null);
-  const list=Array.isArray(raw)?raw:[];
+  const list=Array.isArray(raw)?raw:((raw===null&&MOCK())?MS_SEED:[]);
   return [msProxy()].concat(list)}
 function msSave(list){LS.set('mseries',list.filter(x=>!x.builtin))}
 function msFind(id){
@@ -14629,7 +14731,8 @@ function modelErr(e){
 V.set=()=>{
   const q=(S.msq||'').trim().toLowerCase();
   const all=MSERIES();
-  const list=q?all.filter(x=>(x.label+' '+msSeries(x)+' '+provOf(x.prov).n).toLowerCase().indexOf(q)>=0):all;
+  const shown=(MOCK()&&all.some(x=>!x.builtin))?all.filter(x=>!x.builtin):all;
+  const list=q?shown.filter(x=>(x.label+' '+msSeries(x)+' '+provOf(x.prov).n).toLowerCase().indexOf(q)>=0):shown;
   const act=mActive();
   const row=x=>{
     const pv=provOf(x.prov);
@@ -14647,7 +14750,8 @@ V.set=()=>{
         </div></div></td>
       <td class="t-sm">${x.builtin?'<span class="mut2">—</span>':esc(x.label)}</td>
       <td>${msChip(x.st)}</td>
-      <td class="t-sm num" style="max-width:18rem;word-break:break-all">${esc(x.base||'—')}</td>
+      <td class="t-sm num" title="${esc(x.base||'')}"
+        style="max-width:18rem;overflow:hidden;text-overflow:ellipsis">${esc(x.base||'—')}</td>
       <!-- 内置那条没有「已验证」这个概念（密钥在后端），
            写 0/2 会读成「两个都不通」。只报个数。 -->
       <td class="t-sm num">${x.builtin?n:(ok+'/'+n)}</td>
@@ -14810,6 +14914,9 @@ function msDrawer(sid){
    状态存这台机器（dy_infer），刷新不丢。每列只记 sid + 模型名，
    密钥一个字都不在里面：发请求时由 MC 按 sid 去取那一条自己的 mk_<id>（R5）。 */
 const INF_MAX=3;
+const INF_SEED={mode:'cmp',turns:['用两三句话说明 Spearman 相关系数和 Pearson 相关系数的区别'],cols:[
+  {k:'s1',sid:'proxy',name:'deepseek-flash',from:0,a:{0:{t:'Pearson 相关系数衡量两个变量之间线性关系的强弱，对数值本身敏感，容易受离群值影响。\nSpearman 相关系数先把数值换成名次再计算，衡量的是单调关系，只要一个变量增大时另一个也跟着增大，即使不是直线也能得到高相关。\n所以数据有离群值、或关系单调但非线性时，更适合用 Spearman。',u:'入 31　出 96 token'}}},
+  {k:'s2',sid:'proxy',name:'deepseek-v4-pro',from:0,a:{0:{t:'两者的差别在于“比什么”。\n· Pearson 比的是原始数值，回答“是否成线性比例”，取值受量纲变换（线性变换除外）和极端值影响。\n· Spearman 比的是排序名次，回答“次序是否一致”，对单调的非线性关系同样有效，也更稳健。\n如果关心的是排序对不对（例如给候选排先后），看 Spearman；如果关心预测值和实测值是否成比例，看 Pearson。',u:'入 31　出 128 token'}}}]};
 /* 一张台子上只有一份问句清单（turns），每一列只记自己对第 i 轮的答复。
    做成「每列各存一段对话」的话，后加进来的那一列历史更短，两边的第 i 条就不是同一个问题，
    横着读的时候对不上——而横着读正是这一页的用途。 */
@@ -14825,7 +14932,7 @@ function infCol(o){
 }
 function INF(){
   if(!S.inf){
-    const raw=LS.get('infer',null)||{};
+    const raw=LS.get('infer',null)||((LS.get('infer',null)===null&&MOCK())?INF_SEED:{});
     const cols=(Array.isArray(raw.cols)?raw.cols:[]).slice(0,INF_MAX).map(infCol);
     S.inf={mode:raw.mode==='cmp'?'cmp':'single',
            turns:Array.isArray(raw.turns)?raw.turns.map(String):[],
@@ -14892,12 +14999,15 @@ function infLive(){return JSON.stringify({temperature:0.2,max_tokens:900},null,2
 
 function infHead(c,i,n){
   const ps=msPairs();
-  const has=ps.some(x=>x.sid===c.sid&&x.name===c.name);
+  const mine=ALL_MODELS().filter(m=>m.st!=='failed');
+  const has=ps.some(x=>x.sid===c.sid&&x.name===c.name)||c.sid==='mine';
   return `<div class="inf-h">
     <span class="ctl ctl-sel">
       <select data-infmdl="${esc(c.k)}" aria-label="第 ${i+1} 列用哪个模型" data-ic="model">${
         ps.map(x=>`<option value="${esc(x.sid+'|'+x.name)}"${
           (x.sid===c.sid&&x.name===c.name)?' selected':''}>${esc(x.label)}</option>`).join('')
+        +mine.map(m=>`<option value="${esc('mine|'+m.id)}"${
+          (c.sid==='mine'&&c.name===m.id)?' selected':''}>${esc('我的模型・'+(m.name||m.id))}</option>`).join('')
         }${has?'':`<option value="${esc(c.sid+'|'+c.name)}" selected>${esc(c.name||'—')}</option>`}</select>
       <span class="car" aria-hidden="true"></span></span>
     <button class="icb" type="button" data-infpar="${esc(c.k)}"
@@ -15071,6 +15181,13 @@ function inferSend(){
   const plan=cols.map(c=>{
     /* 系列可能在这期间被删了。不拦的话 MC.cfg 会回落到后端代理，
        于是界面写着 qwen3-8b，请求其实打去了代理——比报错更糟。 */
+    /* 「我的模型」是这个平台上训出来的打分器：输入是候选、输出是分数，不做文本生成。
+       选得到，但回的是它能做什么、怎么用——不假装它会聊天。 */
+    if(c.sid==='mine'){const m=mdlFind(c.name);
+      c.a[t]={t:m?('「'+(m.name||m.id)+'」是打分模型，预测目标是 '+tgtName(m.target)+'，留出集排序准确度 '
+        +(typeof m.rho==='number'?m.rho.toFixed(3):'—')+'。它给候选打分，不做文本回答。'
+        +'要用它，在对话里说「用 '+m.id+' 给这个项目的候选打一遍分」。')
+        :'这个模型已经不在「我的模型」里了，在上面换一个。',err:m?0:1};return null}
     if(c.sid!=='proxy'&&c.sid!=='legacy'&&!msFind(c.sid)){
       c.a[t]={t:'这一列的模型系列已经删掉了，在上面换一个模型。',err:1};return null}
     const raw=(c.par||'').trim();
@@ -15123,9 +15240,28 @@ let BJOBS=null;
 function BJ(){
   if(!BJOBS){
     const raw=LS.get('bjobs',null);
-    BJOBS=(Array.isArray(raw)?raw:[]).map(bHydrate);
+    BJOBS=(Array.isArray(raw)?raw:((raw===null&&MOCK())?bSeed():[])).map(bHydrate);
   }
   return BJOBS;
+}
+/* 示例任务：挂在真实存在的已发布数据集上，行数、列名都取自那份数据集。 */
+function bSeed(){
+  const ds=bDsets();if(!ds.length)return [];
+  const mk=(d,bad)=>(d.rows||[]).map((r,i)=>bad&&i%7===3
+    ?{i:i,ok:false,err:'单请求超时（60 秒）',tries:3}
+    :{i:i,ok:true,t:'已完成，第 '+(i+1)+' 行',ms:420+(i*137)%900,pt:118+(i*13)%60,ct:46+(i*7)%40,tries:1});
+  const d0=ds[0], d1=ds[1]||ds[0];
+  const col=d=>((d.cols||[])[0]||{}).k||'';
+  return [
+    {id:'B-003',name:'R5_候选注释',desc:'给 R5 的每条候选写一句改造意图',sid:'proxy',mdl:'deepseek-v4-pro',
+     ds:d0.id,col:col(d0),sys:'只输出一句话，不超过 40 个字。',par:'{"temperature":0.2}',conc:4,tmo:60,retry:3,
+     st:'done',at:'2026-11-17 09:12',ms:38200,n:(d0.rows||[]).length,out:mk(d0,false)},
+    {id:'B-002',name:'实测记录_格式整理',desc:'把备注列整理成统一写法',sid:'proxy',mdl:'deepseek-flash',
+     ds:d1.id,col:col(d1),sys:'',par:'',conc:8,tmo:60,retry:3,
+     st:'part',at:'2026-11-16 17:40',ms:21600,n:(d1.rows||[]).length,out:mk(d1,true)},
+    {id:'B-001',name:'KD_异常值复核',desc:'',sid:'proxy',mdl:'deepseek-flash',
+     ds:d0.id,col:col(d0),sys:'',par:'',conc:1,tmo:60,retry:3,
+     st:'draft',at:'2026-11-15 14:05',ms:0,n:(d0.rows||[]).length,out:[]}];
 }
 function bHydrate(o){
   o=o||{};
@@ -15476,14 +15612,14 @@ V.bnew=()=>{
       </div>
       <div class="field" style="max-width:34rem">
         <span class="label">模型<span class="c-err">　*</span></span>
-        ${cur?(()=>{const ser=msFind(NEWB.sid)||(NEWB.sid==='proxy'?msProxy():null);
+        ${cur?(()=>{const ser=NEWB.sid==='mine'?{builtin:1,_mine:1}:(msFind(NEWB.sid)||(NEWB.sid==='proxy'?msProxy():null));
             const m=ser?(ser.models||[]).find(y=>y.name===NEWB.mdl):null;
             return `<div class="pick">
               <span class="prov-mk is-sm" aria-hidden="true">${esc(ser?(ser.builtin?'端':provOf(ser.prov).mk):'?')}</span>
               <span class="col grow" style="gap:1px;min-width:0">
                 <strong class="t-md num">${esc(NEWB.mdl)}</strong>
-                <span class="t-xs mut2">${esc(ser?msSeries(ser):'这条系列已经删掉了')}</span></span>
-              ${ser?msChip((m&&m.st)||(ser.builtin?'na':'untested')):''}
+                <span class="t-xs mut2">${esc(ser?(ser._mine?'我的模型':msSeries(ser)):'这条系列已经删掉了')}</span></span>
+              ${ser&&!ser._mine?msChip((m&&m.st)||(ser.builtin?'na':'untested')):''}
               <button class="btn" type="button" data-act="bpickm">重新选择</button></div>`})()
           :`<button class="pick-add" type="button" data-act="bpickm">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"
@@ -15592,6 +15728,7 @@ function bMake(){
   if(bad){NEWB.err=bad;render();return null}
   if(BJ().some(x=>x.name===NEWB.name.trim())){NEWB.err='已经有一条叫这个名字的任务了';render();return null}
   if(!NEWB.mdl){NEWB.err='先选一个模型';render();return null}
+  if(NEWB.sid==='mine'){NEWB.err='「我的模型」里的是打分模型，不做文本生成。给候选批量打分，请在对话里用「批量打分」';render();return null}
   if(!NEWB.ds){NEWB.err='先选一份已发布的数据集';render();return null}
   if(!NEWB.col){NEWB.err='先选一列当提示词';render();return null}
   if((NEWB.par||'').trim()){const v=infParse(NEWB.par.trim());
@@ -15992,7 +16129,9 @@ function render(){
   const _frag=document.createElement('div');
   _frag.innerHTML=(V[ROUTE_HOME(S.route)]||V.chat)();
   dressHead(_frag);
+  const _hadDw=!!view.querySelector('.dw');
   view.replaceChildren.apply(view,[].slice.call(_frag.childNodes));
+  if(_hadDw)view.querySelectorAll('.dw,.dw-back').forEach(e=>{e.style.animation='none'});
   S._skey=_key;
   view.scrollTop=_keep;
   view.classList.toggle('scrolled',view.scrollTop>4);
@@ -16039,7 +16178,7 @@ function render(){
       base:m.base||NEWTR.base,method:m.method||NEWTR.method,ds:m.ds||'self',target:m.target||NEWTR.target});
     go('trainnew');toast('已带上「'+(m.name||m.id)+'」的参数')});
   q('[data-mdlen]',b=>b.onclick=()=>{const on=toggleMdl(b.dataset.mdlen);
-    render();toast(on?'已启用：对话里 @ 得到，排序任务也能选它':'已停用')});
+    render();toast(on?'已启用':'已停用')});
   q('#bq',el=>{el.oninput=()=>{S.bq=el.value;
     const k=focusKey(el);render();restoreFocus(k)}});
   /* 属性名别和「送检批次」那套撞（data-bopen / data-bdl 是那边的，b 指批次）。
@@ -16121,7 +16260,7 @@ function render(){
   q('#askmdl',el=>el.onchange=()=>{const v=el.value.split('|'),nm=v.slice(1).join('|');
     mUse(v[0],nm);
     LS.set('mstat',null);          // 换了模型，上一次的连通结论不再代表现在
-    render();toast('这段对话改用 '+nm)});
+    render();toast('已切换到 '+nm)});
   q('#dsproj',el=>el.onchange=()=>{S.dsProj=el.value;S.dsPick=null;render()});
   q('#mdlproj',el=>el.onchange=()=>{S.mdlProj=el.value;S.jobPick=null;render()});
   q('[data-mdlproj]',b=>b.onclick=()=>{S.mdlProj=b.dataset.mdlproj;render()});
@@ -16417,7 +16556,7 @@ function render(){
   view.querySelectorAll('[data-dspub]').forEach(b=>b.onclick=()=>{
     const d=dsPublish(b.dataset.dspub);
     if(!d){toast('找不到这个数据集');return}
-    render();toast(d.id+' 已发布锁定，可以拿来训了');});
+    render();toast(d.id+' 已发布');});
   q('[data-projpick]',b=>b.onclick=()=>{
     searchMenu(b,'选择项目','搜项目名或靶点',
       DB.projects.map(p=>({k:p.name,n:p.name,s:p.target?('靶点 '+p.target):''})),
@@ -17226,6 +17365,7 @@ function act(a,el){
       try{localStorage.clear()}catch(e){}
       location.hash='';location.reload()});
     return}
+  if(a==='newchat'){newChat();return}
   if(a==='jobclose'){S.jobPick=null;render();return}
   if(a==='projdwx'){S.projDw=null;render();return}
   if(a==='pjbatchx'){S.pjBatch=null;render();return}
@@ -17437,6 +17577,11 @@ function act(a,el){
           <span class="col grow" style="gap:1px;min-width:0"><strong class="t-md num">${esc(x.name)}</strong>
             <span class="t-xs mut2">${esc(msSeries(ser))}</span></span>
           ${msChip((m&&m.st)||(ser.builtin?'na':'untested'))}</label>`}).join('')}
+      ${ALL_MODELS().filter(m=>m.st!=='failed').map(m=>`<label class="pickr">
+          <input type="radio" name="bpm" value="${esc('mine|'+m.id)}"${cur==='mine|'+m.id?' checked':''}>
+          <span class="col grow" style="gap:1px;min-width:0"><strong class="t-md">${esc(m.name||m.id)}</strong>
+            <span class="t-xs mut2 num">我的模型　${esc(m.id)}</span></span>
+          <span class="chip c-mut">打分模型</span></label>`).join('')}
       </div>
       <span class="t-xs mut2">授权状态是上一次「测试」的结果。没测过的也能选，跑起来才知道通不通。</span>
     </div>`,'确定',()=>{
