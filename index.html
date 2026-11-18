@@ -3030,15 +3030,63 @@ function msPairs(){
     out.unshift({sid:a.sid,name:a.name,label:a.series.label+'・'+a.name,st:'untested'});
   return out;
 }
+/* ---- harness：这一句交给哪套智能体框架执行 ----
+   模型只是会说话的那一半，另一半是装着它的那套框架：有哪些工具、怎么调、
+   在什么沙盒里跑、算完按什么格式收回来。各家把自己的那一套放了出来
+   （Claude Code、Codex、Kimi Code、DeepSeek Harness……），于是框架和模型
+   成了两个分开选的东西——同一个模型换一套框架，能做的事和稳不稳都不一样。
+
+   为什么摆在模型**前面**：先定用哪套框架，模型清单才有意义。顺序反过来，
+   人会先挑一个眼熟的模型，再发现这套框架根本带不动它。
+
+   下面这张表是**登记出来的适配关系，不是实测成绩**：各家的框架先适配自家模型，
+   别家的模型要另行适配。没登记的照样列在模型下拉里、标明未适配且选不中——
+   免得有人在一个跑不起来的组合上干等结果。适配按模型名的前缀认，
+   这样后面接进来的新模型不用回来改这张表。 */
+const HARNESS=[
+ {id:'dy',n:'端砚 Harness',pre:null},
+ {id:'claude',n:'Claude Code',pre:['claude']},
+ {id:'codex',n:'Codex',pre:['gpt','o3','o4','codex']},
+ {id:'kimi',n:'Kimi Code',pre:['kimi','moonshot']},
+ {id:'ds',n:'DeepSeek Harness',pre:['deepseek']}];
+const HS_OF=id=>HARNESS.find(h=>h.id===id)||HARNESS[0];
+function hsCur(){return HS_OF(LS.get('harness','dy'))}
+function hsUse(id){LS.set('harness',id)}
+function hsFit(h,name){const n=String(name||'').toLowerCase();
+  return !h.pre||h.pre.some(p=>n.indexOf(p)===0)}
+/* 这套框架下还剩几个模型能用。一个都不剩时要说出来，不能让下拉空着。 */
+function hsFitPairs(h){return msPairs().filter(x=>hsFit(h,x.name))}
+function hsBtn(){
+  const cur=hsCur();
+  return `<span class="ctl ctl-sel ctl-mdl">
+    <select id="askhs" aria-label="这一句交给哪套框架执行" data-ic="grid">${HARNESS.map(h=>
+      `<option value="${esc(h.id)}"${h.id===cur.id?' selected':''}
+        >${esc(h.n)}</option>`).join('')}</select>
+    <span class="car" aria-hidden="true"></span></span>`;
+}
 function mdlBtn(){
-  const a=mActive(), ps=msPairs();
+  const a=mActive(), ps=msPairs(), h=hsCur();
   /* 用产品自己的下拉外壳 .ctl-sel：页面上有一段 JS（dressSelects）会把原生 select
      换成自家按钮。不套这个壳的话，它会被当成孤立的 select 套上 .as-input——
      那个样式是给表单里的整行输入用的，184px 宽，在 360px 的屏上直接把工具条撑破。 */
+  const opt=x=>`<option value="${esc(x.sid+'|'+x.name)}"${(x.sid===a.sid&&x.name===a.name)?' selected':''}
+        >${esc(x.name)}</option>`;
+  const fit=ps.filter(x=>hsFit(h,x.name)), un=h.pre?ps.filter(x=>!hsFit(h,x.name)):[];
+  /* 一个适配的都没有时不能把没适配的那些也灰掉：灰完这个下拉就空了，
+     而发请求走的还是 mActive() 里那一个——屏幕上没有模型、实际却在用一个模型。
+     这种时候照常列出来、照常可选，未适配在名字后面写明，由人自己决定。 */
+  const body=fit.length
+    ? fit.map(opt).join('')
+      /* 分组名只有原生 select 会显示：产品自己的下拉把选项拍平成一列，
+         optgroup 的标签在那一列里不见了——灰掉的几条就成了没有理由的灰。
+         所以理由也写进这一条自己的名字里，两种渲染下都读得到。 */
+      +(un.length?`<optgroup label="未适配${esc(h.n)}">`+un.map(x=>
+          `<option value="${esc(x.sid+'|'+x.name)}" disabled
+            >${esc(x.name)}（未适配 ${esc(h.n)}）</option>`).join('')+'</optgroup>':'')
+    : ps.map(x=>`<option value="${esc(x.sid+'|'+x.name)}"${(x.sid===a.sid&&x.name===a.name)?' selected':''}
+        >${esc(x.name)}${h.pre?'（未适配）':''}</option>`).join('');
   return `<span class="ctl ctl-sel ctl-mdl">
-    <select id="askmdl" aria-label="这一句用哪个模型" data-ic="model">${ps.map(x=>
-      `<option value="${esc(x.sid+'|'+x.name)}"${(x.sid===a.sid&&x.name===a.name)?' selected':''}
-        >${esc(x.name)}</option>`).join('')}</select>
+    <select id="askmdl" aria-label="这一句用哪个模型" data-ic="model">${body}</select>
     <span class="car" aria-hidden="true"></span></span>`;
 }
 function projBtn(explicit=false){
@@ -4851,7 +4899,7 @@ function composer(){
         ${research||ROUTE_HOME(S.route)==='project'?'':projBtn()}
         <span class="grow"></span>
         ${research?'<div class="research-send-controls">'+researchAgentTag():''}
-        ${mdlBtn()}
+        ${hsBtn()}${mdlBtn()}
         <button class="ctl ctl-go" type="button" data-act="chatsend" aria-label="发送">${land||ROUTE_HOME(S.route)==='project'?'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V4m-7 7 7-7 7 7"/></svg>':'发送'}</button>
         ${research?'</div>':''}
       </div>
@@ -16564,6 +16612,17 @@ function render(){
       toast('导入了 '+r.m.name+'　'+r.n+' 个权重'
         +(canScore(r.m)?'，可用于打分':'，暂不能打分'))};
     rd.readAsText(f)});
+  /* 换框架会连带换模型：当前这个没适配新框架的话，当场挑一个适配的，并说清楚换了。
+     一个适配的都没有时不假装挂上了——照实说，让人去接入页接一个。 */
+  q('#askhs',el=>el.onchange=()=>{
+    const h=HS_OF(el.value);hsUse(h.id);
+    const a=mActive();
+    if(hsFit(h,a.name)){render();toast('已切换到 '+h.n);return}
+    const fit=hsFitPairs(h);
+    if(!fit.length){render();toast('已切换到 '+h.n+'，但现在接入的模型都没适配它');return}
+    mUse(fit[0].sid,fit[0].name);
+    LS.set('mstat',null);          // 跟着换了模型，上一次的连通结论不再代表现在
+    render();toast('已切换到 '+h.n+'，模型换成适配的 '+fit[0].name)});
   q('#askmdl',el=>el.onchange=()=>{const v=el.value.split('|'),nm=v.slice(1).join('|');
     mUse(v[0],nm);
     LS.set('mstat',null);          // 换了模型，上一次的连通结论不再代表现在
