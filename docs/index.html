@@ -16089,7 +16089,7 @@ function restoreFocus(k,sel){
   if(sel&&el.setSelectionRange){try{el.setSelectionRange(sel[0],sel[1])}catch(e){}}
 }
 function render(){
-  closeMenu(1);
+  closeMenu(1);keepSoon();
   document.body.dataset.as=S.as?'1':'0';
   document.body.dataset.route=S.route;
   document.getElementById('side').dataset.collapsed=S.collapsed?'1':'0';
@@ -18451,6 +18451,102 @@ document.querySelectorAll('#side [data-go]').forEach(b=>b.onclick=()=>go(b.datas
   });
   S.pid=was;
 })();
+/* ================= 留存：新建的项目与对话，刷新后还在 =================
+   存什么：用户自己建的项目（内置的三个不存，代码里的种子变了要能跟上）、
+   对话列表、每段对话的消息。存在这台机器的 localStorage 里，键 dy_keep。
+   卡片里的下载件带着一个 make 函数，函数存不下来——存的时候把它当场算出的内容
+   拍下来（__body），取回来时再包成 make。超过上限的不拍，那一件取回来之后
+   下载键是灰的，写着「只有登记」，这是现成的诚实降级。
+   还在往外放的回答、还在跑的运行卡不存：刷新会打断它们，存下来就是一张永远在转的卡。
+   探针里（navigator.webdriver）默认不开：几十个探针共用一个浏览器上下文、
+   每条检查前重载，开着的话上一条建的项目会漏进下一条。要测这一层的探针
+   自己写 localStorage.dy_keepTest='1'。 */
+const KEEP={ready:0,t:0,maxSess:40,maxBody:60000,maxLen:2600000,
+  seed:DB.projects.map(x=>x.id),
+  on:(function(){try{return !navigator.webdriver||localStorage.getItem('dy_keepTest')==='1'}catch(e){return false}})()};
+function keepPack(o,lim,seen,d){
+  if(o==null)return o;
+  const t=typeof o;
+  if(t==='function'||t==='symbol')return undefined;
+  if(t!=='object')return (t==='number'&&!isFinite(o))?null:o;
+  if(d>14||seen.has(o))return undefined;
+  if(Array.isArray(o)){seen.add(o);const a=[];
+    o.forEach(x=>{const v=keepPack(x,lim,seen,d+1);if(v!==undefined)a.push(v)});seen.delete(o);return a}
+  if(Object.prototype.toString.call(o)!=='[object Object]')return undefined;
+  seen.add(o);const out={};
+  Object.keys(o).forEach(k=>{
+    if(k==='make'){
+      if(typeof o.make==='function'&&lim>0){
+        try{const b=String(o.make());if(b.length<=lim)out.__body=b}catch(e){}}
+      return}
+    if(k==='__body'){if(typeof o.make!=='function'&&typeof o.__body==='string'&&lim>0)out.__body=o.__body;return}
+    if(k.charAt(0)==='_')return;
+    const v=keepPack(o[k],lim,seen,d+1);if(v!==undefined)out[k]=v});
+  seen.delete(o);return out}
+function keepWake(o,d){
+  if(!o||typeof o!=='object'||d>14)return o;
+  if(Array.isArray(o)){o.forEach(x=>keepWake(x,d+1));return o}
+  if(typeof o.__body==='string'){const b=o.__body;o.make=()=>b}
+  if(typeof o.id==='string'){const m=/^c(\d+)$/.exec(o.id);if(m&&+m[1]>CARD_SEQ)CARD_SEQ=+m[1]}
+  Object.keys(o).forEach(k=>{if(k!=='__body')keepWake(o[k],d+1)});return o}
+/* 一段对话里能存的部分：放完了的消息，和消息里跑完了的卡 */
+function keepMsgs(L){
+  return (L||[]).filter(m=>m&&!m._live).map(m=>{
+    const c=(m.cards||[]).filter(x=>x&&!x._skel&&!(x.t==='run'&&x.st==='run'));
+    return Object.assign({},m,{cards:c})});
+}
+function keepSnap(lim,nSess){
+  const ses=SESSIONS.slice(0,nSess), conv={}, keys={new:1};
+  ses.forEach(x=>keys[x.id]=1);
+  if(S.sid)keys[S.sid]=1;
+  DB.projects.forEach(x=>keys[pjSid(x.id)]=1);
+  Object.keys(keys).forEach(k=>{const L=keepMsgs(CONV[k]);if(L.length)conv[k]=L});
+  return keepPack({v:1,
+    projects:DB.projects.filter(x=>KEEP.seed.indexOf(x.id)<0),
+    sessions:ses,conv:conv,sid:S.sid||null,bind:S.bind||null},lim,new Set(),0);
+}
+function keepNow(){
+  if(!KEEP.on||!KEEP.ready)return;
+  clearTimeout(KEEP.t);KEEP.t=0;
+  /* 写不下就一档一档让：先不拍下载件的内容，再只留最近 10 段对话。
+     localStorage 写满是抛异常，LS.set 会把它吞掉，所以这里自己写、自己接。 */
+  const tries=[[KEEP.maxBody,KEEP.maxSess],[0,KEEP.maxSess],[0,10]];
+  for(let i=0;i<tries.length;i++){
+    try{const j=JSON.stringify(keepSnap(tries[i][0],tries[i][1]));
+      if(j.length>KEEP.maxLen)continue;
+      localStorage.setItem('dy_keep',j);KEEP.fail=0;return}catch(e){}
+  }
+  if(!KEEP.fail){KEEP.fail=1;toast('这台机器的存储空间不够，刷新后新建的项目和对话不会保留')}
+}
+function keepSoon(){if(!KEEP.on||!KEEP.ready||KEEP.t)return;KEEP.t=setTimeout(keepNow,400)}
+function keepLoad(){
+  KEEP.ready=1;
+  if(!KEEP.on)return;
+  let k=null;
+  try{k=JSON.parse(localStorage.getItem('dy_keep')||'null')}catch(e){k=null}
+  if(!k||typeof k!=='object'||k.v!==1)return;
+  try{
+    (Array.isArray(k.projects)?k.projects:[]).forEach(x=>{
+      if(!x||typeof x.id!=='string'||typeof x.name!=='string')return;
+      if(DB.projects.some(y=>y.id===x.id||y.name===x.name))return;
+      if(!Array.isArray(x.rounds)||!x.rounds.length)return;
+      if(!Array.isArray(x.fields))x.fields=[];
+      ['kb','tools'].forEach(f=>{if(!Array.isArray(x[f]))x[f]=[]});
+      DB.projects.push(keepWake(x,0))});
+    if(Array.isArray(k.sessions)){
+      const ok=k.sessions.filter(x=>x&&typeof x.id==='string'&&typeof x.title==='string');
+      SESSIONS.length=0;ok.forEach(x=>SESSIONS.push(x))}
+    if(k.conv&&typeof k.conv==='object')Object.keys(k.conv).forEach(id=>{
+      const L=k.conv[id];if(!Array.isArray(L))return;
+      CONV[id]=keepWake(L.filter(m=>m&&typeof m.role==='string').map(m=>{
+        if(!Array.isArray(m.cards))m.cards=[];if(typeof m.text!=='string')m.text='';return m}),0)});
+    if(typeof k.sid==='string'&&CONV[k.sid]){S.sid=k.sid;
+      if(typeof k.bind==='string'&&DB.projects.some(x=>x.id===k.bind))S.bind=k.bind}
+  }catch(e){}
+}
+keepLoad();
+window.addEventListener('pagehide',keepNow);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')keepNow()});
 const _h0=location.hash.slice(1);
 /* 开页时也归一：旧书签（#pw、#round、#task…）是搬过家，不是不存在。 */
 if(_h0){const _t=ROUTE_HOME(bootTab(_h0));S.route=_t;if(_t!==_h0)location.hash=_t;}
