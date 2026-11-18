@@ -7,4 +7,6 @@ execFileSync(process.execPath, [path.join(root, 'wrap.js'), path.join(root, 'src
 await mkdir(path.join(root, 'docs'), { recursive: true });
 await copyFile(path.join(root, 'index.html'), path.join(root, 'docs/index.html'));
 await copyFile(path.join(root, 'site-config.js'), path.join(root, 'docs/site-config.js'));
+await mkdir(path.join(root, 'docs/assets'), { recursive: true });
+await copyFile(path.join(root, 'assets/research-chat-bg.png'), path.join(root, 'docs/assets/research-chat-bg.png'));
 console.log('GitHub Pages 发布文件已同步到 docs/');
