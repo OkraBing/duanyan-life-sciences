@@ -567,7 +567,7 @@ label.row:has(input[type="checkbox"]),label.row:has(input[type="radio"]){
   border-bottom:1px solid var(--line-2)}
 .wrow:last-child{border-bottom:0}
 .wrow:hover{background:var(--surface-2)}
-.dgrid{display:grid;gap:var(--s4);grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+.dgrid{display:grid;gap:var(--s4);grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr))}
 /* 数据库卡等高、开关对齐：卡身撑满，描述吃掉空档，底栏（开关在那里）钉在卡底。
    上一版这里写的是 .dcard-f——标记里根本没有这个类，规则是空转的。 */
 .dcard>.dcard-b{flex:1 1 auto}
@@ -1004,7 +1004,7 @@ th[aria-sort] .sort-i{opacity:1}
 .mcard[aria-pressed="true"]{border-color:var(--dry);background:var(--dry-soft);box-shadow:inset 0 0 0 1px var(--dry)}
 
 /* ---- 任务列表 ---- */
-.jgrid{display:grid;gap:var(--s3);grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+.jgrid{display:grid;gap:var(--s3);grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr))}
 /* 文件卡：一张卡回答四件事——这是什么、哪来的、还是不是当下这一版、能接到哪一步。
    不定高：下游多的卡本来就该高一些，硬压成一样高只会把最有用的那行截掉。 */
 .filegrid{display:grid;gap:var(--s3);grid-template-columns:repeat(auto-fill,minmax(20.5rem,1fr))}
@@ -1821,7 +1821,8 @@ body[data-route="chat"] #view{padding-bottom:0}
   padding:var(--s2) var(--s3);border-bottom:1px solid var(--line-2)}
 .outbar-l{max-height:17rem;overflow-y:auto;overscroll-behavior:contain}
 
-.page.chat.is-land{justify-content:center;padding-bottom:var(--s8)}
+.page.chat.is-land{display:grid;grid-template-rows:auto 1fr;align-items:center;gap:var(--s6);
+  max-width:none;padding-top:var(--s4);padding-bottom:var(--s8)}
 .land{display:flex;flex-direction:column;gap:var(--s3);align-items:center;text-align:center;
   width:100%;max-width:44rem;margin-inline:auto}
 .land>p{text-align:center}
@@ -2459,13 +2460,57 @@ body[data-route="me"] .acct-b{background:var(--surface-3)}
 .outbar-b:not(:disabled){border-color:var(--dry-dim);color:var(--dry-ink);background:var(--dry-soft)}
 .outbar-b:not(:disabled) .num{background:var(--dry);color:var(--on-dry)}
 .outbar-hist{min-height:1.875rem;padding:0 11px;font-size:0.78125rem;gap:5px}
-body[data-route="chat"] #view{position:relative}
-.land-top{position:absolute;top:var(--s4);right:max(var(--s5),env(safe-area-inset-right,0px));display:flex;gap:var(--s2);z-index:2}
-@media(min-width:1000px){.land-top{right:var(--s7)}}
+/* 首页历史入口占独立顶行，随主内容区域右对齐，矮屏也不会压住问候语。 */
+.land-top{display:flex;justify-self:end;align-self:flex-end;margin-left:auto;width:max-content;gap:var(--s2);z-index:2}
 
 /* 模型接入钉在侧栏最下面、账户上面：最近对话那一段撤掉之后，没有东西把它顶下去了 */
 #navS{margin-top:auto}
 #navS+.side-foot,#navAcct{margin-top:0}
+
+/* 收起菜单时账户和通知仍贴底，用户名跟随头像显示。 */
+@media(min-width:861px){
+  #side[data-collapsed="1"] #navAcct{margin-top:auto;margin-inline:0;padding-inline:4px}
+  #side[data-collapsed="1"] .acct-b{flex-direction:column;gap:4px;max-width:100%}
+  #side[data-collapsed="1"] .acct-me{display:block;width:auto}
+  #side[data-collapsed="1"] .acct-me strong{font-size:.625rem}
+}
+
+/* 响应式布局：容器可收缩，长内容在所属区域内换行或滚动。 */
+#app{height:100dvh}
+#side{height:100dvh}
+#view{min-width:0}
+.page,.page>section,.cols>*{min-width:0}
+.page{width:100%;margin-inline:auto}
+.tbl-wrap{max-width:100%;min-width:0}
+.dw .tbl-wrap{overflow-x:auto}
+pre{max-width:100%;overflow-x:auto}
+.bub,.chat-flow,.dw-b{overflow-wrap:anywhere}
+.tabs,.pw-tabs,.pjx-tabs{max-width:100%;min-width:0;overflow-x:auto;overscroll-behavior-inline:contain}
+.pw-tab,.pjx-tab{flex-shrink:0}
+.menu{max-width:calc(100vw - 24px);max-height:calc(100dvh - 24px);overflow-y:auto}
+dialog{max-height:calc(100dvh - 32px);overflow-y:auto}
+@media(max-width:860px){
+  #side{height:auto;min-height:3.25rem;flex-shrink:0}
+  #side[data-collapsed="1"]{flex-basis:auto}
+  #view{padding-inline:max(var(--s4),env(safe-area-inset-left,0px)) max(var(--s4),env(safe-area-inset-right,0px));padding-bottom:max(var(--s6),env(safe-area-inset-bottom,0px))}
+  .cols{gap:var(--s5)}
+}
+@media(max-width:640px){
+  .fbar-sel{flex:1 1 11rem;min-width:0}
+  .fbar-sel .ctl-dd{min-width:0;width:100%;max-width:100%}
+  .fbar-q{flex:1 1 14rem;min-width:0;max-width:100%}
+  .set-r{flex-wrap:wrap;gap:var(--s3)}
+  .set-r>.col.grow{flex-basis:60%}
+  .dw-h,.dw-f{flex-wrap:wrap}
+  .bub{max-width:92%}
+  .pdw-s{padding:var(--s3);overflow-wrap:anywhere}
+  .chat-ask{padding-bottom:max(var(--s3),env(safe-area-inset-bottom,0px))}
+}
+@media(max-height:600px){
+  .tbl-wrap.is-list{max-height:max(10rem,calc(100dvh - 14rem))}
+  .pg-hd{position:relative}
+}
+
 </style>
 
 <div id="app">
@@ -3357,7 +3402,7 @@ function domOf(p){const x=p||PRJ();return DOMAINS.find(d=>d.k===(x&&x.dom))||DOM
 const NAV_PARENT={project:'projects',labdet:'lab',labnew:'lab',dsnew:'dsets',trainnew:'mdl',bnew:'mdl'};
 const NAV=[
   ['A','研究',[
-    ['chat','新建对话',"M5 6.5A2.5 2.5 0 0 1 7.5 4h9A2.5 2.5 0 0 1 19 6.5v7a2.5 2.5 0 0 1-2.5 2.5H11l-4 3.5V16A2.5 2.5 0 0 1 5 13.5zM12 7.5v5M9.5 10h5",'用一句话发起任务'],
+    ['chat','科研对话',"M5 6.5A2.5 2.5 0 0 1 7.5 4h9A2.5 2.5 0 0 1 19 6.5v7a2.5 2.5 0 0 1-2.5 2.5H11l-4 3.5V16A2.5 2.5 0 0 1 5 13.5zM12 7.5v5M9.5 10h5",'用一句话发起任务'],
     ['projects','项目管理',"M3.5 7.5a2 2 0 0 1 2-2h3.6l2 2.2h7.4a2 2 0 0 1 2 2v7.8a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2zM7.5 13.5h9",'按课题管理多轮的数据、模型与实验']]],
   ['B','干湿闭环',[
     ['lab','实验管理',"M9.5 3.5v5.6L4.7 17.6A2.2 2.2 0 0 0 6.6 21h10.8a2.2 2.2 0 0 0 1.9-3.4L14.5 9.1V3.5M8 3.5h8M7.3 14.5h9.4",'送出去的批次走到哪了，哪一步在等你']]],
@@ -7467,7 +7512,7 @@ function outBar(inline){
         ><circle cx="12" cy="12" r="8"/><path d="M12 7.5V12l3 2"/></svg>历史对话</button>
     <button class="btn btn-pri outbar-new" type="button" data-act="newchat" title="开一段新对话，这一段会留在「最近对话」里">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"
-        stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg>新建对话</button>`}
+        stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg>科研对话</button>`}
     ${L.length&&S.outOpen?`<div class="outbar-p">
       <div class="outbar-h"><strong class="t-md">这段对话的产出</strong>
         <span class="grow"></span>
@@ -9144,10 +9189,10 @@ V.project=()=>{
     <span class="grow"></span>
     ${outBar(1)}
     <button class="btn btn-pri pjx-new" type="button" data-act="pjnew"
-      title="新建对话">
+      title="科研对话">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"
         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-        ><path d="M12 5.5v13M5.5 12h13"/></svg>新建对话</button>
+        ><path d="M12 5.5v13M5.5 12h13"/></svg>科研对话</button>
   </div>
 
   <div class="pjx-b">
@@ -11237,7 +11282,7 @@ return `<section class="card" id="detail">
     <span class="grow"></span>
     <button class="btn btn-gh" type="button" data-go="viewer">看结构</button>
     <button class="btn btn-gh btn-ic" type="button" data-act="nodetail" aria-label="关闭">✕</button></div>
-  <div class="card-b" style="display:grid;gap:var(--s6);grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">
+  <div class="card-b" style="display:grid;gap:var(--s6);grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))">
     <div class="col" style="gap:var(--s4)">
       <span class="lbl">五个维度</span>
       ${DIMS.map(([k,n,how])=>`<div class="col" style="gap:6px">
@@ -12527,7 +12572,7 @@ return `<div class="col" style="gap:var(--s5)">
   <section class="card">
     <div class="card-h"><strong>训练集口径</strong>
       <span class="grow"></span><span class="t-sm mut2">哪些参与重训，哪些不参与</span></div>
-    <div class="card-b" style="display:grid;gap:var(--s4);grid-template-columns:repeat(auto-fit,minmax(252px,1fr))">
+    <div class="card-b" style="display:grid;gap:var(--s4);grid-template-columns:repeat(auto-fit,minmax(min(100%,252px),1fr))">
       <div style="border-left:2px solid var(--dry);padding-left:var(--s4)">
         <div class="lbl" style="color:var(--dry)">参与重训　${trainable.length} 条</div>
         <div class="col" style="gap:var(--s2);margin-top:var(--s3)">
@@ -14269,7 +14314,7 @@ function designForm(){
     </div></section>
 
   <section class="card"><div class="card-h"><strong>模式</strong></div>
-    <div class="card-b" style="display:grid;gap:var(--s3);grid-template-columns:repeat(auto-fit,minmax(272px,1fr))">
+    <div class="card-b" style="display:grid;gap:var(--s3);grid-template-columns:repeat(auto-fit,minmax(min(100%,272px),1fr))">
       ${DMODES.map(([k,n,d])=>{const N=dfModeN(k);
         return `<button class="mcard" type="button" data-dfmode="${k}"
         aria-pressed="${DF.mode===k}">
@@ -15044,7 +15089,7 @@ function inferHd(){
   const seg=(k,n)=>`<button class="seg-i" type="button" role="radio" data-infmode="${k}"
     aria-checked="${x.mode===k}">${n}</button>`;
   return `<button class="btn btn-pri" type="button" data-act="infnew"${
-      x.turns.length?'':' disabled title="还没问过话"'}>新建对话</button>
+      x.turns.length?'':' disabled title="还没问过话"'}>科研对话</button>
     <div class="seg" role="radiogroup" aria-label="推理方式">${seg('single','单模型')}${seg('cmp','模型对比')}</div>
     <button class="btn btn-ic" type="button" data-act="infhist" aria-label="历史会话"
       title="历史会话${infHist().length?'（'+infHist().length+' 段）':''}">
@@ -17314,7 +17359,7 @@ function act(a,el){
         +'<span class="sb">新建对话后，原对话会保留在这里</span></span></div>')
       +'<div class="menu-sep"></div>'
       +'<button class="menu-i is-go" type="button" data-go="__new"><span class="ck"></span>'
-      +'<span><span class="nm">新建对话</span>'
+      +'<span><span class="nm">科研对话</span>'
       +'<span class="sb">当前对话会保留在列表中</span></span></button>';
     menu(el,html,v=>{
       if(v==='__new'){act('pjnew',el);return}
