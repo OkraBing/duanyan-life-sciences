@@ -20326,9 +20326,9 @@ V.devices=()=>{
 };
 function iterationApplyDevice(id){
  const d=labDevice(id);if(!d||!can('edit')||iterationDeviceStatus(id)!=='available')return;
- modal('申请接入 · '+d.name,'<label class="rs-field"><span>设备实例编号 <b>*</b></span><input class="input" id="device-instance" maxlength="80" placeholder="例如 LAB-001"></label><label class="rs-field"><span>设备位置</span><input class="input" id="device-location" maxlength="120"></label><p class="rs-inline-error" id="device-apply-error" role="alert"></p>','提交申请',()=>{
+ modal('申请接入 · '+d.name,'<label class="rs-field"><span>设备实例编号 <b>*</b></span><input class="input" id="device-instance" maxlength="80" placeholder="例如 LAB-001"></label><label class="rs-field"><span>申请说明</span><textarea class="input" id="device-request-note" rows="3" maxlength="500" placeholder="例如，用于本课题的蛋白纯化实验"></textarea></label><p class="rs-inline-error" id="device-apply-error" role="alert"></p>','提交申请',()=>{
   const resource=document.getElementById('device-instance').value.trim();if(!resource){document.getElementById('device-apply-error').textContent='填写设备实例编号';return false;}
-  const previous=DEVICE_CONNECTIONS[id];DEVICE_CONNECTIONS[id]={state:'pending',resource,location:document.getElementById('device-location').value.trim(),at:nowStamp()};
+  const previous=DEVICE_CONNECTIONS[id];DEVICE_CONNECTIONS[id]={state:'pending',resource,requestNote:document.getElementById('device-request-note').value.trim(),at:nowStamp()};
   if(!iterationPersistConnections()){if(previous)DEVICE_CONNECTIONS[id]=previous;else delete DEVICE_CONNECTIONS[id];document.getElementById('device-apply-error').textContent='申请未保存，请检查存储空间';return false;}
   render();
  });
@@ -20345,7 +20345,7 @@ NAV_PARENT.devicedetail='devices';
 V.devicedetail=()=>{
  const d=labDevice(LABUI.devicePick);if(!d)return '<div class="page iteration-page"><header class="iteration-head"><div><h1>设备不存在</h1><p>该设备可能已移除，或尚未选择设备型号。</p></div></header><button class="btn" type="button" data-go="devices">返回设备列表</button></div>';
  const c=DEVICE_CONNECTIONS[d.id],state=iterationDeviceStatus(d.id);
- return '<div class="page iteration-page device-detail"><button class="rs-link" type="button" data-go="devices">← 设备管理</button><header class="iteration-head"><div><h1>'+esc(d.name)+'</h1><p>'+esc(d.model)+' · '+esc(d.brand)+'</p></div><div class="rs-actions"><button type="button" class="btn" data-device-use="'+d.id+'">加入实验方案</button>'+(state==='available'?'<button type="button" class="btn btn-pri" data-device-apply="'+d.id+'">申请接入</button>':'<span class="device-state '+state+'">'+(state==='pending'?'申请中':'已接入')+'</span>')+'</div></header><div class="device-capability"><div class="device-art">'+iterationEquipmentArt(d)+'</div><div><p>'+esc(d.desc)+'</p><div class="lv-tags">'+d.stages.map(k=>'<span class="lv-tag">'+esc(labStage(k).title)+'</span>').join('')+'</div></div></div><div class="device-detail-layout"><div>'+d.stages.map(k=>'<section class="device-section"><h2>'+esc(labStage(k).title)+'</h2>'+labIO(k)+'</section>').join('')+'</div><aside><section class="device-section"><h2>方法条件</h2><p>'+esc(d.why)+'</p><h3>数据交接</h3><p>'+esc(d.native)+'</p><a class="rs-link" href="'+esc(d.url)+'" target="_blank" rel="noopener noreferrer">厂商资料 '+wbViewIcon('external')+'</a></section>'+(c?'<section class="device-section"><h2>接入记录</h2><dl class="asset-key-values"><dt>设备实例</dt><dd>'+esc(c.resource)+'</dd><dt>设备位置</dt><dd>'+esc(c.location||'未登记')+'</dd><dt>申请时间</dt><dd>'+esc(c.at)+'</dd></dl>'+(state==='pending'&&S.as===0&&can('edit')?'<button class="btn" type="button" data-device-confirm="'+d.id+'">确认接入</button>':'')+'</section>':'')+'</aside></div></div>';
+ return '<div class="page iteration-page device-detail"><button class="rs-link" type="button" data-go="devices">← 设备管理</button><header class="iteration-head"><div><h1>'+esc(d.name)+'</h1><p>'+esc(d.model)+' · '+esc(d.brand)+'</p></div><div class="rs-actions"><button type="button" class="btn" data-device-use="'+d.id+'">加入实验方案</button>'+(state==='available'?'<button type="button" class="btn btn-pri" data-device-apply="'+d.id+'">申请接入</button>':'<span class="device-state '+state+'">'+(state==='pending'?'申请中':'已接入')+'</span>')+'</div></header><div class="device-capability"><div class="device-art">'+iterationEquipmentArt(d)+'</div><div><p>'+esc(d.desc)+'</p><div class="lv-tags">'+d.stages.map(k=>'<span class="lv-tag">'+esc(labStage(k).title)+'</span>').join('')+'</div></div></div><div class="device-detail-layout"><div>'+d.stages.map(k=>'<section class="device-section"><h2>'+esc(labStage(k).title)+'</h2>'+labIO(k)+'</section>').join('')+'</div><aside><section class="device-section"><h2>方法条件</h2><p>'+esc(d.why)+'</p><h3>数据交接</h3><p>'+esc(d.native)+'</p><a class="rs-link" href="'+esc(d.url)+'" target="_blank" rel="noopener noreferrer">厂商资料 '+wbViewIcon('external')+'</a></section>'+(c?'<section class="device-section"><h2>接入记录</h2><dl class="asset-key-values"><dt>设备实例</dt><dd>'+esc(c.resource)+'</dd><dt>申请说明</dt><dd style="white-space:pre-wrap">'+esc(c.requestNote||'未填写')+'</dd><dt>申请时间</dt><dd>'+esc(c.at)+'</dd></dl>'+(state==='pending'&&S.as===0&&can('edit')?'<button class="btn" type="button" data-device-confirm="'+d.id+'">确认接入</button>':'')+'</section>':'')+'</aside></div></div>';
 };
 labDeviceDialog=function(id){LABUI.devicePick=id;go('devicedetail');};
 function iterationUseDevice(id){
@@ -20447,9 +20447,9 @@ async function iterationSeedWorkspace(){
   next.shared.push(other);
  }
  next.iterationSeed=1;await rsSave(next);
- if(!DEVICE_CONNECTIONS.star){DEVICE_CONNECTIONS.star={state:'pending',resource:'LAB-STAR-01',location:'样品制备区',at,example:true};}
- if(!DEVICE_CONNECTIONS.innova){DEVICE_CONNECTIONS.innova={state:'connected',resource:'LAB-SHAKER-01',location:'培养区',at,example:true};}
- if(!DEVICE_CONNECTIONS.centrifuge){DEVICE_CONNECTIONS.centrifuge={state:'connected',resource:'LAB-CENTRIFUGE-01',location:'样品处理区',at,example:true};}
+ if(!DEVICE_CONNECTIONS.star){DEVICE_CONNECTIONS.star={state:'pending',resource:'LAB-STAR-01',requestNote:'用于候选蛋白的批量样品分装',at,example:true};}
+ if(!DEVICE_CONNECTIONS.innova){DEVICE_CONNECTIONS.innova={state:'connected',resource:'LAB-SHAKER-01',requestNote:'用于候选蛋白的表达培养',at,example:true};}
+ if(!DEVICE_CONNECTIONS.centrifuge){DEVICE_CONNECTIONS.centrifuge={state:'connected',resource:'LAB-CENTRIFUGE-01',requestNote:'用于纯化前的样品收集与澄清',at,example:true};}
  iterationPersistConnections();
 }
 const iterationPersonalList=PLIST;
