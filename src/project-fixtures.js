@@ -111,6 +111,7 @@ bRun=async function(id){
  const missing=model.featK.find(k=>d.rows.some(r=>!Number.isFinite(+r[k])));
  if(missing){toast('输入数据缺少有效特征：'+missing);return;}
  const start=performance.now(),result=fixtureInference(rsProject(j.pid)||{id:j.pid,name:pnOf(j.pid)},0,d,model);
+ j.resultVersion=(Number(j.resultVersion)||0)+1;
  j.out=result.out;j.n=d.rows.length;j.st='done';j.ms=Math.max(1,Math.round(performance.now()-start));j.err='';j.dropped=false;
  bSave();render();toast('已完成 '+j.n+' 条候选评分');
 };

@@ -15865,7 +15865,7 @@ function bHydrate(o){
     sys:String(o.sys||''),par:String(o.par||''),
     conc:+o.conc||1,tmo:+o.tmo||60,retry:o.retry==null?3:+o.retry,
     st:B_ST[o.st]?o.st:'draft',at:o.at||nowStamp(),ms:+o.ms||0,n:+o.n||0,
-    err:String(o.err||''),dropped:!!o.dropped,
+    err:String(o.err||''),dropped:!!o.dropped,resultVersion:+o.resultVersion||0,
     out:Array.isArray(o.out)?o.out:[],
     stop:false,t0:0};
 }
@@ -15875,7 +15875,7 @@ function bHydrate(o){
 function bSave(){
   const pack=()=>JSON.stringify(BJ().map(j=>({id:j.id,pid:j.pid||null,name:j.name,desc:j.desc,sid:j.sid,
     mdl:j.mdl,ds:j.ds,col:j.col,modelId:j.modelId||null,example:!!j.example,sys:j.sys,par:j.par,conc:j.conc,tmo:j.tmo,retry:j.retry,
-    st:j.st,at:j.at,ms:j.ms,n:j.n,err:j.err,dropped:j.dropped,out:j.dropped?[]:j.out})));
+    st:j.st,at:j.at,ms:j.ms,n:j.n,err:j.err,resultVersion:j.resultVersion||0,dropped:j.dropped,out:j.dropped?[]:j.out})));
   try{localStorage.setItem('dy_bjobs',pack());return true}catch(e){}
   const L=BJ();
   for(let i=L.length-1;i>=0;i--){
@@ -15933,6 +15933,7 @@ async function bRun(id){
   if((j.par||'').trim()){const v=infParse(j.par.trim());
     if(!v.ok){j.st='fail';j.err='生成参数有问题：'+v.why;bSave();render();return}
     par=v.v}
+  j.resultVersion=(Number(j.resultVersion)||0)+1;
   j.n=rows.length;j.dropped=0;j.err='';j.stop=false;j.st='run';j.t0=now();
   if(!Array.isArray(j.out))j.out=[];
   /* 重跑只补没成的那几条：已经花掉的 token 不重复花。 */
@@ -20360,6 +20361,7 @@ function iterationStepProject(delta){
  const i=Math.max(0,ps.findIndex(p=>p.id===WB.progressProject));WB.progressProject=ps[(i+delta+ps.length)%ps.length].id;
 }
 function iterationTaskSection(kind,tasks,pid){
+ tasks=wbAttentionTasks(tasks);
  const model=kind==='model',rank={failed:0,active:1,draft:2,unknown:3,done:4,canceled:5};
  const sorted=tasks.slice().sort((a,b)=>(rank[a.status]??3)-(rank[b.status]??3));
  const size=innerHeight<730?1:innerHeight>=850?3:2;
@@ -20368,7 +20370,7 @@ function iterationTaskSection(kind,tasks,pid){
  const rows=sorted.slice(state[kind]*size,(state[kind]+1)*size);
  const foot=pages>1?'<div class="wb-pagination"><button type="button" class="wb-icon-button" data-wb-section-page="'+kind+'" data-delta="-1" aria-label="上一页'+(model?'模型':'实验')+'任务" '+(!state[kind]?'disabled':'')+'>'+wbViewIcon('left')+'</button><span>'+ (state[kind]+1)+' / '+pages+'</span><button type="button" class="wb-icon-button" data-wb-section-page="'+kind+'" data-delta="1" aria-label="下一页'+(model?'模型':'实验')+'任务" '+(state[kind]+1===pages?'disabled':'')+'>'+wbViewIcon('right')+'</button></div>':'<span>'+tasks.length+' 项</span>';
  const destination=model?'<select data-wb-list-select aria-label="前往模型任务列表"><option value="">查看全部</option><option value="train">模型训练</option><option value="eval">模型评测</option><option value="batch">批量推理</option><option value="online">在线推理</option></select>':'<button type="button" class="wb-list-link" data-wb-list="experiment">查看全部 '+wbViewIcon('right')+'</button>';
- return '<section class="wb-task-section" data-task-kind="'+kind+'"><div class="wb-task-section-head"><h3>'+(model?'模型任务':'实验任务')+'<small>'+tasks.length+'</small></h3></div>'+(rows.length?'<ul class="wb-task-list">'+rows.map(wbViewTask).join('')+'</ul>':'<div class="wb-empty-tasks">暂无'+(model?'模型':'实验')+'任务</div>')+'<div class="wb-task-section-foot">'+foot+destination+'</div></section>';
+ return '<section class="wb-task-section" data-task-kind="'+kind+'"><div class="wb-task-section-head"><h3>'+(model?'模型任务':'实验任务')+'<small>'+tasks.length+'</small></h3></div>'+(rows.length?'<ul class="wb-task-list">'+rows.map(wbViewTask).join('')+'</ul>':'<div class="wb-empty-tasks">暂无需要关注的'+(model?'模型':'实验')+'任务</div>')+'<div class="wb-task-section-foot">'+foot+destination+'</div></section>';
 }
 V.workbench=()=>{
  const d=wbPrepare(),ps=d.projects||[];
@@ -20956,9 +20958,80 @@ bRun=async function(id){
  const missing=model.featK.find(k=>d.rows.some(r=>!Number.isFinite(+r[k])));
  if(missing){toast('输入数据缺少有效特征：'+missing);return;}
  const start=performance.now(),result=fixtureInference(rsProject(j.pid)||{id:j.pid,name:pnOf(j.pid)},0,d,model);
+ j.resultVersion=(Number(j.resultVersion)||0)+1;
  j.out=result.out;j.n=d.rows.length;j.st='done';j.ms=Math.max(1,Math.round(performance.now()-start));j.err='';j.dropped=false;
  bSave();render();toast('已完成 '+j.n+' 条候选评分');
 };
+
+/* Workbench is an attention queue, not a second task archive.
+   Read receipts apply to one result version in this browser, never to task status. */
+function wbReadReceipts(){
+ const saved=LS.get('wb_result_reads_v1',{});
+ return saved&&typeof saved==='object'&&!Array.isArray(saved)?saved:{};
+}
+function wbResultVersion(task){
+ if(task.status!=='done')return '';
+ let result;
+ if(task.kind==='experiment'){
+  const b=BATCHES.find(b=>b.id===task.id&&b.pid===task.pid);
+  if(!b)return '';
+  result=b.workflow?{resultVersion:b.resultVersion,resultRows:b.resultRows,conclusion:b.workflow.conclusion,steps:b.workflow.steps.map(s=>({id:s.id,state:s.state,attempt:s.attempt,result:s.result,evidence:s.evidence}))}
+   :{results:b.results,log:b.log,at:b.at};
+ }else if(task.kind==='train'||task.kind==='eval'){
+  const m=DB.projects.find(p=>p.id===task.pid)?.models?.find(m=>m.id===task.id);
+  if(!m)return '';
+  result=Object.fromEntries(['at','completedAt','runId','resultVersion','ds','target','w','mu','sd','lam','rho','rmse','nTrain','nTest','prosp','bl'].map(k=>[k,m[k]]));
+ }else if(task.type==='batch'){
+  const j=bFind(task.id);if(!j)return '';
+  result={at:j.at,completedAt:j.completedAt,runId:j.runId,resultVersion:j.resultVersion||0,ds:j.ds,modelId:j.modelId||null,out:j.out};
+ }else return '';
+ const value=JSON.stringify(result);
+ return fp32(value)+':'+value.length;
+}
+function wbAttentionTasks(tasks){
+ const read=wbReadReceipts();
+ return tasks.filter(t=>{
+  // Imported assets, derived evaluation metrics and chat sessions have their own libraries.
+  if(t.isTask===false)return false;
+  if(t.status==='active'||t.status==='failed'||(t.status==='unknown'&&t.needsAction))return true;
+  if(t.status!=='done')return false;
+  const version=wbResultVersion(t);
+  return !!version&&read[t.key]!==version;
+ });
+}
+function wbRecordVisibleResults(root){
+ const data=WB_DATA.read(),receipts=wbReadReceipts();let changed=false;
+ const selected=new Set();
+ // Check rendered content as well as state: stale drawer IDs must not consume results.
+ if(!document.hidden&&S.route==='labdet'&&root.querySelector('[data-lv-export],[data-expdl]')){
+  data.experiments.filter(t=>t.id===S.labPick).forEach(t=>selected.add(t.key));
+ }
+ if(!document.hidden&&root.querySelector('.dw [data-dwclose="jobclose"]')){
+  const m=mdlFind(S.jobPick),pid=m?._pid||m?.pid;
+  data.modelTasks.filter(t=>t.id===S.jobPick&&t.pid===pid&&['train','eval'].includes(t.kind)).forEach(t=>selected.add(t.key));
+ }
+ if(!document.hidden&&root.querySelector('.dw [data-dwclose="bdrawerx"]')){
+  data.modelTasks.filter(t=>t.type==='batch'&&t.id===S.bDrawer).forEach(t=>selected.add(t.key));
+ }
+ // Only the full experiment detail contains the workflow conclusion; the legacy
+ // project summary drawer intentionally does not mark it as read.
+ data.tasks.forEach(t=>{
+  if(t.status!=='done'){
+   // A rerun is a new result even if it later reproduces identical numbers.
+   if(Object.hasOwn(receipts,t.key)){delete receipts[t.key];changed=true;}
+  }else if(selected.has(t.key)){
+   const version=wbResultVersion(t);
+   if(version&&receipts[t.key]!==version){receipts[t.key]=version;changed=true;}
+  }
+ });
+ if(changed)LS.set('wb_result_reads_v1',receipts);
+}
+const wbRenderWithAttention=render;
+render=function(){const result=wbRenderWithAttention();wbRecordVisibleResults(view);return result;};
+window.addEventListener('storage',event=>{
+ if(event.key==='dy_wb_result_reads_v1'&&S.route==='workbench')render();
+});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)wbRecordVisibleResults(view);});
 
 
 keepLoad();

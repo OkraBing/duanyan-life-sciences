@@ -1,7 +1,7 @@
 {
   "version": 2,
   "date": "2026-11-20",
-  "policy": "以用户最后一次同类要求为准；旧 A/B/C、任务 tab、统计区要求已被后续要求取代。design 标记已获用户确认并要求直接落地的设计条目，必须有本轮实际行为证据才计通过。 最新覆盖：课题与资讯仅手动切换，今日灵感每天固定一条并降低视觉权重，取代定时轮播。",
+  "policy": "以用户最后一次同类要求为准；旧 A/B/C、任务 tab、统计区要求已被后续要求取代。design 标记已获用户确认并要求直接落地的设计条目，必须有本轮实际行为证据才计通过。 最新覆盖：课题与资讯仅手动切换，今日灵感每天固定一条并降低视觉权重，取代定时轮播。 工作台只展示运行中、异常待处理、完成未查看的真实任务；已查看结果和历史资产从完整列表访问。",
   "requirements": [
     {
       "id": "R01",
@@ -466,6 +466,13 @@
       "suite": "product-iteration",
       "pattern": "daily inspiration has a smaller footprint",
       "design": true
+    },
+    {
+      "id": "R70",
+      "area": "工作台",
+      "title": "任务按关注状态筛选，完成结果查看后退出工作台，重跑与新版本重新提示",
+      "suite": "workbench-attention",
+      "pattern": "read results stay hidden"
     }
   ]
 }

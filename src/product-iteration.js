@@ -31,6 +31,7 @@ function iterationStepProject(delta){
  const i=Math.max(0,ps.findIndex(p=>p.id===WB.progressProject));WB.progressProject=ps[(i+delta+ps.length)%ps.length].id;
 }
 function iterationTaskSection(kind,tasks,pid){
+ tasks=wbAttentionTasks(tasks);
  const model=kind==='model',rank={failed:0,active:1,draft:2,unknown:3,done:4,canceled:5};
  const sorted=tasks.slice().sort((a,b)=>(rank[a.status]??3)-(rank[b.status]??3));
  const size=innerHeight<730?1:innerHeight>=850?3:2;
@@ -39,7 +40,7 @@ function iterationTaskSection(kind,tasks,pid){
  const rows=sorted.slice(state[kind]*size,(state[kind]+1)*size);
  const foot=pages>1?'<div class="wb-pagination"><button type="button" class="wb-icon-button" data-wb-section-page="'+kind+'" data-delta="-1" aria-label="上一页'+(model?'模型':'实验')+'任务" '+(!state[kind]?'disabled':'')+'>'+wbViewIcon('left')+'</button><span>'+ (state[kind]+1)+' / '+pages+'</span><button type="button" class="wb-icon-button" data-wb-section-page="'+kind+'" data-delta="1" aria-label="下一页'+(model?'模型':'实验')+'任务" '+(state[kind]+1===pages?'disabled':'')+'>'+wbViewIcon('right')+'</button></div>':'<span>'+tasks.length+' 项</span>';
  const destination=model?'<select data-wb-list-select aria-label="前往模型任务列表"><option value="">查看全部</option><option value="train">模型训练</option><option value="eval">模型评测</option><option value="batch">批量推理</option><option value="online">在线推理</option></select>':'<button type="button" class="wb-list-link" data-wb-list="experiment">查看全部 '+wbViewIcon('right')+'</button>';
- return '<section class="wb-task-section" data-task-kind="'+kind+'"><div class="wb-task-section-head"><h3>'+(model?'模型任务':'实验任务')+'<small>'+tasks.length+'</small></h3></div>'+(rows.length?'<ul class="wb-task-list">'+rows.map(wbViewTask).join('')+'</ul>':'<div class="wb-empty-tasks">暂无'+(model?'模型':'实验')+'任务</div>')+'<div class="wb-task-section-foot">'+foot+destination+'</div></section>';
+ return '<section class="wb-task-section" data-task-kind="'+kind+'"><div class="wb-task-section-head"><h3>'+(model?'模型任务':'实验任务')+'<small>'+tasks.length+'</small></h3></div>'+(rows.length?'<ul class="wb-task-list">'+rows.map(wbViewTask).join('')+'</ul>':'<div class="wb-empty-tasks">暂无需要关注的'+(model?'模型':'实验')+'任务</div>')+'<div class="wb-task-section-foot">'+foot+destination+'</div></section>';
 }
 V.workbench=()=>{
  const d=wbPrepare(),ps=d.projects||[];

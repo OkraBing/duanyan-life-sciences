@@ -15657,7 +15657,7 @@ function bHydrate(o){
     sys:String(o.sys||''),par:String(o.par||''),
     conc:+o.conc||1,tmo:+o.tmo||60,retry:o.retry==null?3:+o.retry,
     st:B_ST[o.st]?o.st:'draft',at:o.at||nowStamp(),ms:+o.ms||0,n:+o.n||0,
-    err:String(o.err||''),dropped:!!o.dropped,
+    err:String(o.err||''),dropped:!!o.dropped,resultVersion:+o.resultVersion||0,
     out:Array.isArray(o.out)?o.out:[],
     stop:false,t0:0};
 }
@@ -15667,7 +15667,7 @@ function bHydrate(o){
 function bSave(){
   const pack=()=>JSON.stringify(BJ().map(j=>({id:j.id,pid:j.pid||null,name:j.name,desc:j.desc,sid:j.sid,
     mdl:j.mdl,ds:j.ds,col:j.col,modelId:j.modelId||null,example:!!j.example,sys:j.sys,par:j.par,conc:j.conc,tmo:j.tmo,retry:j.retry,
-    st:j.st,at:j.at,ms:j.ms,n:j.n,err:j.err,dropped:j.dropped,out:j.dropped?[]:j.out})));
+    st:j.st,at:j.at,ms:j.ms,n:j.n,err:j.err,resultVersion:j.resultVersion||0,dropped:j.dropped,out:j.dropped?[]:j.out})));
   try{localStorage.setItem('dy_bjobs',pack());return true}catch(e){}
   const L=BJ();
   for(let i=L.length-1;i>=0;i--){
@@ -15725,6 +15725,7 @@ async function bRun(id){
   if((j.par||'').trim()){const v=infParse(j.par.trim());
     if(!v.ok){j.st='fail';j.err='生成参数有问题：'+v.why;bSave();render();return}
     par=v.v}
+  j.resultVersion=(Number(j.resultVersion)||0)+1;
   j.n=rows.length;j.dropped=0;j.err='';j.stop=false;j.st='run';j.t0=now();
   if(!Array.isArray(j.out))j.out=[];
   /* 重跑只补没成的那几条：已经花掉的 token 不重复花。 */
@@ -20122,6 +20123,7 @@ const rsBindShared=rsBind;rsBind=function(root){rsBindShared(root);root.querySel
 /* @include product-iteration.js */
 /* @include review-polish.js */
 /* @include project-fixtures.js */
+/* @include workbench-attention.js */
 
 keepLoad();
 labInit();
