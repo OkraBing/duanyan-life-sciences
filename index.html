@@ -2759,6 +2759,31 @@ dialog.rs-copy-dialog{width:min(600px,calc(100vw - 32px));max-width:600px;overfl
 @media(max-width:600px){.composer-editor-head{padding:14px 18px}.composer-step-button.btn{width:44px;height:44px;min-height:44px}}
 @media(pointer:coarse){.composer-step-button.btn{width:44px;height:44px;min-height:44px}}
 
+/* Progress is primary; news is wider; the one daily idea is a quiet supporting card. */
+.wb .wb-layout{grid-template-columns:minmax(0,1.8fr) minmax(260px,1fr);grid-template-rows:minmax(245px,1.25fr) minmax(185px,.75fr)}
+.wb .wb-news{grid-column:1;grid-row:2}
+.wb .wb-inspiration{grid-column:2;grid-row:2;align-self:start;height:auto;max-height:100%}
+.wb .wb-inspiration .wb-panel-heading{padding-bottom:7px}
+.wb .wb-inspiration .wb-panel-heading h2{font-size:14px;font-weight:600;color:var(--ink-3)}
+.wb .wb-inspiration .wb-panel-label>.wb-icon{width:16px;height:16px}
+.wb .wb-inspiration .wb-idea-topic{font-size:11px;padding-bottom:8px}
+.wb .wb-inspiration .wb-idea-stage{flex:initial;gap:12px;justify-content:flex-start}
+.wb .wb-inspiration .wb-question{flex:initial;margin:0;font-size:14px;font-weight:400;line-height:1.7;-webkit-line-clamp:4}
+.wb .wb-inspiration .wb-idea-bottom{margin-top:0}
+.wb .wb-inspiration .wb-reference-tag{border:0;padding:0;background:transparent;min-height:28px;max-width:55%;font-size:11px}
+.wb .wb-idea-explore{margin-left:auto;font-size:12px;min-height:28px;padding-block:2px}
+@media(max-height:760px) and (min-width:1001px){.wb .wb-layout{grid-template-rows:minmax(220px,1.25fr) minmax(170px,.75fr)}.wb .wb-inspiration .wb-question{font-size:13px;-webkit-line-clamp:3}.wb .wb-inspiration .wb-idea-stage{gap:8px}}
+@media(max-width:900px){.wb .wb-layout{grid-template-columns:minmax(0,1.5fr) minmax(230px,1fr)}}
+@media(max-width:600px){
+ .wb .wb-layout{grid-template-columns:1fr;grid-template-rows:minmax(235px,1fr) minmax(135px,.6fr) auto}
+ .wb .wb-news{grid-column:1;grid-row:2}.wb .wb-inspiration{grid-column:1;grid-row:3;max-height:none}
+ .wb .wb-inspiration .wb-panel-heading{padding-bottom:4px}.wb .wb-inspiration .wb-panel-heading h2{font-size:12px}
+ .wb .wb-inspiration .wb-idea-topic{font-size:10px;padding-bottom:5px}.wb .wb-inspiration .wb-question{font-size:12px;line-height:1.6;-webkit-line-clamp:3}
+ .wb .wb-inspiration .wb-idea-stage{gap:5px}.wb .wb-inspiration .wb-reference-tag{min-height:24px;font-size:10px}.wb .wb-idea-explore{min-height:26px;font-size:11px}
+}
+@media(max-height:560px){.wb .wb-layout{grid-template-rows:235px auto}.wb .wb-news{min-height:180px}}
+@media(max-height:560px) and (max-width:600px){.wb .wb-layout{grid-template-rows:235px 150px auto}.wb .wb-news{min-height:150px}}
+
 /* Unified product typography, surfaces and interaction feedback — 20-round review. */
 :root{--page-title-size:28px;--meta-size:12px;--attention-ink:var(--ink-3);--attention-soft:var(--surface-2)}
 .iteration-head h1,.rs .rs-head h1,.shared-detail .iteration-head h1{font-size:var(--page-title-size);line-height:1.3;letter-spacing:-.025em}
@@ -20272,17 +20297,30 @@ const rsBindShared=rsBind;rsBind=function(root){rsBindShared(root);root.querySel
 
 
 /* Approved product iteration. No device execution, model calls or external writes. */
-WB.progressAuto=WB.auto=WB.newsAuto=true;
+WB.progressAuto=WB.auto=WB.newsAuto=false;
 WB.pagesByProject={};
+/* A single, dated idea stays stable across project switches and reloads. */
+function iterationDailyIdea(pool,projects){
+ const date=wbToday(),valid=idea=>idea&&typeof idea.question==='string'&&idea.question.trim()&&projects.some(p=>p.id===idea.pid);
+ const saved=WB.dailyDate===date&&valid(WB.dailyIdea)?{date,idea:WB.dailyIdea}:LS.get('wb_daily_idea_v1',null);
+ let idea=saved?.date===date&&valid(saved.idea)?saved.idea:null;
+ if(!idea&&pool.length){
+  const day=Math.floor(Date.parse(date+'T00:00:00+08:00')/86400000);
+  idea={...pool[((day%pool.length)+pool.length)%pool.length]};LS.set('wb_daily_idea_v1',{date,idea});
+ }
+ WB.dailyDate=date;WB.dailyIdea=idea;return idea;
+}
+const iterationPrepareWorkbench=wbPrepare;
+wbPrepare=function(){const data=iterationPrepareWorkbench(),idea=iterationDailyIdea(WB.ideas,data.projects||[]);WB.ideas=idea?[idea]:[];WB.idea=0;WB.ideaProject=idea?.pid||'';return data;};
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&S.route==='workbench'&&WB.dailyDate!==wbToday())render();});
 function iterationIcon(name){return wbViewIcon(name);}
 function iterationControls(kind,index,total){
  if(total<2)return '';
- const noun=kind==='progress'?'课题':kind==='idea'?'灵感':'资讯';
+ const noun=kind==='progress'?'课题':'资讯';
  return '<div class="wb-carousel-dots" role="group" aria-label="选择'+noun+'">'+Array.from({length:total},(_,i)=>'<button class="wb-carousel-dot" type="button" data-wb-'+kind+'-dot="'+i+'" aria-label="查看第 '+(i+1)+' 个'+noun+'" aria-current="'+(i===index?'true':'false')+'" tabindex="'+(i===index?'0':'-1')+'"><span aria-hidden="true"></span></button>').join('')+'</div>';
 }
 function iterationSelectSlide(kind,index){
  const projects=workbenchData().projects;
- if(kind==='idea'){if(WB.ideas[index])wbPickIdea(index);return;}
  const p=projects[index];if(!p)return;
  if(kind==='progress')WB.progressProject=p.id;else WB.newsProject=p.id;
 }
@@ -20290,14 +20328,10 @@ function iterationStepProject(delta){
  const ps=workbenchData().projects;if(!ps.length)return;
  const i=Math.max(0,ps.findIndex(p=>p.id===WB.progressProject));WB.progressProject=ps[(i+delta+ps.length)%ps.length].id;
 }
-function iterationStepIdea(delta){
- if(!WB.ideas.length)return;
- wbPickIdea(((WB.idea||0)+delta+WB.ideas.length)%WB.ideas.length);
-}
 function iterationTaskSection(kind,tasks,pid){
  const model=kind==='model',rank={failed:0,active:1,draft:2,unknown:3,done:4,canceled:5};
  const sorted=tasks.slice().sort((a,b)=>(rank[a.status]??3)-(rank[b.status]??3));
- const size=innerHeight<730?1:innerHeight>=1000?3:2;
+ const size=innerHeight<730?1:innerHeight>=850?3:2;
  const state=WB.pagesByProject[pid]||(WB.pagesByProject[pid]={experiment:0,model:0});
  const pages=Math.max(1,Math.ceil(sorted.length/size));state[kind]=Math.max(0,Math.min(pages-1,state[kind]||0));
  const rows=sorted.slice(state[kind]*size,(state[kind]+1)*size);
@@ -20317,19 +20351,19 @@ V.workbench=()=>{
  return '<div class="page wb"><header class="wb-header"><div class="wb-header-copy"><span class="wb-kicker">工作台</span><h1>'+wbViewGreeting()+'，ZHANG</h1></div><span class="wb-date">'+esc(date)+'</span></header><div class="wb-layout">'+
  '<section class="wb-panel wb-tasks" aria-labelledby="wb-tasks-title" aria-roledescription="轮播"><div class="wb-panel-heading"><h2 id="wb-tasks-title">课题进展</h2>'+iterationControls('progress',pi,ps.length)+'</div>'+
  (p?'<div class="wb-progress-project"><div><h3 title="'+esc(p.name)+'">'+esc(p.name)+'</h3><p>'+esc(goalText(DB.projects.find(x=>x.id===p.id))||p.stateText||'')+'</p></div><button class="wb-list-link" type="button" data-wb-project="'+esc(p.id)+'">进入课题 '+wbViewIcon('arrow')+'</button></div><div class="wb-task-columns">'+iterationTaskSection('experiment',scope.experiments||[],p.id)+iterationTaskSection('model',scope.modelTasks||[],p.id)+'</div>':'<div class="wb-empty"><strong>还没有课题</strong><button class="btn btn-pri wb-button wb-button-primary" type="button" data-wb-create-project>新建项目</button></div>')+'</section>'+
- '<section class="wb-panel wb-inspiration" aria-labelledby="wb-ideas-title" aria-roledescription="轮播"><div class="wb-panel-heading"><div class="wb-panel-label">'+wbViewIcon('spark')+'<h2 id="wb-ideas-title">今日灵感</h2></div>'+iterationControls('idea',WB.idea||0,WB.ideas.length)+'</div>'+
- (idea?'<div class="wb-idea-topic"><span title="'+esc(ip?.name||idea.project)+'">'+esc(ip?.name||idea.project)+'</span></div><div class="wb-idea-stage"><button type="button" class="wb-question" data-wb-idea-detail="'+WB.idea+'" aria-label="查看完整问题：'+esc(idea.question)+'">'+esc(idea.question)+'</button><div class="wb-idea-bottom">'+(ref?'<a class="wb-reference-tag" href="'+esc(ref)+'" target="_blank" rel="noopener noreferrer" title="'+esc(idea.sourceTitle||'参考论文')+'">'+wbViewIcon('paper')+'参考论文 '+wbViewIcon('external')+'</a>':'')+'<button type="button" class="btn btn-pri wb-button wb-button-primary" data-wb-prompt="'+esc(idea.question)+'" data-wb-pid="'+esc(idea.pid)+'">去探索 '+wbViewIcon('arrow')+'</button></div></div>':'<div class="wb-empty"><strong>暂无灵感问题</strong><p>为课题补充研究目标。</p></div>')+'</section>'+
  '<section class="wb-panel wb-news" aria-labelledby="wb-news-title" aria-roledescription="轮播"><div class="wb-panel-heading"><div class="wb-panel-label">'+wbViewIcon('paper')+'<h2 id="wb-news-title">学术资讯</h2></div>'+iterationControls('news',ni,ps.length)+'</div>'+
  (np?'<div class="wb-news-context"><span title="'+esc(np.name)+'">'+esc(np.name)+'</span></div>':'')+
  (papers.length?'<ul class="wb-papers">'+papers.slice(0,1).map(wbViewPaper).join('')+'</ul>':'<div class="wb-empty wb-empty-news" role="status"><strong>'+(newsState==='loading'?'正在查找相关论文':newsState==='error'?'暂时无法获取论文':'暂无匹配论文')+'</strong><p>'+(newsState==='error'?'稍后重新进入工作台可重试。':'')+'</p></div>')+
- (newsState==='error'&&papers.length?'<p class="wb-news-state" role="status">暂未获取新结果，保留已保存论文。</p>':'')+'</section></div></div>';
+ (newsState==='error'&&papers.length?'<p class="wb-news-state" role="status">暂未获取新结果，保留已保存论文。</p>':'')+'</section>'+
+ '<section class="wb-panel wb-inspiration" aria-labelledby="wb-ideas-title"><div class="wb-panel-heading"><div class="wb-panel-label">'+wbViewIcon('spark')+'<h2 id="wb-ideas-title">今日灵感</h2></div></div>'+
+ (idea?'<div class="wb-idea-topic"><span title="'+esc(ip?.name||idea.project)+'">'+esc(ip?.name||idea.project)+'</span></div><div class="wb-idea-stage"><button type="button" class="wb-question" data-wb-idea-detail="'+WB.idea+'" aria-label="查看完整问题：'+esc(idea.question)+'">'+esc(idea.question)+'</button><div class="wb-idea-bottom">'+(ref?'<a class="wb-reference-tag" href="'+esc(ref)+'" target="_blank" rel="noopener noreferrer" title="'+esc(idea.sourceTitle||'参考论文')+'">'+wbViewIcon('paper')+'参考论文 '+wbViewIcon('external')+'</a>':'')+'<button type="button" class="wb-list-link wb-idea-explore" data-wb-prompt="'+esc(idea.question)+'" data-wb-pid="'+esc(idea.pid)+'">去探索 '+wbViewIcon('arrow')+'</button></div></div>':'<div class="wb-empty"><strong>暂无灵感问题</strong><p>为课题补充研究目标。</p></div>')+'</section></div></div>';
 };
 wbBind=function(root){
  clearInterval(WB.timer);WB.timer=0;if(wbLayoutObserver)wbLayoutObserver.disconnect();
  if(S.route!=='workbench'){WB.onPage=false;return;}
  const entering=!WB.onPage;WB.onPage=true;
  const on=(s,event,fn)=>root.querySelectorAll(s).forEach(e=>e.addEventListener(event,ev=>fn(e,ev)));
- for(const kind of ['progress','idea','news']){
+ for(const kind of ['progress','news']){
   const selector='[data-wb-'+kind+'-dot]',key='wb'+kind[0].toUpperCase()+kind.slice(1)+'Dot';
   on(selector,'click',e=>{iterationSelectSlide(kind,+e.dataset[key]);render();});
   on(selector,'keydown',(e,ev)=>{
@@ -20351,15 +20385,8 @@ wbBind=function(root){
  on('[data-wb-task-open]','click',e=>workbenchOpenTask(e.dataset.wbTaskOpen));
  on('[data-wb-list]','click',e=>workbenchOpenList(e.dataset.wbList,'all',WB.progressProject));
  on('[data-wb-list-select]','change',e=>{if(e.value)workbenchOpenList(e.value,'all',WB.progressProject);});
- WB.tick=()=>{
-  if(S.route!=='workbench'||document.hidden||document.querySelector('dialog[open],.asset-drawer')||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-  const paused=selector=>{const e=root.querySelector(selector);return e&&(e.matches(':hover')||e.contains(document.activeElement));};let changed=false;
-  if(WB.progressAuto&&workbenchData().projects.length>1&&!paused('.wb-tasks')){iterationStepProject(1);changed=true;}
-  if(WB.auto&&WB.ideas.length>1&&!paused('.wb-inspiration')){iterationStepIdea(1);changed=true;}
-  if(WB.newsAuto&&workbenchData().projects.length>1&&!paused('.wb-news')){wbStepNews(1);changed=true;}
-  if(changed)render();
- };
- WB.timer=setInterval(WB.tick,7000);
+ // Legacy callers may request a tick; manual slides never advance on a clock.
+ WB.tick=()=>{};
  const subs=wbSubscriptions(),signature=JSON.stringify(subs);
  if(entering||!WB.didLoad||signature!==WB.querySignature){
   WB.didLoad=true;WB.querySignature=signature;

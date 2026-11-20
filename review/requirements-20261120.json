@@ -1,7 +1,7 @@
 {
-  "version": 1,
+  "version": 2,
   "date": "2026-11-20",
-  "policy": "以用户最后一次同类要求为准；旧 A/B/C、任务 tab、统计区要求已被后续要求取代。design 标记已获用户确认并要求直接落地的设计条目，必须有本轮实际行为证据才计通过。",
+  "policy": "以用户最后一次同类要求为准；旧 A/B/C、任务 tab、统计区要求已被后续要求取代。design 标记已获用户确认并要求直接落地的设计条目，必须有本轮实际行为证据才计通过。 最新覆盖：课题与资讯仅手动切换，今日灵感每天固定一条并降低视觉权重，取代定时轮播。",
   "requirements": [
     {
       "id": "R01",
@@ -32,7 +32,7 @@
     {
       "id": "R05",
       "area": "工作台",
-      "title": "课题进展整卡轮播，每张停留 6–8 秒；圆点切换，不展示暂停按钮",
+      "title": "课题进展整卡仅由用户手动圆点切换，不自动轮播、不展示暂停按钮",
       "probe": "progress_carousel",
       "design": true
     },
@@ -60,9 +60,9 @@
     {
       "id": "R09",
       "area": "工作台",
-      "title": "灵感按课题绑定，圆点轮播能覆盖课题和不同问题",
-      "suite": "workbench",
-      "pattern": "inspiration carries"
+      "title": "今日灵感每天固定一条，绑定课题，刷新与手动切换不更换问题",
+      "suite": "product-iteration",
+      "pattern": "one daily inspiration"
     },
     {
       "id": "R10",
@@ -458,6 +458,14 @@
       "title": "旧工作区升级保留版本和申请，刷新不重复插入且保留实验登记",
       "suite": "project-fixtures",
       "pattern": "upgrade from existing workspace preserves"
+    },
+    {
+      "id": "R69",
+      "area": "工作台",
+      "title": "今日灵感缩小面积与字号、降低按钮权重，学术资讯占较宽一栏",
+      "suite": "product-iteration",
+      "pattern": "daily inspiration has a smaller footprint",
+      "design": true
     }
   ]
 }

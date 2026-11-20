@@ -45,3 +45,28 @@
 .composer-step-button:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 @media(max-width:600px){.composer-editor-head{padding:14px 18px}.composer-step-button.btn{width:44px;height:44px;min-height:44px}}
 @media(pointer:coarse){.composer-step-button.btn{width:44px;height:44px;min-height:44px}}
+
+/* Progress is primary; news is wider; the one daily idea is a quiet supporting card. */
+.wb .wb-layout{grid-template-columns:minmax(0,1.8fr) minmax(260px,1fr);grid-template-rows:minmax(245px,1.25fr) minmax(185px,.75fr)}
+.wb .wb-news{grid-column:1;grid-row:2}
+.wb .wb-inspiration{grid-column:2;grid-row:2;align-self:start;height:auto;max-height:100%}
+.wb .wb-inspiration .wb-panel-heading{padding-bottom:7px}
+.wb .wb-inspiration .wb-panel-heading h2{font-size:14px;font-weight:600;color:var(--ink-3)}
+.wb .wb-inspiration .wb-panel-label>.wb-icon{width:16px;height:16px}
+.wb .wb-inspiration .wb-idea-topic{font-size:11px;padding-bottom:8px}
+.wb .wb-inspiration .wb-idea-stage{flex:initial;gap:12px;justify-content:flex-start}
+.wb .wb-inspiration .wb-question{flex:initial;margin:0;font-size:14px;font-weight:400;line-height:1.7;-webkit-line-clamp:4}
+.wb .wb-inspiration .wb-idea-bottom{margin-top:0}
+.wb .wb-inspiration .wb-reference-tag{border:0;padding:0;background:transparent;min-height:28px;max-width:55%;font-size:11px}
+.wb .wb-idea-explore{margin-left:auto;font-size:12px;min-height:28px;padding-block:2px}
+@media(max-height:760px) and (min-width:1001px){.wb .wb-layout{grid-template-rows:minmax(220px,1.25fr) minmax(170px,.75fr)}.wb .wb-inspiration .wb-question{font-size:13px;-webkit-line-clamp:3}.wb .wb-inspiration .wb-idea-stage{gap:8px}}
+@media(max-width:900px){.wb .wb-layout{grid-template-columns:minmax(0,1.5fr) minmax(230px,1fr)}}
+@media(max-width:600px){
+ .wb .wb-layout{grid-template-columns:1fr;grid-template-rows:minmax(235px,1fr) minmax(135px,.6fr) auto}
+ .wb .wb-news{grid-column:1;grid-row:2}.wb .wb-inspiration{grid-column:1;grid-row:3;max-height:none}
+ .wb .wb-inspiration .wb-panel-heading{padding-bottom:4px}.wb .wb-inspiration .wb-panel-heading h2{font-size:12px}
+ .wb .wb-inspiration .wb-idea-topic{font-size:10px;padding-bottom:5px}.wb .wb-inspiration .wb-question{font-size:12px;line-height:1.6;-webkit-line-clamp:3}
+ .wb .wb-inspiration .wb-idea-stage{gap:5px}.wb .wb-inspiration .wb-reference-tag{min-height:24px;font-size:10px}.wb .wb-idea-explore{min-height:26px;font-size:11px}
+}
+@media(max-height:560px){.wb .wb-layout{grid-template-rows:235px auto}.wb .wb-news{min-height:180px}}
+@media(max-height:560px) and (max-width:600px){.wb .wb-layout{grid-template-rows:235px 150px auto}.wb .wb-news{min-height:150px}}
