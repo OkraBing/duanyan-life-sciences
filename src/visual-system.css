@@ -11,7 +11,7 @@
 .card,.ask,.pcard,.shared-project-card,.scard,.dcard,.shared-flow-node{box-shadow:none}
 .ask:focus-within{border-color:var(--dry);box-shadow:0 0 0 3px var(--dry-soft)}
 .pcard:hover,.shared-project-card:hover,.scard:hover,.dcard:hover,.pjx-card:hover{box-shadow:none;border-color:var(--ink-4)}
-.pcard::before,.shared-project-card::before{display:none}
+.pcard::before,.shared-project-card::before{content:none;display:none}
 .pcard .pcard-st,.shared-project-card .pcard-st{color:var(--ink-3)}
 
 /* Type and location are already labelled; their icons do not need separate colors. */
@@ -40,3 +40,33 @@
 .research-home::before{opacity:.2;filter:grayscale(1)}
 .research-home .ask{border-color:var(--line);box-shadow:none}
 .research-home .ask:focus-within{border-color:var(--dry);box-shadow:0 0 0 3px var(--dry-soft)}
+
+/* Project library: clean two-column cards with one aligned footer action. */
+.pgrid,.shared-project-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.pcard,.shared-project-card.pcard{padding:20px;gap:10px;min-height:240px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.pcard-t{align-items:flex-start;gap:16px;min-height:26px}
+.pcard-t strong,.shared-project-card .pcard-t strong{font-size:16px;font-weight:600;line-height:1.5;letter-spacing:-.015em;white-space:normal;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;flex:1}
+.pcard .pcard-st,.pcard.c-wet .pcard-st,.pcard.c-mut .pcard-st,.shared-project-card.pcard .pcard-st{display:inline-flex;align-items:center;gap:5px;flex-shrink:0;margin:1px 0 0 auto;padding:2px 8px;border:1px solid var(--line-2);border-radius:999px;background:var(--surface-2);font-size:11px;line-height:1.5;font-weight:400;color:var(--ink-3);white-space:nowrap}
+.pcard-st::before{content:'';width:4px;height:4px;flex-shrink:0;border-radius:50%;background:currentColor}
+.pcard-labels{gap:6px;min-height:23px}
+.pcard .tag,.pcard .rs-tag{font-size:11px;font-weight:400;padding:2px 7px;border-radius:5px;background:var(--surface-2);color:var(--ink-3)}
+.pcard .project-shared-badge{font-size:11px;font-weight:500;padding:2px 7px}
+.pcard .pcard-g,.shared-project-card p.pcard-g{margin:2px 0 6px;font-size:13px;line-height:1.65;min-height:3.3em;height:3.3em;color:var(--ink-3);-webkit-line-clamp:2}
+.shared-project-card .pcard-g>span:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.shared-project-card .pcard-g>span+span{font-size:12px;color:var(--ink-4)}
+.pcard .pcard-f,.project-card-wrap .pcard-f,.shared-project-card .pcard-f{align-items:center;min-height:43px;gap:8px 12px;padding-top:12px;border-top:1px solid var(--line-2);font-size:12px;line-height:1.6}
+.project-card-wrap .pcard-f{padding-right:138px;justify-content:flex-start}
+.project-card-wrap .pcard-f>.grow{display:none}
+.pcard-f .t-sm{font-size:12px}.pcard-f .num{font-family:inherit;font-weight:500}
+.project-copy-trigger{right:20px;bottom:20px;min-height:30px;padding:3px 8px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font-size:12px;color:var(--ink-3)}
+.project-copy-trigger:hover:not(:disabled){color:var(--ink);border-color:var(--ink-4);background:var(--surface-2)}
+@media(max-width:900px){.pgrid,.shared-project-grid{grid-template-columns:1fr}}
+@media(max-width:600px){
+ .projects-header.row.wrap{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center}
+ .projects-header>.col{grid-column:1/-1;min-width:0}.projects-header h1{font-size:24px}
+ .projects-header .fbar-q{width:100%;min-width:0;max-width:none}
+ .pcard,.shared-project-card.pcard{padding:18px;min-height:240px}.pcard-t{gap:10px}.pcard-t strong,.shared-project-card .pcard-t strong{font-size:15px}
+ .project-card-wrap .pcard-f{padding-right:0;padding-bottom:46px;min-height:75px}
+ .project-copy-trigger{right:18px;bottom:16px;min-height:36px}
+ .shared-project-card .pcard-f{min-height:75px;align-content:center}
+}

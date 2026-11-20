@@ -1132,12 +1132,9 @@ th[aria-sort] .sort-i{opacity:1}
 /* ---- 项目卡 ---- */
 .pgrid{display:grid;gap:var(--s3);grid-template-columns:repeat(auto-fill,minmax(294px,1fr))}
 .pcard{position:relative;overflow:hidden;display:flex;flex-direction:column;gap:var(--s3);min-width:0;
-  padding:var(--s4) var(--s4) var(--s4) calc(var(--s4) + 2px);text-align:left;cursor:pointer;
+  padding:var(--s4);text-align:left;cursor:pointer;
   background:var(--surface);border:1px solid var(--line);border-radius:var(--r2);
   color:var(--ink);transition:border-color .14s,box-shadow .14s}
-.pcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--dry)}
-.pcard.c-wet::before{background:var(--wet-dim)}
-.pcard.c-mut::before{background:var(--line)}
 .pcard:hover{border-color:var(--ink-4);box-shadow:var(--sh-2)}
 .pcard-t{display:flex;align-items:baseline;gap:var(--s3)}
 .pcard-t strong{font-size:0.9375rem;font-weight:600;letter-spacing:-.015em;min-width:0;
@@ -1386,7 +1383,7 @@ body.is-pjdrag{cursor:col-resize;user-select:none}
    只撑上下不撑左右：左右撑开会压到旁边那颗。
    用 ::after 的那几个（导航、页签、阶段条）排除掉，它们的伪元素另有用处。 */
 @media(max-width:480px){
-  #view button,#side button,#view [role="button"]{position:relative}
+  #view button:not(.project-copy-trigger),#side button,#view [role="button"]{position:relative}
   #view button:not(.nav):not(.rail-link):not(.pjx-tab):not(.stg):not(.pcard)::after,
   #side button:not(.nav):not(.rail-link)::after,
   #view [role="button"]:not(.chip):not(.pcard)::after{
@@ -9361,8 +9358,8 @@ function grid(){
 
 
 V.projects=()=>`
-<div class="page">
-  <div class="row wrap" style="align-items:flex-end;gap:var(--s4)">
+<div class="page projects-page">
+  <div class="row wrap projects-header" style="align-items:flex-end;gap:var(--s4)">
     <div class="col grow" style="gap:6px"><h1>项目管理</h1>
       <p class="mut t-md" style="margin:0">按靶点归档，跨轮累积</p></div>
     <label class="fbar-q"><span class="sr">搜索项目</span>${SEARCH_IC}
