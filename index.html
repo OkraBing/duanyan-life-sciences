@@ -2753,6 +2753,17 @@ dialog.rs-copy-dialog{width:min(600px,calc(100vw - 32px));max-width:600px;overfl
 
 @media(max-width:900px){.research-home::before{left:0;right:0}}
 
+/* Shared carousel indicators: direct selection, no playback controls. */
+.wb .wb-carousel-dots{position:relative;display:flex;align-items:center;flex:0 1 auto;max-width:48%;min-width:0;margin-left:auto;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;overscroll-behavior-x:contain}
+.wb .wb-carousel-dots::-webkit-scrollbar{display:none}
+.wb .wb-carousel-dot{display:grid;place-items:center;flex:0 0 24px;width:24px;height:28px;min-height:28px;padding:0;border:0;border-radius:6px;background:transparent;cursor:pointer}
+.wb .wb-carousel-dot>span{display:block;width:5px;height:5px;border-radius:50%;background:var(--ink-4);opacity:.8;transition:background-color .15s,opacity .15s,transform .15s}
+.wb .wb-carousel-dot[aria-current=true]>span{background:var(--dry-ink);opacity:1;transform:scale(1.3)}
+.wb .wb-carousel-dot:hover>span{background:var(--dry-ink);opacity:.8}
+.wb .wb-carousel-dot:focus-visible{outline:2px solid var(--focus);outline-offset:-3px}
+@media(max-width:600px){.wb .wb-carousel-dots{max-width:60%}}
+@media(prefers-reduced-motion:reduce){.wb .wb-carousel-dot>span{transition:none}}
+
 /* Unified product typography, surfaces and interaction feedback — 20-round review. */
 :root{--page-title-size:28px;--meta-size:12px;--attention-ink:#895500;--attention-soft:#fff2d7}
 :root[data-theme=dark]{--attention-ink:#f0c474;--attention-soft:#342a1b}
@@ -20189,13 +20200,19 @@ const rsBindShared=rsBind;rsBind=function(root){rsBindShared(root);root.querySel
 
 
 /* Approved product iteration. No device execution, model calls or external writes. */
-WB.progressAuto=WB_SAVED.progressAuto!==false;
+WB.progressAuto=WB.auto=WB.newsAuto=true;
 WB.pagesByProject={};
 function iterationIcon(name){return wbViewIcon(name);}
-function iterationControls(kind,index,total,auto){
- const attr=kind==='progress'?'data-wb-progress':kind==='idea'?'data-wb-idea':'data-wb-news';
+function iterationControls(kind,index,total){
+ if(total<2)return '';
  const noun=kind==='progress'?'课题':kind==='idea'?'灵感':'资讯';
- return '<div class="wb-carousel-controls"><button class="wb-icon-button" type="button" '+attr+'-auto aria-pressed="'+auto+'" aria-label="'+(auto?'暂停':'开启')+'自动切换'+noun+'">'+wbViewIcon(auto?'pause':'play')+'</button><button class="wb-icon-button" type="button" '+attr+'-step="-1" aria-label="上一个'+noun+'" '+(total<2?'disabled':'')+'>'+wbViewIcon('left')+'</button><span class="wb-carousel-count">'+(total?index+1:0)+' / '+total+'</span><button class="wb-icon-button" type="button" '+attr+'-step="1" aria-label="下一个'+noun+'" '+(total<2?'disabled':'')+'>'+wbViewIcon('right')+'</button></div>';
+ return '<div class="wb-carousel-dots" role="group" aria-label="选择'+noun+'">'+Array.from({length:total},(_,i)=>'<button class="wb-carousel-dot" type="button" data-wb-'+kind+'-dot="'+i+'" aria-label="查看第 '+(i+1)+' 个'+noun+'" aria-current="'+(i===index?'true':'false')+'" tabindex="'+(i===index?'0':'-1')+'"><span aria-hidden="true"></span></button>').join('')+'</div>';
+}
+function iterationSelectSlide(kind,index){
+ const projects=workbenchData().projects;
+ if(kind==='idea'){if(WB.ideas[index])wbPickIdea(index);return;}
+ const p=projects[index];if(!p)return;
+ if(kind==='progress')WB.progressProject=p.id;else WB.newsProject=p.id;
 }
 function iterationStepProject(delta){
  const ps=workbenchData().projects;if(!ps.length)return;
@@ -20226,11 +20243,11 @@ V.workbench=()=>{
  const ref=wbViewHref(idea?.sourceURL);
  const date=new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'long',timeZone:'Asia/Shanghai'});
  return '<div class="page wb"><header class="wb-header"><div class="wb-header-copy"><span class="wb-kicker">工作台</span><h1>'+wbViewGreeting()+'，ZHANG</h1></div><span class="wb-date">'+esc(date)+'</span></header><div class="wb-layout">'+
- '<section class="wb-panel wb-tasks" aria-labelledby="wb-tasks-title" aria-roledescription="轮播"><div class="wb-panel-heading"><h2 id="wb-tasks-title">课题进展</h2>'+iterationControls('progress',pi,ps.length,WB.progressAuto)+'</div>'+
+ '<section class="wb-panel wb-tasks" aria-labelledby="wb-tasks-title" aria-roledescription="轮播"><div class="wb-panel-heading"><h2 id="wb-tasks-title">课题进展</h2>'+iterationControls('progress',pi,ps.length)+'</div>'+
  (p?'<div class="wb-progress-project"><div><h3 title="'+esc(p.name)+'">'+esc(p.name)+'</h3><p>'+esc(goalText(DB.projects.find(x=>x.id===p.id))||p.stateText||'')+'</p></div><button class="wb-list-link" type="button" data-wb-project="'+esc(p.id)+'">进入课题 '+wbViewIcon('arrow')+'</button></div><div class="wb-task-columns">'+iterationTaskSection('experiment',scope.experiments||[],p.id)+iterationTaskSection('model',scope.modelTasks||[],p.id)+'</div>':'<div class="wb-empty"><strong>还没有课题</strong><button class="wb-button wb-button-primary" type="button" data-wb-create-project>新建项目</button></div>')+'</section>'+
- '<section class="wb-panel wb-inspiration" aria-labelledby="wb-ideas-title" aria-roledescription="轮播"><div class="wb-panel-heading"><div class="wb-panel-label">'+wbViewIcon('spark')+'<h2 id="wb-ideas-title">今日灵感</h2></div>'+iterationControls('idea',WB.idea||0,WB.ideas.length,WB.auto)+'</div>'+
+ '<section class="wb-panel wb-inspiration" aria-labelledby="wb-ideas-title" aria-roledescription="轮播"><div class="wb-panel-heading"><div class="wb-panel-label">'+wbViewIcon('spark')+'<h2 id="wb-ideas-title">今日灵感</h2></div>'+iterationControls('idea',WB.idea||0,WB.ideas.length)+'</div>'+
  (idea?'<div class="wb-idea-topic"><span title="'+esc(ip?.name||idea.project)+'">'+esc(ip?.name||idea.project)+'</span></div><div class="wb-idea-stage"><button type="button" class="wb-question" data-wb-idea-detail="'+WB.idea+'" aria-label="查看完整问题：'+esc(idea.question)+'">'+esc(idea.question)+'</button><div class="wb-idea-bottom">'+(ref?'<a class="wb-reference-tag" href="'+esc(ref)+'" target="_blank" rel="noopener noreferrer" title="'+esc(idea.sourceTitle||'参考论文')+'">'+wbViewIcon('paper')+'参考论文 '+wbViewIcon('external')+'</a>':'')+'<button type="button" class="wb-button wb-button-primary" data-wb-prompt="'+esc(idea.question)+'" data-wb-pid="'+esc(idea.pid)+'">去探索 '+wbViewIcon('arrow')+'</button></div></div>':'<div class="wb-empty"><strong>暂无灵感问题</strong><p>为课题补充研究目标。</p></div>')+'</section>'+
- '<section class="wb-panel wb-news" aria-labelledby="wb-news-title" aria-roledescription="轮播"><div class="wb-panel-heading"><div class="wb-panel-label">'+wbViewIcon('paper')+'<h2 id="wb-news-title">学术资讯</h2></div>'+iterationControls('news',ni,ps.length,WB.newsAuto)+'</div>'+
+ '<section class="wb-panel wb-news" aria-labelledby="wb-news-title" aria-roledescription="轮播"><div class="wb-panel-heading"><div class="wb-panel-label">'+wbViewIcon('paper')+'<h2 id="wb-news-title">学术资讯</h2></div>'+iterationControls('news',ni,ps.length)+'</div>'+
  (np?'<div class="wb-news-context"><span title="'+esc(np.name)+'">'+esc(np.name)+'</span></div>':'')+
  (papers.length?'<ul class="wb-papers">'+papers.slice(0,1).map(wbViewPaper).join('')+'</ul>':'<div class="wb-empty wb-empty-news" role="status"><strong>'+(newsState==='loading'?'正在查找相关论文':newsState==='error'?'暂时无法获取论文':'暂无匹配论文')+'</strong><p>'+(newsState==='error'?'稍后重新进入工作台可重试。':'')+'</p></div>')+
  (newsState==='error'&&papers.length?'<p class="wb-news-state" role="status">暂未获取新结果，保留已保存论文。</p>':'')+'</section></div></div>';
@@ -20240,10 +20257,20 @@ wbBind=function(root){
  if(S.route!=='workbench'){WB.onPage=false;return;}
  const entering=!WB.onPage;WB.onPage=true;
  const on=(s,event,fn)=>root.querySelectorAll(s).forEach(e=>e.addEventListener(event,ev=>fn(e,ev)));
- on('[data-wb-progress-step]','click',e=>{iterationStepProject(+e.dataset.wbProgressStep);render();});
- on('[data-wb-idea-step]','click',e=>{iterationStepIdea(+e.dataset.wbIdeaStep);render();});
- on('[data-wb-news-step]','click',e=>{wbStepNews(+e.dataset.wbNewsStep);render();});
- [['progress','progressAuto'],['idea','auto'],['news','newsAuto']].forEach(([kind,flag])=>on('[data-wb-'+kind+'-auto]','click',()=>{WB[flag]=!WB[flag];LS.set('wb_view',{auto:WB.auto,newsAuto:WB.newsAuto,progressAuto:WB.progressAuto});render();}));
+ for(const kind of ['progress','idea','news']){
+  const selector='[data-wb-'+kind+'-dot]',key='wb'+kind[0].toUpperCase()+kind.slice(1)+'Dot';
+  on(selector,'click',e=>{iterationSelectSlide(kind,+e.dataset[key]);render();});
+  on(selector,'keydown',(e,ev)=>{
+   if(!['ArrowLeft','ArrowRight','Home','End'].includes(ev.key))return;
+   const count=root.querySelectorAll(selector).length,i=+e.dataset[key];
+   const next=ev.key==='Home'?0:ev.key==='End'?count-1:(i+(ev.key==='ArrowRight'?1:-1)+count)%count;
+   ev.preventDefault();iterationSelectSlide(kind,next);render();
+   view.querySelector(selector.slice(0,-1)+'="'+next+'"]')?.focus({preventScroll:true});
+  });
+ }
+ const alignIndicators=()=>root.querySelectorAll('.wb-carousel-dots [aria-current="true"]').forEach(e=>{if(e.isConnected){const track=e.parentElement;track.scrollLeft=Math.max(0,e.offsetLeft-(track.clientWidth-e.offsetWidth)/2);}});
+ requestAnimationFrame(alignIndicators);
+ wbLayoutObserver=new ResizeObserver(alignIndicators);root.querySelectorAll('.wb-carousel-dots').forEach(e=>wbLayoutObserver.observe(e));
  on('[data-wb-section-page]','click',e=>{const state=WB.pagesByProject[WB.progressProject];if(state)state[e.dataset.wbSectionPage]+=+e.dataset.delta;render();});
  on('[data-wb-prompt]','click',e=>wbAsk(e.dataset.wbPid,e.dataset.wbPrompt));
  on('[data-wb-idea-detail]','click',e=>wbReadIdea(+e.dataset.wbIdeaDetail));

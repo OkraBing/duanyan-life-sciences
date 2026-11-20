@@ -32,7 +32,7 @@
     {
       "id": "R05",
       "area": "工作台",
-      "title": "课题进展整卡轮播，每张停留 6–8 秒",
+      "title": "课题进展整卡轮播，每张停留 6–8 秒；圆点切换，不展示暂停按钮",
       "probe": "progress_carousel",
       "design": true
     },
@@ -60,7 +60,7 @@
     {
       "id": "R09",
       "area": "工作台",
-      "title": "灵感按课题绑定，轮播能覆盖课题和不同问题",
+      "title": "灵感按课题绑定，圆点轮播能覆盖课题和不同问题",
       "suite": "workbench",
       "pattern": "inspiration carries"
     },

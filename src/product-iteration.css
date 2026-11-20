@@ -22,3 +22,14 @@
 .shared-flow-node{min-height:134px}.shared-flow-description{font-size:11px;line-height:1.5;color:var(--ink-3);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 
 @media(max-width:900px){.research-home::before{left:0;right:0}}
+
+/* Shared carousel indicators: direct selection, no playback controls. */
+.wb .wb-carousel-dots{position:relative;display:flex;align-items:center;flex:0 1 auto;max-width:48%;min-width:0;margin-left:auto;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;overscroll-behavior-x:contain}
+.wb .wb-carousel-dots::-webkit-scrollbar{display:none}
+.wb .wb-carousel-dot{display:grid;place-items:center;flex:0 0 24px;width:24px;height:28px;min-height:28px;padding:0;border:0;border-radius:6px;background:transparent;cursor:pointer}
+.wb .wb-carousel-dot>span{display:block;width:5px;height:5px;border-radius:50%;background:var(--ink-4);opacity:.8;transition:background-color .15s,opacity .15s,transform .15s}
+.wb .wb-carousel-dot[aria-current=true]>span{background:var(--dry-ink);opacity:1;transform:scale(1.3)}
+.wb .wb-carousel-dot:hover>span{background:var(--dry-ink);opacity:.8}
+.wb .wb-carousel-dot:focus-visible{outline:2px solid var(--focus);outline-offset:-3px}
+@media(max-width:600px){.wb .wb-carousel-dots{max-width:60%}}
+@media(prefers-reduced-motion:reduce){.wb .wb-carousel-dot>span{transition:none}}

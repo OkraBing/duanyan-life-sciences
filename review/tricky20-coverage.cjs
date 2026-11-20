@@ -1,7 +1,7 @@
 const fs=require('node:fs');
 function inPage(){
  const full=new Set(['workbench','devices','devicedetail','lab','labnew','labdet','shared','sharednew','shareddetail','toolnew','databasenew','resdetail']);
- const finite=new Set(['data-go','data-act','data-wb-progress-step','data-wb-idea-step','data-wb-news-step','data-wb-section-page','data-wb-list','data-lv-type','data-lv-filter','data-lv-save','data-composer-node','data-rs-tab','data-shared-asset-tab','data-rs-flow','data-iteration-zoom','data-rs-new-resource','data-rs-market-tab','data-rs-save-resource','data-rs-back-resource-market']);
+ const finite=new Set(['data-go','data-act','data-wb-progress-dot','data-wb-idea-dot','data-wb-news-dot','data-wb-section-page','data-wb-list','data-lv-type','data-lv-filter','data-lv-save','data-composer-node','data-rs-tab','data-shared-asset-tab','data-rs-flow','data-iteration-zoom','data-rs-new-resource','data-rs-market-tab','data-rs-save-resource','data-rs-back-resource-market']);
  const state={seen:{},enabled:{},clicks:{},disabled:{},lastChoice:''};window.__review20=state;
  function identify(e){
   const route=typeof S==='object'?S.route:'boot',dialog=e.closest('#dlg'),drawer=e.closest('.asset-drawer');
