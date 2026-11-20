@@ -1,0 +1,428 @@
+{
+  "version": 1,
+  "date": "2026-11-20",
+  "policy": "以用户最后一次同类要求为准；旧 A/B/C、任务 tab、统计区要求已被后续要求取代。design 标记已获用户确认并要求直接落地的设计条目，必须有本轮实际行为证据才计通过。",
+  "requirements": [
+    {
+      "id": "R01",
+      "area": "仓库与构建",
+      "title": "独立仓库命名为 duanyan-life-sciences-3，构建产物一致",
+      "probe": "repository"
+    },
+    {
+      "id": "R02",
+      "area": "工作台",
+      "title": "新增导航并作为默认进入页",
+      "suite": "workbench",
+      "pattern": "default landing"
+    },
+    {
+      "id": "R03",
+      "area": "工作台",
+      "title": "今日灵感、学术资讯、课题进展三个模块",
+      "probe": "workbench_modules"
+    },
+    {
+      "id": "R04",
+      "area": "工作台",
+      "title": "桌面一屏展示，窄屏无横向溢出",
+      "suite": "workbench",
+      "pattern": "one viewport"
+    },
+    {
+      "id": "R05",
+      "area": "工作台",
+      "title": "课题进展整卡轮播，每张停留 6–8 秒",
+      "probe": "progress_carousel",
+      "design": true
+    },
+    {
+      "id": "R06",
+      "area": "工作台",
+      "title": "实验任务、模型任务同时展示为小标题，不使用 tab",
+      "probe": "parallel_task_sections",
+      "design": true
+    },
+    {
+      "id": "R07",
+      "area": "工作台",
+      "title": "删除统计区和整块 AI 建议，不再展示重复课题进展区",
+      "probe": "no_progress_stats",
+      "design": true
+    },
+    {
+      "id": "R08",
+      "area": "工作台",
+      "title": "灵感、资讯直接轮播，删除全部 A/B/C 分组",
+      "probe": "no_abc",
+      "design": true
+    },
+    {
+      "id": "R09",
+      "area": "工作台",
+      "title": "灵感按课题绑定，轮播能覆盖课题和不同问题",
+      "suite": "workbench",
+      "pattern": "inspiration carries"
+    },
+    {
+      "id": "R10",
+      "area": "工作台",
+      "title": "删除为什么想到、检查视角，参考论文用标签",
+      "probe": "inspiration_copy"
+    },
+    {
+      "id": "R11",
+      "area": "工作台",
+      "title": "去探索预填可编辑问题，绑定课题，不自动发送",
+      "suite": "workbench",
+      "pattern": "inspiration carries"
+    },
+    {
+      "id": "R12",
+      "area": "工作台",
+      "title": "论文展示标题、描述，整条可跳转论文",
+      "suite": "workbench",
+      "pattern": "simple linked cards"
+    },
+    {
+      "id": "R13",
+      "area": "工作台",
+      "title": "删除刷新 AI、刷新资讯、微调和重复课题面板",
+      "suite": "workbench",
+      "pattern": "removed controls"
+    },
+    {
+      "id": "R14",
+      "area": "工作台",
+      "title": "学术资讯按课题匹配，加载失败保留可用内容",
+      "suite": "workbench",
+      "pattern": "simple linked cards"
+    },
+    {
+      "id": "R15",
+      "area": "工作台",
+      "title": "训练、评测、批量和在线推理正确跳转",
+      "suite": "workbench",
+      "pattern": "both inference destinations"
+    },
+    {
+      "id": "R16",
+      "area": "工作台",
+      "title": "实验状态与环节进度同步，查看列表保留课题范围",
+      "suite": "workbench",
+      "pattern": "project progress scopes"
+    },
+    {
+      "id": "R17",
+      "area": "科研对话",
+      "title": "删除底部项目、实验、模型三列概览",
+      "probe": "chat_summary_removed"
+    },
+    {
+      "id": "R18",
+      "area": "共享项目",
+      "title": "导航可见，支持多个共享项目及从现有项目转换",
+      "suite": "research-workspace",
+      "pattern": "shared navigation and conversion"
+    },
+    {
+      "id": "R19",
+      "area": "共享项目",
+      "title": "支持空白共享项目，选择和数据重载后保留",
+      "suite": "research-workspace",
+      "pattern": "multiple shared projects"
+    },
+    {
+      "id": "R20",
+      "area": "共享项目",
+      "title": "添加、删除成员及不同角色权限",
+      "suite": "research-workspace",
+      "pattern": "role controls enforce"
+    },
+    {
+      "id": "R21",
+      "area": "共享项目",
+      "title": "项目资产和项目工作流两个入口",
+      "probe": "shared_tabs"
+    },
+    {
+      "id": "R22",
+      "area": "共享项目",
+      "title": "资产排列、文件条目和知识库/工具/实验沿用对话左侧",
+      "probe": "shared_asset_browser",
+      "design": true
+    },
+    {
+      "id": "R23",
+      "area": "共享项目",
+      "title": "模型工作流：数据集、训练、评测、推理",
+      "probe": "model_pipeline"
+    },
+    {
+      "id": "R24",
+      "area": "共享项目",
+      "title": "实验工作流：实验数据集、实验任务、实验结论",
+      "probe": "experiment_pipeline"
+    },
+    {
+      "id": "R25",
+      "area": "共享项目",
+      "title": "实验节点点击从右侧抽屉展示对应详情",
+      "probe": "workflow_drawer",
+      "design": true
+    },
+    {
+      "id": "R26",
+      "area": "共享项目",
+      "title": "同一版本数据集只画一次并连接多个实验",
+      "probe": "dataset_fanout",
+      "design": true
+    },
+    {
+      "id": "R27",
+      "area": "共享项目",
+      "title": "申请、审批和导入分开，固定版本复制到个人项目",
+      "suite": "research-workspace",
+      "pattern": "separate approval and import"
+    },
+    {
+      "id": "R28",
+      "area": "共享项目",
+      "title": "模型不重新训练，数据集为独立草稿，保留来源",
+      "suite": "research-workspace",
+      "pattern": "dataset acquisition creates"
+    },
+    {
+      "id": "R29",
+      "area": "共享项目",
+      "title": "版本不可覆盖已审批内容，移除成员不删除已导入副本",
+      "suite": "research-workspace",
+      "pattern": "new versions never overwrite"
+    },
+    {
+      "id": "R30",
+      "area": "共享项目",
+      "title": "默认构造我创建与他人创建两个相反申请方向的项目",
+      "probe": "two_seed_scenarios",
+      "design": true
+    },
+    {
+      "id": "R31",
+      "area": "共享项目",
+      "title": "项目卡片整卡进入，没有进入按钮",
+      "probe": "shared_whole_card"
+    },
+    {
+      "id": "R32",
+      "area": "共享项目",
+      "title": "删除本机原型说明、角色演示和侧边解释栏",
+      "probe": "shared_copy_cleanup"
+    },
+    {
+      "id": "R33",
+      "area": "项目管理",
+      "title": "列表与详情显示共享标识，分享转共享并打开管理",
+      "suite": "research-workspace",
+      "pattern": "project sharing action converts"
+    },
+    {
+      "id": "R34",
+      "area": "项目管理",
+      "title": "管理共享采用浅蓝底、蓝字",
+      "probe": "share_action_blue"
+    },
+    {
+      "id": "R35",
+      "area": "项目管理",
+      "title": "创建项目副本保持独立，不复制聊天、成员或执行任务",
+      "suite": "research-workspace",
+      "pattern": "project copy creates independent"
+    },
+    {
+      "id": "R36",
+      "area": "项目管理",
+      "title": "副本范围、权限、重载和固定弹窗可用",
+      "suite": "research-workspace",
+      "pattern": "copy scopes"
+    },
+    {
+      "id": "R37",
+      "area": "项目管理",
+      "title": "复制按钮、弹窗统一命名创建项目副本",
+      "probe": "copy_name"
+    },
+    {
+      "id": "R38",
+      "area": "项目管理",
+      "title": "项目管理和共享项目卡片样式、间距尽可能一致",
+      "probe": "card_alignment",
+      "design": true
+    },
+    {
+      "id": "R39",
+      "area": "设备管理",
+      "title": "实验导航下新增设备管理，蛋白实验场景优先",
+      "probe": "device_navigation"
+    },
+    {
+      "id": "R40",
+      "area": "设备管理",
+      "title": "设备名称、描述、型号、适用环节、能力及输入输出",
+      "suite": "lab-workflow",
+      "pattern": "device contracts"
+    },
+    {
+      "id": "R41",
+      "area": "设备管理",
+      "title": "设备类别筛选、搜索和厂商资料链接",
+      "suite": "lab-workflow",
+      "pattern": "catalog filters"
+    },
+    {
+      "id": "R42",
+      "area": "设备管理",
+      "title": "整卡与键盘进入设备详情，无底部能力入口",
+      "probe": "device_whole_card"
+    },
+    {
+      "id": "R43",
+      "area": "设备管理",
+      "title": "申请接入、申请中、已接入状态并持久保存",
+      "probe": "device_connection",
+      "design": true
+    },
+    {
+      "id": "R44",
+      "area": "设备管理",
+      "title": "删除英文眉题、蓝色说明、数量、参考型号卡标与页脚",
+      "probe": "device_copy_cleanup"
+    },
+    {
+      "id": "R45",
+      "area": "实验管理",
+      "title": "实验包含多个环节，支持串行和并行，分样来源独立",
+      "suite": "lab-workflow",
+      "pattern": "schedule dependencies"
+    },
+    {
+      "id": "R46",
+      "area": "实验管理",
+      "title": "逐环节选择设备、型号、实例、SOP及输入输出要求",
+      "suite": "lab-workflow",
+      "pattern": "validation catches"
+    },
+    {
+      "id": "R47",
+      "area": "实验管理",
+      "title": "图形化编排：右侧节点定位，左侧编辑所选操作",
+      "probe": "graphical_composer",
+      "design": true
+    },
+    {
+      "id": "R48",
+      "area": "实验管理",
+      "title": "未填必填项在对应节点显示圆点，补齐后消失",
+      "probe": "node_required_dot",
+      "design": true
+    },
+    {
+      "id": "R49",
+      "area": "实验管理",
+      "title": "异常、正常进行中、有结论三态及并行进展一致",
+      "suite": "lab-workflow",
+      "pattern": "three coherent statuses"
+    },
+    {
+      "id": "R50",
+      "area": "实验管理",
+      "title": "实验卡片点击查看当前环节和结论，无底部按钮",
+      "probe": "experiment_whole_card"
+    },
+    {
+      "id": "R51",
+      "area": "实验管理",
+      "title": "设备列表按钮命名，删除英文眉题、统计卡及说明页脚",
+      "probe": "lab_copy_cleanup"
+    },
+    {
+      "id": "R52",
+      "area": "实验管理",
+      "title": "异常处理、重试、下游失效及证据结论关联",
+      "suite": "lab-workflow",
+      "pattern": "upstream retry invalidates"
+    },
+    {
+      "id": "R53",
+      "area": "实验管理",
+      "title": "创建/编辑草稿、保存方案和重载不丢记录",
+      "suite": "lab-workflow",
+      "pattern": "deduplicated sample IDs"
+    },
+    {
+      "id": "R54",
+      "area": "资源市场",
+      "title": "公共工具/数据库统一命名生命科学工具/生命科学数据",
+      "probe": "resource_names"
+    },
+    {
+      "id": "R55",
+      "area": "资源市场",
+      "title": "工具上传支持 SKILL.md、目录、拖放与元数据",
+      "suite": "research-workspace",
+      "pattern": "tool upload validates"
+    },
+    {
+      "id": "R56",
+      "area": "资源市场",
+      "title": "标识名称、描述、GitHub、学科、5标签、封面及版本表单",
+      "suite": "research-workspace",
+      "pattern": "tool upload validates"
+    },
+    {
+      "id": "R57",
+      "area": "资源市场",
+      "title": "私有、公开待审核、版本更新保留已发布版本",
+      "suite": "research-workspace",
+      "pattern": "published version remains"
+    },
+    {
+      "id": "R58",
+      "area": "资源市场",
+      "title": "数据库上传解析行列，外部来源校验并可创建",
+      "suite": "research-workspace",
+      "pattern": "database parses actual rows"
+    },
+    {
+      "id": "R59",
+      "area": "资源市场",
+      "title": "依赖字段和固定表单动作保持位置、不遮挡",
+      "suite": "research-workspace",
+      "pattern": "fixed form frame"
+    },
+    {
+      "id": "R60",
+      "area": "通用质量",
+      "title": "中文页面标题，清除英文宣传眉题",
+      "probe": "page_titles"
+    },
+    {
+      "id": "R61",
+      "area": "通用质量",
+      "title": "三轮审查覆盖长内容、空态、极端数量、深色与焦点",
+      "suite": "workbench-tricky",
+      "pattern": "round 3: light and dark"
+    },
+    {
+      "id": "R62",
+      "area": "通用质量",
+      "title": "设计图、提示词和交互规则齐全，设计不能冒充实现",
+      "probe": "design_delivery"
+    },
+    {
+      "id": "R63",
+      "area": "回归入口",
+      "title": "默认回归包含实验、共享与三轮审查脚本",
+      "probe": "regression_entry"
+    }
+  ]
+}

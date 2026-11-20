@@ -10,12 +10,18 @@ SRC="$PWD/src/index.html"
 node build.mjs >/dev/null || { echo "打包失败"; exit 1; }
 
 PASS=0; FAIL=0; FAILED=""
+TASK_LOG_DIR="$PWD/work/qa/regression"
+mkdir -p "$TASK_LOG_DIR"
 run(){ local n="$1"; shift
   out=$("$@" 2>&1); rc=$?
+  printf '%s\n' "$out" > "$TASK_LOG_DIR/${n//\//_}.log"
   if [ $rc -eq 0 ]; then PASS=$((PASS+1)); echo "✅ $n"
   else FAIL=$((FAIL+1)); FAILED="$FAILED $n"; echo "❌ $n"; echo "$out" | tail -7 | sed 's/^/      /'; fi }
 
 # 评审脚本：渲染 / 空态 / 响应式 / 组件状态 / 数据闭环 / 全量点击 / 极端数据 / 端到端 / 模型接入 / 自由问答
+for f in product-iteration workbench lab-workflow research-workspace workbench-tricky; do
+  [ -f "review/$f.cjs" ] && run "review/$f" node "review/$f.cjs" "$P"
+done
 for f in a_render b_empty c_resp d_state e_loop f_click g_extreme h_flows i_set j_ask k_comp; do
   [ -f "review/$f.js" ] && run "review/$f" node "review/$f.js" "$P"; done
 # 100 条研究路线 / 数据上传 / 训练 / 部署调用 / 日常使用检查，详见 测试点清单.md

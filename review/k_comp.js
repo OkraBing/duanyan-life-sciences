@@ -19,7 +19,7 @@ const CAPS=['deg','seek','str','des','lab','primer','sgrna','train','dset','file
     window.fetch=()=>{window.__n++;return Promise.resolve({ok:true,status:200,
       json:()=>Promise.resolve({choices:[{message:{content:x}}],usage:{}})})};
   },r);
-  const newChat=()=>pg.evaluate(()=>{convOf().length=0;S.ask='';S.useTools=[];render()});
+  const newChat=()=>pg.evaluate(()=>{S.sid='component-regression';CONV[S.sid]=[];S.ask='';S.useTools=[];go('chat')});
   const send=async t=>{await pg.fill('#ask',t);await pg.keyboard.press('Enter');
     await pg.waitForTimeout(1400)};
   // 卡片数据取自对话模型本身，去掉每次都变的 id

@@ -20,6 +20,8 @@ const STATES=[];
 const b=await chromium.launch();
 const p=await b.newPage({viewport:{width:1440,height:950}});
 await blockExternalNetwork(p);
+// Track registered interaction listeners as well as onclick properties.
+await p.addInitScript(()=>{const add=EventTarget.prototype.addEventListener;EventTarget.prototype.addEventListener=function(type,...args){if(this instanceof Element&&['click','keydown'].includes(type)){if(!this.__dyBoundEvents)Object.defineProperty(this,'__dyBoundEvents',{value:new Set()});this.__dyBoundEvents.add(type);}return add.call(this,type,...args);};});
 const errs=[];p.on('pageerror',e=>errs.push(e.message));
 await p.goto('file://'+P);await p.waitForTimeout(700);
 const bad=[];
@@ -34,7 +36,14 @@ for(const st of STATES){
     if(!v||v.innerHTML.length<200)out.push('内容为空');
     /* 死控件：有 data-* 动作名但一个 onclick 都没挂上的 */
     const dead=[...v.querySelectorAll('button,[role="button"]')].filter(e=>{
-      if(e.onclick||e.onkeydown)return false;
+      if(e.disabled||e.onclick||e.onkeydown||e.__dyBoundEvents?.has('click')||e.__dyBoundEvents?.has('keydown'))return false;
+      // Delegated parent onclick must explicitly match this control's selector.
+      for(let parent=e.parentElement;parent;parent=parent.parentElement){
+        const source=parent.onclick?.toString()||'';
+        for(const match of source.matchAll(/\.closest\((['"])([^'"]+)\1\)/g)){
+          if(e.matches(match[2]))return false;
+        }
+      }
       if(e.closest('form'))return false;
       if(e.type==='submit')return false;
       const has=[...e.attributes].some(a=>/^data-/.test(a.name));

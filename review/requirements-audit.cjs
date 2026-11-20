@@ -1,0 +1,49 @@
+/* Fresh, evidence-backed audit of the user's final requirements. */
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict');
+const {spawn,execFileSync}=require('node:child_process');
+const root=path.resolve(__dirname,'..');process.chdir(root);
+const out=path.join(root,'work/qa/requirements-audit-20261120');fs.mkdirSync(out,{recursive:true});
+const hash=x=>crypto.createHash('sha256').update(x).digest('hex');
+const h=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const coreSuites=['product-iteration','workbench','lab-workflow','research-workspace','workbench-tricky'];
+const suites=coreSuites.concat(process.argv.includes('--extended')?['a_render','b_empty','c_resp','d_state','e_loop','f_click','g_extreme','h_flows','i_set','j_ask','k_comp','t100']:[]);
+function runSuite(name){return new Promise(resolve=>{
+ const script='review/'+name+(fs.existsSync('review/'+name+'.cjs')?'.cjs':'.js');
+ const started=Date.now(),child=spawn(process.execPath,[script,path.join(root,'index.html')],{cwd:root,stdio:['ignore','pipe','pipe']});let log='',timedOut=false;
+ const timer=setTimeout(()=>{timedOut=true;child.kill('SIGTERM');},name==='t100'?600000:180000);
+ child.stdout.on('data',b=>{log+=b;});child.stderr.on('data',b=>{log+=b;});
+ child.on('close',code=>{clearTimeout(timer);fs.writeFileSync(path.join(out,'latest-'+name+'.log'),log);const groups=log.split('\n').filter(l=>l.startsWith('PASS ')).map(l=>l.slice(5));const caseMatch=/通过\s+(\d+)\s*\/\s*(\d+)\s*失败\s+(\d+)/.exec(log);const result={name,cases:caseMatch?{passed:+caseMatch[1],total:+caseMatch[2],failed:+caseMatch[3]}:null,command:'node '+script+' '+JSON.stringify(path.join(root,'index.html')),status:code===0&&!timedOut?'passed':'failed',code,timedOut,durationMs:Date.now()-started,groups};console.log(result.status.toUpperCase()+' '+name+' '+groups.length+' groups');if(result.status==='failed')console.error(log.slice(-3500));resolve(result);});
+ });}
+async function main(){
+ execFileSync(process.execPath,['build.mjs'],{stdio:'inherit'});
+ const built=fs.readFileSync('index.html'),buildHash=hash(built),results=[];let index=0;
+ async function worker(){while(index<suites.length){const name=suites[index++];results.push(await runSuite(name));}}
+ await Promise.all([worker(),worker()]);
+ const changed=hash(fs.readFileSync('index.html'))!==buildHash;
+ const manifest=JSON.parse(fs.readFileSync('review/requirements-20261120.json','utf8'));
+ const livePath=path.join(out,'product-iteration-results.json');
+ const live=fs.existsSync(livePath)?JSON.parse(fs.readFileSync(livePath,'utf8')):{checks:[]};
+ const probes={};
+ const probe=(name,fn)=>{try{probes[name]={status:'passed',evidence:fn()};}catch(e){probes[name]={status:'failed',evidence:e.message};}};
+ probe('repository',()=>{const origin=execFileSync('git',['remote','get-url','origin'],{encoding:'utf8'}).trim();assert(/OkraBing\/duanyan-life-sciences-3(?:\.git)?$/.test(origin),origin);assert.equal(hash(fs.readFileSync('docs/index.html')),buildHash);assert(!built.includes(Buffer.from('/* @include')));assert(!changed,'Build changed during audit');return origin+'；根页面与 docs 构建 SHA-256 一致：'+buildHash;});
+ probe('design_delivery',()=>{const m=JSON.parse(fs.readFileSync('work/qa/imagegen-design-v2/manifest.json','utf8'));assert(m.images.length>=13);assert(m.prompts?.length>=13||Object.keys(m).some(k=>JSON.stringify(m[k]).includes('Use case:')));assert(m.images.every(x=>fs.existsSync(x.file)));const gallery=fs.readFileSync('work/qa/imagegen-design-v2/gallery.html','utf8');assert(/已确认/.test(gallery)&&/已实现/.test(gallery));return m.images.length+' 张图稿、生成提示词及交互约定已保留；确认后实现，实际截图另存。';});
+ probe('regression_entry',()=>{const run=fs.readFileSync('run_all.sh','utf8'),pkg=JSON.parse(fs.readFileSync('package.json','utf8'));for(const s of coreSuites)assert(run.includes(s),s+' missing');assert.equal(pkg.scripts['test:requirements'],'node review/requirements-audit.cjs');return 'npm run test:requirements 重新构建并运行 5 套专项；默认 npm test 同样包含这 5 套专项。';});
+ let preview;
+ try{const response=await fetch('http://127.0.0.1:8843/?v='+buildHash.slice(0,12),{signal:AbortSignal.timeout(5000)});assert(response.ok);const serverHash=hash(Buffer.from(await response.arrayBuffer()));assert.equal(serverHash,buildHash);preview={status:'passed',url:'http://127.0.0.1:8843/?v='+buildHash.slice(0,12)+'#workbench',evidence:'正在服务的 HTML 与本轮验收构建逐字节一致。'};}catch(e){preview={status:'unavailable',evidence:e.message};}
+ const entries=manifest.requirements.map(r=>{
+  if(changed)return {...r,status:'failed',evidence:'审查过程中构建发生改变，需重新运行。'};
+  if(r.probe&&probes[r.probe])return {...r,...probes[r.probe]};
+  const suite=results.find(s=>s.name===(r.suite||'product-iteration'));
+  const hit=r.suite?suite?.groups.find(x=>x.includes(r.pattern)):live.checks.find(c=>c.id===r.id&&c.status==='passed')?.name;
+  return {...r,status:suite?.status==='passed'&&hit?'passed':'failed',evidence:hit||'没有找到本轮通过的对应行为测试。',command:suite?.command,log:suite?'latest-'+suite.name+'.log':undefined};
+ });
+ const report={auditCommand:process.argv.includes('--extended')?'npm run test:requirements:extended':'npm run test:requirements',generatedAt:new Date().toISOString(),buildSha256:buildHash,scope:'用户最后一次同类要求覆盖旧要求；已确认图稿直接落地。',summary:{requirements:entries.length,passed:entries.filter(r=>r.status==='passed').length,failed:entries.filter(r=>r.status!=='passed').length,integrationGroups:results.filter(s=>coreSuites.includes(s.name)).reduce((n,s)=>n+s.groups.length,0),extendedScripts:results.length-coreSuites.length,failedScripts:results.filter(s=>s.status!=='passed').map(s=>s.name)},preview,suites:results,requirements:entries,boundaries:['本轮浏览器使用隔离数据，拦截外部请求；Crossref 使用确定性响应测试加载、缓存、竞态与失败状态。','共享邀请、审批、设备接入确认和资源审核为本地交互与持久化；未验证真实账号、邮件、服务端权限、硬件执行或自动回流。','示例共享项目与复用关系按用户要求构造。科研数据、实验结论与已接入示例不代表真实科研结果或设备连接。','本次未向 GitHub 推送、未发布公网；不把历史模型代理验证计入本轮验收。']};
+ fs.writeFileSync(path.join(out,'requirements-audit.json'),JSON.stringify(report,null,2));
+ const rows=entries.map(r=>'<tr><td>'+h(r.id)+'</td><td>'+h(r.area)+'</td><td>'+h(r.title)+'</td><td class="'+r.status+'">'+(r.status==='passed'?'通过':'未通过')+'</td><td>'+h(r.evidence)+(r.log?'<br><a href="'+r.log+'">本轮脚本日志</a>':'')+'</td></tr>').join('');
+ const shots=[['工作台','workbench-implemented'],['共享项目','shared-projects-final'],['共享资产','shared-assets-final'],['分支工作流','shared-workflow-final'],['节点抽屉','shared-node-drawer-final'],['我审批他人','shared-owner-requests-final'],['我向他人申请','shared-my-requests-final'],['设备管理','devices-final'],['实验编排','experiment-composer-final'],['实验管理','experiments-final']];
+ const html='<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>端砚需求验收</title><style>body{margin:0;background:#f7f8fa;color:#151a22;font:14px/1.65 system-ui,-apple-system,sans-serif}main{max-width:1440px;margin:auto;padding:32px}h1{font-size:28px;margin:0}h2{font-size:20px;margin-top:30px}p{max-width:1000px}a{color:#204ce8}code{overflow-wrap:anywhere}table{border-collapse:collapse;width:100%;background:white}td,th{text-align:left;border-bottom:1px solid #e0e4ec;padding:12px;vertical-align:top}th{background:#eef1f7}td:first-child{white-space:nowrap}.passed{color:#08774f}.failed{color:#c02621}.stats{display:flex;gap:22px;padding:20px 0}.stats b{font-size:22px}.scroll{overflow:auto}.shots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}figure{margin:0}img{width:100%;border:1px solid #d9dfe8;border-radius:8px}figcaption{margin:6px 0}ul{padding-left:22px}@media(max-width:750px){main{padding:16px}.shots{grid-template-columns:1fr}.stats{flex-wrap:wrap}td,th{padding:8px}}</style><main><h1>端砚 · 最新需求验收</h1><p>'+h(report.scope)+'</p><div class="stats"><span>需求 <b>'+entries.length+'</b></span><span class="passed">通过 <b>'+report.summary.passed+'</b></span><span class="failed">未通过 <b>'+report.summary.failed+'</b></span><span>行为测试 <b>'+report.summary.integrationGroups+'</b></span></div><p>构建时间：'+h(report.generatedAt)+'<br>SHA-256：<code>'+buildHash+'</code><br>预览核对：'+h(preview.evidence)+(preview.url?'<br><a href="'+h(preview.url)+'">打开已核对的工作台</a>':'')+'</p><p><a href="requirements-audit.json">机器可读报告</a> · <a href="../imagegen-design-v2/gallery.html">已确认的设计图稿</a></p><h2>验证范围</h2><ul>'+report.boundaries.map(x=>'<li>'+h(x)+'</li>').join('')+'</ul><h2>测试命令</h2><p><code>'+h(report.auditCommand)+'</code> 会重新构建并运行以下全部专项，不复用旧结果。</p><table><tr><th>脚本</th><th>状态</th><th>通过分组</th><th>耗时</th></tr>'+results.map(s=>'<tr><td><a href="latest-'+s.name+'.log">'+h(s.command)+'</a></td><td>'+h(s.status)+'</td><td>'+(s.cases?s.cases.passed+' / '+s.cases.total:s.groups.length||'—')+'</td><td>'+Math.round(s.durationMs/1000)+' 秒</td></tr>').join('')+'</table><p>扩展脚本：'+report.summary.extendedScripts+' 套；失败：'+h(report.summary.failedScripts.join('、')||'无')+'。扩展结果单列，不改变 63 条需求的对应证据。</p><h2>逐项结果</h2><div class="scroll"><table><thead><tr><th>编号</th><th>页面</th><th>最终需求</th><th>结果</th><th>证据</th></tr></thead><tbody>'+rows+'</tbody></table></div><h2>本轮实际页面</h2><div class="shots">'+shots.filter(x=>fs.existsSync(path.join(out,x[1]+'.png'))).map(([label,file])=>'<figure><a href="'+file+'.png"><img loading="lazy" src="'+file+'.png" alt="'+h(label)+'实际页面截图"></a><figcaption>'+h(label)+' · 实际页面</figcaption></figure>').join('')+'</div></main></html>';
+ fs.writeFileSync(path.join(out,'report.html'),html);
+ console.log(JSON.stringify(report.summary));console.log('Report: '+path.join(out,'report.html'));
+ if(report.summary.failed||results.some(s=>s.status!=='passed'))process.exitCode=1;
+}
+main().catch(e=>{console.error(e);process.exitCode=1;});

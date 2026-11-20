@@ -7,13 +7,14 @@ const playwright = require('playwright');
 const chrome = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const chromium = new Proxy(playwright.chromium, {
   get(target, property) {
-    if (property === 'launch') return (options = {}) => {
+    if (property === 'launch') return async (options = {}) => {
       const selected = { ...options };
       if (!selected.executablePath && !selected.channel) {
         if (process.env.DUANYAN_TEST_BROWSER) selected.executablePath = process.env.DUANYAN_TEST_BROWSER;
         else if (process.platform === 'darwin' && fs.existsSync(chrome)) selected.executablePath = chrome;
       }
-      return target.launch(selected);
+      const browser=await target.launch(selected);
+      return process.env.DUANYAN_REVIEW_COVERAGE_FILE?require('./review/tricky20-coverage.cjs').install(browser,process.env.DUANYAN_REVIEW_COVERAGE_FILE):browser;
     };
     const value = Reflect.get(target, property);
     return typeof value === 'function' ? value.bind(target) : value;

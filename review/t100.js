@@ -4,6 +4,7 @@
 const {chromium,testOutput}=require('../test-browser.cjs');
 const path=require('path'), fs=require('fs');
 const {blockExternalNetwork}=require('./offline-network.cjs');
+const {createSeries,changeSeriesKey}=require('./model-series-helpers.cjs');
 const F='file://'+path.resolve(process.argv[2]||'index.html');
 const ONLY=process.argv[3]||'';
 const T=[]; const C=(id,g,name,fn)=>T.push({id,g,name,fn});
@@ -297,8 +298,10 @@ C(49,'B','建数据集页不该混进公共库',async(pg,h)=>{await h.go('#dsnew
   const v=await h.view();
   if(/已接入的公共库|公共库列表/.test(v))return '建数据集页里混进了公共库';});
 C(50,'B','数据集能接到训练',async(pg,h)=>{await h.go('#dsets');
-  const b=await pg.$('[data-askthis*="训"]');
-  if(!b)return '数据集上没有「在这上面训一个」的去处';});
+  const b=pg.locator('[data-dataset-train]:not(:disabled)').first();if(!await b.count())return '已发布数据集缺少训练入口';
+  const id=await b.getAttribute('data-dataset-train'),before=await h.ev(()=>ALL_MODELS().length);await b.click();
+  if(await h.ev(()=>S.route)!=='trainnew'||await pg.locator('#trds').inputValue()!==id)return '训练表单没有沿用所选数据集';
+  if(await h.ev(()=>ALL_MODELS().length)!==before)return '打开训练表单就自动创建了模型';});
 
 /* ============ C 训练（51–70） ============ */
 const toTrain=async(pg,h)=>{await h.go();await h.say('用这个项目的实测数据训一个打分模型',1900);
@@ -472,32 +475,13 @@ C(79,'D','启用状态能持久化',async(pg,h)=>{await h.go();
   await h.go();
   const on=await h.ev(i=>mdlOn(i),id);
   if(!on)return '刷新之后启用状态丢了';});
-C(80,'D','模型接入的新旧入口一致，统一代理固定且本机配置可持久化',async(pg,h)=>{await h.go();
-  await h.nav('mdl');await pg.click('[data-mtab="set"]');
-  const entry=await h.ev(()=>({route:S.route,tab:S.mtab,
-    selected:document.querySelector('[data-mtab="set"]')?.getAttribute('aria-selected')}));
-  if(entry.route!=='mdl'||entry.tab!=='set'||entry.selected!=='true')
-    return '模型制备的子导航未进入模型接入';
-  await h.go('#set');
-  const bookmark=await h.ev(()=>({route:S.route,tab:S.mtab,hash:location.hash}));
-  if(bookmark.route!=='mdl'||bookmark.tab!=='set'||bookmark.hash!=='#mdl')
-    return '旧 #set 书签没有迁移到模型接入: '+JSON.stringify(bookmark);
-  const wasManaged=await h.ev(()=>MC.isManaged());
-  if(wasManaged){
-    const config=await h.ev(()=>{const before=MC.cfg();
-      MC.save({mode:'direct',endpoint:'https://invalid.example/api/model/chat'});
-      return {before,after:MC.cfg()}});
-    if(config.after.mode!=='proxy'||config.after.endpoint!==config.before.endpoint)
-      return '公开站点可被切成直连或改掉代理';
-    if(await pg.$('[data-mmode],#mkey,#mep'))return '公开设置页暴露了接入切换或密钥/地址字段';
-  }
-  await pg.selectOption('#mn','deepseek-v4-pro');await h.go('#set');
-  if(await h.ev(()=>MC.cfg().name)!=='deepseek-v4-pro')return '刷新后丢失模型选择';
-  await h.local();
-  await pg.click('[data-mmode="direct"]');await pg.waitForTimeout(300);
-  await h.go('#set');await h.local();
-  const mode=await h.ev(()=>MC.cfg().mode);
-  if(mode!=='direct')return '本机刷新后接入方式回到了 '+mode;});
+C(80,'D','侧栏模型接入、直达书签与系列选择可持久化',async(pg,h)=>{await h.go('#set');
+  if(await h.ev(()=>S.route)!=='set')return '模型接入书签没有打开当前界面';
+  const id=await createSeries(pg,{name:'持久化测试凭证'});
+  await h.ev(id=>mUse(id,'deepseek-v4-pro'),id);await h.go('#set');
+  const c=await h.ev(()=>MC.cfg());
+  if(c.sid!==id||c.name!=='deepseek-v4-pro'||c.endpoint!=='https://model.example.test/v1/chat/completions')return '模型系列或模型选择在重载后丢失';
+  await h.nav('chat');await h.nav('set');if(await h.ev(()=>S.route)!=='set')return '侧栏模型接入入口失效';});
 C(81,'D','代理模式不带凭据',async(pg,h)=>{await h.go('#set');
   const r=await h.ev(async()=>{const log=[];const real=window.fetch;
     window.fetch=(u,o)=>{log.push({u:String(u),auth:!!((o&&o.headers||{})['Authorization'])});
@@ -515,21 +499,16 @@ C(82,'D','没密钥时直连一次都不发',async(pg,h)=>{await h.go('#set');aw
     window.fetch=real;return {n:n,err:err}});
   if(r.n!==0)return '没密钥还发了 '+r.n+' 次';
   if(r.err!=='NOKEY')return '抛的不是 NOKEY，是 '+r.err;});
-C(83,'D','本机测试密钥不进 DOM，保存到站点隔离的存储',async(pg,h)=>{await h.go('#set');await h.local();
-  await pg.click('[data-mmode="direct"]');await pg.waitForTimeout(300);
-  await pg.fill('#mkey','TESTKEY-not-a-real-credential');
-  await pg.click('[data-act="mkeysave"]');await pg.waitForTimeout(400);
-  const r=await h.ev(()=>({dom:document.documentElement.innerHTML.indexOf('TESTKEY-not-a-real')>=0,
-    ls:localStorage.getItem('dy_life_ds_key')==='TESTKEY-not-a-real-credential'}));
-  if(r.dom)return '密钥出现在 DOM 里';
-  if(!r.ls)return '密钥没存进 localStorage';});
-C(84,'D','换密钥要作废上一次的连通结论',async(pg,h)=>{await h.go('#set');await h.local();
-  await pg.click('[data-mmode="direct"]');await pg.waitForTimeout(250);
-  await h.ev(()=>LS.set('mstat',{ok:true,at:'09:00',msg:'x'}));
-  await pg.fill('#mkey','ANOTHER-test-value');
-  await pg.click('[data-act="mkeysave"]');await pg.waitForTimeout(400);
-  const st=await h.ev(()=>LS.get('mstat',null));
-  if(st&&st.ok)return '换了密钥，上一次的「成功」还挂在界面上';});
+C(83,'D','系列测试密钥不进 DOM 或系列记录，独立保存',async(pg,h)=>{await h.go('#set');
+  const id=await createSeries(pg,{name:'密钥隔离测试凭证'});
+  const r=await h.ev(id=>({dom:document.documentElement.innerHTML.includes('TESTKEY-not-a-real-credential'),stored:MC.keyOf(id)==='TESTKEY-not-a-real-credential',serialized:JSON.stringify(MSERIES()).includes('TESTKEY-not-a-real-credential')}),id);
+  if(r.dom||r.serialized||!r.stored)return '系列密钥没有正确隔离';
+  await pg.locator('[data-msedit="'+id+'"]').click();if(await pg.locator('#mck').getAttribute('type')!=='password')return '密钥输入框不是 password';if(await pg.locator('#mck').inputValue())return '编辑凭证时回填了明文密钥';});
+C(84,'D','换密钥后作废系列、模型和全局连通结论',async(pg,h)=>{await h.go('#set');
+  const id=await createSeries(pg,{name:'状态重置测试凭证'});
+  await h.ev(id=>{const x=msFind(id);msSet(id,{st:'ok',models:x.models.map(m=>({...m,st:'ok'}))});mUse(id,x.models[0].name);LS.set('mstat',{ok:true});render()},id);
+  await changeSeriesKey(pg,id,'ANOTHER-test-value');const r=await h.ev(id=>({s:msFind(id),status:LS.get('mstat',null),key:MC.keyOf(id)}),id);
+  if(r.s.st!=='untested'||r.s.models.some(m=>m.st!=='untested')||r.status?.ok)return '改密钥后仍残留旧连通结论';if(r.key!=='ANOTHER-test-value')return '新密钥没有保存';});
 C(85,'D','源码里没有密钥字面量',async(pg,h)=>{
   const src=fs.readFileSync(process.argv[2]||'index.html','utf8');
   const m=src.match(/sk-[A-Za-z0-9_-]{16,}/g);
@@ -590,7 +569,7 @@ C(94,'E','模型连不上要说明服务失败且课题数据未改动',async(pg
   await h.stub('x',{off:1});
   await h.say('这一轮还能不能再往上推',2600);
   const t=await h.lastTxt();
-  const managed=await h.ev(()=>MC.isManaged());
+  const managed=await h.ev(()=>MC.cfg().mode==='proxy');
   if(managed){
     if(!/检查网络后重试/.test(t)||!/没有更改课题数据/.test(t)||/API Key/.test(t))
       return '统一代理断网时没有说明服务失败与数据未改动：'+t.slice(0,100);

@@ -7,7 +7,15 @@
     "build": "node build.mjs",
     "test": "bash run_all.sh",
     "test:quick": "bash run_all.sh --quick",
-    "proxy": "node model-proxy.mjs ./index.html"
+    "test:workbench": "node build.mjs && node review/workbench.cjs ./index.html",
+    "proxy": "node model-proxy.mjs ./index.html",
+    "test:lab": "node build.mjs && node review/lab-workflow.cjs ./index.html",
+    "test:workspace": "node build.mjs && node review/research-workspace.cjs ./index.html",
+    "test:workbench-tricky": "node build.mjs && node review/workbench-tricky.cjs ./index.html",
+    "test:iteration": "node build.mjs && node review/product-iteration.cjs ./index.html",
+    "test:requirements": "node review/requirements-audit.cjs",
+    "test:requirements:extended": "node review/requirements-audit.cjs --extended",
+    "test:tricky20": "node build.mjs && node review/tricky20.cjs"
   },
   "devDependencies": {
     "playwright": "1.49.1"

@@ -77,8 +77,8 @@ const F='file://'+require('path').resolve(process.argv[2]||'index.html');
   await pg.keyboard.press('Enter');await pg.waitForTimeout(2200);
   const f4=await pg.textContent('.pjx-flow');
   if(!/API Key/.test(f4))bad.push('没密钥时没提示去填 API Key');
-  if(!/模型制备[\s\S]*模型接入/.test(f4))bad.push('缺密钥提示没有指向「模型制备 → 模型接入」');
-  if(/侧栏的「模型接入」/.test(f4))bad.push('缺密钥提示仍指向已移除的侧栏入口');
+  if(!/「模型接入」/.test(f4))bad.push('缺密钥提示没有指向当前模型接入入口');
+  if(/填一把|选了直连但/.test(f4))bad.push('缺密钥提示仍含口语化过程说明');
 
   // 5. 关键词能路由的那一句，不该白跑模型
   await pg.evaluate(()=>{window.__sent=[];

@@ -1,0 +1,28 @@
+/* Unified product typography, surfaces and interaction feedback — 20-round review. */
+:root{--page-title-size:28px;--meta-size:12px;--attention-ink:#895500;--attention-soft:#fff2d7}
+:root[data-theme=dark]{--attention-ink:#f0c474;--attention-soft:#342a1b}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--attention-ink:#f0c474;--attention-soft:#342a1b}}
+.iteration-head h1,.rs .rs-head h1,.shared-detail .iteration-head h1{font-size:var(--page-title-size);line-height:1.3;letter-spacing:-.025em}
+.page.rs.shared-detail{gap:0}.page.rs.shared-detail .shared-breadcrumb{margin-bottom:16px}.page.rs.shared-detail .iteration-head{margin-bottom:16px}.page.rs.shared-detail .rs-tabs{margin-bottom:20px}
+.page.iteration-page.device-detail{max-width:1180px;width:100%;margin-inline:0}
+.page.lv>.pg-hd>.iteration-head{margin-bottom:0}
+.page .rs-card,.page .device-card,.page .device-section,.page .composer-editor,.page .composer-map,.page .shared-asset-workspace{border-radius:var(--project-card-radius)}
+.device-card{transition:border-color .15s,box-shadow .15s}.device-card:hover{box-shadow:var(--sh-1)}
+.wb .wb-task-meta,.wb .wb-task-detail,.wb .wb-task-project,.wb .wb-task-section-foot,.wb .wb-idea-topic,.wb .wb-news-context{font-size:12px}
+.wb .wb-status{font-size:11px}.wb .wb-task-main>strong{font-size:14px}.wb .wb-panel-heading h2{font-size:18px}.wb .wb-carousel-controls{gap:4px}.wb .wb-icon-button{min-width:28px;min-height:28px}.wb .wb-task-list>li{max-height:92px}
+.request-attention{color:var(--attention-ink)}.request-status.pending{color:var(--attention-ink);background:var(--attention-soft)}
+.request-block .request-status{font-size:12px}.asset-drawer-head h2{overflow-wrap:anywhere}.asset-drawer h2:focus{outline:0}
+body[data-route=toolnew] .rs-form-layout,body[data-route=databasenew] .rs-form-layout{grid-template-columns:minmax(0,1fr)}
+body[data-route=toolnew] .rs-form-footer,body[data-route=databasenew] .rs-form-footer{justify-content:flex-end}
+.rs-upload{min-height:168px;padding:22px}.rs-upload strong{font-size:14px}.rs-upload .rs-help{font-size:12px}
+.rs-form-scroll{scroll-padding-block:24px}.rs-framed-form .rs-form-card{border-radius:var(--project-card-radius)}
+.review-error-links{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:0;margin:8px 0 0;list-style:none}.review-error-link{border:0;background:none;color:var(--err);font:inherit;text-align:left;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:3px 0;min-height:26px}
+.composer-global-error:focus,.rs-error-summary:focus{outline:2px solid var(--focus);outline-offset:3px}.review-invalid{border-color:var(--err)!important}
+.composer-map .composer-plan-node[aria-pressed=true]{box-shadow:inset 0 0 0 1px var(--dry-dim)}
+@media(max-width:800px){.iteration-head h1,.rs .rs-head h1,.shared-detail .iteration-head h1{font-size:24px}.shared-detail .iteration-head{align-items:flex-start}.page.rs.shared-detail{padding-top:20px}.page.iteration-page.device-detail{margin:0}.shared-asset-workspace{grid-template-columns:250px minmax(0,1fr)}}
+@media(max-width:600px){.iteration-head h1,.rs .rs-head h1,.shared-detail .iteration-head h1{font-size:22px}.page.rs.shared-detail .shared-breadcrumb{margin-bottom:12px}.wb .wb-panel-heading h2{font-size:14px}.wb .wb-task-meta,.wb .wb-task-detail,.wb .wb-task-project{font-size:10px}.wb .wb-task-main>strong{font-size:12px}.wb .wb-task-section-foot,.wb .wb-status{font-size:10px}.wb .wb-icon-button{min-width:26px;min-height:26px}.wb .wb-idea-topic,.wb .wb-news-context{font-size:11px}.rs-upload{min-height:150px;padding:16px}.shared-asset-workspace{display:flex;grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.device-card{transition:none}}
+
+.page .lv-cards .lv-exp{border-radius:var(--project-card-radius)}.page.lv .lv-head h1{font-size:var(--page-title-size);line-height:1.3}
+
+.iteration-page .rs-link>.wb-icon,.rs .rs-link>.wb-icon{width:14px;height:14px;flex:0 0 auto}.device-section .rs-link{white-space:nowrap}
