@@ -15671,7 +15671,7 @@ function bSeed(){
 }
 function bHydrate(o){
   o=o||{};
-  return {id:o.id||'B-001',name:String(o.name||''),desc:String(o.desc||''),
+  return {id:o.id||'B-001',pid:o.pid||null,name:String(o.name||''),desc:String(o.desc||''),
     sid:o.sid||'proxy',mdl:String(o.mdl||''),ds:o.ds||'',col:o.col||'',modelId:o.modelId||null,example:!!o.example,
     sys:String(o.sys||''),par:String(o.par||''),
     conc:+o.conc||1,tmo:+o.tmo||60,retry:o.retry==null?3:+o.retry,
@@ -15684,7 +15684,7 @@ function bHydrate(o){
    并且把「丢了」这件事记在那条任务上（dropped）——
    悄悄存不下，等人下次来下载才发现是空的，那比直接说出来糟得多。 */
 function bSave(){
-  const pack=()=>JSON.stringify(BJ().map(j=>({id:j.id,name:j.name,desc:j.desc,sid:j.sid,
+  const pack=()=>JSON.stringify(BJ().map(j=>({id:j.id,pid:j.pid||null,name:j.name,desc:j.desc,sid:j.sid,
     mdl:j.mdl,ds:j.ds,col:j.col,modelId:j.modelId||null,example:!!j.example,sys:j.sys,par:j.par,conc:j.conc,tmo:j.tmo,retry:j.retry,
     st:j.st,at:j.at,ms:j.ms,n:j.n,err:j.err,dropped:j.dropped,out:j.dropped?[]:j.out})));
   try{localStorage.setItem('dy_bjobs',pack());return true}catch(e){}

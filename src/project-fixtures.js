@@ -53,7 +53,7 @@ function restoreProjectFixtures(fixtures){
   PRJ_WT[p.id]=row.referenceSequence;p.referenceSequence=p.referenceSequence||row.referenceSequence;
   for(const [key,records] of [['dsets',row.datasets],['models',row.models]]){p[key]=p[key]||[];records.forEach(x=>{if(!p[key].some(y=>y.id===x.id))p[key].push(rsClone(x));});}
   for(const [target,records] of [[DB.cands,row.candidates],[TASKS,row.tasks],[BATCHES,row.experiments],[BJ(),row.inference]])records.forEach(x=>{if(!target.some(y=>y.id===x.id)){const saved=target===BATCHES?LS.get('lab_workflow_v1',{})?.batches?.find(b=>b.id===x.id&&b.localLab):null;target.push(rsClone(saved||x));}});
-  const jobs=BJ();row.inference.forEach(x=>{const j=jobs.find(y=>y.id===x.id);if(j&&!j.modelId)j.modelId=x.modelId;});
+  const jobs=BJ();row.inference.forEach(x=>{const j=jobs.find(y=>y.id===x.id);if(j){if(!j.modelId)j.modelId=x.modelId;if(!j.pid)j.pid=x.pid;}});
   p.kb=p.kb||[];Object.entries(row.files).forEach(([name,body])=>{if(!p.kb.includes(name))p.kb.push(name);KBTEXT[p.id+'|'+name]=body;});
   p.tools=p.tools||[];['ProteinMPNN','Protenix','自主实验网络'].forEach(n=>{if(!p.tools.includes(n))p.tools.push(n);});
  }

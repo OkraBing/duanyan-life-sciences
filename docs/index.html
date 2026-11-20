@@ -15741,7 +15741,7 @@ function bSeed(){
 }
 function bHydrate(o){
   o=o||{};
-  return {id:o.id||'B-001',name:String(o.name||''),desc:String(o.desc||''),
+  return {id:o.id||'B-001',pid:o.pid||null,name:String(o.name||''),desc:String(o.desc||''),
     sid:o.sid||'proxy',mdl:String(o.mdl||''),ds:o.ds||'',col:o.col||'',modelId:o.modelId||null,example:!!o.example,
     sys:String(o.sys||''),par:String(o.par||''),
     conc:+o.conc||1,tmo:+o.tmo||60,retry:o.retry==null?3:+o.retry,
@@ -15754,7 +15754,7 @@ function bHydrate(o){
    并且把「丢了」这件事记在那条任务上（dropped）——
    悄悄存不下，等人下次来下载才发现是空的，那比直接说出来糟得多。 */
 function bSave(){
-  const pack=()=>JSON.stringify(BJ().map(j=>({id:j.id,name:j.name,desc:j.desc,sid:j.sid,
+  const pack=()=>JSON.stringify(BJ().map(j=>({id:j.id,pid:j.pid||null,name:j.name,desc:j.desc,sid:j.sid,
     mdl:j.mdl,ds:j.ds,col:j.col,modelId:j.modelId||null,example:!!j.example,sys:j.sys,par:j.par,conc:j.conc,tmo:j.tmo,retry:j.retry,
     st:j.st,at:j.at,ms:j.ms,n:j.n,err:j.err,dropped:j.dropped,out:j.dropped?[]:j.out})));
   try{localStorage.setItem('dy_bjobs',pack());return true}catch(e){}
@@ -20757,7 +20757,7 @@ function restoreProjectFixtures(fixtures){
   PRJ_WT[p.id]=row.referenceSequence;p.referenceSequence=p.referenceSequence||row.referenceSequence;
   for(const [key,records] of [['dsets',row.datasets],['models',row.models]]){p[key]=p[key]||[];records.forEach(x=>{if(!p[key].some(y=>y.id===x.id))p[key].push(rsClone(x));});}
   for(const [target,records] of [[DB.cands,row.candidates],[TASKS,row.tasks],[BATCHES,row.experiments],[BJ(),row.inference]])records.forEach(x=>{if(!target.some(y=>y.id===x.id)){const saved=target===BATCHES?LS.get('lab_workflow_v1',{})?.batches?.find(b=>b.id===x.id&&b.localLab):null;target.push(rsClone(saved||x));}});
-  const jobs=BJ();row.inference.forEach(x=>{const j=jobs.find(y=>y.id===x.id);if(j&&!j.modelId)j.modelId=x.modelId;});
+  const jobs=BJ();row.inference.forEach(x=>{const j=jobs.find(y=>y.id===x.id);if(j){if(!j.modelId)j.modelId=x.modelId;if(!j.pid)j.pid=x.pid;}});
   p.kb=p.kb||[];Object.entries(row.files).forEach(([name,body])=>{if(!p.kb.includes(name))p.kb.push(name);KBTEXT[p.id+'|'+name]=body;});
   p.tools=p.tools||[];['ProteinMPNN','Protenix','自主实验网络'].forEach(n=>{if(!p.tools.includes(n))p.tools.push(n);});
  }
