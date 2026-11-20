@@ -1,0 +1,42 @@
+/* Shared visual policy: neutral structure, one interaction accent, compact status color.
+   Applies to UI chrome only. Scientific plots and molecular confidence colors stay intact. */
+:root{--primary-hover:color-mix(in srgb,var(--ink) 84%,var(--surface));--catalog-art-filter:grayscale(1) invert(1)}
+:root[data-theme=dark]{--catalog-art-filter:grayscale(1)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--catalog-art-filter:grayscale(1)}}
+
+/* The primary action stays neutral through hover; selection and links use the accent. */
+.btn-pri,.wb .wb-button-primary{box-shadow:none}
+.page h1,.iteration-head h1,.rs .rs-head h1{color:var(--ink)}
+.btn-pri:hover:not([disabled]),.ctl-go:hover,.wb .wb-button-primary:hover:not(:disabled){background:var(--primary-hover);border-color:var(--primary-hover);color:var(--on-pri)}
+.card,.ask,.pcard,.shared-project-card,.scard,.dcard,.shared-flow-node{box-shadow:none}
+.ask:focus-within{border-color:var(--dry);box-shadow:0 0 0 3px var(--dry-soft)}
+.pcard:hover,.shared-project-card:hover,.scard:hover,.dcard:hover,.pjx-card:hover{box-shadow:none;border-color:var(--ink-4)}
+.pcard::before,.shared-project-card::before{display:none}
+.pcard .pcard-st,.shared-project-card .pcard-st{color:var(--ink-3)}
+
+/* Type and location are already labelled; their icons do not need separate colors. */
+.fsq.is-dry,.fsq.is-wet,.fsq.is-ok{color:var(--ink-3);background:var(--surface-2);border-color:var(--line-2)}
+.scard .scard-ic,.scard.is-on .scard-ic,.rs-icon{background:var(--surface-2);color:var(--ink-3)}
+.tag.tag-lead,.tag.tag-lead.is-wet{background:var(--surface-2);color:var(--ink-3);border-color:var(--line-2);font-weight:500}
+.wb .wb-panel-label>.wb-icon,.wb .wb-task-symbol,.wb .wb-task-symbol.is-experiment,.qk-ic,.qk-ic.is-wet{color:var(--ink-3)}
+.wb .wb-idea-topic,.wb .wb-news-context{color:var(--ink-3)}
+.chip.c-dry,.chip.c-wet{background:var(--surface-2);color:var(--ink-3)}
+.chip.c-ok,.chip.c-err{background:transparent}
+
+/* Outcomes use text and a dot. Large card interiors remain neutral. */
+.wb .wb-status,.wb .wb-status.is-active,.wb .wb-status.is-done,.wb .wb-status.is-failed{background:transparent;padding-inline:0}
+.device-state.pending,.device-state.connected{background:transparent;padding-inline:0}
+.request-status.pending,.request-status.approved,.request-status.imported{background:var(--surface-2);color:var(--ink-3)}
+.lv-exp.is-exception .lv-current{background:var(--surface-2);color:var(--ink-2)}
+.lv-exp.is-exception .lv-current strong{color:var(--err)}
+.lv-bar i.done{background:var(--ink-3)}
+.composer-branches{border-color:var(--line)}
+.composer-branches:before{background:var(--line)}
+
+/* Catalog covers are decorative previews, separate from scientific detail plots. */
+.dcard-cov{background:var(--surface-2)!important;border-bottom:1px solid var(--line-2)}
+.dcard-cov .dcov-g{filter:var(--catalog-art-filter);opacity:.55}
+.dcard-cov .dcard-ab{background:none;color:var(--ink-3)}
+.research-home::before{opacity:.2;filter:grayscale(1)}
+.research-home .ask{border-color:var(--line);box-shadow:none}
+.research-home .ask:focus-within{border-color:var(--dry);box-shadow:0 0 0 3px var(--dry-soft)}

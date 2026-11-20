@@ -6,39 +6,21 @@
 :root{
   /* 标尺用 rem：根字号一变，字、间距、圆角一起变，不用逐条改。 */
   --s1:.25rem;--s2:.5rem;--s3:.75rem;--s4:1rem;--s5:1.25rem;--s6:1.75rem;--s7:2.25rem;--s8:3rem;--s9:4.5rem;
-  /* 结构承自端砚（暖纸 + 墨 + 一干一湿两个语义色），颜色换了一副——往仪器那边走，
-     不往故纸堆那边走。
-     纸从暖奶黄转成冷近白（#FDFCF8 → #FAFBFC）：仍然不是纯白，但偏蓝不偏黄，
-       读起来像显示器上的工作区，不像翻出来的旧稿。
-     墨从蓝黑压成冷近黑（#1A2332 → #0F1721），对比更硬，字口更利。
-     边和点阵一起转冷（米色 → 冷灰），整张底不再发黄。
-     两个语义色：
-       干（计算）#1654A8 → #0C6CA6，更亮、更饱和的仪器蓝，和端砚的群青分得开；
-       成功色原先和「干」是同一个值，于是「跑完了」和「这是计算结果」长得一样。
-         拆出 #14795A，两件事各有各的颜色。
-     湿（实验）留赭石 #9A5A1E，并且只留它一个暖色——
-     一整片冷底上一个暖口，这就是仪表盘的读法：冷的是算出来的，暖的是测出来的。
-     下面这几个值是端砚的原值，留着做对照：
-     纸 #FDFCF8、点阵 #EBE6DA、墨 #1A2332、次级 #3A4557、
-     纸 #FDFCF8、点阵 #EBE6DA、墨 #1A2332、次级 #3A4557、
-     边 #E8E4D9、暖底 #F6F4EC / #EEECE4、蓝 #1654A8。
-     本产品要两个语义色相（干=计算、湿=实验），端砚只给了蓝。
-     湿取赭石、错误取朱砂——都是宣纸上的本来就有的颜料，和暖纸同源。
-     ink-3/ink-4 比端砚的 #5F6674/#7A8393 各压深一档：后者在暖底上只有 3.07，
-     当正文读不出来。 */
---paper:#FAFBFC;--surface:#FFFFFF;--surface-2:#F4F6F8;--surface-3:#E9EDF1;
-  --ink:#0B0F14;--ink-2:#2B323C;--ink-3:#48515D;--ink-4:#5B6472;
-  --line:#DCE1E7;--line-2:#EBEEF2;
+  /* Neutral workspace surfaces; one restrained blue for interaction.
+     Green and red are reserved for compact outcome/error indicators. */
+--paper:#F8F9FA;--surface:#FFFFFF;--surface-2:#F3F4F6;--surface-3:#E7E9ED;
+  --ink:#171A1F;--ink-2:#373D46;--ink-3:#59616D;--ink-4:#626B78;
+  --line:#DFE2E6;--line-2:#E9EBEF;
   --pop:#FFFFFF;
-  --dry:#1F5BFF;--dry-soft:#EAF0FF;--dry-ink:#1443C8;--dry-dim:#9DB6FF;
-  --wet:#6D4AE8;--wet-soft:#F0ECFE;--wet-ink:#4C2FB8;--wet-dim:#B7A6F5;
-  --ok:#0B7A55;--ok-soft:#E3F4EC;--ok-ink:#085C40;
-  --err:#C8281C;--err-soft:#FDEAE7;
-  --info:#1F5BFF;
-  --focus:#1F5BFF;--on-dry:#FFFFFF;--on-pri:#FFFFFF;
-  --seal:#1F5BFF;--seal-on:#FFFFFF;
+  --dry:#3B5F9B;--dry-soft:#F0F3F8;--dry-ink:#355487;--dry-dim:#BCC8D9;
+  --wet:var(--ink-3);--wet-soft:var(--surface-2);--wet-ink:var(--ink-2);--wet-dim:var(--line);
+  --ok:#336950;--ok-soft:#F0F4F1;--ok-ink:#305F4A;
+  --err:#B34236;--err-soft:#FBF3F1;
+  --info:var(--dry);
+  --focus:var(--dry);--on-dry:#FFFFFF;--on-pri:#FFFFFF;
+  --seal:var(--dry);--seal-on:#FFFFFF;
 --sh-1:none;
-  --sh-2:0 1px 2px rgba(14,17,22,.05),0 2px 8px -4px rgba(14,17,22,.08);
+  --sh-2:none;
   --sh-3:0 2px 6px rgba(14,17,22,.07),0 16px 36px -12px rgba(14,17,22,.18);
   --r1:.375rem;--r2:.625rem;--r3:.625rem;--r4:.75rem;
   --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
@@ -46,36 +28,36 @@
   --art:.3;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
---paper:#0B0E13;--surface:#12161C;--surface-2:#0E1217;--surface-3:#1B212A;
-  --ink:#E8ECF1;--ink-2:#BFC6D0;--ink-3:#99A2AE;--ink-4:#7E8794;
-  --line:#232A34;--line-2:#191F27;
-  --pop:#12161C;
-  --dry:#6C9BFF;--dry-soft:#101F3D;--dry-ink:#A9C4FF;--dry-dim:#33508F;
-  --wet:#A590FF;--wet-soft:#211A40;--wet-ink:#C9BCFF;--wet-dim:#55469A;
-  --ok:#4CC79D;--ok-soft:#0E2A22;--ok-ink:#86DCC0;
-  --err:#F28B82;--err-soft:#351A17;
-  --info:#6C9BFF;
-  --focus:#6C9BFF;--on-dry:#0B0E13;--on-pri:#0B0E13;
-  --seal:#1F5BFF;--seal-on:#FFFFFF;
+--paper:#141619;--surface:#1B1E22;--surface-2:#20242A;--surface-3:#2B3038;
+  --ink:#E8EAED;--ink-2:#C4C9D0;--ink-3:#A8AFB8;--ink-4:#969FAA;
+  --line:#353A42;--line-2:#2A2F36;
+  --pop:#1B1E22;
+  --dry:#8CA9D6;--dry-soft:#232C39;--dry-ink:#ACC1E2;--dry-dim:#4A5C74;
+  --wet:var(--ink-3);--wet-soft:var(--surface-2);--wet-ink:var(--ink-2);--wet-dim:var(--line);
+  --ok:#88B09B;--ok-soft:#222D27;--ok-ink:#A1C4AF;
+  --err:#E2A39C;--err-soft:#322725;
+  --info:var(--dry);
+  --focus:var(--dry);--on-dry:#171A1F;--on-pri:#171A1F;
+  --seal:var(--dry);--seal-on:#171A1F;
 --sh-1:none;
-  --sh-2:0 1px 2px rgba(0,0,0,.35),0 2px 8px -4px rgba(0,0,0,.45);
+  --sh-2:none;
   --sh-3:0 2px 6px rgba(0,0,0,.45),0 16px 36px -12px rgba(0,0,0,.6);
   --art:.46;color-scheme:dark;
 }}
 :root[data-theme="dark"]{
---paper:#0B0E13;--surface:#12161C;--surface-2:#0E1217;--surface-3:#1B212A;
-  --ink:#E8ECF1;--ink-2:#BFC6D0;--ink-3:#99A2AE;--ink-4:#7E8794;
-  --line:#232A34;--line-2:#191F27;
-  --pop:#12161C;
-  --dry:#6C9BFF;--dry-soft:#101F3D;--dry-ink:#A9C4FF;--dry-dim:#33508F;
-  --wet:#A590FF;--wet-soft:#211A40;--wet-ink:#C9BCFF;--wet-dim:#55469A;
-  --ok:#4CC79D;--ok-soft:#0E2A22;--ok-ink:#86DCC0;
-  --err:#F28B82;--err-soft:#351A17;
-  --info:#6C9BFF;
-  --focus:#6C9BFF;--on-dry:#0B0E13;--on-pri:#0B0E13;
-  --seal:#1F5BFF;--seal-on:#FFFFFF;
+--paper:#141619;--surface:#1B1E22;--surface-2:#20242A;--surface-3:#2B3038;
+  --ink:#E8EAED;--ink-2:#C4C9D0;--ink-3:#A8AFB8;--ink-4:#969FAA;
+  --line:#353A42;--line-2:#2A2F36;
+  --pop:#1B1E22;
+  --dry:#8CA9D6;--dry-soft:#232C39;--dry-ink:#ACC1E2;--dry-dim:#4A5C74;
+  --wet:var(--ink-3);--wet-soft:var(--surface-2);--wet-ink:var(--ink-2);--wet-dim:var(--line);
+  --ok:#88B09B;--ok-soft:#222D27;--ok-ink:#A1C4AF;
+  --err:#E2A39C;--err-soft:#322725;
+  --info:var(--dry);
+  --focus:var(--dry);--on-dry:#171A1F;--on-pri:#171A1F;
+  --seal:var(--dry);--seal-on:#171A1F;
 --sh-1:none;
-  --sh-2:0 1px 2px rgba(0,0,0,.35),0 2px 8px -4px rgba(0,0,0,.45);
+  --sh-2:none;
   --sh-3:0 2px 6px rgba(0,0,0,.45),0 16px 36px -12px rgba(0,0,0,.6);
   --art:.46;color-scheme:dark;
 }
@@ -2778,9 +2760,7 @@ dialog.rs-copy-dialog{width:min(600px,calc(100vw - 32px));max-width:600px;overfl
 @media(pointer:coarse){.composer-step-button.btn{width:44px;height:44px;min-height:44px}}
 
 /* Unified product typography, surfaces and interaction feedback — 20-round review. */
-:root{--page-title-size:28px;--meta-size:12px;--attention-ink:#895500;--attention-soft:#fff2d7}
-:root[data-theme=dark]{--attention-ink:#f0c474;--attention-soft:#342a1b}
-@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--attention-ink:#f0c474;--attention-soft:#342a1b}}
+:root{--page-title-size:28px;--meta-size:12px;--attention-ink:var(--ink-3);--attention-soft:var(--surface-2)}
 .iteration-head h1,.rs .rs-head h1,.shared-detail .iteration-head h1{font-size:var(--page-title-size);line-height:1.3;letter-spacing:-.025em}
 .page.rs.shared-detail{gap:0}.page.rs.shared-detail .shared-breadcrumb{margin-bottom:16px}.page.rs.shared-detail .iteration-head{margin-bottom:16px}.page.rs.shared-detail .rs-tabs{margin-bottom:20px}
 .page.iteration-page.device-detail{max-width:1180px;width:100%;margin-inline:0}
@@ -2839,6 +2819,49 @@ body[data-route=toolnew] .rs-form-footer,body[data-route=databasenew] .rs-form-f
  .asset-drawer-close,.dw-h>.panel-close{width:44px;height:44px;min-width:44px;min-height:44px}
 }
 @media(max-width:600px){.wb .wb-button-primary{min-height:32px;font-size:12px}}
+
+/* Shared visual policy: neutral structure, one interaction accent, compact status color.
+   Applies to UI chrome only. Scientific plots and molecular confidence colors stay intact. */
+:root{--primary-hover:color-mix(in srgb,var(--ink) 84%,var(--surface));--catalog-art-filter:grayscale(1) invert(1)}
+:root[data-theme=dark]{--catalog-art-filter:grayscale(1)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--catalog-art-filter:grayscale(1)}}
+
+/* The primary action stays neutral through hover; selection and links use the accent. */
+.btn-pri,.wb .wb-button-primary{box-shadow:none}
+.page h1,.iteration-head h1,.rs .rs-head h1{color:var(--ink)}
+.btn-pri:hover:not([disabled]),.ctl-go:hover,.wb .wb-button-primary:hover:not(:disabled){background:var(--primary-hover);border-color:var(--primary-hover);color:var(--on-pri)}
+.card,.ask,.pcard,.shared-project-card,.scard,.dcard,.shared-flow-node{box-shadow:none}
+.ask:focus-within{border-color:var(--dry);box-shadow:0 0 0 3px var(--dry-soft)}
+.pcard:hover,.shared-project-card:hover,.scard:hover,.dcard:hover,.pjx-card:hover{box-shadow:none;border-color:var(--ink-4)}
+.pcard::before,.shared-project-card::before{display:none}
+.pcard .pcard-st,.shared-project-card .pcard-st{color:var(--ink-3)}
+
+/* Type and location are already labelled; their icons do not need separate colors. */
+.fsq.is-dry,.fsq.is-wet,.fsq.is-ok{color:var(--ink-3);background:var(--surface-2);border-color:var(--line-2)}
+.scard .scard-ic,.scard.is-on .scard-ic,.rs-icon{background:var(--surface-2);color:var(--ink-3)}
+.tag.tag-lead,.tag.tag-lead.is-wet{background:var(--surface-2);color:var(--ink-3);border-color:var(--line-2);font-weight:500}
+.wb .wb-panel-label>.wb-icon,.wb .wb-task-symbol,.wb .wb-task-symbol.is-experiment,.qk-ic,.qk-ic.is-wet{color:var(--ink-3)}
+.wb .wb-idea-topic,.wb .wb-news-context{color:var(--ink-3)}
+.chip.c-dry,.chip.c-wet{background:var(--surface-2);color:var(--ink-3)}
+.chip.c-ok,.chip.c-err{background:transparent}
+
+/* Outcomes use text and a dot. Large card interiors remain neutral. */
+.wb .wb-status,.wb .wb-status.is-active,.wb .wb-status.is-done,.wb .wb-status.is-failed{background:transparent;padding-inline:0}
+.device-state.pending,.device-state.connected{background:transparent;padding-inline:0}
+.request-status.pending,.request-status.approved,.request-status.imported{background:var(--surface-2);color:var(--ink-3)}
+.lv-exp.is-exception .lv-current{background:var(--surface-2);color:var(--ink-2)}
+.lv-exp.is-exception .lv-current strong{color:var(--err)}
+.lv-bar i.done{background:var(--ink-3)}
+.composer-branches{border-color:var(--line)}
+.composer-branches:before{background:var(--line)}
+
+/* Catalog covers are decorative previews, separate from scientific detail plots. */
+.dcard-cov{background:var(--surface-2)!important;border-bottom:1px solid var(--line-2)}
+.dcard-cov .dcov-g{filter:var(--catalog-art-filter);opacity:.55}
+.dcard-cov .dcard-ab{background:none;color:var(--ink-3)}
+.research-home::before{opacity:.2;filter:grayscale(1)}
+.research-home .ask{border-color:var(--line);box-shadow:none}
+.research-home .ask:focus-within{border-color:var(--dry);box-shadow:0 0 0 3px var(--dry-soft)}
 
 </style>
 

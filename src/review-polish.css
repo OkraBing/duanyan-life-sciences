@@ -1,7 +1,5 @@
 /* Unified product typography, surfaces and interaction feedback — 20-round review. */
-:root{--page-title-size:28px;--meta-size:12px;--attention-ink:#895500;--attention-soft:#fff2d7}
-:root[data-theme=dark]{--attention-ink:#f0c474;--attention-soft:#342a1b}
-@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--attention-ink:#f0c474;--attention-soft:#342a1b}}
+:root{--page-title-size:28px;--meta-size:12px;--attention-ink:var(--ink-3);--attention-soft:var(--surface-2)}
 .iteration-head h1,.rs .rs-head h1,.shared-detail .iteration-head h1{font-size:var(--page-title-size);line-height:1.3;letter-spacing:-.025em}
 .page.rs.shared-detail{gap:0}.page.rs.shared-detail .shared-breadcrumb{margin-bottom:16px}.page.rs.shared-detail .iteration-head{margin-bottom:16px}.page.rs.shared-detail .rs-tabs{margin-bottom:20px}
 .page.iteration-page.device-detail{max-width:1180px;width:100%;margin-inline:0}
