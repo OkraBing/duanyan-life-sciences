@@ -20965,10 +20965,12 @@ bRun=async function(id){
 
 /* Workbench is an attention queue, not a second task archive.
    Read receipts apply to one result version in this browser, never to task status. */
+const WB_TASK_OBSERVATIONS=new Map();
 function wbReadReceipts(){
  const saved=LS.get('wb_result_reads_v1',{});
  return saved&&typeof saved==='object'&&!Array.isArray(saved)?saved:{};
 }
+function wbReadVersions(value){return Array.isArray(value)?value.filter(v=>typeof v==='string'):typeof value==='string'?[value]:[];}
 function wbResultVersion(task){
  if(task.status!=='done')return '';
  let result;
@@ -20996,7 +20998,7 @@ function wbAttentionTasks(tasks){
   if(t.status==='active'||t.status==='failed'||(t.status==='unknown'&&t.needsAction))return true;
   if(t.status!=='done')return false;
   const version=wbResultVersion(t);
-  return !!version&&read[t.key]!==version;
+  return !!version&&!wbReadVersions(read[t.key]).includes(version);
  });
 }
 function wbRecordVisibleResults(root){
@@ -21016,13 +21018,20 @@ function wbRecordVisibleResults(root){
  // Only the full experiment detail contains the workflow conclusion; the legacy
  // project summary drawer intentionally does not mark it as read.
  data.tasks.forEach(t=>{
+  const previous=WB_TASK_OBSERVATIONS.get(t.key),version=t.status==='done'?wbResultVersion(t):'';
   if(t.status!=='done'){
-   // A rerun is a new result even if it later reproduces identical numbers.
-   if(Object.hasOwn(receipts,t.key)){delete receipts[t.key];changed=true;}
+   // Invalidate only a completed-to-running transition observed here. Repainting
+   // a stale running tab must never erase a newer receipt from another tab.
+   if(previous?.status==='done'){
+    const versions=wbReadVersions(receipts[t.key]),remaining=versions.filter(v=>v!==previous.version);
+    if(remaining.length!==versions.length){if(remaining.length)receipts[t.key]=remaining;else delete receipts[t.key];changed=true;}
+   }
   }else if(selected.has(t.key)){
-   const version=wbResultVersion(t);
-   if(version&&receipts[t.key]!==version){receipts[t.key]=version;changed=true;}
+   // Preserve already-read versions when an older snapshot is opened elsewhere.
+   const versions=wbReadVersions(receipts[t.key]);
+   if(version&&!versions.includes(version)){receipts[t.key]=versions.concat(version);changed=true;}
   }
+  WB_TASK_OBSERVATIONS.set(t.key,{status:t.status,version});
  });
  if(changed)LS.set('wb_result_reads_v1',receipts);
 }

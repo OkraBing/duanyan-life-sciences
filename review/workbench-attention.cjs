@@ -119,5 +119,21 @@ const url=process.env.DUANYAN_TEST_URL||'file://'+path.resolve(process.argv[2]||
   await tab.waitForFunction(key=>!document.querySelector('[data-wb-task-open="'+key+'"]'),key);
   assert.equal(await tab.locator('[data-task-kind="experiment"] h3 small').innerText(),String(+count-1));await tab.close();
  });
+ await check('a stale running tab cannot erase a newer result read in another tab',async()=>{
+  const tab=await context.newPage();await tab.goto(url+'#workbench');await tab.waitForFunction(()=>RS.seedReady);
+  const task=await tab.evaluate(()=>workbenchData({pid:'p2'}).modelTasks.find(t=>t.kind==='train'&&t.isTask&&t.status==='done'));assert(task);
+  await tab.evaluate(id=>{rsProject('p2').models.find(m=>m.id===id).st='running';render()},task.id);
+  await page.evaluate(t=>{const m=rsProject(t.pid).models.find(m=>m.id===t.id);m.resultVersion='cross-tab-v2';workbenchOpenTask(t.key)},task);
+  // A second tab may still hold an older running snapshot after the new result is read.
+  await tab.evaluate(()=>render());await home();assert.equal(await has(task.key),false);
+  await tab.close();
+ });
+ await check('viewing an older completed version cannot overwrite a newer read receipt',async()=>{
+  const tab=await context.newPage();await tab.goto(url+'#workbench');await tab.waitForFunction(()=>RS.seedReady);
+  const task=await tab.evaluate(()=>workbenchData({pid:'p3'}).modelTasks.find(t=>t.kind==='train'&&t.isTask&&t.status==='done'));assert(task);
+  await page.evaluate(t=>{rsProject(t.pid).models.find(m=>m.id===t.id).resultVersion='newest-result-v3';workbenchOpenTask(t.key)},task);
+  await tab.evaluate(key=>workbenchOpenTask(key),task.key);await home();assert.equal(await has(task.key),false);
+  await tab.close();
+ });
  assert.deepEqual(errors,[]);await browser.close();console.log('Workbench attention: '+checks.length+' groups passed.');
 })().catch(e=>{console.error(e);process.exit(1)});

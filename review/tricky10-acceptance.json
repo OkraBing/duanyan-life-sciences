@@ -1,0 +1,104 @@
+{
+  "generatedAt": "2026-11-20T18:39:31.956Z",
+  "buildSha256": "039ad25c12b7b995a15ce4b0ea0d8da3e3dbb61e21d429133c68103620bb0a21",
+  "browser": "153.0.8010.12",
+  "rounds": 10,
+  "passedRounds": 10,
+  "cases": 51,
+  "requirements": {
+    "requirements": 70,
+    "passed": 70,
+    "failed": 0,
+    "integrationGroups": 137,
+    "extendedScripts": 0,
+    "failedScripts": []
+  },
+  "coverage": {
+    "eligible": 292,
+    "clicked": 292,
+    "uncovered": 0,
+    "disabledOnly": 3
+  },
+  "runtimeErrors": 0,
+  "findings": [
+    {
+      "id": "T10-F01",
+      "issue": "旧标签页的运行状态或旧结果详情，会清除或覆盖另一标签页的新结果已读记录。",
+      "change": "仅在实际观察到重新运行时撤销对应旧版本的已读状态；已读记录按结果版本合并，旧页面的重绘和查看不会覆盖新版本。兼容已有单版本记录。",
+      "evidence": "work/qa/tricky10/stale-tab-before.log 和 old-version-before.log 保存修复前失败；workbench-attention.cjs 新增旧运行页面及旧结果页面的竞争用例。"
+    }
+  ],
+  "command": "npm run test:tricky10 -- --out work/qa/tricky10/release",
+  "roundResults": [
+    {
+      "round": 1,
+      "name": "视觉统一与简约配色",
+      "status": "passed",
+      "cases": 6,
+      "ms": 3453
+    },
+    {
+      "round": 2,
+      "name": "工作台信息取舍与结果已读",
+      "status": "passed",
+      "cases": 8,
+      "ms": 9762
+    },
+    {
+      "round": 3,
+      "name": "界面文案与资源创建发布",
+      "status": "passed",
+      "cases": 4,
+      "ms": 7116
+    },
+    {
+      "round": 4,
+      "name": "键盘、错误定位与响应式",
+      "status": "passed",
+      "cases": 6,
+      "ms": 5072
+    },
+    {
+      "round": 5,
+      "name": "设备发现、详情与接入申请",
+      "status": "passed",
+      "cases": 5,
+      "ms": 5285
+    },
+    {
+      "round": 6,
+      "name": "实验编排、异常与结论闭环",
+      "status": "passed",
+      "cases": 5,
+      "ms": 24834
+    },
+    {
+      "round": 7,
+      "name": "共享资产、分支画布与节点详情",
+      "status": "passed",
+      "cases": 4,
+      "ms": 13062
+    },
+    {
+      "round": 8,
+      "name": "共享成员、双向申请与权限",
+      "status": "passed",
+      "cases": 6,
+      "ms": 16942
+    },
+    {
+      "round": 9,
+      "name": "项目分享、副本与课题数据完整性",
+      "status": "passed",
+      "cases": 4,
+      "ms": 12911
+    },
+    {
+      "round": 10,
+      "name": "逐项需求与全部新增控件复核",
+      "status": "passed",
+      "cases": 3,
+      "ms": 47263
+    }
+  ]
+}

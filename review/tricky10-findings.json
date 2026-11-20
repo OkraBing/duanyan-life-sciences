@@ -1,0 +1,8 @@
+[
+  {
+    "id": "T10-F01",
+    "issue": "旧标签页的运行状态或旧结果详情，会清除或覆盖另一标签页的新结果已读记录。",
+    "change": "仅在实际观察到重新运行时撤销对应旧版本的已读状态；已读记录按结果版本合并，旧页面的重绘和查看不会覆盖新版本。兼容已有单版本记录。",
+    "evidence": "work/qa/tricky10/stale-tab-before.log 和 old-version-before.log 保存修复前失败；workbench-attention.cjs 新增旧运行页面及旧结果页面的竞争用例。"
+  }
+]
