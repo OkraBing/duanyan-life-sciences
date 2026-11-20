@@ -423,6 +423,41 @@
       "area": "回归入口",
       "title": "默认回归包含实验、共享与三轮审查脚本",
       "probe": "regression_entry"
+    },
+    {
+      "id": "R64",
+      "area": "实验管理",
+      "title": "课题选择器与状态筛选统一高度、圆角、字号和垂直位置",
+      "suite": "project-fixtures",
+      "pattern": "filter controls share height"
+    },
+    {
+      "id": "R65",
+      "area": "课题示例数据",
+      "title": "每个展示课题具备完整科学任务、实验、数据集、训练、评测和推理关联",
+      "suite": "project-fixtures",
+      "pattern": "per-project linkage covers"
+    },
+    {
+      "id": "R66",
+      "area": "课题示例数据",
+      "title": "每个课题的实验状态和训练评测推理详情可打开、结果可导出与重算",
+      "suite": "project-fixtures",
+      "pattern": "dataset training evaluation and inference pages"
+    },
+    {
+      "id": "R67",
+      "area": "共享项目",
+      "title": "两个共享项目均具备完整数据模型实验资产和可复用工作流",
+      "suite": "project-fixtures",
+      "pattern": "both shared examples have complete"
+    },
+    {
+      "id": "R68",
+      "area": "数据保留",
+      "title": "旧工作区升级保留版本和申请，刷新不重复插入且保留实验登记",
+      "suite": "project-fixtures",
+      "pattern": "upgrade from existing workspace preserves"
     }
   ]
 }

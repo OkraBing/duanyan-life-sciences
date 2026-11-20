@@ -26,3 +26,10 @@ body[data-route=toolnew] .rs-form-footer,body[data-route=databasenew] .rs-form-f
 .page .lv-cards .lv-exp{border-radius:var(--project-card-radius)}.page.lv .lv-head h1{font-size:var(--page-title-size);line-height:1.3}
 
 .iteration-page .rs-link>.wb-icon,.rs .rs-link>.wb-icon{width:14px;height:14px;flex:0 0 auto}.device-section .rs-link{white-space:nowrap}
+
+/* One filter-control scale across experimental pages. */
+.page.lv .lv-toolbar .ctl-dd,.page.lv .lv-toolbar .input,.page.lv .lv-filter{height:32px;min-height:32px;border-radius:8px;font-size:13px;line-height:20px}
+.page.lv .lv-filter{padding:5px 12px}.page.lv .lv-filters{align-items:center}.page.lv .lv-toolbar .lv-small{white-space:nowrap;line-height:20px}
+.training-snapshot-progress{width:100%;height:8px;accent-color:var(--dry)}
+
+.fixture-file-preview{white-space:pre-wrap;overflow-wrap:anywhere;max-height:440px;overflow:auto;font:12px/1.7 var(--mono);color:var(--ink-2);padding:16px;border-radius:8px;background:var(--surface-2)}

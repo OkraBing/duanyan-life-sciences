@@ -35,12 +35,18 @@ ds.forEach(d=>{
 
 // 2. 种子模型：指标是真算的、和基线能比、引用的数据对得上
 const ms=await p.evaluate(()=>['p1','p2','p3'].map(pid=>(PMODELS(pid)||[]).map(m=>({
-  pid,id:m.id,target:m.target,rho:m.rho,rmse:m.rmse,n:m.n,
+  pid,id:m.id,st:m.st,pg:m.pg,weights:m.w?.length||0,lib:m.lib,target:m.target,rho:m.rho,rmse:m.rmse,n:m.n,
   nTrain:m.nTrain,nTest:m.nTest,
   base:m.base,method:m.method,
   hasBl:!!m.bl}))).flat());
 chk(ms.length>0,'一个模型都没种出来');
 ms.forEach(m=>{
+  if(['queued','running'].includes(m.st)){
+    chk(m.rho==null&&m.rmse==null&&!m.hasBl,`${m.pid}/${m.id} 训练未完成却已有评测结果`);
+    chk(!m.lib&&!m.weights,`${m.pid}/${m.id} 训练未完成却已同步权重`);
+    chk(Number.isFinite(m.pg)&&m.pg>=0&&m.pg<100,`${m.pid}/${m.id} 训练进度无效`);
+    return;
+  }
   chk(typeof m.rho==='number'&&m.rho>=-1&&m.rho<=1,`${m.pid}/${m.id} ρ=${m.rho} 不在 [-1,1]`);
   chk(typeof m.rmse==='number'&&m.rmse>=0,`${m.pid}/${m.id} RMSE=${m.rmse}`);
   chk(m.nTrain+m.nTest===m.n,`${m.pid}/${m.id} 训 ${m.nTrain} + 留出 ${m.nTest} ≠ 总 ${m.n}`);
