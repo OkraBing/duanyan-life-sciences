@@ -2813,6 +2813,33 @@ body[data-route=toolnew] .rs-form-footer,body[data-route=databasenew] .rs-form-f
 
 .fixture-file-preview{white-space:pre-wrap;overflow-wrap:anywhere;max-height:440px;overflow:auto;font:12px/1.7 var(--mono);color:var(--ink-2);padding:16px;border-radius:8px;background:var(--surface-2)}
 
+/* Established project/form controls, measured against pre-iteration baseline 5a38eb6. */
+.lv-field input.input:not([type=checkbox]):not([type=radio]),.rs-field input.input:not([type=checkbox]):not([type=radio]),
+.lv-field>.ctl-dd,.rs-field>.ctl-dd{height:32px;min-height:32px;border-radius:8px;font-size:.84375rem;line-height:1.5}
+.lv-field>.ctl-dd,.rs-field>.ctl-dd{padding-inline:10px}
+.lv-field textarea.input,.rs-field textarea.input{min-height:76px;border-radius:8px;font-size:.84375rem}
+.wb .wb-button-primary{min-height:30px;padding:0 var(--s3);border-radius:8px;font-size:.78125rem;font-weight:600;box-shadow:var(--sh-1);filter:none}
+.wb .wb-button-primary:hover:not(:disabled){background:var(--dry);border-color:var(--dry);color:var(--on-pri);filter:none}
+.wb .wb-button-primary:disabled{opacity:.4;cursor:not-allowed}
+.page.rs .rs-tabs{gap:var(--s5)}
+.page.rs .rs-tabs>button{min-height:0;padding:0 0 var(--s3);margin-bottom:-1px;border-radius:0;font-size:.84375rem;line-height:1.6;font-weight:600;color:var(--ink-3)}
+.page.rs .rs-tabs>button:hover{color:var(--ink)}
+.page.rs .rs-tabs>button.is-on{color:var(--ink);border-color:var(--ink);border-bottom-color:var(--dry)}
+.asset-drawer-close,.dw-h>.panel-close{width:28px;height:28px;min-width:28px;min-height:28px;padding:0;border-radius:var(--r1);color:var(--ink-4);font-size:inherit}
+.asset-drawer-close:hover,.dw-h>.panel-close:hover{color:var(--ink);background:var(--surface-2)}
+.asset-drawer-close svg{width:15px;height:15px}
+.ctl-dd[aria-invalid=true]{border-color:var(--err)}
+.ctl-dd[aria-invalid=true]:focus-visible{outline-color:var(--err)}
+.rs-choice:hover:not(:has(input:disabled)),.lv-choice:hover:not(:has(input:disabled)){border-color:var(--ink-4)}
+.rs-choice:has(input:checked),.lv-choice:has(input:checked){border-color:var(--dry-dim)}
+.rs-choice:focus-within,.lv-choice:focus-within{outline:2px solid var(--focus);outline-offset:2px}
+.rs-choice:has(input:disabled),.lv-choice:has(input:disabled){opacity:.5;cursor:not-allowed}
+@media(max-width:860px),(pointer:coarse){
+ .lv-field input.input:not([type=checkbox]):not([type=radio]),.rs-field input.input:not([type=checkbox]):not([type=radio]),.lv-field>.ctl-dd,.rs-field>.ctl-dd{height:40px;min-height:40px}
+ .asset-drawer-close,.dw-h>.panel-close{width:44px;height:44px;min-width:44px;min-height:44px}
+}
+@media(max-width:600px){.wb .wb-button-primary{min-height:32px;font-size:12px}}
+
 </style>
 
 <div id="app">
@@ -4221,7 +4248,7 @@ function drawer(o){
       <strong class="t-lg">${esc(o.title)}</strong>
       ${o.chip||''}
       <span class="grow"></span>
-      <button class="icx" type="button" data-dwclose="${esc(o.close)}" aria-label="关闭" title="关闭">
+      <button class="icx panel-close" type="button" data-dwclose="${esc(o.close)}" aria-label="关闭" title="关闭">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"
           stroke="currentColor" stroke-width="2" stroke-linecap="round"
           ><path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5"/></svg></button>
@@ -20266,9 +20293,9 @@ V.workbench=()=>{
  const date=new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'long',timeZone:'Asia/Shanghai'});
  return '<div class="page wb"><header class="wb-header"><div class="wb-header-copy"><span class="wb-kicker">工作台</span><h1>'+wbViewGreeting()+'，ZHANG</h1></div><span class="wb-date">'+esc(date)+'</span></header><div class="wb-layout">'+
  '<section class="wb-panel wb-tasks" aria-labelledby="wb-tasks-title" aria-roledescription="轮播"><div class="wb-panel-heading"><h2 id="wb-tasks-title">课题进展</h2>'+iterationControls('progress',pi,ps.length)+'</div>'+
- (p?'<div class="wb-progress-project"><div><h3 title="'+esc(p.name)+'">'+esc(p.name)+'</h3><p>'+esc(goalText(DB.projects.find(x=>x.id===p.id))||p.stateText||'')+'</p></div><button class="wb-list-link" type="button" data-wb-project="'+esc(p.id)+'">进入课题 '+wbViewIcon('arrow')+'</button></div><div class="wb-task-columns">'+iterationTaskSection('experiment',scope.experiments||[],p.id)+iterationTaskSection('model',scope.modelTasks||[],p.id)+'</div>':'<div class="wb-empty"><strong>还没有课题</strong><button class="wb-button wb-button-primary" type="button" data-wb-create-project>新建项目</button></div>')+'</section>'+
+ (p?'<div class="wb-progress-project"><div><h3 title="'+esc(p.name)+'">'+esc(p.name)+'</h3><p>'+esc(goalText(DB.projects.find(x=>x.id===p.id))||p.stateText||'')+'</p></div><button class="wb-list-link" type="button" data-wb-project="'+esc(p.id)+'">进入课题 '+wbViewIcon('arrow')+'</button></div><div class="wb-task-columns">'+iterationTaskSection('experiment',scope.experiments||[],p.id)+iterationTaskSection('model',scope.modelTasks||[],p.id)+'</div>':'<div class="wb-empty"><strong>还没有课题</strong><button class="btn btn-pri wb-button wb-button-primary" type="button" data-wb-create-project>新建项目</button></div>')+'</section>'+
  '<section class="wb-panel wb-inspiration" aria-labelledby="wb-ideas-title" aria-roledescription="轮播"><div class="wb-panel-heading"><div class="wb-panel-label">'+wbViewIcon('spark')+'<h2 id="wb-ideas-title">今日灵感</h2></div>'+iterationControls('idea',WB.idea||0,WB.ideas.length)+'</div>'+
- (idea?'<div class="wb-idea-topic"><span title="'+esc(ip?.name||idea.project)+'">'+esc(ip?.name||idea.project)+'</span></div><div class="wb-idea-stage"><button type="button" class="wb-question" data-wb-idea-detail="'+WB.idea+'" aria-label="查看完整问题：'+esc(idea.question)+'">'+esc(idea.question)+'</button><div class="wb-idea-bottom">'+(ref?'<a class="wb-reference-tag" href="'+esc(ref)+'" target="_blank" rel="noopener noreferrer" title="'+esc(idea.sourceTitle||'参考论文')+'">'+wbViewIcon('paper')+'参考论文 '+wbViewIcon('external')+'</a>':'')+'<button type="button" class="wb-button wb-button-primary" data-wb-prompt="'+esc(idea.question)+'" data-wb-pid="'+esc(idea.pid)+'">去探索 '+wbViewIcon('arrow')+'</button></div></div>':'<div class="wb-empty"><strong>暂无灵感问题</strong><p>为课题补充研究目标。</p></div>')+'</section>'+
+ (idea?'<div class="wb-idea-topic"><span title="'+esc(ip?.name||idea.project)+'">'+esc(ip?.name||idea.project)+'</span></div><div class="wb-idea-stage"><button type="button" class="wb-question" data-wb-idea-detail="'+WB.idea+'" aria-label="查看完整问题：'+esc(idea.question)+'">'+esc(idea.question)+'</button><div class="wb-idea-bottom">'+(ref?'<a class="wb-reference-tag" href="'+esc(ref)+'" target="_blank" rel="noopener noreferrer" title="'+esc(idea.sourceTitle||'参考论文')+'">'+wbViewIcon('paper')+'参考论文 '+wbViewIcon('external')+'</a>':'')+'<button type="button" class="btn btn-pri wb-button wb-button-primary" data-wb-prompt="'+esc(idea.question)+'" data-wb-pid="'+esc(idea.pid)+'">去探索 '+wbViewIcon('arrow')+'</button></div></div>':'<div class="wb-empty"><strong>暂无灵感问题</strong><p>为课题补充研究目标。</p></div>')+'</section>'+
  '<section class="wb-panel wb-news" aria-labelledby="wb-news-title" aria-roledescription="轮播"><div class="wb-panel-heading"><div class="wb-panel-label">'+wbViewIcon('paper')+'<h2 id="wb-news-title">学术资讯</h2></div>'+iterationControls('news',ni,ps.length)+'</div>'+
  (np?'<div class="wb-news-context"><span title="'+esc(np.name)+'">'+esc(np.name)+'</span></div>':'')+
  (papers.length?'<ul class="wb-papers">'+papers.slice(0,1).map(wbViewPaper).join('')+'</ul>':'<div class="wb-empty wb-empty-news" role="status"><strong>'+(newsState==='loading'?'正在查找相关论文':newsState==='error'?'暂时无法获取论文':'暂无匹配论文')+'</strong><p>'+(newsState==='error'?'稍后重新进入工作台可重试。':'')+'</p></div>')+
@@ -20440,6 +20467,7 @@ labV2Bind=function(root){
  root.querySelectorAll('[data-composer-node]').forEach(e=>e.onclick=()=>iterationSelectComposer(e.dataset.composerNode));
  root.querySelectorAll('[data-composer-step]').forEach(e=>e.onclick=()=>{const order=iterationComposerOrder(labForm()),target=order[order.indexOf(LABUI.selected)+Number(e.dataset.composerStep)];if(target)iterationSelectComposer(target,Number(e.dataset.composerStep));});
  root.querySelectorAll('[data-lv-field],[data-lv-resource],[data-lv-sop]').forEach(e=>e.addEventListener('input',iterationRefreshComposer));
+ root.querySelectorAll('[data-lv-field],[data-lv-device-select]').forEach(e=>e.addEventListener('change',iterationRefreshComposer));
 };
 /* Collaboration examples are additive, versioned and idempotent. Existing assets stay immutable. */
 async function iterationSeedWorkspace(){
@@ -20611,7 +20639,7 @@ function iterationMountDrawer(title,body,footer,state={}){
  const previous=RS.drawer,scroll=document.querySelector('.asset-drawer-body')?.scrollTop||0;
  document.querySelector('.asset-drawer')?.remove();
  const panel=document.createElement('section');panel.className='asset-drawer';panel.setAttribute('role','dialog');panel.setAttribute('aria-modal','false');panel.setAttribute('aria-labelledby','asset-drawer-title');
- panel.innerHTML='<header class="asset-drawer-head"><div><h2 id="asset-drawer-title" tabindex="-1">'+esc(title)+'</h2></div><button class="asset-drawer-close" type="button" aria-label="关闭详情">×</button></header><div class="asset-drawer-body">'+body+'</div>'+(footer?'<footer class="asset-drawer-footer">'+footer+'</footer>':'');
+ panel.innerHTML='<header class="asset-drawer-head"><div><h2 id="asset-drawer-title" tabindex="-1">'+esc(title)+'</h2></div><button class="asset-drawer-close icb" type="button" aria-label="关闭详情"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5"/></svg></button></header><div class="asset-drawer-body">'+body+'</div>'+(footer?'<footer class="asset-drawer-footer">'+footer+'</footer>':'');
  document.body.append(panel);RS.drawer={...state,trigger:state.trigger||previous?.trigger};panel.querySelector('.asset-drawer-close').onclick=()=>iterationCloseDrawer();
  iterationBindAcquisitions(panel);
  if(previous?.kind===state.kind&&previous?.assetId===state.assetId)panel.querySelector('.asset-drawer-body').scrollTop=scroll;else panel.querySelector('#asset-drawer-title').focus({preventScroll:true});
@@ -20712,10 +20740,11 @@ labV2Act=function(action){if(action==='labnew')LABUI.selected='setup';return ite
  dressSelects=function(root){
   root.querySelectorAll('select:not([aria-label])').forEach(e=>{const field=e.closest('.lv-field,.rs-field,.field,.label'),label=field?.querySelector(':scope>span,:scope>label');if(label)e.setAttribute('aria-label',label.textContent.trim().replace(/\s*\*.*$/,''));});
   dress(root);
-  root.querySelectorAll('select').forEach((e,i)=>{const b=e.previousElementSibling;if(b?.matches('.ctl-dd'))b.dataset.reviewSelect=e.id||e.dataset.lvField||e.dataset.lvDeviceSelect||e.dataset.rsResourceField||e.getAttribute('aria-label')||('select-'+i);});
+  root.querySelectorAll('select').forEach((e,i)=>{const b=e.previousElementSibling;if(b?.matches('.ctl-dd')){b.dataset.reviewSelect=e.id||e.dataset.lvField||e.dataset.lvDeviceSelect||e.dataset.rsResourceField||e.getAttribute('aria-label')||('select-'+i);syncSelectFeedback(e);}});
   root.querySelectorAll('input[type=file]:not([aria-label])').forEach(e=>e.setAttribute('aria-label',e.hasAttribute('webkitdirectory')?'选择资源文件夹':'选择资源文件'));
   root.querySelectorAll('[data-rs-publish-pick],[data-rs-new-asset]').forEach(e=>{const label=e.closest('label')?.querySelector('strong')?.textContent;if(label)e.setAttribute('aria-label',label);});
  };
+ function syncSelectFeedback(select){const button=select?.previousElementSibling;if(!button?.matches('.ctl-dd'))return;for(const attribute of ['aria-invalid','aria-describedby']){const value=select.getAttribute(attribute);if(value)button.setAttribute(attribute,value);else button.removeAttribute(attribute);}}
  function fieldFor(key){return key.startsWith('resource_')?'[data-lv-resource="'+CSS.escape(key.slice(9))+'"]':key.startsWith('sop_')?'[data-lv-sop="'+CSS.escape(key.slice(4))+'"]':key.startsWith('device_')?'[data-lv-device-select="'+CSS.escape(key.slice(7))+'"]':'[data-lv-field="'+CSS.escape(key)+'"]';}
  function errorLinks(){
   if(S.route==='labnew'&&Object.keys(LABUI.errors||{}).length){const box=view.querySelector('.composer-global-error');if(!box)return;box.tabIndex=-1;box.innerHTML='<strong>请补全实验信息</strong><ul class="review-error-links">'+Object.entries(LABUI.errors).map(([k,v])=>'<li><button class="review-error-link" type="button" data-composer-error="'+esc(k)+'">'+esc(v)+'</button></li>').join('')+'</ul>';box.querySelectorAll('[data-composer-error]').forEach(e=>e.onclick=()=>{const key=e.dataset.composerError,node=key.replace(/^(resource|device|sop)_/,'');LABUI.selected=labForm().steps.some(s=>s.id===node)?node:'setup';render();const target=view.querySelector(fieldFor(key));(target?.classList.contains('sel-raw')?target.previousElementSibling:target)?.focus();});}
@@ -20729,7 +20758,7 @@ labV2Act=function(action){if(action==='labnew')LABUI.selected='setup';return ite
  const saveResource=rsSaveResource;
  rsSaveResource=async function(draft){const value=await saveResource(draft);if(!value&&RS.form?.errors&&Object.keys(RS.form.errors).length)requestAnimationFrame(()=>view.querySelector('.rs-error-summary')?.focus());return value;};
  const refresh=iterationRefreshComposer;
- iterationRefreshComposer=function(){const f=labForm(),errors=labValidate(f,false);Object.keys(LABUI.errors||{}).forEach(k=>{if(!errors[k]){delete LABUI.errors[k];const target=view.querySelector(fieldFor(k));target?.removeAttribute('aria-invalid');target?.removeAttribute('aria-describedby');view.querySelector('#lverr-'+CSS.escape(k))?.remove();}});refresh();if(!Object.keys(LABUI.errors).length)view.querySelector('.composer-global-error')?.remove();else errorLinks();};
+ iterationRefreshComposer=function(){const f=labForm(),errors=labValidate(f,false);Object.keys(LABUI.errors||{}).forEach(k=>{if(!errors[k]){delete LABUI.errors[k];const target=view.querySelector(fieldFor(k));target?.removeAttribute('aria-invalid');target?.removeAttribute('aria-describedby');if(target?.matches('select'))syncSelectFeedback(target);view.querySelector('#lverr-'+CSS.escape(k))?.remove();}});refresh();if(!Object.keys(LABUI.errors).length)view.querySelector('.composer-global-error')?.remove();else errorLinks();};
  document.addEventListener('focusin',e=>{const drawer=document.querySelector('.asset-drawer');if(!drawer||drawer.contains(e.target)||document.querySelector('dialog[open]'))return;const r=e.target.getBoundingClientRect(),d=drawer.getBoundingClientRect();if(r.width&&r.right>d.left&&r.left<d.right&&r.top<d.bottom&&r.bottom>d.top)iterationCloseDrawer(false);});
 })();
 
