@@ -28,8 +28,12 @@
 .device-state.pending,.device-state.connected{background:transparent;padding-inline:0}
 .request-status.pending,.request-status.approved,.request-status.imported{background:var(--surface-2);color:var(--ink-3)}
 .lv-exp.is-exception .lv-current{background:var(--surface-2);color:var(--ink-2)}
-.lv-exp.is-exception .lv-current strong{color:var(--err)}
+.lv-exp.is-exception .lv-current strong{color:var(--ink-2)}
 .lv-bar i.done{background:var(--ink-3)}
+.wb .wb-status.is-active,.wb .wb-status.is-done{color:var(--ink-3)}
+.wb progress::-webkit-progress-value{background:var(--ink-3)}
+.wb progress::-moz-progress-bar{background:var(--ink-3)}
+.shared-flow-node .device-state.pending,.shared-flow-node .device-state.connected{color:var(--ink-3)}
 .composer-branches{border-color:var(--line)}
 .composer-branches:before{background:var(--line)}
 
