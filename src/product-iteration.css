@@ -33,3 +33,15 @@
 .wb .wb-carousel-dot:focus-visible{outline:2px solid var(--focus);outline-offset:-3px}
 @media(max-width:600px){.wb .wb-carousel-dots{max-width:60%}}
 @media(prefers-reduced-motion:reduce){.wb .wb-carousel-dot>span{transition:none}}
+
+/* Keep operation switching available while the form scrolls. */
+.composer-editor-head{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:52px;padding:9px 22px;border-bottom:1px solid var(--line-2);flex-shrink:0;background:var(--surface)}
+.composer-editor .composer-editor-head h2{margin:0;min-width:0;line-height:1.5;overflow-wrap:anywhere}
+.composer-step-navigation{display:flex;gap:8px;flex-shrink:0}
+.composer-step-button.btn{width:32px;height:32px;min-height:32px;padding:0;display:grid;place-items:center;border-radius:8px}
+.composer-step-button .wb-icon{width:16px;height:16px}
+.composer-step-button:disabled{opacity:.38;cursor:default}
+.composer-step-button:not(:disabled):hover{color:var(--dry);border-color:var(--dry-dim);background:var(--dry-soft)}
+.composer-step-button:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+@media(max-width:600px){.composer-editor-head{padding:14px 18px}.composer-step-button.btn{width:44px;height:44px;min-height:44px}}
+@media(pointer:coarse){.composer-step-button.btn{width:44px;height:44px;min-height:44px}}

@@ -164,12 +164,29 @@ function iterationComposerGraph(f){
  const pre=f.steps.filter(s=>!f.assays.includes(s.stage)&&s.stage!=='review'),branches=f.steps.filter(s=>f.assays.includes(s.stage)),review=f.steps.find(s=>s.stage==='review'),arrow='<div class="flow-arrow" aria-hidden="true">↓</div>';
  return '<div class="composer-flow">'+pre.map(s=>iterationComposerNode(f,s)).join(arrow)+arrow+(f.mode==='parallel'&&branches.length>1?'<div class="composer-branches" style="grid-template-columns:repeat('+branches.length+',minmax(0,1fr))" aria-label="并行表征">'+branches.map(s=>iterationComposerNode(f,s)).join('')+'</div>':branches.map(s=>iterationComposerNode(f,s)).join(arrow))+(review?arrow+iterationComposerNode(f,review):'')+'</div>';
 }
+function iterationComposerOrder(f){
+ return ['setup',...f.steps.filter(s=>!f.assays.includes(s.stage)&&s.stage!=='review').map(s=>s.id),...f.steps.filter(s=>f.assays.includes(s.stage)).map(s=>s.id),...f.steps.filter(s=>s.stage==='review').map(s=>s.id)];
+}
+function iterationComposerNavigation(f){
+ const order=iterationComposerOrder(f),index=order.indexOf(LABUI.selected);
+ const button=(delta,label,icon)=>{const target=order[index+delta],title=target==='setup'?'实验设置与样本':f.steps.find(s=>s.id===target)?.title;return '<button class="btn composer-step-button" type="button" data-composer-step="'+delta+'" aria-label="'+label+(title?'：'+esc(title):'')+'" title="'+label+(title?'：'+esc(title):'')+'" '+(target?'':'disabled')+'>'+wbViewIcon(icon)+'</button>';};
+ return '<div class="composer-step-navigation" role="group" aria-label="切换实验环节">'+button(-1,'上一个环节','left')+button(1,'下一个环节','right')+'</div>';
+}
+function iterationSelectComposer(id,direction){
+ if(!iterationComposerOrder(labForm()).includes(id))return;
+ const graph=view.querySelector('.composer-graph'),scroll=graph?{top:graph.scrollTop,left:graph.scrollLeft}:null;
+ LABUI.selected=id;render();view.querySelector('.composer-editor-scroll')?.scrollTo(0,0);
+ const nextGraph=view.querySelector('.composer-graph'),node=nextGraph?.querySelector('[data-composer-node="'+CSS.escape(id)+'"]');
+ if(nextGraph&&scroll){nextGraph.scrollTop=scroll.top;nextGraph.scrollLeft=scroll.left;}
+ if(node){const n=node.getBoundingClientRect(),g=nextGraph.getBoundingClientRect();if(n.top<g.top+12)nextGraph.scrollTop-=g.top+12-n.top;else if(n.bottom>g.bottom-12)nextGraph.scrollTop+=n.bottom-g.bottom+12;}
+ if(direction){const target=view.querySelector('[data-composer-step="'+direction+'"]'),fallback=view.querySelector('.composer-step-button:not(:disabled)');(target?.disabled?fallback:target)?.focus({preventScroll:true});}
+}
 V.labnew=()=>{
  const f=labForm();if(LABUI.selected!=='setup'&&!f.steps.some(s=>s.id===LABUI.selected))LABUI.selected='setup';
  const s=f.steps.find(s=>s.id===LABUI.selected),errors=LABUI.errors||{},missing=Object.keys(labValidate(f,false)).length;
  const field=(key,label,control)=>'<label class="lv-field wide"><span>'+label+'</span>'+control+labError(key)+'</label>';
  const text=(key,placeholder='')=>'<input class="input" data-lv-field="'+key+'" value="'+esc(f[key]||'')+'" placeholder="'+esc(placeholder)+'" '+labInvalid(key)+'>';
- const setup='<h2>实验设置与样本</h2>'+field('pid','关联课题 *','<select class="input" data-lv-field="pid">'+DB.projects.filter(p=>(p.ownerId||'me')==='me').map(p=>'<option value="'+esc(p.id)+'" '+(f.pid===p.id?'selected':'')+'>'+esc(p.name)+'</option>').join('')+'</select>')+
+ const setup=field('pid','关联课题 *','<select class="input" data-lv-field="pid">'+DB.projects.filter(p=>(p.ownerId||'me')==='me').map(p=>'<option value="'+esc(p.id)+'" '+(f.pid===p.id?'selected':'')+'>'+esc(p.name)+'</option>').join('')+'</select>')+
  field('name','实验名称 *',text('name','蛋白亲和力与稳定性表征'))+field('template','实验模板','<select class="input" data-lv-field="template">'+Object.entries(LAB_TEMPLATES).map(([k,t])=>'<option value="'+k+'" '+(f.template===k?'selected':'')+'>'+esc(t.name)+'</option>').join('')+'</select>')+
  field('desc','研究目标','<textarea class="input" data-lv-field="desc" rows="2">'+esc(f.desc)+'</textarea>')+
  field('samples','样本编号清单 *','<textarea class="input" data-lv-field="samples" placeholder="每行一个样本编号" '+labInvalid('samples')+'>'+esc(f.samples)+'</textarea>')+
@@ -177,11 +194,11 @@ V.labnew=()=>{
  '<div class="lv-field"><span>表征目标</span><div class="lv-choices">'+['affinity','stability','activity'].map(k=>'<label class="lv-choice"><input type="checkbox" data-lv-assay="'+k+'" '+(f.assays.includes(k)?'checked':'')+'>'+esc(labStage(k).title)+'</label>').join('')+'</div>'+labError('assays')+'</div><div class="lv-field"><span>执行关系</span><div class="lv-choices">'+[['parallel','并行表征'],['serial','依次表征']].map(([k,n])=>'<label class="lv-choice"><input type="radio" name="lv-mode" data-lv-mode="'+k+'" '+(f.mode===k?'checked':'')+'>'+n+'</label>').join('')+'</div></div>'+
  (f.mode==='parallel'&&f.assays.length>1?field('aliquot','独立分样与交接安排 *','<textarea class="input" data-lv-field="aliquot" placeholder="各表征分支的样品、板位和交接安排" '+labInvalid('aliquot')+'>'+esc(f.aliquot)+'</textarea>'):'');
  let operation='';
- if(s){const devices=LAB_DEVICES.filter(d=>d.stages.includes(s.stage));operation='<h2>'+esc(s.title)+'</h2><p class="lv-small">输入来源：'+s.inputFrom.map(k=>k==='source'?'样本清单':esc(labStage(k).title)).join('、')+'</p>'+(s.stage!=='review'?
+ if(s){const devices=LAB_DEVICES.filter(d=>d.stages.includes(s.stage));operation='<p class="lv-small">输入来源：'+s.inputFrom.map(k=>k==='source'?'样本清单':esc(labStage(k).title)).join('、')+'</p>'+(s.stage!=='review'?
  field('device_'+s.id,'设备型号 *','<select class="input" data-lv-device-select="'+s.id+'" '+labInvalid('device_'+s.id)+'><option value="">选择设备型号</option>'+devices.map((d,i)=>'<option value="'+d.id+'" '+(s.deviceId===d.id?'selected':'')+'>'+esc(d.model)+(i===0?' · 推荐':'')+'</option>').join('')+'</select>')+
  field('resource_'+s.id,'设备实例编号 *','<input class="input" data-lv-resource="'+s.id+'" value="'+esc(s.resource)+'" placeholder="例如 LAB-001" '+labInvalid('resource_'+s.id)+'>')+
  field('sop_'+s.id,'SOP／方法版本 *','<input class="input" data-lv-sop="'+s.id+'" value="'+esc(s.sop)+'" placeholder="已确认的方法版本" '+labInvalid('sop_'+s.id)+'>'):'<p class="lv-small">各实验分支完成后复核数据与证据，发布实验结论。</p>')+labIO(s.stage);}
- return '<div class="page lv experiment-composer"><header class="iteration-head"><div><button class="rs-link" type="button" data-go="lab">← 实验管理</button><h1>'+(f.editing?'编辑实验草稿':'发起实验')+'</h1></div><div class="rs-actions"><span class="composer-save-state" data-composer-missing>'+ (missing?missing+' 项待补全':'')+'</span><button class="btn" type="button" data-lv-save="draft">保存草稿</button><button class="btn btn-pri" type="button" data-lv-save="ready">创建实验</button></div></header><div class="composer-layout"><section class="composer-editor" aria-label="实验操作编辑"><div class="composer-editor-scroll">'+(Object.keys(errors).length?'<div class="lv-error-summary composer-global-error" role="alert">请补全 '+Object.keys(errors).length+' 项信息。</div>':'')+(s?operation:setup)+'</div></section><section class="composer-map" aria-label="实验编排定位图"><div class="composer-map-head"><span>实验编排</span><button class="btn composer-setup" type="button" data-composer-node="setup">实验设置与样本</button></div><div class="composer-graph">'+iterationComposerGraph(f)+'</div></section></div></div>';
+ return '<div class="page lv experiment-composer"><header class="iteration-head"><div><button class="rs-link" type="button" data-go="lab">← 实验管理</button><h1>'+(f.editing?'编辑实验草稿':'发起实验')+'</h1></div><div class="rs-actions"><span class="composer-save-state" data-composer-missing>'+ (missing?missing+' 项待补全':'')+'</span><button class="btn" type="button" data-lv-save="draft">保存草稿</button><button class="btn btn-pri" type="button" data-lv-save="ready">创建实验</button></div></header><div class="composer-layout"><section class="composer-editor" aria-labelledby="composer-operation-title"><div class="composer-editor-head"><h2 id="composer-operation-title">'+esc(s?.title||'实验设置与样本')+'</h2>'+iterationComposerNavigation(f)+'</div><div class="composer-editor-scroll">'+(Object.keys(errors).length?'<div class="lv-error-summary composer-global-error" role="alert">请补全 '+Object.keys(errors).length+' 项信息。</div>':'')+(s?operation:setup)+'</div></section><section class="composer-map" aria-label="实验编排定位图"><div class="composer-map-head"><span>实验编排</span><button class="btn composer-setup" type="button" data-composer-node="setup">实验设置与样本</button></div><div class="composer-graph">'+iterationComposerGraph(f)+'</div></section></div></div>';
 };
 function iterationRefreshComposer(){
  if(S.route!=='labnew')return;const f=labForm();
@@ -197,7 +214,8 @@ labV2Bind=function(root){
  root.querySelectorAll('[data-device-apply]').forEach(e=>e.onclick=ev=>{ev.stopPropagation();iterationApplyDevice(e.dataset.deviceApply);});
  root.querySelectorAll('[data-device-confirm]').forEach(e=>e.onclick=()=>iterationConfirmDevice(e.dataset.deviceConfirm));
  root.querySelectorAll('[data-device-use]').forEach(e=>e.onclick=()=>iterationUseDevice(e.dataset.deviceUse));
- root.querySelectorAll('[data-composer-node]').forEach(e=>e.onclick=()=>{LABUI.selected=e.dataset.composerNode;render();view.querySelector('.composer-editor-scroll')?.scrollTo(0,0);});
+ root.querySelectorAll('[data-composer-node]').forEach(e=>e.onclick=()=>iterationSelectComposer(e.dataset.composerNode));
+ root.querySelectorAll('[data-composer-step]').forEach(e=>e.onclick=()=>{const order=iterationComposerOrder(labForm()),target=order[order.indexOf(LABUI.selected)+Number(e.dataset.composerStep)];if(target)iterationSelectComposer(target,Number(e.dataset.composerStep));});
  root.querySelectorAll('[data-lv-field],[data-lv-resource],[data-lv-sop]').forEach(e=>e.addEventListener('input',iterationRefreshComposer));
 };
 /* Collaboration examples are additive, versioned and idempotent. Existing assets stay immutable. */
