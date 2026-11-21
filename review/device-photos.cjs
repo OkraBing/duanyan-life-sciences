@@ -38,7 +38,7 @@ const checks=[],errors=[],requests=[];let browser;
  checks.push('桌面、移动端及深色主题保持留白和完整机身，无横向溢出');
  for(const file of new Set(source.map(e=>e.file))){
   const expected=fs.readFileSync('assets/device-photos/'+file),published=fs.readFileSync('docs/assets/device-photos/'+file);assert(expected.equals(published),file+' build copy');
-  if(ownHost){const response=await context.request.get(new URL('assets/device-photos/'+file,target));assert.equal(response.status(),200);assert(expected.equals(await response.body()),file+' HTTPS bytes');}
+  if(ownHost){const actual=await page.evaluate(async url=>{const response=await fetch(url);const hash=await crypto.subtle.digest('SHA-256',await response.arrayBuffer());return{status:response.status,hash:[...new Uint8Array(hash)].map(x=>x.toString(16).padStart(2,'0')).join('')};},new URL('assets/device-photos/'+file,target).href);assert.equal(actual.status,200);assert.equal(actual.hash,crypto.createHash('sha256').update(expected).digest('hex'),file+' HTTPS bytes');}
  }
  checks.push('11 份真实设备图片与 Pages 发布资源字节一致，ÄKTA 两型号复用厂商系列图');assert.deepEqual(errors,[]);
  fs.writeFileSync(path.join(output,'results.json'),JSON.stringify({target,checks,errors,images:source.map(e=>({id:e.id,file:e.file,sha256:crypto.createHash('sha256').update(fs.readFileSync('assets/device-photos/'+e.file)).digest('hex')})),externalRequestsBlocked:requests.length},null,2));
