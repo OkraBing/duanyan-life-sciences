@@ -2793,7 +2793,8 @@ dialog.rs-copy-dialog{width:min(600px,calc(100vw - 32px));max-width:600px;overfl
   align-items:flex-end;text-align:right;font-size:11px;line-height:16px;border-radius:0}
 .wb-dashboard .wb-project-card .wb-status.is-failed{color:var(--err);font-weight:600}
 .wb-dashboard .wb-project-card .wb-status.is-active{color:var(--ink-2)}
-.wb-dashboard .wb-project-card .wb-status.is-done{color:var(--ok-ink)}
+/* 只有「异常」用颜色。有结论、进行中都保持中性：
+   一屏上同时出现红绿两种状态色时，红色就不再是唯一要紧的那一个了。 */
 .wb-dashboard .wb-project-card .wb-status.is-draft{color:var(--ink-4)}
 .wb-dashboard .wb-project-card .wb-task-symbol{width:20px;height:20px;background:transparent!important;color:var(--ink-4)}
 .wb-dashboard .wb-project-card .wb-task-symbol svg{width:16px;height:16px}
@@ -2802,7 +2803,7 @@ dialog.rs-copy-dialog{width:min(600px,calc(100vw - 32px));max-width:600px;overfl
    视觉重量比它承载的信息大得多。 */
 .wb-dashboard .wb-task-symbol{width:20px;height:20px;background:transparent!important;color:var(--ink-4)}
 .wb-dashboard .wb-task-symbol svg{width:16px;height:16px}
-.wb-dashboard .wb-task-row:has(.is-failed) .wb-task-symbol{color:var(--err)}
+/* 异常只由状态词承担颜色，图标保持中性——同一件事不说两遍 */
 .wb-dashboard .wb-panel-label>.wb-icon,.wb-dashboard .wb-inspiration-label>.wb-icon{width:14px;height:14px}
 
 /* 九、间距走 4 的倍数，三级：面板 20、卡 16、行 8。 */
@@ -2826,12 +2827,8 @@ dialog.rs-copy-dialog{width:min(600px,calc(100vw - 32px));max-width:600px;overfl
 .wb-dashboard :is(.wb-icon-button,.wb-task-view-all,.wb-project-title):focus-visible{
   outline:2px solid var(--focus);outline-offset:2px;border-radius:8px}
 
-/* 十一、黑底按钮降权。整屏最强的视觉信号原先给了「去探索」——
-   它是一条推测性的建议，不是会产生后果的动作。改成描边的次级按钮，
-   把黑底留给真的会改变什么的操作。 */
-.wb-dashboard .wb-idea-explore.btn{background:var(--surface);color:var(--ink-2);
-  border:1px solid var(--line);font-weight:500}
-.wb-dashboard .wb-idea-explore.btn:hover{background:var(--surface-2);border-color:var(--ink-4);color:var(--ink)}
+/* 十一、「去探索」保持全站统一的主操作长相（黑底）。
+   灵感卡的分量由卡面、左侧竖条和 18px 问句给足，不再靠按钮的颜色去抢。 */
 
 /* ===== 第二遍打磨 ===== */
 
@@ -2867,6 +2864,144 @@ dialog.rs-copy-dialog{width:min(600px,calc(100vw - 32px));max-width:600px;overfl
 .wb-dashboard .wb-inspiration .wb-project-card,
 .wb-dashboard .wb-news .wb-paper-card{background:var(--surface)}
 
+
+/* 十四、今日灵感升为首屏主角。原先它和资讯一样压了一档，可它是这一页唯一
+   「邀请你开始」的东西，压下去之后整屏只剩清单。做法是只加重这一张卡：
+   问句升到 18px，卡面从纸白抬到干色底，左侧一条 3px 的干色竖条定位，
+   「去探索」作为这张卡唯一的动作重新用实底——但用干色而不是纯黑，
+   黑底仍然留给会产生后果的操作。 */
+.wb-dashboard .wb-inspiration{position:relative;padding:22px 24px 22px 27px;
+  background:linear-gradient(118deg,var(--dry-soft),color-mix(in srgb,var(--dry-soft) 35%,var(--surface)) 78%);
+  border-color:color-mix(in srgb,var(--dry-ink) 22%,var(--line-2));
+  box-shadow:0 1px 3px rgba(16,20,26,.05)}
+.wb-dashboard .wb-inspiration::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--dry-ink);border-radius:14px 0 0 14px}
+.wb-dashboard .wb-inspiration .wb-question{font-size:18px;line-height:1.62;font-weight:500;
+  letter-spacing:-.01em;color:var(--ink)}
+.wb-dashboard .wb-inspiration-label{color:var(--dry-ink)}
+.wb-dashboard .wb-inspiration-label>.wb-icon{width:15px;height:15px;color:var(--dry-ink)}
+.wb-dashboard .wb-idea-banner-head{margin-bottom:10px}
+.wb-dashboard .wb-idea-banner-body{gap:24px}
+.wb-dashboard .wb-idea-explore.btn{background:var(--ink);border-color:var(--ink);
+  color:var(--on-pri);font-weight:500;height:36px;min-height:36px;padding:0 16px;font-size:13px}
+/* 同一排的两个控件必须同高同基线：按钮抬到 36 之后，「换一句」也要跟上，
+   否则两个控件差 1px，看着像没对齐——事实上也确实没对齐。 */
+.wb-dashboard .wb-refresh-idea{height:36px;min-height:36px}
+.wb-dashboard .wb-idea-explore.btn:hover{background:color-mix(in srgb,var(--ink) 88%,#fff);
+  border-color:color-mix(in srgb,var(--ink) 88%,#fff);color:var(--on-pri)}
+@media(max-height:850px) and (min-width:901px){
+  .wb-dashboard .wb-inspiration{padding:16px 20px 16px 23px}
+  .wb-dashboard .wb-inspiration .wb-question{font-size:16px}}
+@media(max-width:600px){
+  .wb-dashboard .wb-inspiration{padding:16px 16px 16px 19px}
+  .wb-dashboard .wb-inspiration .wb-question{font-size:16px}
+  /* 窄屏触达不小于 44：上面那条把按钮按到了 36，这里要回到 44 */
+  .wb-dashboard .wb-idea-explore.btn,.wb-dashboard .wb-refresh-idea{height:44px;min-height:44px}}
+
+/* 干色实底按钮上的字：浅色主题下干色是深蓝，字用白；深色主题下干色是浅蓝，字必须反过来 */
+:root{--dry-on:#FFFFFF}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--dry-on:#141A22}}
+:root[data-theme="dark"]{--dry-on:#141A22}
+
+/* ===== 其余页面：按工作台那一套打磨（只改视觉，不动任何文案） ===== */
+
+/* 一、状态标签全站去盒子。项目管理与共享项目里「进行中 / 送检中 / 已收敛」
+   被装在灰底药丸里，和旁边的「蛋白」「共享项目」标签同形，
+   于是状态（系统的判断）和标签（项目的属性）看起来是一类东西。
+   去掉底色和描边，只留圆点和字——这和工作台卡片上的状态是同一套读法。 */
+.page .pcard .pcard-st,.page .shared-project-card.pcard .pcard-st{
+  padding:0;border:0;background:transparent;font-size:11px;font-weight:500}
+
+/* 二、选中的筛选不再用纯黑实底。整屏最重的视觉信号原先同时给了
+   「发起实验」（会产生后果）和「全部实验」（只是换个看法），两者分不出主次。
+   选中态改成描边加重，黑底只留给真正的主操作。 */
+.page .pill.lv-filter.is-on,.page .pill.is-on{
+  background:var(--surface);color:var(--ink);border:1px solid var(--ink);font-weight:600}
+.page .pill.lv-filter.is-on:hover,.page .pill.is-on:hover{
+  background:var(--surface-2);color:var(--ink)}
+
+/* 三、进度条上的「异常」环节原先和「进行中」长得一模一样——
+   两者都是空心描边，颜色也同一个 --ink-3。于是这条进度条上最该被看见的那一格
+   完全看不出来，只能靠卡片左边那道红杠知道这个实验出了事，不知道卡在第几环。
+   异常环节改用胭脂，描边加底色；进行中保持空心描边。 */
+.page .lv-bar i.exception{
+  background:var(--err-soft);box-shadow:inset 0 0 0 1px var(--err)}
+.page .lv-bar i.running{box-shadow:inset 0 0 0 1px var(--ink-4)}
+.page .lv-bar i{border-radius:3px}
+
+/* 四、发送按钮用的是 #245BE8，这是全站唯一一处体系外的亮蓝——
+   其余所有强调都走墨蓝（干）或朱砂（湿）。换成干色，和「去探索」同一个蓝。 */
+.research-home{--rh-blue:#355487}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .research-home{--rh-blue:#3E5D91}}
+:root[data-theme="dark"] .research-home{--rh-blue:#3E5D91}
+
+/* 五、设备照片的规格不一：厂商图各自的留白、比例、角度都不同，
+   原先容器尺寸还随断点在 114/120/190 之间变，于是八张卡的图没有一张对得齐。
+   统一成一个正方形图位，白底、等量内边距、contain 居中，再给一条淡描边，
+   免得白底图片浮在白卡上没有边界。 */
+.page .device-art:has(.device-photo){
+  width:128px;height:128px;flex:0 0 128px;padding:10px;
+  border:1px solid var(--line-2);border-radius:10px;background:#fff}
+@media(max-width:600px){.page .device-art:has(.device-photo){
+  width:96px;height:96px;flex:0 0 96px;padding:8px}}
+
+/* 六、数字等宽。卡片页脚的计数、环节分数纵向排下来，右边缘才是一条直线。 */
+.page .pcard-f,.page .lv-exp-progress .lv-small,.page .lv-stat strong,
+.page .lv-toolbar .lv-small{font-variant-numeric:tabular-nums}
+
+/* 「还有 N 项」和「查看全部」是同一个控件的两种文字，颜色必须一样 */
+.page .wb-task-view-all .wb-task-more-count{color:inherit;font:inherit}
+
+/* 顶层卡片圆角统一成 14（实验卡、设备卡本来就是 14，只有项目/共享卡是 12） */
+.page .pcard{border-radius:14px}
+
+/* 七、卡片交互态统一：项目卡、共享卡原先没有 hover，
+   和已经有 hover 的实验卡、设备卡放在一起，像是两套组件。 */
+.page .pcard[role="button"]{transition:border-color .14s ease,box-shadow .14s ease}
+.page .pcard[role="button"]:hover{border-color:var(--ink-4);box-shadow:0 1px 3px rgba(16,20,26,.06)}
+
+/* 八、课题卡的标题行原先只是一行字加一条分隔线，下面紧跟同样是「字 + 右侧数值」
+   的实验行，于是标题读起来像列表的第一项。给每个课题一个固定的色位和一枚首字标记，
+   标题行再铺一层极淡的同色底——卡片有了「谁的卡」这个身份，和下面的清单就分开了。
+   色位由课题 id 稳定算出，只是分组的记号，不代表状态，也不表示任何业务含义。 */
+.wb-dashboard .wb-project-card{--pc:var(--dry-ink)}
+.wb-dashboard .wb-project-card[data-wb-hue="0"]{--pc:#355487}
+.wb-dashboard .wb-project-card[data-wb-hue="1"]{--pc:#2F6E66}
+.wb-dashboard .wb-project-card[data-wb-hue="2"]{--pc:#8A5A20}
+.wb-dashboard .wb-project-card[data-wb-hue="3"]{--pc:#5B4A8A}
+.wb-dashboard .wb-project-card[data-wb-hue="4"]{--pc:#8C3B4A}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --pc0:#9FB8DC;--pc1:#8FC2B9;--pc2:#D9AE72;--pc3:#B0A2D6;--pc4:#DB9AA4}}
+:root[data-theme="dark"]{--pc0:#9FB8DC;--pc1:#8FC2B9;--pc2:#D9AE72;--pc3:#B0A2D6;--pc4:#DB9AA4}
+@media (prefers-color-scheme:dark){
+:root:not([data-theme="light"]) .wb-dashboard .wb-project-card[data-wb-hue="0"]{--pc:var(--pc0)}
+:root:not([data-theme="light"]) .wb-dashboard .wb-project-card[data-wb-hue="1"]{--pc:var(--pc1)}
+:root:not([data-theme="light"]) .wb-dashboard .wb-project-card[data-wb-hue="2"]{--pc:var(--pc2)}
+:root:not([data-theme="light"]) .wb-dashboard .wb-project-card[data-wb-hue="3"]{--pc:var(--pc3)}
+:root:not([data-theme="light"]) .wb-dashboard .wb-project-card[data-wb-hue="4"]{--pc:var(--pc4)}}
+:root[data-theme="dark"] .wb-dashboard .wb-project-card[data-wb-hue="0"]{--pc:var(--pc0)}
+:root[data-theme="dark"] .wb-dashboard .wb-project-card[data-wb-hue="1"]{--pc:var(--pc1)}
+:root[data-theme="dark"] .wb-dashboard .wb-project-card[data-wb-hue="2"]{--pc:var(--pc2)}
+:root[data-theme="dark"] .wb-dashboard .wb-project-card[data-wb-hue="3"]{--pc:var(--pc3)}
+:root[data-theme="dark"] .wb-dashboard .wb-project-card[data-wb-hue="4"]{--pc:var(--pc4)}
+
+.wb-dashboard .wb-project-card-head{display:flex;align-items:center;gap:10px;
+  margin:-16px -16px 10px;padding:12px 16px;
+  background:color-mix(in srgb,var(--pc) 9%,transparent);
+  border-bottom:1px solid color-mix(in srgb,var(--pc) 20%,transparent);
+  border-radius:10px 10px 0 0}
+.wb-dashboard .wb-project-card-head h3{flex:1;min-width:0;margin:0}
+.wb-dashboard .wb-project-mark{display:grid;place-items:center;flex:0 0 26px;
+  width:26px;height:26px;border-radius:8px;background:var(--pc);color:#fff;
+  line-height:0}
+.wb-dashboard .wb-project-mark .dd-ic{display:grid;place-items:center}
+.wb-dashboard .wb-project-mark svg{width:15px;height:15px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .wb-dashboard .wb-project-mark{color:#141A22}}
+:root[data-theme="dark"] .wb-dashboard .wb-project-mark{color:#141A22}
+@media(max-height:850px) and (min-width:901px){
+  .wb-dashboard .wb-project-card-head{margin:-10px -10px 6px;padding:8px 10px}}
+@media(max-width:600px){
+  .wb-dashboard .wb-project-card-head{margin:-12px -12px 8px;padding:10px 12px}}
 </style>
 
 <div id="app">
