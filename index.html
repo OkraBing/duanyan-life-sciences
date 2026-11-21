@@ -3124,6 +3124,34 @@ body[data-route=toolnew] .rs-form-footer,body[data-route=databasenew] .rs-form-f
 @media(max-height:850px) and (min-width:901px){.wb-dashboard .wb-project-card{grid-template-rows:36px minmax(178px,1fr) minmax(187px,1fr)}}
 @media(max-width:600px){.wb-dashboard .wb-project-card{grid-template-rows:44px minmax(194px,1fr) minmax(215px,1fr)}}
 @media(pointer:coarse){.wb-dashboard .wb-project-card{grid-template-rows:44px minmax(210px,1fr) minmax(231px,1fr)}}
+/* Four paper summaries per page; shared icon sizing and quieter card actions. */
+.wb-dashboard .wb-paper-stack{gap:8px}
+.wb-dashboard .wb-paper-card{padding:12px;gap:8px;min-height:138px}
+.wb-dashboard .wb-paper-copy{gap:6px}
+.wb-dashboard .wb-paper-title{font-size:13px;line-height:18px;-webkit-line-clamp:3}
+.wb-dashboard .wb-paper-description{font-size:11.5px;line-height:17px;-webkit-line-clamp:2}
+.wb-dashboard .wb-paper-topics{flex-wrap:nowrap;max-height:24px}
+.wb-dashboard .wb-project-step.btn,.wb-dashboard .wb-news-controls .wb-project-step.btn{width:30px;height:30px;min-height:30px;border-radius:8px}
+.wb-dashboard .wb-project-step .wb-icon{width:15px;height:15px;stroke-width:1.8}
+.wb-dashboard .wb-project-title>.wb-icon{width:26px;height:26px;padding:5px;margin-top:-2px;border:1px solid var(--line);border-radius:7px;color:var(--ink-3);background:var(--surface);transition:background .15s,border-color .15s}
+.wb-dashboard .wb-project-title:hover>.wb-icon{background:var(--surface-2);border-color:var(--ink-4);color:var(--ink)}
+.wb-dashboard .wb-task-view-all>.wb-icon{width:14px;height:14px;stroke-width:1.75}
+.wb-dashboard .wb-project-card .wb-task-symbol>.wb-icon{width:17px;height:17px;stroke-width:1.65}
+.wb-dashboard .wb-paper-open{width:28px;height:28px;border:1px solid var(--line);border-radius:7px;color:var(--ink-3)}
+.wb-dashboard .wb-refresh-idea{border:1px solid transparent}
+.wb-dashboard .wb-refresh-idea:hover{background:var(--surface);border-color:var(--line)}
+@media(max-height:850px) and (min-width:901px){
+ .wb-dashboard .wb-paper-card{min-height:118px;padding:10px;gap:6px}
+ .wb-dashboard .wb-paper-title{-webkit-line-clamp:2}
+ .wb-dashboard .wb-paper-description{line-height:16px}
+ .wb-dashboard .wb-paper-copy{gap:5px}
+ .wb-dashboard .wb-paper-open{width:24px;height:24px}
+ .wb-dashboard .wb-tasks .wb-project-step.btn{width:24px;height:24px;min-height:24px}
+}
+@media(max-width:900px){.wb-dashboard .wb-layout{grid-template-rows:auto 584px 740px}}
+@media(max-width:600px){.wb-dashboard .wb-layout{grid-template-rows:auto 600px 740px}}
+@media(pointer:coarse){.wb-dashboard .wb-project-step.btn,.wb-dashboard .wb-news-controls .wb-project-step.btn,.wb-dashboard .wb-paper-open,.wb-dashboard .wb-refresh-idea{width:44px;height:44px;min-height:44px}}
+@media(pointer:coarse) and (max-width:900px){.wb-dashboard .wb-layout{grid-template-rows:auto 640px 820px}}
 
 </style>
 
@@ -19662,31 +19690,43 @@ function wbDefaultQuery(p){
   if(p.id==='p2')return '(barstar OR ("protein binder" AND affinity))';
   if(p.id==='p3')return '("staphylococcal nuclease" OR ("enzyme design" AND catalysis))';
   const t=String(p.target||p.name||'').replace(/["\\\r\n]/g,' ').trim().slice(0,160);
+  if(/蛋白|多肽/.test(t))return '"protein design" stability affinity';
   return t?'"'+t+'"':'"protein design"';
 }
 function wbSubscriptions(){const raw=LS.get('wb_subscriptions',{})||{};
   return DB.projects.map(p=>({pid:p.id,name:p.name,query:typeof raw[p.id]==='string'?raw[p.id]:wbDefaultQuery(p)}))}
-function wbRelevantTitle(title,pid,query){
-  const t=String(title||'').toLowerCase();const p=DB.projects.find(x=>x.id===pid);
-  if(p&&query===wbDefaultQuery(p)){
-    if(pid==='p1')return /barnase|barstar/.test(t)||
-      (/protein.{0,24}(stabil|folding)|(stabil|folding).{0,24}protein/.test(t)&&
-       /computational|sequence|mutat|generative|language model|machine learning|evolution|protein design|protein engineering/.test(t));
-    if(pid==='p2')return /barstar/.test(t)||(/protein/.test(t)&&/binder|binding affinity|interface|protein.?protein.*affinity/.test(t));
-    if(pid==='p3')return (/staphylococcal nuclease/.test(t)&&!/domain.?containing|tudor|snd1/.test(t))||
-      (/enzyme|catalytic/.test(t)&&/computational|de novo|design|machine learning|substrate|catalytic motif|evolution/.test(t));
-  }
-  const generic=new Set(['protein','design','binding','title','abstract','and','with','from']);
-  const terms=(String(query||'').toLowerCase().match(/[a-z][a-z0-9-]{3,}/g)||[]).filter(x=>!generic.has(x));
-  return !terms.length||terms.some(x=>t.includes(x));
+function wbLifeScienceTitle(title){
+ const t=String(title||'').toLowerCase();
+ if(/classroom|pedagog|curriculum|educat|ideological|tourism|primary school|secondary school|教学|思政|作业设计|养老|非遗|文化传播|教育/.test(t))return false;
+ return /\b(?:proteins?|peptides?|enzymes?|nucleases?|lysozyme|barnase|barstar|metalloproteases?|proteases?|amino.?acids?|genes?|genom\w*|dna|rna|mrna|microrna|crispr|cas13a|antibod\w*|antigens?|biomolecular|cells?|cellular|catalytic motif)\b|蛋白|多肽|酶|核酸|基因|基因组|抗体|细胞|分子生物/.test(t);
 }
-function wbMergePapers(list){const map=new Map();
-  list.forEach(p=>{if(!p||!wbSafeURL(p.url)||!p.title)return;
-    if(p.source==='Crossref'){const subs=wbSubscriptions();p=Object.assign({},p,{pids:(p.pids||[]).filter(id=>{const q=subs.find(x=>x.pid===id);return q&&wbRelevantTitle(p.title,id,q.query)})});if(!p.pids.length)return}
-    const key=p.doi?String(p.doi).toLowerCase():p.url;
-    if(map.has(key)){const x=map.get(key);x.pids=[...new Set(x.pids.concat(p.pids||[]))];return}
-    map.set(key,Object.assign({},p,{url:wbSafeURL(p.url),pids:[...new Set(p.pids||[])]}));
-  });return [...map.values()].sort((a,b)=>String(b.published||'').localeCompare(String(a.published||'')));
+function wbRelevantTitle(title,pid,query){
+ const t=String(title||'').toLowerCase();if(!wbLifeScienceTitle(t))return false;
+ const p=DB.projects.find(x=>x.id===pid);
+ if(p&&query===wbDefaultQuery(p)){
+  if(pid==='p1')return /barnase|barstar/.test(t)||(/protein.{0,24}(stabil|folding)|(stabil|folding).{0,24}protein/.test(t)&&/computational|sequence|mutat|generative|language model|machine learning|evolution|protein design|protein engineering/.test(t));
+  if(pid==='p2')return /barstar/.test(t)||(/protein/.test(t)&&/binder|binding affinity|interface|protein.?protein.*affinity/.test(t));
+  if(pid==='p3')return (/staphylococcal nuclease/.test(t)&&!/domain.?containing|tudor|snd1/.test(t))||(/enzyme|protease|catalytic motif/.test(t)&&/computational|de novo|design|machine learning|substrate|evolution/.test(t));
+ }
+ const generic=new Set(['protein','design','binding','title','abstract','and','with','from','stability','affinity']);
+ const terms=(String(query||'').toLowerCase().match(/[a-z][a-z0-9-]{3,}/g)||[]).filter(x=>!generic.has(x));
+ if(terms.length)return terms.some(x=>new RegExp('\\b'+x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b','i').test(t));
+ const context=String(query||'')+' '+String(p?.name||'')+' '+String(p?.target||'');
+ if(/蛋白|多肽|protein|peptide/i.test(context))return /protein|peptide|蛋白|多肽/.test(t)&&/design|stabil|affinit|binding|folding|engineer|mutat|evolution|sequence|设计|稳定性|亲和力|结合|突变|序列/.test(t);
+ if(/酶|enzyme|nuclease/i.test(context))return /enzyme|nuclease|protease|酶/.test(t)&&/design|cataly|substrate|activity|engineering|设计|催化|活性|底物/.test(t);
+ return false;
+}
+function wbMergePapers(list){const map=new Map(),subs=wbSubscriptions();
+ list.forEach(p=>{
+  if(!p||typeof p.title!=='string'||!wbSafeURL(p.url)||!wbLifeScienceTitle(p.title))return;
+  const curated=WB_PAPERS.find(x=>x.id===p.id&&x.title===p.title&&wbSafeURL(x.url)===wbSafeURL(p.url));
+  const ids=Array.isArray(p.pids)?p.pids:[];
+  const pids=ids.filter(id=>curated?(curated.projectIds||[]).includes(id)&&subs.some(s=>s.pid===id):subs.some(s=>s.pid===id&&wbRelevantTitle(p.title,id,s.query)));
+  if(!pids.length)return;p=Object.assign({},p,{pids});
+  const key=p.doi?String(p.doi).toLowerCase():p.url;
+  if(map.has(key)){const x=map.get(key);x.pids=[...new Set(x.pids.concat(p.pids))];return;}
+  map.set(key,Object.assign({},p,{url:wbSafeURL(p.url)}));
+ });return [...map.values()].sort((a,b)=>String(b.published||'').localeCompare(String(a.published||'')));
 }
 function wbCurated(){return WB_PAPERS.map(p=>({id:p.id,title:p.title,shortTitle:p.shortTitle,
   url:p.url,journal:p.journal,year:p.publicationYear,published:p.publishedDate,
@@ -19713,11 +19753,14 @@ function wbPrepare(){
   WB.notes={ideas:'从已有研究出发，为课题换一个提问角度。',papers:'围绕课题目标，读一篇能补充证据的新研究。',
     tasks:(sum.experiment.failed?'有 '+sum.experiment.failed+' 项实验异常，建议先核对原因。':'先推进正在进行的环节。')+'有结论的实验可以回到课题继续判断。'};
   if(!d.projects.some(p=>p.id===WB.newsProject))WB.newsProject=d.projects[0]?.id||'all';
+  WB.papers=wbMergePapers(WB.papers);
   if(!WB.papers.length){
     const cache=LS.get('wb_papers_v1',null);const subs=wbSubscriptions();
     const cached=cache&&Array.isArray(cache.items)?cache.items.filter(p=>
-      Array.isArray(p.pids)&&p.pids.some(id=>subs.some(s=>s.pid===id&&cache.queries&&cache.queries[id]===s.query))):[];
-    WB.papers=wbMergePapers(cached.concat(wbCurated()));
+      p&&Array.isArray(p.pids)&&p.pids.some(id=>subs.some(s=>s.pid===id&&cache.queries&&cache.queries[id]===s.query))):[];
+    const filtered=wbMergePapers(cached);
+    if(cache&&(cache.filterVersion!==2||JSON.stringify(cache.items)!==JSON.stringify(filtered)))LS.set('wb_papers_v1',Object.assign({},cache,{items:filtered,filterVersion:2}));
+    WB.papers=wbMergePapers(filtered.concat(wbCurated()));
     WB.papersAt=cached.length?cache.checkedAt:WB_SEED_CHECKED;
     WB.papersSource=cached.length?'Crossref 与文献精选':'课题相关文献精选';
   }
@@ -20291,7 +20334,7 @@ function rsProjectShareAction(p){
  const shared=rsProjectShared(p.id),active=shared?.members.some(m=>m.id==='me'&&m.status==='active');
  const unavailable=!RS.ready||!!RS.error||(!shared&&(!can('edit')||(p.ownerId||'me')!=='me'))||(shared&&!active);
  const label=shared?(active?'管理共享':'已共享'):'分享';
- const hint=RS.error||(!RS.ready?'正在读取共享状态':shared?(active?'管理共享成员与邀请':'当前账号没有访问共享空间的权限'):!can('edit')?'当前身份没有编辑权限':(p.ownerId||'me')!=='me'?'仅项目所有者可以开启共享':'开启共享并邀请研究伙伴');
+ const hint=RS.error||(!RS.ready?'正在读取共享状态':shared?(active?'管理共享成员与邀请':'当前账号没有访问共享空间的权限'):!can('edit')?'当前身份没有编辑权限':(p.ownerId||'me')!=='me'?'仅项目所有者可以开启共享':'开启共享并邀请成员');
  return '<button class="btn pjx-share" type="button" '+(shared?'data-rs-manage-project="'+esc(shared.id)+'"':'data-rs-share-project="'+esc(p.id)+'"')+' title="'+esc(hint)+'" aria-haspopup="dialog" '+(unavailable?'disabled':'')+'>'+rsSharingIcon()+label+'</button>';
 }
 async function rsShareProject(pid){
@@ -20435,9 +20478,9 @@ V.shareddetail=()=>{
  (RS.tab==='assets'?'<div class="rs-asset-sections">'+[['知识库与数据',['knowledge','dataset','sampleSheet','evaluation','conclusion','inference']],['工具与模型',['tool','model']],['实验',['experiment']]].map(([n,types])=>'<section class="rs-card"><h2>'+n+'</h2>'+rsAssetCards(s,s.assets.filter(a=>types.includes(a.kind)))+'</section>').join('')+'</div>':'<section class="rs-card"><div class="rs-canvas-toolbar"><div class="rs-choice-row">'+[['model','模型训练'],['experiment','实验验证']].map(([k,n])=>'<button type="button" class="btn '+(RS.flow===k?'btn-pri':'')+'" data-rs-flow="'+k+'">'+n+'</button>').join('')+'</div><div class="rs-actions"><button type="button" class="btn" data-rs-zoom="-1" aria-label="缩小画布">−</button><span class="rs-help">'+Math.round((RS.zoom||1)*100)+'%</span><button type="button" class="btn" data-rs-zoom="1" aria-label="放大画布">+</button><button type="button" class="btn" data-rs-fit>适应画布</button></div></div><p class="rs-help">节点来自已共享的任务与产物快照。点击有产物的节点可申请获取，空节点不会生成虚构任务。</p><div class="rs-canvas" tabindex="0" aria-label="项目工作流画布，可拖动平移"><div class="rs-canvas-content" style="zoom:'+(RS.zoom||1)+'">'+(flows.length?flows.map(f=>'<div class="rs-pipeline"><h3>'+esc(f.title)+'</h3><div class="rs-pipeline-nodes">'+f.nodes.map((n,i)=>(i?'<span class="rs-edge" aria-hidden="true">→</span>':'')+'<button type="button" class="rs-node is-'+n.status+'" '+(n.assetId?'data-rs-asset="'+esc(n.assetId)+'"':'disabled')+'><span class="rs-tag">'+esc(n.kind)+'</span><strong>'+esc(n.title)+'</strong><p>'+esc(n.description)+'</p><small>'+(n.assetId?'查看版本并申请获取 →':'暂无可获取产物')+'</small></button>').join('')+'</div></div>').join(''):'<div class="rs-soft-empty">还没有这类已共享任务。发布现有项目的相关产物后，将在这里形成流程。</div>')+'</div></div></section>')+'</div>';
 };
 function rsAssetDialog(id){const s=rsShared(),a=s?.assets.find(a=>a.id===id);if(!a||!rsCan(s,'read'))return;const authorized=rsCan(s,'approve')||s.requests.some(r=>r.actor===RS.actor&&r.assetId===id&&['approved','imported'].includes(r.state));const preview=authorized?a.snapshot:{name:a.name,type:rsAssetLabel(a.kind),version:a.version,fingerprint:a.fingerprint,description:a.description,availability:'审批通过后可获取完整版本内容'};modal(a.name,'<div class="rs-dialog-scroll"><div class="rs-tags"><span class="rs-tag">'+rsAssetLabel(a.kind)+'</span><span class="rs-tag">'+esc(a.version)+'</span></div><p>'+esc(a.description)+'</p><dl class="rs-details"><dt>版本指纹</dt><dd>'+esc(a.fingerprint)+'</dd><dt>来源课题</dt><dd>'+esc(rsProject(a.sourceProject)?.name||a.sourceProject)+'</dd><dt>共享时间</dt><dd>'+esc(a.at)+'</dd></dl><details><summary>查看版本信息</summary><pre class="rs-code">'+esc(JSON.stringify(preview,null,2).slice(0,7000))+'</pre></details><p class="rs-help">获取会复制此固定版本。模型导入不代表重新训练，实验记录导入不触发实验执行。</p></div>',rsCan(s,'approve')?'获取到个人项目':'申请获取',()=>{document.getElementById('dlg').close();setTimeout(()=>rsRequestDialog(id),0);return false;});}
-function rsRequestDialog(id){const s=rsShared(),a=s?.assets.find(a=>a.id===id);if(!a)return;const projects=rsPersonalProjects();modal('获取资产 · '+a.name,'<label class="rs-field"><span>目标个人项目</span><select class="input" id="rs-target" aria-label="目标个人项目">'+projects.map(p=>'<option value="'+esc(p.id)+'">'+esc(p.name)+'</option>').join('')+'</select></label>'+(!projects.length?'<p class="rs-help">当前演示成员还没有个人项目。先创建接收项目。</p><button type="button" class="btn" id="rs-target-create">新建个人项目</button>':'')+'<label class="rs-field"><span>申请理由</span><textarea class="input" id="rs-request-reason" rows="3" maxlength="500" placeholder="说明计划如何复用该版本"></textarea></label><p class="rs-help">'+(rsCan(s,'approve')?'当前角色可以直接授权；授权后仍需在申请列表确认导入。':'申请通过后，在“获取申请”中确认导入。')+'</p>','提交申请',()=>rsModalSave(async()=>{await rsRequest(s.id,id,document.getElementById('rs-target').value,document.getElementById('rs-request-reason').value);toast('申请已登记，可在“获取申请”中继续');}));const create=document.getElementById('rs-target-create');if(create)create.onclick=()=>{document.getElementById('dlg').close();setTimeout(()=>modal('新建个人项目','<label class="rs-field"><span>项目名称</span><input class="input" id="rs-personal-name" maxlength="50"></label>','创建',()=>rsModalSave(async()=>{const name=document.getElementById('rs-personal-name').value.trim();if(name.length<2)throw new Error('名称至少 2 个字符');const next=rsClone(RS.data);next.projects.push(rsBlankProject(name,'共享资产的接收项目',RS.actor));await rsSave(next);setTimeout(()=>rsRequestDialog(id),30);})),0);};}
+function rsRequestDialog(id){const s=rsShared(),a=s?.assets.find(a=>a.id===id);if(!a)return;const projects=rsPersonalProjects();modal('获取资产 · '+a.name,'<label class="rs-field"><span>目标个人项目</span><select class="input" id="rs-target" aria-label="目标个人项目">'+projects.map(p=>'<option value="'+esc(p.id)+'">'+esc(p.name)+'</option>').join('')+'</select></label>'+(!projects.length?'<p class="rs-help">当前演示成员还没有个人项目。先创建接收项目。</p><button type="button" class="btn" id="rs-target-create">新建个人项目</button>':'')+'<label class="rs-field"><span>申请理由</span><textarea class="input" id="rs-request-reason" rows="3" maxlength="500" placeholder="例如，用于候选蛋白的交叉验证"></textarea></label><p class="rs-help">'+(rsCan(s,'approve')?'当前角色可以直接授权；授权后仍需在申请列表确认导入。':'申请通过后，在“获取申请”中确认导入。')+'</p>','提交申请',()=>rsModalSave(async()=>{await rsRequest(s.id,id,document.getElementById('rs-target').value,document.getElementById('rs-request-reason').value);toast('申请已提交');}));const create=document.getElementById('rs-target-create');if(create)create.onclick=()=>{document.getElementById('dlg').close();setTimeout(()=>modal('新建个人项目','<label class="rs-field"><span>项目名称</span><input class="input" id="rs-personal-name" maxlength="50"></label>','创建',()=>rsModalSave(async()=>{const name=document.getElementById('rs-personal-name').value.trim();if(name.length<2)throw new Error('名称至少 2 个字符');const next=rsClone(RS.data);next.projects.push(rsBlankProject(name,'共享资产的接收项目',RS.actor));await rsSave(next);setTimeout(()=>rsRequestDialog(id),30);})),0);};}
 function rsMembersDialog(){const s=rsShared();if(!s)return;modal('成员与邀请','<div class="rs-dialog-scroll">'+'<div class="rs-member-list">'+s.members.filter(m=>m.status!=='removed').map(m=>'<div class="rs-member"><span class="rs-avatar">'+esc(m.name.slice(0,1))+'</span><div><strong>'+esc(m.name)+'</strong><small>'+esc(m.email||'本机账号')+' · '+(m.status==='active'?'已加入':'待接受')+'</small></div><span class="rs-tag">'+rsRoleNames[m.role]+'</span>'+(rsCan(s,'manage')&&m.role!=='owner'?'<div class="rs-actions">'+(m.status==='invited'?'<button class="rs-link" type="button" data-rs-accept="'+m.id+'">确认加入</button>':'<button class="rs-link" type="button" data-rs-member-role="'+m.id+'">调整角色</button>')+'<button class="rs-link is-danger" type="button" data-rs-remove="'+m.id+'">'+(m.status==='invited'?'撤销邀请':'移除')+'</button></div>':'')+'</div>').join('')+'</div>'+(rsCan(s,'manage')?'<button class="btn btn-pri" type="button" id="rs-invite-open">邀请成员</button>':'')+(rsCan(s,'own')&&s.members.filter(m=>m.status==='active').length>1?'<button class="btn" type="button" id="rs-transfer-open">转交所有权</button>':'')+'</div>','完成',()=>{});rsBindDialog();}
-function rsInviteDialog(){const s=rsShared();modal('邀请研究伙伴','<label class="rs-field"><span>邮箱</span><input type="email" class="input" id="rs-invite-email" placeholder="researcher@example.com"></label><label class="rs-field"><span>姓名</span><input class="input" id="rs-invite-name" maxlength="30"></label><label class="rs-field"><span>项目角色</span><select class="input" id="rs-invite-role">'+(rsCan(s,'own')?'<option value="admin">管理员</option>':'')+'<option value="editor" selected>协作者</option><option value="viewer">查看者</option></select></label>','登记邀请',()=>rsModalSave(async()=>{await rsInvite(s.id,document.getElementById('rs-invite-email').value.trim(),document.getElementById('rs-invite-name').value,document.getElementById('rs-invite-role').value);toast('邀请已登记');}));}
+function rsInviteDialog(){const s=rsShared();modal('邀请成员','<label class="rs-field"><span>邮箱</span><input type="email" class="input" id="rs-invite-email" placeholder="researcher@example.com"></label><label class="rs-field"><span>姓名</span><input class="input" id="rs-invite-name" maxlength="30"></label><label class="rs-field"><span>项目角色</span><select class="input" id="rs-invite-role">'+(rsCan(s,'own')?'<option value="admin">管理员</option>':'')+'<option value="editor" selected>协作者</option><option value="viewer">查看者</option></select></label>','邀请成员',()=>rsModalSave(async()=>{await rsInvite(s.id,document.getElementById('rs-invite-email').value.trim(),document.getElementById('rs-invite-name').value,document.getElementById('rs-invite-role').value);toast('邀请已创建');}));}
 function rsRequestsDialog(){const s=rsShared(),rows=s.requests.filter(r=>rsCan(s,'approve')||r.actor===RS.actor),labels={pending:'待审批',approved:'待导入',rejected:'已拒绝',revoked:'已撤回',imported:'已导入'};modal('资产获取申请','<div class="rs-dialog-scroll">'+(rows.length?rows.map(r=>{const a=s.assets.find(a=>a.id===r.assetId);return '<div class="rs-request"><div class="rs-card-top"><strong>'+esc(a?.name||'来源资产已不存在')+'</strong><span class="rs-tag">'+labels[r.state]+'</span></div><p>'+esc(s.members.find(m=>m.id===r.actor)?.name||r.actor)+' → '+esc(rsProject(r.target)?.name||r.target)+'</p><small>'+esc(r.version)+' · '+esc(r.fingerprint)+'</small><p class="rs-help">'+esc((r.reason||'未填写理由')+(r.reviewReason?'；审核意见：'+r.reviewReason:'')+(r.revocationReason?'；撤回原因：'+r.revocationReason:''))+'</p><div class="rs-actions">'+(r.state==='pending'&&rsCan(s,'approve')?'<button class="btn btn-pri" data-rs-approve="'+r.id+'">批准</button><button class="btn" data-rs-reject="'+r.id+'">拒绝</button>':'')+(r.state==='pending'&&r.actor===RS.actor?'<button class="btn" data-rs-withdraw-request="'+r.id+'">撤回申请</button>':'')+(r.state==='approved'&&r.actor===RS.actor?'<button class="btn btn-pri" data-rs-import="'+r.id+'">确认导入</button>':'')+(r.state==='imported'?'<span class="rs-help">已复制到目标项目，来源与版本保持可追溯。</span>':'')+'</div></div>';}).join(''):'<div class="rs-soft-empty">暂无获取申请</div>')+'</div>','完成',()=>{});rsBindDialog();}
 function rsPublishDialog(){const s=rsShared(),items=rsCandidates(s.projectId).filter(a=>!s.assets.some(x=>x.id===a.id));modal('共享资产','<p class="rs-help">勾选新增或已变化的版本。已共享的旧版本会保留，不会覆盖已有申请。</p><div class="rs-dialog-scroll">'+(items.length?items.map(a=>'<label class="rs-select-asset"><input type="checkbox" data-rs-new-asset="'+esc(a.id)+'" checked><span><strong>'+esc(a.name)+'</strong><small>'+rsAssetLabel(a.kind)+' · '+esc(a.version)+'</small></span></label>').join(''):'<div class="rs-soft-empty">没有新版本可发布</div>')+'</div>','共享所选资产',()=>rsModalSave(async()=>{await rsPublishAssets(s.id,[...document.querySelectorAll('[data-rs-new-asset]:checked')].map(e=>e.dataset.rsNewAsset));}));}
 function rsBindDialog(){const d=document.getElementById('dlg'),s=rsShared();if(!s)return;
@@ -20454,7 +20497,7 @@ function rsBindDialog(){const d=document.getElementById('dlg'),s=rsShared();if(!
 }
 function rsBind(root){const on=(q,event,fn)=>root.querySelectorAll(q).forEach(el=>el.addEventListener(event,e=>fn(el,e)));
  on('[data-rs-copy-project]','click',el=>rsCopyProjectDialog(el.dataset.rsCopyProject));
- on('[data-rs-share-project]','click',el=>{el.disabled=true;el.setAttribute('aria-busy','true');el.innerHTML=rsSharingIcon()+'开启共享中…';rsShareProject(el.dataset.rsShareProject).then(s=>{rsManageProjectSharing(s.id);toast('已开启共享，可以邀请研究伙伴');}).catch(e=>{toast(e.message||'未能开启共享');render();});});
+ on('[data-rs-share-project]','click',el=>{el.disabled=true;el.setAttribute('aria-busy','true');rsShareProject(el.dataset.rsShareProject).then(s=>{rsManageProjectSharing(s.id);toast('项目已共享');}).catch(e=>{toast(e.message||'未能开启共享');render();});});
  on('[data-rs-manage-project]','click',el=>rsManageProjectSharing(el.dataset.rsManageProject));
  on('[data-rs-new-shared]','click',()=>{if(!can('edit')){toast('没有创建权限');return;}RS.sharedForm=null;go('sharednew');});
  on('[data-rs-open]','click',el=>{RS.sharedPick=el.dataset.rsOpen;LS.set('rs_shared_pick',RS.sharedPick);RS.actor='me';RS.tab='assets';RS.zoom=1;go('shareddetail');});
@@ -20501,7 +20544,7 @@ async function rsUpload(files){
  preview={type:'skill',text:text.slice(0,9000),root:selected.meta.path};
  }else{
  const file=list.find(x=>/\.(csv|tsv|json|fasta|fa|faa|pdb)$/i.test(x.name));if(!file)throw new Error('请提供 CSV、TSV、JSON、FASTA 或 PDB 数据文件；可同时附说明文件');
- const text=await file.text();if(text.split(/\r?\n/).length>100001)throw new Error('本机预览上限为 10 万行，大规模数据库可改用外部来源登记');
+ const text=await file.text();if(text.split(/\r?\n/).length>100001)throw new Error('数据超过 10 万行，请使用外部数据链接');
  if(/\.(csv|tsv)$/i.test(file.name)){const sep=/\.tsv$/i.test(file.name)?'\t':',';const lines=text.split(/\r?\n/).filter(x=>x.trim());const head=csvCells(lines[0]||'',sep);if(new Set(head).size!==head.length)throw new Error('表头包含重复列名');const bad=lines.findIndex((line,i)=>i>0&&csvCells(line,sep).length!==head.length);if(bad>0)throw new Error('第 '+(bad+1)+' 行列数与表头不一致');const table=parseTable(text,file.name);if(!table.ok)throw new Error(table.why);preview={type:'table',file:file.name,rows:table.rows.length,cols:table.cols.map(c=>({name:c.k,type:c.type||'文本'})),sample:table.rows.slice(0,5),fingerprint:table.fp};}
  else if(/\.json$/i.test(file.name)){let data;try{data=JSON.parse(text);}catch(e){throw new Error('JSON 无法解析，请检查文件内容');}const rows=Array.isArray(data)?data:Array.isArray(data.data)?data.data:null;if(!rows||!rows.length||rows.some(x=>!x||typeof x!=='object'||Array.isArray(x)))throw new Error('JSON 应是非空对象数组，或包含 data 对象数组');const keys=[...new Set(rows.slice(0,100).flatMap(x=>Object.keys(x)))];preview={type:'table',file:file.name,rows:rows.length,cols:keys.map(name=>({name,type:'JSON'})),sample:rows.slice(0,5)};}
  else if(/\.(fasta|fa|faa)$/i.test(file.name)){const headers=text.split(/\r?\n/).filter(x=>x.startsWith('>'));if(!headers.length)throw new Error('FASTA 文件缺少序列标题');preview={type:'sequence',file:file.name,count:headers.length,headers:headers.slice(0,5)};}
@@ -20513,7 +20556,7 @@ async function rsUpload(files){
 }
 function rsResourceErrors(f,draft=false){const errors={};if(!/^[A-Za-z0-9_-]{2,30}$/.test(f.slug))errors.slug='标识须为 2–30 位英文、数字、- 或 _';if(f.name.trim().length<2||f.name.trim().length>30||/[\u0000-\u001F]/.test(f.name))errors.name='展示名称须为 2–30 个可见字符';if(f.description.length>1000)errors.description='描述最多 1000 字';
  if(!rsValidRepo(f.github.trim()))errors.github='请输入 https://github.com/用户名/仓库名';if(RS.data.resources.some(r=>r.kind===f.kind&&r.slug.toLowerCase()===f.slug.toLowerCase()&&r.id!==f.editId))errors.slug='此标识已存在，请使用其他标识';if(f.tags.length>5)errors.tags='最多选择 5 个标签';if(f.uploading)errors.upload='文件仍在校验';
- if(!draft){if(!f.subjects.length)errors.subjects='请选择所属学科';if(f.uploadError)errors.upload=f.uploadError;if(f.kind==='tool'||f.sourceKind==='upload'){if(!f.manifest.length||!f.preview)errors.upload='请上传并校验有效文件';}else if(!rsValidSource(f.sourceUrl.trim()))errors.sourceUrl='请输入有效的 HTTPS 数据来源地址';}
+ if(!draft){if(!f.subjects.length)errors.subjects='请选择所属学科';if(f.uploadError)errors.upload=f.uploadError;if(f.kind==='tool'||f.sourceKind==='upload'){if(!f.manifest.length||!f.preview)errors.upload=f.kind==='tool'?'请上传 SKILL.md 或包含它的文件夹':'请上传数据文件';}else if(!rsValidSource(f.sourceUrl.trim()))errors.sourceUrl='请输入有效的 HTTPS 数据来源地址';}
  return errors;
 }
 async function rsSaveResource(draft=false){
@@ -20713,7 +20756,7 @@ function iterationTaskSection(kind,tasks,pid){
  const project=rsProject(pid),noun=model?'模型任务':'实验',hidden=Math.max(0,attention.length-rows.length);
  return '<section class="wb-task-section" data-task-kind="'+kind+'"><div class="wb-task-section-head"><h4>'+noun+'<small>'+attention.length+'</small></h4></div>'+
  (rows.length?'<ul class="wb-task-list">'+rows.map(iterationCompactTask).join('')+'</ul>':'<div class="wb-empty-tasks">暂无需要关注的'+(model?'模型':'实验')+'任务</div>')+
- '<div class="wb-task-section-foot">'+(hidden?'<span class="wb-task-more-count">还有 '+hidden+' 项</span>':'')+'<button class="wb-task-view-all" type="button" data-wb-list="'+(model?'train':'experiment')+'" data-wb-pid="'+esc(pid)+'" aria-label="'+esc(project?.name||'课题')+'：查看全部'+(model?'模型任务':'实验任务')+'">查看全部 '+wbViewIcon('arrow')+'</button></div></section>';
+ '<div class="wb-task-section-foot">'+(hidden?'<span class="wb-task-more-count">还有 '+hidden+' 项</span>':'')+'<button class="wb-task-view-all" type="button" data-wb-list="'+(model?'train':'experiment')+'" data-wb-pid="'+esc(pid)+'" aria-label="'+esc(project?.name||'课题')+'：查看全部'+(model?'模型任务':'实验任务')+'">查看全部 '+wbViewIcon('right')+'</button></div></section>';
 }
 
 V.workbench=()=>{
@@ -20877,7 +20920,7 @@ V.labnew=()=>{
  if(s){const devices=LAB_DEVICES.filter(d=>d.stages.includes(s.stage));operation='<p class="lv-small">输入来源：'+s.inputFrom.map(k=>k==='source'?'样本清单':esc(labStage(k).title)).join('、')+'</p>'+(s.stage!=='review'?
  field('device_'+s.id,'设备型号 *','<select class="input" data-lv-device-select="'+s.id+'" '+labInvalid('device_'+s.id)+'><option value="">选择设备型号</option>'+devices.map((d,i)=>'<option value="'+d.id+'" '+(s.deviceId===d.id?'selected':'')+'>'+esc(d.model)+(i===0?' · 推荐':'')+'</option>').join('')+'</select>')+
  field('resource_'+s.id,'设备实例编号 *','<input class="input" data-lv-resource="'+s.id+'" value="'+esc(s.resource)+'" placeholder="例如 LAB-001" '+labInvalid('resource_'+s.id)+'>')+
- field('sop_'+s.id,'SOP／方法版本 *','<input class="input" data-lv-sop="'+s.id+'" value="'+esc(s.sop)+'" placeholder="已确认的方法版本" '+labInvalid('sop_'+s.id)+'>'):'<p class="lv-small">各实验分支完成后复核数据与证据，发布实验结论。</p>')+labIO(s.stage);}
+ field('sop_'+s.id,'SOP／方法版本 *','<input class="input" data-lv-sop="'+s.id+'" value="'+esc(s.sop)+'" placeholder="例如 SOP-PREP-v1.0" '+labInvalid('sop_'+s.id)+'>'):'<p class="lv-small">各实验分支完成后复核数据与证据，发布实验结论。</p>')+labIO(s.stage);}
  return '<div class="page lv experiment-composer"><header class="iteration-head"><div><button class="rs-link" type="button" data-go="lab">← 实验管理</button><h1>'+(f.editing?'编辑实验草稿':'发起实验')+'</h1></div><div class="rs-actions"><span class="composer-save-state" data-composer-missing>'+ (missing?missing+' 项待补全':'')+'</span><button class="btn" type="button" data-lv-save="draft">保存草稿</button><button class="btn btn-pri" type="button" data-lv-save="ready">创建实验</button></div></header><div class="composer-layout"><section class="composer-editor" aria-labelledby="composer-operation-title"><div class="composer-editor-head"><h2 id="composer-operation-title">'+esc(s?.title||'实验设置与样本')+'</h2>'+iterationComposerNavigation(f)+'</div><div class="composer-editor-scroll">'+(Object.keys(errors).length?'<div class="lv-error-summary composer-global-error" role="alert">请补全 '+Object.keys(errors).length+' 项信息。</div>':'')+(s?operation:setup)+'</div></section><section class="composer-map" aria-label="实验编排定位图"><div class="composer-map-head"><span>实验编排</span><button class="btn composer-setup" type="button" data-composer-node="setup">实验设置与样本</button></div><div class="composer-graph">'+iterationComposerGraph(f)+'</div></section></div></div>';
 };
 function iterationRefreshComposer(){
@@ -21406,7 +21449,7 @@ window.addEventListener('storage',event=>{
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)wbRecordVisibleResults(view);});
 
 /* Research workbench: one quiet idea banner, progress on the left, papers on the right. */
-WB.newsPage=0;WB.newsPageSize=2;
+WB.newsPage=0;WB.newsPageSize=4;
 function dashboardProjectSlots(){
  const grid=view.querySelector('.wb-dashboard .wb-project-grid');
  const content=Math.max(280,view.clientWidth-(innerWidth<=600?32:72));
@@ -21429,12 +21472,12 @@ function dashboardDescription(t){
 const dashboardMinimalTask=iterationCompactTask;
 iterationCompactTask=function(t){
  const descriptionId='wb-description-'+encodeURIComponent(t.key),html=dashboardMinimalTask(t),copy=dashboardDescription(t),kind={experiment:'实验',train:'模型训练',eval:'模型评测',infer:'模型推理'}[t.kind]||'任务';
- const path={train:'M5 18h14M7 15V9M12 15V5M17 15v-4M4 7l4-3 5 2 6-3',eval:'M8 3h8v3h3v15H5V6h3V3zM8 6h8M8 11l2 2 4-4M8 17h8',infer:'M4 5h7v6H4zM13 13h7v6h-7zM15 5h5v5M20 5l-7 7M4 15v4h5'}[t.kind];
+ const path={train:'m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3zM4 7.5l8 4.5 8-4.5M12 12v9',eval:'M8 3h8v3h3v15H5V6h3V3zM8 6h8M8 11l2 2 4-4M8 17h8',infer:'M3 4h7v6H3zM14 14h7v6h-7zM6.5 10v7H14M10 7h7.5v7'}[t.kind];
  const icon=path?'<svg class="wb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+path+'"/></svg>':wbViewIcon('flask');
- let rendered=html.replace(/<span class="wb-task-symbol[^>]*>[\s\S]*?<\/span>/,'<span class="wb-task-symbol is-'+esc(t.kind)+'" title="'+kind+'">'+icon+'</span>').replace('</strong></span>','</strong><span id="'+esc(descriptionId)+'" class="wb-task-description" title="'+esc(copy.description)+'">'+esc(copy.description)+'</span></span>');
+ let rendered=html.replace(/<span class="wb-task-symbol[^>]*>[\s\S]*?<\/span>/,'<span class="wb-task-symbol is-'+esc(t.kind)+'" title="'+kind+'">'+icon+'</span>').replace('</strong></span>',()=>'</strong><span id="'+esc(descriptionId)+'" class="wb-task-description" title="'+esc(copy.description)+'">'+esc(copy.description)+'</span></span>');
  const progress=dashboardTaskProgress(t);
  rendered=rendered.replace('<button ', '<button aria-describedby="'+esc(descriptionId)+'" ');
- return rendered.replace(/(<span class="wb-status[^"]*")>([^<]*)<\/span>/,'$1 title="'+esc(copy.meta)+'">$2'+(progress?'<span class="wb-tag-detail">'+esc(progress)+'</span>':'')+'</span>');
+ return rendered.replace(/(<span class="wb-status[^"]*")>([^<]*)<\/span>/,(_,open,label)=>open+' title="'+esc(copy.meta)+'">'+label+(progress?'<span class="wb-tag-detail">'+esc(progress)+'</span>':'')+'</span>');
 };
 function dashboardTaskProgress(t){
  if(t.kind==='experiment'){const b=BATCHES.find(b=>b.id===t.id&&b.pid===t.pid),s=b&&labSummary(b);return s?.total?s.done+'/'+s.total+' 环节':'';}
@@ -21444,7 +21487,7 @@ function dashboardTaskProgress(t){
 }
 function dashboardSummary(data){
  const failed=data.experiments.filter(t=>t.status==='failed'),active=data.experiments.filter(t=>t.status==='active'),ready=wbAttentionTasks(data.experiments).filter(t=>t.status==='done');
- if(failed.length){const groups=new Set(failed.map(t=>t.pid));return '有 '+failed.length+' 项实验异常，分布在 '+groups.size+' 个课题；建议先查看异常环节。';}
+ if(failed.length){const groups=new Set(failed.map(t=>t.pid));return '有 '+failed.length+' 项实验异常，分布在 '+groups.size+' 个课题；请先查看异常环节。';}
  if(active.length)return '有 '+active.length+' 项实验正在进行，可以查看各环节的最新记录。';
  if(ready.length)return '有 '+ready.length+' 项实验已有结论，等待你查看。';
  return '当前没有需要关注的实验，可以继续推进模型任务或探索新的研究问题。';
@@ -21469,25 +21512,20 @@ function dashboardPaper(p,projects){
 }
 V.workbench=()=>{
  const d=wbPrepare(),ps=d.projects||[];if(!ps.some(p=>p.id===WB.progressProject))WB.progressProject=ps[0]?.id||'';
- const window=iterationProjectWindow(ps),idea=WB.ideas[0],papers=dashboardPapers(ps),pageSize=WB.newsPageSize||2,pages=Math.ceil(papers.length/pageSize);WB.newsPage=Math.max(0,Math.min(Math.max(0,pages-1),WB.newsPage||0));
+ const window=iterationProjectWindow(ps),idea=WB.ideas[0],papers=dashboardPapers(ps),pageSize=4,pages=Math.ceil(papers.length/pageSize);WB.newsPage=Math.max(0,Math.min(Math.max(0,pages-1),WB.newsPage||0));
  const date=new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'long',timeZone:'Asia/Shanghai'});
  return '<div class="page wb wb-dashboard"><header class="wb-header"><div class="wb-header-copy"><span class="wb-kicker">工作台</span><h1>'+wbViewGreeting()+'，ZHANG</h1></div><span class="wb-date">'+esc(date)+'</span></header><div class="wb-layout">'+
  '<section class="wb-panel wb-inspiration" aria-labelledby="wb-ideas-title"><div class="wb-idea-banner-head"><h2 id="wb-ideas-title" class="wb-inspiration-label">'+wbViewIcon('spark')+'今日灵感</h2><button class="wb-icon-button wb-refresh-idea" type="button" data-wb-refresh-idea aria-label="刷新今日灵感" title="换个问题" '+(!idea?'disabled':'')+'>'+wbViewIcon('refresh')+'</button></div>'+(idea?'<div class="wb-idea-banner-body"><p class="wb-question" aria-live="polite">'+esc(idea.question)+'</p><button type="button" class="btn btn-pri wb-idea-explore" data-wb-prompt="'+esc(idea.question)+'" data-wb-pid="'+esc(idea.pid)+'" aria-label="去探索，关联课题：'+esc(ps.find(p=>p.id===idea.pid)?.name||idea.project||'')+'">去探索 '+wbViewIcon('arrow')+'</button></div>':'<div class="wb-empty-idea">为课题补充研究目标，开始探索新问题。</div>')+'</section>'+
- '<section class="wb-panel wb-tasks" aria-labelledby="wb-tasks-title" aria-roledescription="轮播"><div class="wb-panel-heading"><div class="wb-progress-heading"><h2 id="wb-tasks-title">课题进展</h2>'+iterationProjectControls(window,ps.length)+'</div><div class="wb-agent-summary" aria-live="polite">'+wbViewIcon('spark')+'<p>'+esc(dashboardSummary(d))+'</p></div></div>'+(window.items.length?'<div class="wb-project-grid" style="--wb-project-slots:'+window.slots+'">'+window.items.map(p=>{const scope=workbenchData({pid:p.id});return '<article class="wb-project-card" data-wb-project-id="'+esc(p.id)+'" aria-label="课题：'+esc(p.name)+'"><header class="wb-project-card-head"><h3><button class="wb-project-title" type="button" data-wb-project="'+esc(p.id)+'" title="'+esc(p.name)+'" aria-label="进入课题：'+esc(p.name)+'"><span>'+esc(p.name)+'</span>'+wbViewIcon('arrow')+'</button></h3></header>'+iterationTaskSection('experiment',scope.experiments||[],p.id)+iterationTaskSection('model',scope.modelTasks||[],p.id)+'</article>'}).join('')+'</div>':'<div class="wb-empty"><strong>还没有课题</strong><button class="btn btn-pri" type="button" data-wb-create-project>新建项目</button></div>')+'</section>'+
+ '<section class="wb-panel wb-tasks" aria-labelledby="wb-tasks-title" aria-roledescription="轮播"><div class="wb-panel-heading"><div class="wb-progress-heading"><h2 id="wb-tasks-title">课题进展</h2>'+iterationProjectControls(window,ps.length)+'</div><div class="wb-agent-summary" aria-live="polite">'+wbViewIcon('spark')+'<p>'+esc(dashboardSummary(d))+'</p></div></div>'+(window.items.length?'<div class="wb-project-grid" style="--wb-project-slots:'+window.slots+'">'+window.items.map(p=>{const scope=workbenchData({pid:p.id});return '<article class="wb-project-card" data-wb-project-id="'+esc(p.id)+'" aria-label="课题：'+esc(p.name)+'"><header class="wb-project-card-head"><h3><button class="wb-project-title" type="button" data-wb-project="'+esc(p.id)+'" title="'+esc(p.name)+'" aria-label="进入课题：'+esc(p.name)+'"><span>'+esc(p.name)+'</span>'+wbViewIcon('right')+'</button></h3></header>'+iterationTaskSection('experiment',scope.experiments||[],p.id)+iterationTaskSection('model',scope.modelTasks||[],p.id)+'</article>'}).join('')+'</div>':'<div class="wb-empty"><strong>还没有课题</strong><button class="btn btn-pri" type="button" data-wb-create-project>新建项目</button></div>')+'</section>'+
  '<section class="wb-panel wb-news" aria-labelledby="wb-news-title"><div class="wb-panel-heading"><div class="wb-progress-heading"><div class="wb-panel-label">'+wbViewIcon('paper')+'<h2 id="wb-news-title">学术资讯</h2></div>'+dashboardNewsControls(WB.newsPage,pages)+'</div><p class="wb-news-agent">'+'我为你找到可能相关的最新论文'+'</p>'+(papers.length&&WB.papersError?'<p class="wb-news-state" role="status">暂未获取新结果，保留现有论文。</p>':'')+'</div><ul class="wb-paper-stack">'+papers.slice(WB.newsPage*pageSize,(WB.newsPage+1)*pageSize).map(p=>dashboardPaper(p,ps)).join('')+'</ul>'+(!papers.length?'<div class="wb-empty-news"><p>'+(WB.papersBusy?'正在查找可能相关的最新论文':WB.papersError?'暂时无法获取论文，请稍后重试。':'暂无匹配论文，为课题补充关键词。')+'</p></div>':'')+'</section></div></div>';
 };
-function dashboardFit(root){
- let changed=false;
- const stack=root.querySelector('.wb-paper-stack');if(stack?.clientHeight){const min=parseFloat(getComputedStyle(stack).getPropertyValue('--wb-paper-min-row'))||178,size=Math.max(1,Math.min(3,Math.floor((stack.clientHeight+10)/(min+10))));if(size!==WB.newsPageSize){WB.newsPage=Math.floor(WB.newsPage*(WB.newsPageSize||2)/size);WB.newsPageSize=size;changed=true;}}
- return changed;
-}
 const dashboardOriginalBind=wbBind;
 wbBind=function(root){
  dashboardOriginalBind(root);if(S.route!=='workbench')return;wbLayoutObserver?.disconnect();
  root.querySelector('[data-wb-refresh-idea]')?.addEventListener('click',dashboardRefreshIdea);
  root.querySelectorAll('[data-wb-news-page]').forEach(b=>b.addEventListener('click',()=>{WB.newsPage+=Number(b.dataset.wbNewsPage);render();(view.querySelector('[data-wb-news-page="'+b.dataset.wbNewsPage+'"]:not(:disabled)')||view.querySelector('[data-wb-news-page]:not(:disabled)'))?.focus({preventScroll:true});}));
- let scheduled=false;const fit=()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;if(S.route!=='workbench')return;const slots=dashboardProjectSlots();if(slots!==WB.projectSlots||dashboardFit(view)){render();return;}WB.projectViewport=view.clientWidth+':'+innerHeight;});};
- wbLayoutObserver=new ResizeObserver(fit);root.querySelectorAll('.wb-project-grid,.wb-paper-stack').forEach(e=>wbLayoutObserver.observe(e));fit();
+ let scheduled=false;const fit=()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;if(S.route!=='workbench')return;const slots=dashboardProjectSlots();if(slots!==WB.projectSlots){render();return;}WB.projectViewport=view.clientWidth+':'+innerHeight;});};
+ wbLayoutObserver=new ResizeObserver(fit);root.querySelectorAll('.wb-project-grid').forEach(e=>wbLayoutObserver.observe(e));fit();
 };
 
 

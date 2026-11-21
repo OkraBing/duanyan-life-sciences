@@ -35,7 +35,7 @@ function contrast(a,b){const lum=c=>c.slice(0,3).map(v=>(v/=255)<=.04045?v/12.92
   await p.locator('[data-wb-refresh-idea]').click();const expected=await p.locator('[data-wb-prompt]').evaluate(e=>({pid:e.dataset.wbPid,q:e.dataset.wbPrompt}));await p.locator('.wb-idea-explore').click();assert.deepEqual(await p.evaluate(()=>[S.route,S.bind,convOf().length]),['chat',expected.pid,0]);assert.equal(await p.locator('#ask').inputValue(),expected.q);await p.locator('#ask').fill(expected.q+' 请比较两种方法。');assert.equal(await p.evaluate(()=>convOf().length),0);
  });
  await check('05 paper feed shows multiple structured cards and safe external icon links',async p=>{
-  assert.match(await p.locator('.wb-news-agent').innerText(),/我为你找到可能相关的最新论文/);assert(await p.locator('.wb-paper-card').count()>=2);
+  assert.match(await p.locator('.wb-news-agent').innerText(),/我为你找到可能相关的最新论文/);assert.equal(await p.locator('.wb-paper-card').count(),4);
   for(const card of await p.locator('.wb-paper-card').all()){assert(await card.locator('h3').innerText());assert((await card.locator('.wb-paper-description').innerText()).length>20);assert(await card.locator('.wb-paper-topic').count());const a=card.locator('.wb-paper-open');assert.match(await a.getAttribute('href'),/^https:/);assert.equal(await a.getAttribute('target'),'_blank');assert.match(await a.getAttribute('rel'),/noopener/);assert.match(await a.getAttribute('aria-label'),/打开论文/);assert.equal(await a.locator('svg').count(),1);}
   assert.equal(await p.locator('.wb-paper-card a').count(),await p.locator('.wb-paper-card').count());
  });

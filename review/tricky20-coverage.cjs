@@ -1,15 +1,17 @@
 const fs=require('node:fs');
 function inPage(){
  const full=new Set(['workbench','devices','devicedetail','lab','labnew','labdet','shared','sharednew','shareddetail','toolnew','databasenew','resdetail']);
- const finite=new Set(['data-go','data-act','data-wb-progress-dot','data-wb-idea-dot','data-wb-news-dot','data-wb-section-page','data-wb-list','data-lv-type','data-lv-filter','data-lv-save','data-composer-node','data-composer-step','data-wb-project-window','data-rs-tab','data-shared-asset-tab','data-rs-flow','data-iteration-zoom','data-rs-new-resource','data-rs-market-tab','data-rs-save-resource','data-rs-back-resource-market']);
+ const finite=new Set(['data-go','data-act','data-wb-progress-dot','data-wb-idea-dot','data-wb-news-dot','data-wb-section-page','data-wb-news-page','data-wb-list','data-lv-type','data-lv-filter','data-lv-save','data-composer-node','data-composer-step','data-wb-project-window','data-rs-tab','data-shared-asset-tab','data-rs-flow','data-iteration-zoom','data-rs-new-resource','data-rs-market-tab','data-rs-save-resource','data-rs-back-resource-market']);
  const state={seen:{},enabled:{},clicks:{},disabled:{},lastChoice:''};window.__review20=state;
  function identify(e){
+  if(/^http:\/\/127\.0\.0\.1:18843\/legacy(?:[#?]|$)/.test(location.href))return null;
   const route=typeof S==='object'?S.route:'boot',dialog=e.closest('#dlg'),drawer=e.closest('.asset-drawer');
   const special=e.matches('[data-rs-copy-project],[data-rs-share-project],[data-rs-manage-project],[data-rs-new-resource],[data-rs-market-tab],[data-rs-resource],[data-rs-back-resource-market]');
   if(!full.has(route)&&!special&&!(dialog&&['projects','project'].includes(route)))return null;
   if(e.closest('#side')){if(!e.matches('[data-navid=workbench],[data-navid=devices],[data-navid=shared]'))return null;return {key:'navigation|'+e.dataset.navid,route:'navigation',section:'navigation',action:e.dataset.navid,label:e.textContent.trim(),disabled:false};}
   let section=route+(dialog?'/dialog':drawer?'/drawer':''),action='';
-  if(e.matches('.ctl-dd')){const sel=e.nextElementSibling;action='select:'+(sel?.id||sel?.dataset.lvField||sel?.dataset.lvDeviceSelect||sel?.dataset.rsResourceField||sel?.getAttribute('aria-label')||e.getAttribute('aria-label'));}
+  if(e.matches('.wb-paper-open'))action='paper-open';
+  else if(e.matches('.ctl-dd')){const sel=e.nextElementSibling;action='select:'+(sel?.id||sel?.dataset.lvField||sel?.dataset.lvDeviceSelect||sel?.dataset.rsResourceField||sel?.getAttribute('aria-label')||e.getAttribute('aria-label'));}
   else if(e.matches('[data-pick]'))action='option:'+state.lastChoice;
   else if(e.matches('.asset-drawer-close'))action='drawer-close';
   else if(e.matches('[value=ok],[value=cancel]'))action=e.getAttribute('value')+':'+e.textContent.trim();
@@ -23,9 +25,9 @@ function inPage(){
   }
   return {key:section+'|'+action,route,section,action,label:(e.getAttribute('aria-label')||e.textContent.trim()).replace(/\s+/g,' ').slice(0,100),disabled:!!(e.disabled||e.getAttribute('aria-disabled')==='true')};
  }
- function snapshot(){document.querySelectorAll('#view button,#view [role=button],#dlg[open] button,.asset-drawer button,#menu [data-pick],#side [data-navid]').forEach(e=>{const r=e.getBoundingClientRect();if(r.width<1||r.height<1)return;const item=identify(e);if(!item)return;state.seen[item.key]=item;if(item.disabled)state.disabled[item.key]=item;else state.enabled[item.key]=item;});}
+ function snapshot(){document.querySelectorAll('#view button,#view [role=button],#view a.wb-paper-open,#dlg[open] button,.asset-drawer button,#menu [data-pick],#side [data-navid]').forEach(e=>{const r=e.getBoundingClientRect();if(r.width<1||r.height<1)return;const item=identify(e);if(!item)return;state.seen[item.key]=item;if(item.disabled)state.disabled[item.key]=item;else state.enabled[item.key]=item;});}
  window.__review20Snapshot=snapshot;
- document.addEventListener('click',ev=>{const e=ev.target.closest('button,[role=button]');if(!e)return;const item=identify(e);if(!item)return;if(e.matches('.ctl-dd'))state.lastChoice=item.action.slice(7);state.seen[item.key]=item;state.enabled[item.key]=item;state.clicks[item.key]=(state.clicks[item.key]||0)+1;},true);
+ document.addEventListener('click',ev=>{const e=ev.target.closest('button,[role=button],a.wb-paper-open');if(!e)return;const item=identify(e);if(!item)return;if(e.matches('.ctl-dd'))state.lastChoice=item.action.slice(7);state.seen[item.key]=item;state.enabled[item.key]=item;state.clicks[item.key]=(state.clicks[item.key]||0)+1;},true);
  let scheduled=false;new MutationObserver(()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;snapshot();});}).observe(document,{subtree:true,childList:true});
 }
 function install(browser,file){
@@ -37,3 +39,19 @@ function install(browser,file){
  return browser;
 }
 module.exports={install};
+
+// Compatibility probes intentionally open an older HTML at /legacy. Its removed
+// controls are outside the current-build denominator, while its assertions remain.
+function summarize(file){
+ const all={},enabled={},clicks={},disabled={};let excludedLegacyRecords=0;
+ const records=fs.readFileSync(file,'utf8').trim().split('\n').filter(Boolean).map(JSON.parse);
+ const canonical=item=>item.route==='workbench'&&/^打开论文/.test(item.action)?{...item,key:'workbench|paper-open',action:'paper-open',label:'打开论文原文'}:item;
+ for(const record of records){
+  if(/^http:\/\/127\.0\.0\.1:18843\/legacy(?:[#?]|$)/.test(record.url||'')){excludedLegacyRecords++;continue;}
+  for(const [name,target]of[['seen',all],['enabled',enabled],['disabled',disabled]])for(const item of Object.values(record[name]||{})){const value=canonical(item);target[value.key]=value;}
+  for(const[key,count]of Object.entries(record.clicks||{})){const item=record.seen?.[key],name=item?canonical(item).key:key;clicks[name]=(clicks[name]||0)+count;}
+ }
+ const uncovered=Object.values(enabled).filter(x=>!clicks[x.key]);
+ return{observed:Object.keys(all).length,eligible:Object.keys(enabled).length,disabledOnly:Object.keys(disabled).filter(k=>!enabled[k]).length,clicked:Object.keys(clicks).filter(k=>enabled[k]).length,disabled:Object.keys(disabled).length,excludedLegacyRecords,uncovered,controls:Object.values(all).map(x=>({...x,clicks:clicks[x.key]||0,disabledObserved:!!disabled[x.key]}))};
+}
+module.exports.summarize=summarize;

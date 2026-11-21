@@ -94,3 +94,31 @@
 @media(max-height:850px) and (min-width:901px){.wb-dashboard .wb-project-card{grid-template-rows:36px minmax(178px,1fr) minmax(187px,1fr)}}
 @media(max-width:600px){.wb-dashboard .wb-project-card{grid-template-rows:44px minmax(194px,1fr) minmax(215px,1fr)}}
 @media(pointer:coarse){.wb-dashboard .wb-project-card{grid-template-rows:44px minmax(210px,1fr) minmax(231px,1fr)}}
+/* Four paper summaries per page; shared icon sizing and quieter card actions. */
+.wb-dashboard .wb-paper-stack{gap:8px}
+.wb-dashboard .wb-paper-card{padding:12px;gap:8px;min-height:138px}
+.wb-dashboard .wb-paper-copy{gap:6px}
+.wb-dashboard .wb-paper-title{font-size:13px;line-height:18px;-webkit-line-clamp:3}
+.wb-dashboard .wb-paper-description{font-size:11.5px;line-height:17px;-webkit-line-clamp:2}
+.wb-dashboard .wb-paper-topics{flex-wrap:nowrap;max-height:24px}
+.wb-dashboard .wb-project-step.btn,.wb-dashboard .wb-news-controls .wb-project-step.btn{width:30px;height:30px;min-height:30px;border-radius:8px}
+.wb-dashboard .wb-project-step .wb-icon{width:15px;height:15px;stroke-width:1.8}
+.wb-dashboard .wb-project-title>.wb-icon{width:26px;height:26px;padding:5px;margin-top:-2px;border:1px solid var(--line);border-radius:7px;color:var(--ink-3);background:var(--surface);transition:background .15s,border-color .15s}
+.wb-dashboard .wb-project-title:hover>.wb-icon{background:var(--surface-2);border-color:var(--ink-4);color:var(--ink)}
+.wb-dashboard .wb-task-view-all>.wb-icon{width:14px;height:14px;stroke-width:1.75}
+.wb-dashboard .wb-project-card .wb-task-symbol>.wb-icon{width:17px;height:17px;stroke-width:1.65}
+.wb-dashboard .wb-paper-open{width:28px;height:28px;border:1px solid var(--line);border-radius:7px;color:var(--ink-3)}
+.wb-dashboard .wb-refresh-idea{border:1px solid transparent}
+.wb-dashboard .wb-refresh-idea:hover{background:var(--surface);border-color:var(--line)}
+@media(max-height:850px) and (min-width:901px){
+ .wb-dashboard .wb-paper-card{min-height:118px;padding:10px;gap:6px}
+ .wb-dashboard .wb-paper-title{-webkit-line-clamp:2}
+ .wb-dashboard .wb-paper-description{line-height:16px}
+ .wb-dashboard .wb-paper-copy{gap:5px}
+ .wb-dashboard .wb-paper-open{width:24px;height:24px}
+ .wb-dashboard .wb-tasks .wb-project-step.btn{width:24px;height:24px;min-height:24px}
+}
+@media(max-width:900px){.wb-dashboard .wb-layout{grid-template-rows:auto 584px 740px}}
+@media(max-width:600px){.wb-dashboard .wb-layout{grid-template-rows:auto 600px 740px}}
+@media(pointer:coarse){.wb-dashboard .wb-project-step.btn,.wb-dashboard .wb-news-controls .wb-project-step.btn,.wb-dashboard .wb-paper-open,.wb-dashboard .wb-refresh-idea{width:44px;height:44px;min-height:44px}}
+@media(pointer:coarse) and (max-width:900px){.wb-dashboard .wb-layout{grid-template-rows:auto 640px 820px}}
