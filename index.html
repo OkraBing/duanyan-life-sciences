@@ -3153,6 +3153,36 @@ body[data-route=toolnew] .rs-form-footer,body[data-route=databasenew] .rs-form-f
 @media(pointer:coarse){.wb-dashboard .wb-project-step.btn,.wb-dashboard .wb-news-controls .wb-project-step.btn,.wb-dashboard .wb-paper-open,.wb-dashboard .wb-refresh-idea{width:44px;height:44px;min-height:44px}}
 @media(pointer:coarse) and (max-width:900px){.wb-dashboard .wb-layout{grid-template-rows:auto 640px 820px}}
 
+/* ===== 视觉走查：只动样式、层级与配色，文案一个字不改（2026-11-21） ===== */
+
+/* 一、工作台的层级是倒挂的：最大的字给了寒暄，而「有几项实验异常」
+   被压成面板里的小灰字。文案不动，把两者的视觉权重对调——
+   寒暄降到小标题的量级，摘要那一行升到现在标题的量级。 */
+.wb-dashboard .wb-header h1{font-size:19px;font-weight:500;color:var(--ink-3);letter-spacing:-.01em}
+.wb-dashboard .wb-kicker{font-size:12px;color:var(--ink-4)}
+.wb-dashboard .wb-agent-summary{margin-top:10px;align-items:center}
+.wb-dashboard .wb-agent-summary>p{font-size:15px;line-height:1.5;font-weight:500;color:var(--ink-2)}
+.wb-dashboard .wb-agent-summary>.wb-icon{width:16px;height:16px;margin-top:0}
+/* 有异常的时候这一行才带语义色；没有异常就还是中性的，不制造虚假的紧迫感 */
+.wb-dashboard .wb-agent-summary.is-alert>p{color:var(--err);font-weight:600}
+.wb-dashboard .wb-agent-summary.is-alert>.wb-icon{color:var(--err)}
+
+/* 二、异常要在卡片这一层就看得见。
+   原先异常和正常用同一个容器，只靠标签里一个小红点区分——
+   17 张卡铺下来，得逐张读标签才知道哪张要紧。容器层给一条左色条。 */
+.lv-exp{position:relative}
+.lv-exp.is-exception::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--err);border-radius:var(--r2) 0 0 var(--r2)}
+
+/* 三、「干」和「湿」原先是一对：墨蓝对朱砂。现在 --wet 被指成了 ink-3，
+   湿实验这一侧在界面上就没有身份了，而干湿闭环是这个产品的立身之本。
+   先让实验与设备这两格的图标重新暖起来。用赭石不用朱砂：
+   朱砂和胭脂（--err）太近，满屏异常标签时会糊成一片。 */
+:root{--wet-warm:#8A5A20}
+[data-theme="dark"]{--wet-warm:#D9AE72}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--wet-warm:#D9AE72}}
+.nav[data-navid="lab"] svg,.nav[data-navid="devices"] svg{color:var(--wet-warm)}
+
 </style>
 
 <div id="app">
@@ -21514,9 +21544,13 @@ V.workbench=()=>{
  const d=wbPrepare(),ps=d.projects||[];if(!ps.some(p=>p.id===WB.progressProject))WB.progressProject=ps[0]?.id||'';
  const window=iterationProjectWindow(ps),idea=WB.ideas[0],papers=dashboardPapers(ps),pageSize=4,pages=Math.ceil(papers.length/pageSize);WB.newsPage=Math.max(0,Math.min(Math.max(0,pages-1),WB.newsPage||0));
  const date=new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'long',timeZone:'Asia/Shanghai'});
+ /* 层级对调只动视觉，不动文案：寒暄那句原样留着，但字号字重降下来；
+    真正要紧的那一行（面板里已有的那句摘要）升上去。
+    这里只取一个「有没有异常」的标记给样式用，不生成任何新文字。 */
+ const wex=(d.summary&&d.summary.experiment)||{};
  return '<div class="page wb wb-dashboard"><header class="wb-header"><div class="wb-header-copy"><span class="wb-kicker">工作台</span><h1>'+wbViewGreeting()+'，ZHANG</h1></div><span class="wb-date">'+esc(date)+'</span></header><div class="wb-layout">'+
  '<section class="wb-panel wb-inspiration" aria-labelledby="wb-ideas-title"><div class="wb-idea-banner-head"><h2 id="wb-ideas-title" class="wb-inspiration-label">'+wbViewIcon('spark')+'今日灵感</h2><button class="wb-icon-button wb-refresh-idea" type="button" data-wb-refresh-idea aria-label="刷新今日灵感" title="换个问题" '+(!idea?'disabled':'')+'>'+wbViewIcon('refresh')+'</button></div>'+(idea?'<div class="wb-idea-banner-body"><p class="wb-question" aria-live="polite">'+esc(idea.question)+'</p><button type="button" class="btn btn-pri wb-idea-explore" data-wb-prompt="'+esc(idea.question)+'" data-wb-pid="'+esc(idea.pid)+'" aria-label="去探索，关联课题：'+esc(ps.find(p=>p.id===idea.pid)?.name||idea.project||'')+'">去探索 '+wbViewIcon('arrow')+'</button></div>':'<div class="wb-empty-idea">为课题补充研究目标，开始探索新问题。</div>')+'</section>'+
- '<section class="wb-panel wb-tasks" aria-labelledby="wb-tasks-title" aria-roledescription="轮播"><div class="wb-panel-heading"><div class="wb-progress-heading"><h2 id="wb-tasks-title">课题进展</h2>'+iterationProjectControls(window,ps.length)+'</div><div class="wb-agent-summary" aria-live="polite">'+wbViewIcon('spark')+'<p>'+esc(dashboardSummary(d))+'</p></div></div>'+(window.items.length?'<div class="wb-project-grid" style="--wb-project-slots:'+window.slots+'">'+window.items.map(p=>{const scope=workbenchData({pid:p.id});return '<article class="wb-project-card" data-wb-project-id="'+esc(p.id)+'" aria-label="课题：'+esc(p.name)+'"><header class="wb-project-card-head"><h3><button class="wb-project-title" type="button" data-wb-project="'+esc(p.id)+'" title="'+esc(p.name)+'" aria-label="进入课题：'+esc(p.name)+'"><span>'+esc(p.name)+'</span>'+wbViewIcon('right')+'</button></h3></header>'+iterationTaskSection('experiment',scope.experiments||[],p.id)+iterationTaskSection('model',scope.modelTasks||[],p.id)+'</article>'}).join('')+'</div>':'<div class="wb-empty"><strong>还没有课题</strong><button class="btn btn-pri" type="button" data-wb-create-project>新建项目</button></div>')+'</section>'+
+ '<section class="wb-panel wb-tasks" aria-labelledby="wb-tasks-title" aria-roledescription="轮播"><div class="wb-panel-heading"><div class="wb-progress-heading"><h2 id="wb-tasks-title">课题进展</h2>'+iterationProjectControls(window,ps.length)+'</div><div class="wb-agent-summary'+(wex.failed?' is-alert':'')+'" aria-live="polite">'+wbViewIcon('spark')+'<p>'+esc(dashboardSummary(d))+'</p></div></div>'+(window.items.length?'<div class="wb-project-grid" style="--wb-project-slots:'+window.slots+'">'+window.items.map(p=>{const scope=workbenchData({pid:p.id});return '<article class="wb-project-card" data-wb-project-id="'+esc(p.id)+'" aria-label="课题：'+esc(p.name)+'"><header class="wb-project-card-head"><h3><button class="wb-project-title" type="button" data-wb-project="'+esc(p.id)+'" title="'+esc(p.name)+'" aria-label="进入课题：'+esc(p.name)+'"><span>'+esc(p.name)+'</span>'+wbViewIcon('right')+'</button></h3></header>'+iterationTaskSection('experiment',scope.experiments||[],p.id)+iterationTaskSection('model',scope.modelTasks||[],p.id)+'</article>'}).join('')+'</div>':'<div class="wb-empty"><strong>还没有课题</strong><button class="btn btn-pri" type="button" data-wb-create-project>新建项目</button></div>')+'</section>'+
  '<section class="wb-panel wb-news" aria-labelledby="wb-news-title"><div class="wb-panel-heading"><div class="wb-progress-heading"><div class="wb-panel-label">'+wbViewIcon('paper')+'<h2 id="wb-news-title">学术资讯</h2></div>'+dashboardNewsControls(WB.newsPage,pages)+'</div><p class="wb-news-agent">'+'我为你找到可能相关的最新论文'+'</p>'+(papers.length&&WB.papersError?'<p class="wb-news-state" role="status">暂未获取新结果，保留现有论文。</p>':'')+'</div><ul class="wb-paper-stack">'+papers.slice(WB.newsPage*pageSize,(WB.newsPage+1)*pageSize).map(p=>dashboardPaper(p,ps)).join('')+'</ul>'+(!papers.length?'<div class="wb-empty-news"><p>'+(WB.papersBusy?'正在查找可能相关的最新论文':WB.papersError?'暂时无法获取论文，请稍后重试。':'暂无匹配论文，为课题补充关键词。')+'</p></div>':'')+'</section></div></div>';
 };
 const dashboardOriginalBind=wbBind;

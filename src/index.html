@@ -2721,6 +2721,36 @@ dialog.rs-copy-dialog{width:min(600px,calc(100vw - 32px));max-width:600px;overfl
 /* @include workbench-project-cards.css */
 /* @include lab-workflow-map.css */
 /* @include workbench-dashboard.css */
+/* ===== 视觉走查：只动样式、层级与配色，文案一个字不改（2026-11-21） ===== */
+
+/* 一、工作台的层级是倒挂的：最大的字给了寒暄，而「有几项实验异常」
+   被压成面板里的小灰字。文案不动，把两者的视觉权重对调——
+   寒暄降到小标题的量级，摘要那一行升到现在标题的量级。 */
+.wb-dashboard .wb-header h1{font-size:19px;font-weight:500;color:var(--ink-3);letter-spacing:-.01em}
+.wb-dashboard .wb-kicker{font-size:12px;color:var(--ink-4)}
+.wb-dashboard .wb-agent-summary{margin-top:10px;align-items:center}
+.wb-dashboard .wb-agent-summary>p{font-size:15px;line-height:1.5;font-weight:500;color:var(--ink-2)}
+.wb-dashboard .wb-agent-summary>.wb-icon{width:16px;height:16px;margin-top:0}
+/* 有异常的时候这一行才带语义色；没有异常就还是中性的，不制造虚假的紧迫感 */
+.wb-dashboard .wb-agent-summary.is-alert>p{color:var(--err);font-weight:600}
+.wb-dashboard .wb-agent-summary.is-alert>.wb-icon{color:var(--err)}
+
+/* 二、异常要在卡片这一层就看得见。
+   原先异常和正常用同一个容器，只靠标签里一个小红点区分——
+   17 张卡铺下来，得逐张读标签才知道哪张要紧。容器层给一条左色条。 */
+.lv-exp{position:relative}
+.lv-exp.is-exception::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--err);border-radius:var(--r2) 0 0 var(--r2)}
+
+/* 三、「干」和「湿」原先是一对：墨蓝对朱砂。现在 --wet 被指成了 ink-3，
+   湿实验这一侧在界面上就没有身份了，而干湿闭环是这个产品的立身之本。
+   先让实验与设备这两格的图标重新暖起来。用赭石不用朱砂：
+   朱砂和胭脂（--err）太近，满屏异常标签时会糊成一片。 */
+:root{--wet-warm:#8A5A20}
+[data-theme="dark"]{--wet-warm:#D9AE72}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--wet-warm:#D9AE72}}
+.nav[data-navid="lab"] svg,.nav[data-navid="devices"] svg{color:var(--wet-warm)}
+
 </style>
 
 <div id="app">
