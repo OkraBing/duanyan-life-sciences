@@ -5,7 +5,7 @@ const root=path.resolve(__dirname,'..');process.chdir(root);
 const out=path.join(root,'work/qa/requirements-audit-20261120');fs.mkdirSync(out,{recursive:true});
 const hash=x=>crypto.createHash('sha256').update(x).digest('hex');
 const h=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const coreSuites=['product-iteration','workbench','lab-workflow','research-workspace','workbench-tricky','project-fixtures','interaction-components','visual-style','workbench-attention'];
+const coreSuites=['product-iteration','workbench','lab-workflow','research-workspace','workbench-tricky','project-fixtures','interaction-components','visual-style','workbench-attention','workbench-dashboard'];
 const suites=coreSuites.concat(process.argv.includes('--extended')?['a_render','b_empty','c_resp','d_state','e_loop','f_click','g_extreme','h_flows','i_set','j_ask','k_comp','t100']:[]);
 function runSuite(name){return new Promise(resolve=>{
  const script='review/'+name+(fs.existsSync('review/'+name+'.cjs')?'.cjs':'.js');

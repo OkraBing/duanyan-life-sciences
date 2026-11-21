@@ -2720,6 +2720,7 @@ dialog.rs-copy-dialog{width:min(600px,calc(100vw - 32px));max-width:600px;overfl
 /* @include visual-system.css */
 /* @include workbench-project-cards.css */
 /* @include lab-workflow-map.css */
+/* @include workbench-dashboard.css */
 </style>
 
 <div id="app">
@@ -19285,7 +19286,7 @@ function wbMergePapers(list){const map=new Map();
 }
 function wbCurated(){return WB_PAPERS.map(p=>({id:p.id,title:p.title,shortTitle:p.shortTitle,
   url:p.url,journal:p.journal,year:p.publicationYear,published:p.publishedDate,
-  pids:p.projectIds||[],relevance:p.relevance,boundary:p.relevanceBoundary,
+  pids:p.projectIds||[],description:p.summary,relevance:p.relevance,boundary:p.relevanceBoundary,
   question:p.question,source:'文献精选',doi:p.doi,isPreprint:!!p.isPreprint}));}
 function wbDefaultIdeas(data){return data.projects.flatMap(p=>{
   const refs=WB_PAPERS.filter(x=>(x.projectIds||[]).includes(p.id));
@@ -20159,6 +20160,7 @@ const rsBindShared=rsBind;rsBind=function(root){rsBindShared(root);root.querySel
 /* @include review-polish.js */
 /* @include project-fixtures.js */
 /* @include workbench-attention.js */
+/* @include workbench-dashboard.js */
 
 keepLoad();
 labInit();

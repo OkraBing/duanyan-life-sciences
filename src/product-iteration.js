@@ -6,6 +6,12 @@ WB.projectStart=0;
 function iterationDailyIdea(pool,projects){
  const date=wbToday(),valid=idea=>idea&&typeof idea.question==='string'&&idea.question.trim()&&projects.some(p=>p.id===idea.pid);
  const saved=WB.dailyDate===date&&valid(WB.dailyIdea)?{date,idea:WB.dailyIdea}:LS.get('wb_daily_idea_v1',null);
+ // Persisted projects hydrate asynchronously. A temporary first render must not
+ // replace a same-day question belonging to a project that has not loaded yet.
+ if(!RS.seedReady){
+  const day=Math.floor(Date.parse(date+'T00:00:00+08:00')/86400000);
+  return saved?.date===date&&valid(saved.idea)?saved.idea:pool[((day%pool.length)+pool.length)%pool.length]||null;
+ }
  let idea=saved?.date===date&&valid(saved.idea)?saved.idea:null;
  if(!idea&&pool.length){
   const day=Math.floor(Date.parse(date+'T00:00:00+08:00')/86400000);
@@ -61,7 +67,7 @@ function iterationTaskSection(kind,tasks,pid){
  tasks=wbAttentionTasks(tasks);
  const model=kind==='model',rank={failed:0,active:1,draft:2,unknown:3,done:4,canceled:5};
  const sorted=tasks.slice().sort((a,b)=>(rank[a.status]??3)-(rank[b.status]??3));
- const size=innerHeight<850?1:2;
+ const size=dashboardTaskSize(pid,kind);
  const state=WB.pagesByProject[pid]||(WB.pagesByProject[pid]={experiment:0,model:0});
  const pages=Math.max(1,Math.ceil(sorted.length/size));state[kind]=Math.max(0,Math.min(pages-1,state[kind]||0));
  const rows=sorted.slice(state[kind]*size,(state[kind]+1)*size);

@@ -22,7 +22,8 @@
     "test:attention": "node build.mjs && node review/workbench-attention.cjs",
     "test:tricky10": "node build.mjs && node review/tricky10.cjs",
     "test:tricky15": "node build.mjs && node review/tricky15.cjs",
-    "test:upgrade": "node build.mjs && node review/workbench-upgrade.cjs"
+    "test:upgrade": "node build.mjs && node review/workbench-upgrade.cjs",
+    "test:dashboard": "node build.mjs && node review/workbench-dashboard.cjs"
   },
   "devDependencies": {
     "playwright": "1.49.1"

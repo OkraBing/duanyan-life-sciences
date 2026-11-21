@@ -1,0 +1,38 @@
+{
+  "generatedAt": "2026-11-21T04:06:12.438Z",
+  "buildSha256": "9f9b77a1bc4b82a8f32802d13470e3077ff4e86c342884cde35a034b22bc5b10",
+  "requirements": {
+    "requirements": 74,
+    "passed": 74,
+    "failed": 0,
+    "integrationGroups": 159,
+    "extendedScripts": 0,
+    "failedScripts": []
+  },
+  "preview": {
+    "status": "passed",
+    "url": "http://127.0.0.1:8843/?v=9f9b77a1bc4b#workbench",
+    "evidence": "正在服务的 HTML 与本轮验收构建逐字节一致。"
+  },
+  "dashboardChecks": [
+    "01 compact idea above progress, full-height papers to the right",
+    "02 inspiration is plain selectable text and uses a native dark primary action",
+    "03 manual idea refresh changes one question and persists on reload",
+    "04 exploration carries the refreshed query and project without sending",
+    "05 paper feed shows multiple structured cards and safe external icon links",
+    "06 paper arrows reach every paper with bounded navigation and keyboard focus",
+    "07 project windows keep every project reachable and independent",
+    "08 tasks show type icons, real descriptions and compact progress context",
+    "09 attention task pagination reaches every eligible record for every project",
+    "10 agent summary counts current exceptions and follows state changes",
+    "11 manual navigation never changes on a timer",
+    "12 desktop rows fit without overlap, mobile reflows without horizontal scroll",
+    "13 empty loading and failed papers remain distinct, cached papers stay available",
+    "14 light dark contrast and keyboard focus remain clear",
+    "15 long questions stay fully readable and an empty workspace offers creation"
+  ],
+  "runtimeErrors": [],
+  "scope": "Isolated browser storage, deterministic Crossref responses; no real model generation or device execution.",
+  "screenshots": "work/qa/dashboard-v2/",
+  "report": "work/qa/requirements-audit-20261120/report.html"
+}

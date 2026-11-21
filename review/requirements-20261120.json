@@ -1,7 +1,7 @@
 {
-  "version": 2,
+  "version": 3,
   "date": "2026-11-20",
-  "policy": "以用户最后一次同类要求为准；旧 A/B/C、任务 tab、统计区要求已被后续要求取代。design 标记已获用户确认并要求直接落地的设计条目，必须有本轮实际行为证据才计通过。 最新覆盖：课题与资讯仅手动切换，今日灵感每天固定一条并降低视觉权重，取代定时轮播。 工作台只展示运行中、异常待处理、完成未查看的真实任务；已查看结果和历史资产从完整列表访问。",
+  "policy": "以用户最后一次同类要求为准；旧 A/B/C、任务 tab、统计区要求已被后续要求取代。design 标记已获用户确认并要求直接落地的设计条目，必须有本轮实际行为证据才计通过。 最新覆盖：课题与资讯仅手动切换，今日灵感每天固定一条并降低视觉权重，取代定时轮播。 工作台只展示运行中、异常待处理、完成未查看的真实任务；已查看结果和历史资产从完整列表访问。 2026-11-21 最新覆盖：灵感改为左上轻渐变横条、可手动换一句、文字不可点击、去探索使用深底主按钮；左下实验与模型进展加动态摘要和任务说明；右侧纵向多篇论文，按页用左右箭头切换。",
   "requirements": [
     {
       "id": "R01",
@@ -19,7 +19,7 @@
     {
       "id": "R03",
       "area": "工作台",
-      "title": "今日灵感、学术资讯、课题进展三个模块",
+      "title": "今日灵感、学术资讯、实验进展三个模块",
       "probe": "workbench_modules"
     },
     {
@@ -32,7 +32,7 @@
     {
       "id": "R05",
       "area": "工作台",
-      "title": "桌面同时展示三个课题，超出后左右手动切换，不自动轮播",
+      "title": "左下项目窗口按可用宽度展示一至三张，左右手动切换",
       "probe": "progress_carousel",
       "design": true
     },
@@ -46,7 +46,7 @@
     {
       "id": "R07",
       "area": "工作台",
-      "title": "删除统计区和整块 AI 建议，不再展示重复课题进展区",
+      "title": "删除统计区和重复面板，实验摘要基于当前状态生成",
       "probe": "no_progress_stats",
       "design": true
     },
@@ -60,14 +60,14 @@
     {
       "id": "R09",
       "area": "工作台",
-      "title": "今日灵感每天固定一条，绑定课题，刷新与手动切换不更换问题",
+      "title": "今日灵感默认每天固定一条，手动换一句后同日保留，绑定课题",
       "suite": "product-iteration",
       "pattern": "one daily inspiration"
     },
     {
       "id": "R10",
       "area": "工作台",
-      "title": "删除为什么想到、检查视角，参考论文用标签",
+      "title": "灵感只保留小标签、完整一句话、刷新和去探索，不显示解释或参考论文入口",
       "probe": "inspiration_copy"
     },
     {
@@ -80,7 +80,7 @@
     {
       "id": "R12",
       "area": "工作台",
-      "title": "论文展示标题、描述，整条可跳转论文",
+      "title": "论文卡片展示标题、摘要描述、相关课题标签及跳转图标",
       "suite": "workbench",
       "pattern": "simple linked cards"
     },
@@ -462,7 +462,7 @@
     {
       "id": "R69",
       "area": "工作台",
-      "title": "今日灵感缩小面积与字号、降低按钮权重，学术资讯占较宽一栏",
+      "title": "灵感左上轻渐变横条，实验进展在左下，学术资讯在右侧整列",
       "suite": "product-iteration",
       "pattern": "daily inspiration has a smaller footprint",
       "design": true
@@ -477,9 +477,30 @@
     {
       "id": "R71",
       "area": "工作台",
-      "title": "任务行简化为图标、名称和状态，详情入口保留完整任务身份",
+      "title": "任务行保留图标名称状态，增加简短说明与进度上下文",
       "suite": "product-iteration",
-      "pattern": "compact tasks keep name status"
+      "pattern": "compact tasks show name state"
+    },
+    {
+      "id": "R72",
+      "area": "工作台",
+      "title": "灵感手动刷新持久化，课题异步加载不会覆盖已保存问题",
+      "suite": "workbench-dashboard",
+      "pattern": "manual idea refresh"
+    },
+    {
+      "id": "R73",
+      "area": "工作台",
+      "title": "论文多卡片以左右箭头手动翻页，边界与键盘焦点明确",
+      "suite": "workbench-dashboard",
+      "pattern": "paper arrows reach"
+    },
+    {
+      "id": "R74",
+      "area": "工作台",
+      "title": "实验关注摘要准确计数并跟随任务状态变化",
+      "suite": "workbench-dashboard",
+      "pattern": "agent summary counts"
     }
   ]
 }

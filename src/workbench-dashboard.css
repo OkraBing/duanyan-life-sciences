@@ -1,0 +1,60 @@
+/* A restrained two-column workbench: compact inspiration, actionable progress, paper feed. */
+.page.wb.wb-dashboard{--wb-task-min-row:68px;--wb-paper-min-row:178px;grid-template-rows:50px minmax(0,1fr);gap:16px}
+.wb-dashboard .wb-layout{grid-template-columns:minmax(0,1.8fr) minmax(310px,1fr);grid-template-rows:auto minmax(0,1fr);gap:16px}
+.wb-dashboard .wb-inspiration{grid-column:1;grid-row:1;align-self:stretch;height:auto;max-height:none;padding:14px 18px;background:linear-gradient(115deg,color-mix(in srgb,var(--dry-soft) 65%,var(--surface)),var(--surface) 85%)}
+.wb-dashboard .wb-idea-banner-head{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:6px}
+.wb-dashboard .wb-inspiration-label{display:flex;align-items:center;gap:7px;margin:0;font-size:12px;line-height:20px;font-weight:600;color:var(--dry-ink)}
+.wb-dashboard .wb-inspiration-label>.wb-icon{width:15px;height:15px}
+.wb-dashboard .wb-refresh-idea{width:28px;height:28px;min-height:28px;margin:-3px -4px -3px 0;border-radius:7px;color:var(--ink-3)}
+.wb-dashboard .wb-refresh-idea>.wb-icon{width:15px;height:15px}
+.wb-dashboard .wb-idea-banner-body{display:flex;gap:20px;align-items:center;min-width:0}
+.wb-dashboard .wb-inspiration .wb-question{display:block;flex:1;min-width:0;overflow:visible;-webkit-line-clamp:unset;margin:0;font-size:14px;line-height:1.7;font-weight:450;text-decoration:none;color:var(--ink);cursor:text;white-space:normal;overflow-wrap:anywhere}
+.wb-dashboard .wb-inspiration .wb-question:hover{text-decoration:none;color:var(--ink)}
+.wb-dashboard .wb-idea-explore.btn{display:inline-flex;align-items:center;gap:8px;flex-shrink:0;margin:0;min-height:32px;padding:6px 12px;font-size:12px;color:var(--on-pri);background:var(--ink);border-color:var(--ink);border-radius:8px}
+.wb-dashboard .wb-idea-explore>.wb-icon{width:14px;height:14px}
+.wb-dashboard .wb-tasks{grid-column:1;grid-row:2;height:auto;min-height:0;align-self:stretch}
+.wb-dashboard .wb-news{grid-column:2;grid-row:1/-1;min-height:0;align-self:stretch}
+.wb-dashboard .wb-panel-heading{display:block;padding:16px 18px 12px}
+.wb-dashboard .wb-progress-heading{padding:0;margin:0;display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0}
+.wb-dashboard .wb-panel-heading h2{font-size:17px;line-height:24px}
+.wb-dashboard .wb-agent-summary{display:flex;align-items:flex-start;gap:7px;margin-top:8px;color:var(--ink-3)}
+.wb-dashboard .wb-agent-summary>.wb-icon{width:14px;height:14px;flex-shrink:0;margin-top:3px}
+.wb-dashboard .wb-agent-summary>p,.wb-dashboard .wb-news-agent{font-size:12px;line-height:1.7;margin:0;color:var(--ink-3)}
+.wb-dashboard .wb-news-agent{margin-top:8px}
+.wb-dashboard .wb-project-grid{gap:12px;padding:0 16px 16px;overflow:hidden}
+.wb-dashboard .wb-project-card{padding:14px;min-height:0;overflow:hidden}
+.wb-dashboard .wb-project-card-head{min-height:44px;margin-bottom:8px;padding-bottom:10px}
+.wb-dashboard .wb-project-card-head h3{font-size:15px}
+.wb-dashboard .wb-project-card .wb-task-list{gap:4px;overflow:visible}
+.wb-dashboard .wb-project-card .wb-task-list>li{height:auto;flex:1 1 0;min-height:var(--wb-task-min-row);max-height:96px}
+.wb-dashboard .wb-project-card .wb-task-row{display:grid;grid-template-columns:28px minmax(0,1fr) max-content;gap:8px;align-items:start;padding:6px 0;min-height:0}
+.wb-dashboard .wb-project-card .wb-task-symbol{width:28px;height:28px;margin-top:1px;display:grid;place-items:center;border-radius:8px;background:var(--surface-2)!important;color:var(--ink-3)}
+.wb-dashboard .wb-project-card .wb-task-symbol>.wb-icon{width:16px;height:16px}
+.wb-dashboard .wb-project-card .wb-task-main{display:flex;flex-direction:column;gap:3px}
+.wb-dashboard .wb-project-card .wb-task-main>strong{font-size:13px;line-height:18px;font-weight:500}
+.wb-dashboard .wb-task-description{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;line-height:16px;color:var(--ink-3)}
+.wb-dashboard .wb-task-context{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;line-height:14px;color:var(--ink-3)}
+.wb-dashboard .wb-project-card .wb-task-state{padding-top:0;align-items:flex-end;font-size:11px;max-width:66px}
+.wb-dashboard .wb-project-card .wb-status{line-height:18px}
+.wb-dashboard .wb-news-controls{display:flex;gap:5px;align-items:center;margin-left:auto}
+.wb-dashboard .wb-news-controls .wb-project-range{min-width:36px;font-size:11px}
+.wb-dashboard .wb-news-controls .wb-project-step.btn{width:28px;height:28px;min-height:28px}
+.wb-dashboard .wb-paper-stack{list-style:none;display:flex;flex-direction:column;gap:10px;flex:1;min-height:0;padding:0 16px 16px;margin:0;overflow:hidden}
+.wb-dashboard .wb-paper-card{display:flex;flex-direction:column;gap:12px;flex:1 1 0;min-height:0;min-width:0;padding:14px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.wb-dashboard .wb-paper-copy{display:flex;flex-direction:column;gap:9px;flex:1;min-height:0;overflow:hidden}
+.wb-dashboard .wb-paper-title{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;color:var(--ink);font-size:14px;line-height:1.45;font-weight:600;margin:0}
+.wb-dashboard .wb-paper-description{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;font-size:12px;line-height:1.65;font-weight:400;color:var(--ink-3);margin:0}
+.wb-dashboard .wb-paper-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;min-width:0}
+.wb-dashboard .wb-paper-topics{display:flex;flex-wrap:wrap;gap:4px;min-width:0;max-height:46px;overflow:hidden}
+.wb-dashboard .wb-paper-topic{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:3px 6px;border-radius:5px;background:var(--surface-2);color:var(--ink-3);font-size:10px;line-height:15px}
+.wb-dashboard .wb-paper-open{width:26px;height:26px;display:grid;place-items:center;border-radius:6px;color:var(--dry-ink);flex-shrink:0}
+.wb-dashboard .wb-paper-open:hover{background:var(--surface-2)}.wb-dashboard .wb-paper-open>.wb-icon{width:16px;height:16px}
+.wb-dashboard .wb-paper-open:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.wb-dashboard .wb-empty-idea{font-size:13px;line-height:1.6;color:var(--ink-3)}
+@media(max-height:760px) and (min-width:901px){.page.wb.wb-dashboard{--wb-task-min-row:64px;--wb-paper-min-row:162px;grid-template-rows:44px minmax(0,1fr);gap:12px}.wb-dashboard .wb-layout{gap:12px}.wb-dashboard .wb-inspiration{padding:10px 16px}.wb-dashboard .wb-panel-heading{padding:12px 16px 8px}.wb-dashboard .wb-project-grid{padding:0 12px 12px}.wb-dashboard .wb-project-card{padding:10px}.wb-dashboard .wb-project-card-head{min-height:36px;padding-bottom:6px;margin-bottom:5px}.wb-dashboard .wb-project-card .wb-task-row{padding-block:4px}.wb-dashboard .wb-project-card .wb-task-section+.wb-task-section{margin-top:6px;padding-top:8px}.wb-dashboard .wb-paper-stack{padding:0 12px 12px}.wb-dashboard .wb-paper-card{padding:12px;gap:8px}.wb-dashboard .wb-paper-title{-webkit-line-clamp:2}.wb-dashboard .wb-paper-description{-webkit-line-clamp:3}}
+@media(max-width:900px){body[data-route=workbench] #view{overflow:auto}.page.wb.wb-dashboard{height:auto;min-height:100%;grid-template-rows:auto 1fr}.wb-dashboard .wb-layout{grid-template-columns:1fr;grid-template-rows:auto 460px 620px}.wb-dashboard .wb-inspiration{grid-column:1;grid-row:1}.wb-dashboard .wb-tasks{grid-column:1;grid-row:2}.wb-dashboard .wb-news{grid-column:1;grid-row:3}.wb-dashboard .wb-paper-stack{--wb-paper-min-row:164px}}
+@media(max-width:600px){.wb-dashboard .wb-layout{grid-template-rows:auto 480px 600px;gap:12px}.wb-dashboard .wb-inspiration{padding:12px 14px}.wb-dashboard .wb-idea-banner-body{gap:12px;align-items:flex-start;flex-direction:column}.wb-dashboard .wb-idea-explore.btn{align-self:flex-end;min-height:36px}.wb-dashboard .wb-inspiration .wb-question{font-size:14px}.wb-dashboard .wb-panel-heading{padding:12px 14px 10px}.wb-dashboard .wb-panel-heading h2{font-size:16px}.wb-dashboard .wb-agent-summary>p,.wb-dashboard .wb-news-agent{font-size:12px}.wb-dashboard .wb-project-grid{padding:0 12px 12px}.wb-dashboard .wb-project-card{padding:12px}.wb-dashboard .wb-project-card-head h3{font-size:15px}.wb-dashboard .wb-project-card .wb-task-symbol{display:grid}.wb-dashboard .wb-project-card .wb-task-section-foot{height:28px;min-height:28px}.wb-dashboard .wb-project-card .wb-pagination .wb-icon-button{height:28px;min-height:28px}.wb-dashboard .wb-paper-stack{padding:0 12px 12px}.wb-dashboard .wb-paper-card{padding:12px}}
+@media(max-height:560px) and (min-width:901px){body[data-route=workbench] #view{overflow:auto}.page.wb.wb-dashboard{height:auto;min-height:100%;grid-template-rows:44px auto}.wb-dashboard .wb-layout{grid-template-rows:auto 440px}.wb-dashboard .wb-news{min-height:550px}}
+@media(pointer:coarse){.wb-dashboard .wb-refresh-idea,.wb-dashboard .wb-news-controls .wb-project-step.btn,.wb-dashboard .wb-paper-open{width:40px;height:40px;min-height:40px}.wb-dashboard .wb-project-card .wb-task-section-foot{height:40px;min-height:40px}}
+
+.wb-dashboard .wb-news-state{font-size:11px;line-height:1.6;color:var(--ink-3);margin:5px 0 0;padding:0}
