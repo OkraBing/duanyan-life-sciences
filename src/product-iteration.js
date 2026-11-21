@@ -314,10 +314,55 @@ function iterationRequestCounts(s){
  const mine=s.requests.filter(r=>r.actor===RS.actor);
  return {incoming:rsCan(s,'approve')?s.requests.filter(r=>r.state==='pending').length:0,pending:mine.filter(r=>r.state==='pending').length,approved:mine.filter(r=>r.state==='approved').length};
 }
+/* 跨项目的申请总览。
+   原先只有「进了某个项目之后」才看得到申请：申请了三个别人的项目，就得点三次。
+   这里把所有共享项目里和我有关的申请收到一处，分两组——
+   「待我审批」是别人要用我的东西，「我的申请」是我要用别人的东西。
+   两组的名字、状态词、操作都沿用项目里那一套，数也从同一份 requests 算，
+   不另起一套事实。 */
+function iterationRequestInbox(projects){
+ const incoming=[],mine=[];
+ projects.forEach(s=>{
+  const owner=rsCan(s,'approve');
+  s.requests.forEach(r=>{
+   if(owner&&r.state==='pending')incoming.push({s,r});
+   else if(r.actor===RS.actor&&(r.state==='pending'||r.state==='approved'))mine.push({s,r});
+  });
+ });
+ return {incoming,mine};
+}
+function iterationInboxRow(s,r,owner){
+ const a=s.assets.find(x=>x.id===r.assetId);
+ const who=owner?(s.members.find(m=>m.id===r.actor)?.name||'项目成员')
+                :(s.members.find(m=>m.id===r.reviewBy)?.name||s.members.find(m=>m.id===s.owner)?.name||'项目负责人');
+ const label=r.state==='pending'?(owner?'待审批':'申请中'):'待导入';
+ const act=owner
+  ? '<button class="btn btn-pri" type="button" data-inbox-approve="'+esc(r.id)+'" data-inbox-sid="'+esc(s.id)+'">批准</button>'
+   +'<button class="btn" type="button" data-inbox-reject="'+esc(r.id)+'" data-inbox-sid="'+esc(s.id)+'">拒绝</button>'
+  : (r.state==='approved'
+     ? '<button class="btn btn-pri" type="button" data-inbox-import="'+esc(r.id)+'" data-inbox-sid="'+esc(s.id)+'">确认导入</button>'
+     : '<button class="btn" type="button" data-inbox-withdraw="'+esc(r.id)+'" data-inbox-sid="'+esc(s.id)+'">撤回申请</button>');
+ return '<li class="inbox-row">'
+  +'<div class="inbox-main"><strong>'+esc(a?.name||'来源资产不可用')+'</strong>'
+  +'<small>'+esc(rsAssetLabel(a?.kind))+' · '+esc(r.version||'')+'</small></div>'
+  +'<button class="rs-link inbox-project" type="button" data-inbox-open="'+esc(s.id)+'">'+esc(s.name)+'</button>'
+  +'<span class="inbox-who">'+esc(who)+'</span>'
+  +'<span class="request-status '+esc(r.state)+'">'+label+'</span>'
+  +'<div class="inbox-actions">'+act+'</div></li>';
+}
+function iterationRequestInboxView(projects){
+ const {incoming,mine}=iterationRequestInbox(projects);
+ if(!incoming.length&&!mine.length)return '';
+ const group=(title,rows,owner)=>rows.length
+  ? '<section class="inbox-group"><h2>'+title+' '+rows.length+'</h2><ul class="inbox-list">'
+    +rows.map(({s,r})=>iterationInboxRow(s,r,owner)).join('')+'</ul></section>'
+  : '';
+ return '<div class="request-inbox">'+group('待我审批',incoming,true)+group('我的申请',mine,false)+'</div>';
+}
 V.shared=()=>{
  const gate=rsGate();if(gate)return gate;
  const projects=RS.data.shared.filter(iterationRole);
- return '<div class="page rs iteration-page"><header class="iteration-head"><div><h1>共享项目</h1></div><button class="btn btn-pri" type="button" data-rs-new-shared>新建共享项目</button></header><strong class="t-sm">全部 '+projects.length+' 个</strong>'+
+ return '<div class="page rs iteration-page"><header class="iteration-head"><div><h1>共享项目</h1></div><button class="btn btn-pri" type="button" data-rs-new-shared>新建共享项目</button></header>'+iterationRequestInboxView(projects)+'<strong class="t-sm">全部 '+projects.length+' 个</strong>'+
  (projects.length?'<div class="shared-project-grid">'+projects.map(s=>{
   const member=iterationRole(s),owner=s.members.find(m=>m.id===s.owner),counts=iterationRequestCounts(s),source=rsProject(s.projectId),summary=s.projectSummary||{},state=source?.state||summary.state;
   const status=state?stateOf(state):null;
@@ -461,6 +506,12 @@ function iterationBindAcquisitions(root){
  root.querySelectorAll('[data-iteration-acquire]').forEach(e=>e.onclick=()=>rsRequestDialog(e.dataset.iterationAcquire));
  root.querySelectorAll('[data-iteration-import]').forEach(e=>e.onclick=()=>iterationMutation(()=>rsImport(rsShared().id,e.dataset.iterationImport)));
  if(root!==view)root.querySelectorAll('[data-rs-requests]').forEach(e=>e.onclick=()=>rsRequestsDialog());
+ root.querySelectorAll('[data-inbox-open]').forEach(e=>e.onclick=()=>{RS.sharedPick=e.dataset.inboxOpen;LS.set('rs_shared_pick',RS.sharedPick);RS.actor='me';RS.tab='assets';RS.zoom=1;go('shareddetail');});
+ root.querySelectorAll('[data-inbox-import]').forEach(e=>e.onclick=()=>iterationMutation(()=>rsImport(e.dataset.inboxSid,e.dataset.inboxImport)));
+ root.querySelectorAll('[data-inbox-withdraw]').forEach(e=>e.onclick=()=>iterationMutation(()=>rsWithdrawRequest(e.dataset.inboxSid,e.dataset.inboxWithdraw)));
+ root.querySelectorAll('[data-inbox-approve]').forEach(e=>e.onclick=()=>iterationMutation(()=>rsDecide(e.dataset.inboxSid,e.dataset.inboxApprove,true,'同意在目标项目复用')));
+ root.querySelectorAll('[data-inbox-reject]').forEach(e=>{const sid=e.dataset.inboxSid,rid=e.dataset.inboxReject;
+  e.onclick=()=>modal('拒绝获取申请','<label class="rs-field"><span>拒绝原因</span><textarea class="input" id="inbox-reject-reason"></textarea></label>','拒绝申请',()=>rsModalSave(()=>rsDecide(sid,rid,false,document.getElementById('inbox-reject-reason').value)));});
 }
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&RS.drawer&&!document.querySelector('dialog[open]')){e.preventDefault();iterationCloseDrawer();}});
 const iterationBind=rsBind;
