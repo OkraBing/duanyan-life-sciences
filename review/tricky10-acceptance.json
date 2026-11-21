@@ -1,104 +1,281 @@
 {
-  "generatedAt": "2026-11-20T18:39:31.956Z",
-  "buildSha256": "039ad25c12b7b995a15ce4b0ea0d8da3e3dbb61e21d429133c68103620bb0a21",
+  "generatedAt": "2026-11-21T06:22:05.160Z",
+  "buildSha256": "42db5d0051a3469480b0459267f72b6d51613c4e80fb285b3d0b335cde31497b",
   "browser": "153.0.8010.12",
   "rounds": 10,
   "passedRounds": 10,
   "cases": 51,
   "requirements": {
-    "requirements": 70,
-    "passed": 70,
+    "requirements": 78,
+    "passed": 78,
     "failed": 0,
-    "integrationGroups": 137,
+    "integrationGroups": 178,
     "extendedScripts": 0,
     "failedScripts": []
   },
   "coverage": {
-    "eligible": 292,
-    "clicked": 292,
+    "eligible": 248,
+    "clicked": 248,
     "uncovered": 0,
     "disabledOnly": 3
   },
   "runtimeErrors": 0,
   "findings": [
     {
-      "id": "T10-F01",
-      "issue": "旧标签页的运行状态或旧结果详情，会清除或覆盖另一标签页的新结果已读记录。",
-      "change": "仅在实际观察到重新运行时撤销对应旧版本的已读状态；已读记录按结果版本合并，旧页面的重绘和查看不会覆盖新版本。兼容已有单版本记录。",
-      "evidence": "work/qa/tricky10/stale-tab-before.log 和 old-version-before.log 保存修复前失败；workbench-attention.cjs 新增旧运行页面及旧结果页面的竞争用例。"
+      "id": "T10-20261121-F01",
+      "issue": "获取共享资产时，没有目标个人项目的空态仍称用户为“演示成员”。",
+      "change": "改为“还没有个人项目”，保留新建个人项目入口；没有接收项目时禁用目标选择和提交。继续检查创建后，原资产 ID、版本和申请理由正确传入申请。",
+      "evidence": "tricky10-edge-states.cjs E01；修复前失败见 work/qa/tricky10/20261121-before-edge.log。"
+    },
+    {
+      "id": "T10-20261121-F02",
+      "issue": "上传超过 25 MB 的文件后，错误提示仍带“本机原型”这一开发说明。",
+      "change": "提示改为“文件总大小不能超过 25 MB”；保留实际大小限制，检查重传有效文件后错误清除且资源不会意外发布。",
+      "evidence": "tricky10-edge-states.cjs E02，使用真实文件输入；修复前失败见 work/qa/tricky10/20261121-before-edge.log。"
+    },
+    {
+      "id": "T10-20261121-F03",
+      "issue": "成员没有邮箱时，成员列表显示“本机账号”，没有准确表达缺失字段。",
+      "change": "改为“未设置邮箱”，保留成员姓名、角色和已有操作。",
+      "evidence": "tricky10-edge-states.cjs E03；修复前失败见 work/qa/tricky10/20261121-before-edge.log。"
+    },
+    {
+      "id": "T10-20261121-F04",
+      "issue": "获取资产时新建个人项目，取消会关闭整个申请；成功创建后，先填的申请理由也没有带回。",
+      "change": "新建项目的取消按钮和 Esc 均返回原申请并保留理由；成功创建后自动选中新项目，保留申请对象、版本和理由。关闭原申请后清理临时取消监听，避免重复打开。",
+      "evidence": "tricky10-edge-states.cjs E05；修复前取消后找不到原申请，失败见 work/qa/tricky10/20261121-before-edge.log。"
+    },
+    {
+      "id": "T10-20261121-D01",
+      "kind": "design",
+      "issue": "用户指出灵感刷新、探索主按钮、翻页和课题入口的视觉层级零散。",
+      "change": "在 Claude 最新提交 f2ee8fe 上调整：灵感主次操作同排，刷新加“换一句”文字，主按钮去除重复箭头；课题与论文翻页器共用轻量容器；课题入口去除额外图标框。保留 Claude 调整的问候语、异常摘要和实验导航图标。",
+      "evidence": "tricky10-edge-states.cjs E06/E07；桌面与触屏截图、点击、焦点、44 px 命中区和横向溢出检查。"
     }
   ],
-  "command": "npm run test:tricky10 -- --out work/qa/tricky10/release",
+  "claudeBaseline": "f2ee8fe7ba534f9cfb713220145548f1810303a5",
+  "command": "DUANYAN_REVIEW_FINDINGS_FILE=tricky10-20261121-findings.json node review/tricky10.cjs --out work/qa/tricky10/20261121-release",
   "roundResults": [
     {
       "round": 1,
       "name": "视觉统一与简约配色",
       "status": "passed",
       "cases": 6,
-      "ms": 3453
+      "sections": [
+        {
+          "name": "标题、圆角、主操作的统一",
+          "status": "passed"
+        },
+        {
+          "name": "页头、面包屑与内容对齐",
+          "status": "passed"
+        },
+        {
+          "name": "深浅主题、状态对比和减少动态",
+          "status": "passed"
+        }
+      ],
+      "ms": 3765
     },
     {
       "round": 2,
       "name": "工作台信息取舍与结果已读",
       "status": "passed",
       "cases": 8,
-      "ms": 9762
+      "sections": [
+        {
+          "name": "工作台密度、字号与卡片层级",
+          "status": "passed"
+        },
+        {
+          "name": "工作台全部内容、四篇论文与任务入口",
+          "status": "passed"
+        }
+      ],
+      "ms": 17122
     },
     {
       "round": 3,
       "name": "界面文案与资源创建发布",
       "status": "passed",
       "cases": 4,
-      "ms": 7116
+      "sections": [
+        {
+          "name": "逐屏文案减法与资源表单排版",
+          "status": "passed"
+        },
+        {
+          "name": "工具与数据库全部创建和版本动作",
+          "status": "passed"
+        }
+      ],
+      "ms": 7409
     },
     {
       "round": 4,
       "name": "键盘、错误定位与响应式",
       "status": "passed",
       "cases": 6,
-      "ms": 5072
+      "sections": [
+        {
+          "name": "键盘焦点、表单报错和必填反馈",
+          "status": "passed"
+        },
+        {
+          "name": "多视口、短屏与字体放大",
+          "status": "passed"
+        }
+      ],
+      "ms": 5423
     },
     {
       "round": 5,
       "name": "设备发现、详情与接入申请",
       "status": "passed",
       "cases": 5,
-      "ms": 5285
+      "sections": [
+        {
+          "name": "设备目录的全部设备和筛选",
+          "status": "passed"
+        },
+        {
+          "name": "设备申请、确认与重载",
+          "status": "passed"
+        }
+      ],
+      "ms": 6238
     },
     {
       "round": 6,
       "name": "实验编排、异常与结论闭环",
       "status": "passed",
       "cases": 5,
-      "ms": 24834
+      "sections": [
+        {
+          "name": "实验编排三模板及所有节点",
+          "status": "passed"
+        },
+        {
+          "name": "实验状态、记录、异常、重试与结论",
+          "status": "passed"
+        }
+      ],
+      "ms": 25660
     },
     {
       "round": 7,
       "name": "共享资产、分支画布与节点详情",
       "status": "passed",
       "cases": 4,
-      "ms": 13062
+      "sections": [
+        {
+          "name": "共享资产的全部分类与条目",
+          "status": "passed"
+        },
+        {
+          "name": "工作流分支、缩放、平移与抽屉",
+          "status": "passed"
+        }
+      ],
+      "ms": 14479
     },
     {
       "round": 8,
       "name": "共享成员、双向申请与权限",
       "status": "passed",
       "cases": 6,
-      "ms": 16942
+      "sections": [
+        {
+          "name": "成员邀请、角色、移除与转交",
+          "status": "passed"
+        },
+        {
+          "name": "双向申请、审批与独立副本",
+          "status": "passed"
+        }
+      ],
+      "ms": 18003
     },
     {
       "round": 9,
       "name": "项目分享、副本与课题数据完整性",
       "status": "passed",
       "cases": 4,
-      "ms": 12911
+      "sections": [
+        {
+          "name": "共享创建、分享与项目副本",
+          "status": "passed"
+        }
+      ],
+      "ms": 13229
     },
     {
       "round": 10,
       "name": "逐项需求与全部新增控件复核",
       "status": "passed",
       "cases": 3,
-      "ms": 47263
+      "sections": [
+        {
+          "name": "逐项需求与当前构建复核",
+          "status": "passed"
+        },
+        {
+          "name": "控件覆盖补扫与最终一致性",
+          "status": "passed"
+        }
+      ],
+      "ms": 85454
     }
+  ],
+  "edgeCases": [
+    {
+      "id": "E01",
+      "name": "没有个人项目时，获取申请可创建目标项目并保留资产与版本",
+      "status": "passed"
+    },
+    {
+      "id": "E02",
+      "name": "超限上传只提示文件限制，重传可恢复且不生成资源",
+      "status": "passed"
+    },
+    {
+      "id": "E03",
+      "name": "成员缺少邮箱时显示明确空值，不暴露内部账号类型",
+      "status": "passed"
+    },
+    {
+      "id": "E04",
+      "name": "移除上传会丢弃尚未结束的解析结果，不恢复已删除文件",
+      "status": "passed"
+    },
+    {
+      "id": "E05",
+      "name": "新建接收项目的取消和返回保留原申请理由，创建后自动选中新项目",
+      "status": "passed"
+    },
+    {
+      "id": "E06",
+      "name": "沿用最新视觉，灵感操作同排、翻页统一容器且课题入口没有伪按钮",
+      "status": "passed"
+    },
+    {
+      "id": "E07",
+      "name": "触屏操作保持四十四像素命中区，窄屏不遮挡或横向溢出",
+      "status": "passed"
+    }
+  ],
+  "report": "work/qa/tricky10/20261121-release/report.html",
+  "evidence": {
+    "before": "work/qa/tricky10/20261121-before-edge.log",
+    "edge": "work/qa/tricky10/edge-states/results.json",
+    "coverage": "work/qa/tricky10/20261121-release/button-coverage.json",
+    "rawControls": "work/qa/tricky10/20261121-release/coverage.jsonl",
+    "build": "42db5d0051a3469480b0459267f72b6d51613c4e80fb285b3d0b335cde31497b"
+  },
+  "notes": [
+    "Four product/copy findings and one requested component design adjustment; historical fixes are not new findings.",
+    "The first merged-build run failed one outdated heading color expectation. The explicit Claude baseline was retained and the expectation updated before the complete passing rerun.",
+    "Counts are top-level journeys, nested integration groups and unique observed operation types; they are not additive.",
+    "External services are intercepted; device execution, email delivery and server authorization are outside this frontend review."
   ]
 }
