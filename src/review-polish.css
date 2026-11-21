@@ -46,7 +46,7 @@ body[data-route=toolnew] .rs-form-footer,body[data-route=databasenew] .rs-form-f
 .page.rs .rs-tabs>button.is-on{color:var(--ink);border-color:var(--ink);border-bottom-color:var(--dry)}
 .asset-drawer-close,.dw-h>.panel-close{width:28px;height:28px;min-width:28px;min-height:28px;padding:0;border-radius:var(--r1);color:var(--ink-4);font-size:inherit}
 .asset-drawer-close:hover,.dw-h>.panel-close:hover{color:var(--ink);background:var(--surface-2)}
-.asset-drawer-close svg{width:15px;height:15px}
+.asset-drawer-close svg{width:16px;height:16px}
 .ctl-dd[aria-invalid=true]{border-color:var(--err)}
 .ctl-dd[aria-invalid=true]:focus-visible{outline-color:var(--err)}
 .rs-choice:hover:not(:has(input:disabled)),.lv-choice:hover:not(:has(input:disabled)){border-color:var(--ink-4)}
