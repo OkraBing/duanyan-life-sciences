@@ -2961,43 +2961,26 @@ dialog.rs-copy-dialog{width:min(600px,calc(100vw - 32px));max-width:600px;overfl
 .page .pcard[role="button"]:hover{border-color:var(--ink-4);box-shadow:0 1px 3px rgba(16,20,26,.06)}
 
 /* 八、课题卡的标题行原先只是一行字加一条分隔线，下面紧跟同样是「字 + 右侧数值」
-   的实验行，于是标题读起来像列表的第一项。给每个课题一个固定的色位和一枚首字标记，
-   标题行再铺一层极淡的同色底——卡片有了「谁的卡」这个身份，和下面的清单就分开了。
-   色位由课题 id 稳定算出，只是分组的记号，不代表状态，也不表示任何业务含义。 */
-.wb-dashboard .wb-project-card{--pc:var(--dry-ink)}
-.wb-dashboard .wb-project-card[data-wb-hue="0"]{--pc:#355487}
-.wb-dashboard .wb-project-card[data-wb-hue="1"]{--pc:#2F6E66}
-.wb-dashboard .wb-project-card[data-wb-hue="2"]{--pc:#8A5A20}
-.wb-dashboard .wb-project-card[data-wb-hue="3"]{--pc:#5B4A8A}
-.wb-dashboard .wb-project-card[data-wb-hue="4"]{--pc:#8C3B4A}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --pc0:#9FB8DC;--pc1:#8FC2B9;--pc2:#D9AE72;--pc3:#B0A2D6;--pc4:#DB9AA4}}
-:root[data-theme="dark"]{--pc0:#9FB8DC;--pc1:#8FC2B9;--pc2:#D9AE72;--pc3:#B0A2D6;--pc4:#DB9AA4}
-@media (prefers-color-scheme:dark){
-:root:not([data-theme="light"]) .wb-dashboard .wb-project-card[data-wb-hue="0"]{--pc:var(--pc0)}
-:root:not([data-theme="light"]) .wb-dashboard .wb-project-card[data-wb-hue="1"]{--pc:var(--pc1)}
-:root:not([data-theme="light"]) .wb-dashboard .wb-project-card[data-wb-hue="2"]{--pc:var(--pc2)}
-:root:not([data-theme="light"]) .wb-dashboard .wb-project-card[data-wb-hue="3"]{--pc:var(--pc3)}
-:root:not([data-theme="light"]) .wb-dashboard .wb-project-card[data-wb-hue="4"]{--pc:var(--pc4)}}
-:root[data-theme="dark"] .wb-dashboard .wb-project-card[data-wb-hue="0"]{--pc:var(--pc0)}
-:root[data-theme="dark"] .wb-dashboard .wb-project-card[data-wb-hue="1"]{--pc:var(--pc1)}
-:root[data-theme="dark"] .wb-dashboard .wb-project-card[data-wb-hue="2"]{--pc:var(--pc2)}
-:root[data-theme="dark"] .wb-dashboard .wb-project-card[data-wb-hue="3"]{--pc:var(--pc3)}
-:root[data-theme="dark"] .wb-dashboard .wb-project-card[data-wb-hue="4"]{--pc:var(--pc4)}
+   的实验行，于是标题读起来像列表的第一项。
 
+   先做过一版「每个课题一个颜色」——撤掉了：端砚只有三个带含义的颜色
+   （墨蓝=干、朱砂=湿、胭脂=错误），再添四五个凭 id 哈希出来的装饰色，
+   既不表示任何事，又会把真正要紧的那一点红稀释掉。
+   现在改成：标题行用纸白，卡身用灰底，靠明度分层而不是色相；
+   标记统一用干色淡底 + 干色图标，所有课题长一样。 */
 .wb-dashboard .wb-project-card-head{display:flex;align-items:center;gap:10px;
   margin:-16px -16px 10px;padding:12px 16px;
-  background:color-mix(in srgb,var(--pc) 9%,transparent);
-  border-bottom:1px solid color-mix(in srgb,var(--pc) 20%,transparent);
-  border-radius:10px 10px 0 0}
+  background:var(--surface);
+  border-bottom:1px solid var(--line-2);
+  border-radius:14px 14px 0 0}
 .wb-dashboard .wb-project-card-head h3{flex:1;min-width:0;margin:0}
 .wb-dashboard .wb-project-mark{display:grid;place-items:center;flex:0 0 26px;
-  width:26px;height:26px;border-radius:8px;background:var(--pc);color:#fff;
-  line-height:0}
+  width:26px;height:26px;border-radius:8px;
+  background:color-mix(in srgb,var(--dry-ink) 12%,var(--surface));
+  border:1px solid color-mix(in srgb,var(--dry-ink) 20%,transparent);
+  color:var(--dry-ink);line-height:0}
 .wb-dashboard .wb-project-mark .dd-ic{display:grid;place-items:center}
 .wb-dashboard .wb-project-mark svg{width:15px;height:15px}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .wb-dashboard .wb-project-mark{color:#141A22}}
-:root[data-theme="dark"] .wb-dashboard .wb-project-mark{color:#141A22}
 @media(max-height:850px) and (min-width:901px){
   .wb-dashboard .wb-project-card-head{margin:-10px -10px 6px;padding:8px 10px}}
 @media(max-width:600px){
@@ -3044,7 +3027,7 @@ dialog.rs-copy-dialog{width:min(600px,calc(100vw - 32px));max-width:600px;overfl
         <button class="bell" id="bell" type="button" data-act="inbox" aria-label="消息">
           <svg width="17" height="17" style="width:1.0625rem;height:1.0625rem"
             viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor"
-            stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
+            stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"
             ><path d="M6 9a6 6 0 0 1 12 0c0 4 1.2 5.4 1.8 6H4.2C4.8 14.4 6 13 6 9"/>
              <path d="M10.2 19a2 2 0 0 0 3.6 0"/></svg>
           <span class="nav-n" id="bellN"></span>
@@ -3331,7 +3314,7 @@ const CAP_IC={
   flask:'<path d="M9.6 3.2v6.1l-4.8 8.4a1.9 1.9 0 0 0 1.7 2.9h11a1.9 1.9 0 0 0 1.7-2.9l-4.8-8.4V3.2"/><path d="M8.1 3.2h7.8M7.7 14.2h8.6"/>'};
 function capIcon(c){
   return `<svg width="20" height="20" style="width:1.25rem;height:1.25rem" viewBox="0 0 24 24" fill="none" aria-hidden="true"
-    stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${CAP_IC[c.art]||CAP_IC.cube}</svg>`;
+    stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${CAP_IC[c.art]||CAP_IC.cube}</svg>`;
 }
 
 /* 输入框里「已经挑好的东西」只有一种长相：一枚 chip，带一个去掉它的 ✕。
@@ -3423,7 +3406,7 @@ function projBtn(explicit=false){
   return `<button class="ctl ctl-proj" type="button" data-act="bindproj"
     title="这段对话绑定的项目" aria-label="关联项目">
     <svg width="14" height="14" style="width:0.875rem;height:0.875rem" viewBox="0 0 24 24" fill="none" aria-hidden="true"
-      stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
       <path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4l2 2.2h7A1.5 1.5 0 0 1 19 9.7v7.8a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 3 17.5z"/></svg>
     ${explicit?'<span class="research-project-label">关联项目</span>':''}<span class="dd-v">${S.bind?esc(pn)+' · R'+S.round:'选择项目'}</span>
     <span class="car" aria-hidden="true"></span></button>`;
@@ -3434,7 +3417,7 @@ function askTop(withProj){
   if(withProj)bits.push(`<button class="ctl asktop-b" type="button" data-act="bindproj"
     title="这段对话绑定的项目">
     <svg width="14" height="14" style="width:0.875rem;height:0.875rem" viewBox="0 0 24 24" fill="none" aria-hidden="true"
-      stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
       <path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4l2 2.2h7A1.5 1.5 0 0 1 19 9.7v7.8a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 3 17.5z"/></svg>
     <span class="dd-v">${S.bind?esc(pn)+' · R'+S.round:'选择项目'}</span>
     <span class="car" aria-hidden="true"></span></button>`);
@@ -4002,7 +3985,7 @@ function paintNav(force){
       items.forEach(([id,label,d,why])=>{
         const b=document.createElement('button');b.type='button';b.className='nav';
         b.dataset.navid=id;b.title=why||label;
-        b.innerHTML=`<svg width="17" height="17" style="width:1.0625rem;height:1.0625rem" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="${d}" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg><span class="nav-tx">${label}</span>`;
+        b.innerHTML=`<svg width="17" height="17" style="width:1.0625rem;height:1.0625rem" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="${d}" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span class="nav-tx">${label}</span>`;
         b.onclick=()=>{
           /* 「新建对话」要真的开一段新的。原先它只是 go('chat')，
              而 chat 页画的是 S.sid 那一段——点下去回到的是刚才那段旧对话。
@@ -4326,7 +4309,7 @@ function menu(anchor,html,onPick,again){
   const f=m.querySelector('.menu-i');if(f)f.focus();
 }
 const CK='<svg width="14" height="14" style="width:0.875rem;height:0.875rem" viewBox="0 0 24 24" fill="none" aria-hidden="true">'
-  +'<path d="m5 12.5 4.5 4.5L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  +'<path d="m5 12.5 4.5 4.5L19 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
 /* 原生 <select> 展开后的那张列表是操作系统画的，CSS 够不着——
    于是产品里几十个选框一展开就跳出另一套视觉语言。
@@ -4338,7 +4321,7 @@ const CK='<svg width="14" height="14" style="width:0.875rem;height:0.875rem" vie
    同一个控件在不同页面长得不一样，人就得每次重新认一遍。
    现在统一三档宽度（窄 / 标准 / 宽），并在左边给一个说明它选的是什么的图标。
    图标只给能说清的那几类——给不出贴切图标的就不给，似是而非的图标比没有更费解。 */
-const SEARCH_IC='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>';
+const SEARCH_IC='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>';
 const DDIC={
   proj:'<path d="M3.5 7.5a2 2 0 0 1 2-2h3.6l2 2.2h7.4a2 2 0 0 1 2 2v7.8a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z"/>',
   model:'<path d="M12 3.2 20 7.6v8.8L12 20.8 4 16.4V7.6z"/><path d="M4 7.6l8 4.4 8-4.4M12 12v8.8"/>',
@@ -4412,7 +4395,7 @@ function drawer(o){
       <span class="grow"></span>
       <button class="icx panel-close" type="button" data-dwclose="${esc(o.close)}" aria-label="关闭" title="关闭">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"
-          stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
           ><path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5"/></svg></button>
     </div>
     <div class="dw-b">${o.body}</div>
@@ -4464,7 +4447,7 @@ function toolCapName(t){const c=toolCap(t);return c?c.n:(t&&t.u)||'工具'}
 function toolIc(t){
   const c=toolCap(t);
   return `<span class="tool-ic${c&&c.hue==='wet'?' is-wet':''}">${
-    c?capIcon(c):'<svg width="20" height="20" style="width:1.25rem;height:1.25rem" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.4"/><path d="M12 4.2v2.3M12 17.5v2.3M4.2 12h2.3M17.5 12h2.3"/></svg>'}</span>`;
+    c?capIcon(c):'<svg width="20" height="20" style="width:1.25rem;height:1.25rem" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.4"/><path d="M12 4.2v2.3M12 17.5v2.3M4.2 12h2.3M17.5 12h2.3"/></svg>'}</span>`;
 }
 /* ============ 路线对比与文献依据 ============
    原先这是一个独立的「前期研究」入口，带一个发射台和一个「开始调研」任务。
@@ -4792,7 +4775,7 @@ FLD.file=(c,f)=>f.v
        ${f.hint?`<span class="fbox-m">${esc(f.hint)}</span>`:''}</span></span>
      <button class="icx" type="button" data-kfx="${c.id}|${f.k}" aria-label="移掉 ${esc(f.v)}" title="移掉这个文件">
        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"
-         stroke="currentColor" stroke-width="2" stroke-linecap="round"
+         stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
          ><path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5"/></svg></button></div>`
   /* 拖拽区原来把 f.ph 整个当正文渲染。而数据集那个字段的 ph 是
      「一行一个样本：第一列 ID…」——那是**文件格式说明**，不是可供性。
@@ -4917,7 +4900,7 @@ CARD.hits=c=>`<div class="kard-h"><strong class="t-md">${esc(c.title)}</strong>
           <span class="t-xs mut2 num">${esc(h.acc||'')}</span></span>
         <span class="t-xs mut2 num">一致度 ${h.pct}% · 比对 ${h.aln} aa · ${esc(h.src)}</span></span>
       <svg class="krow-go" width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"
-        stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
+        stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"
         ><path d="M9 5.5 15.5 12 9 18.5"/></svg></div>`).join('')}
   </div>`;
 
@@ -5048,7 +5031,7 @@ const ABIL_IC={
  file:"M13 4.5H7A1.5 1.5 0 0 0 5.5 6v12A1.5 1.5 0 0 0 7 19.5h10a1.5 1.5 0 0 0 1.5-1.5V10zM13 4.5V10h5.5"};
 function abilIcon(a){return `<svg width="15" height="15" style="width:0.9375rem;height:0.9375rem"
   viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="${ABIL_IC[a.id]||ABIL_IC.file}"
-  stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>`}
+  stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`}
 
 /* 输入框。@ 已经去掉：靠记符号召唤工具，要先知道有哪些工具才用得上。
    改成一个下拉框，打开就是一张能力与工具的清单，选中挂成 chip。 */
@@ -5228,12 +5211,12 @@ function composer(){
         <input type="file" id="askfile" multiple style="display:none"
           accept=".csv,.tsv,.xlsx,.txt,.fasta,.fa,.pdb,.cif,.json,.pdf" aria-label="选择要上传的文件">
         <button class="ctl ctl-ic${land?' research-upload':''}" type="button" data-act="askfile" aria-label="上传文件" title="上传文件">
-          <svg width="15" height="15" style="width:0.9375rem;height:0.9375rem" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M18.4 11.3 12 17.7a4.1 4.1 0 0 1-5.8-5.8l7.1-7.1a2.7 2.7 0 1 1 3.9 3.9l-7.1 7.1a1.4 1.4 0 0 1-1.9-1.9l6.4-6.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <svg width="15" height="15" style="width:0.9375rem;height:0.9375rem" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M18.4 11.3 12 17.7a4.1 4.1 0 0 1-5.8-5.8l7.1-7.1a2.7 2.7 0 1 1 3.9 3.9l-7.1 7.1a1.4 1.4 0 0 1-1.9-1.9l6.4-6.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         ${research||ROUTE_HOME(S.route)==='project'?'':projBtn()}
         <span class="grow"></span>
         ${research?'<div class="research-send-controls">'+researchAgentTag():''}
         ${hsBtn()}${mdlBtn()}
-        <button class="ctl ctl-go" type="button" data-act="chatsend" aria-label="发送">${land||ROUTE_HOME(S.route)==='project'?'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V4m-7 7 7-7 7 7"/></svg>':'发送'}</button>
+        <button class="ctl ctl-go" type="button" data-act="chatsend" aria-label="发送">${land||ROUTE_HOME(S.route)==='project'?'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V4m-7 7 7-7 7 7"/></svg>':'发送'}</button>
         ${research?'</div>':''}
       </div>
     </div></div>${research?'<div class="research-project-outside">'+projBtn(true)+'</div></div>':''}`;
@@ -5253,7 +5236,7 @@ function toolMenu(btn){
     +`<button class="menu-i is-go" type="button" data-pick="__more"><span class="ck"></span>
       <span><span class="nm">更多工具</span><span class="sb">在对话里说「有哪些工具」</span></span>
       <span class="go-i"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"
-        ><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2"
+        ><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="1.6"
         stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>`;
   menu(btn,html,v=>{
     if(v==='__more'){S.ask='有哪些工具可以用';render();return}
@@ -5318,7 +5301,7 @@ function acts(list){
     +(a.off?' disabled title="'+esc(a.off)+'"':(a.tip?' title="'+esc(a.tip)+'"':''))
     +`>${esc(a.n)}</button>`).join('')}</div></td>`;
 }
-const DL_IC='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4.5v10M7.5 10.5 12 15l4.5-4.5M5 19.5h14"/></svg>';
+const DL_IC='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4.5v10M7.5 10.5 12 15l4.5-4.5M5 19.5h14"/></svg>';
 /* 有几个训练任务训在这份数据集上。删不删得掉就看它——
    原先一律写「已经有模型**可能**指向它」，可这件事是数得出来的，
    数得出来的事不该在界面上用「可能」。 */
@@ -5513,7 +5496,7 @@ V.labnew=()=>{
                <span class="fbox-n">${esc(E.file)}</span></span></span>
              <button class="icx" type="button" data-act="nxfilex" aria-label="移掉 ${esc(E.file)}" title="移掉这个文件">
        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"
-         stroke="currentColor" stroke-width="2" stroke-linecap="round"
+         stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
          ><path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5"/></svg></button></div>`
           : `<label class="drop">把配方文件拖到这里，或点击选择（.md / .txt / .csv / .json）
              <input type="file" hidden id="nxfile" accept=".json,.md,.txt,.csv"></label>`}
@@ -5566,7 +5549,7 @@ function labCard(b){
   return `<button class="scard is-click" type="button" data-labgo="${esc(b.id)}">
       <div class="scard-h">
         <span class="scard-ic${st.phase==='执行'?' is-wet':''}">${
-          '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 3.5v6L4.5 18a2 2 0 0 0 1.8 3h11.4a2 2 0 0 0 1.8-3l-5-8.5v-6M8 3.5h8M7.5 14h9"/></svg>'}</span>
+          '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 3.5v6L4.5 18a2 2 0 0 0 1.8 3h11.4a2 2 0 0 0 1.8-3l-5-8.5v-6M8 3.5h8M7.5 14h9"/></svg>'}</span>
         <span class="col grow" style="gap:1px;min-width:0">
           <strong class="scard-n">${esc(b.name||(pr.n+' · Round '+b.round))}</strong>
           <span class="scard-slug num">${esc(b.id)}　${esc(pnOf(b.pid))}</span></span>
@@ -5750,7 +5733,7 @@ V.dsets=()=>{
     <span class="grow"></span>
     <button class="hlp-t${open?' is-on':''}" type="button" data-act="dshelp" aria-expanded="${open}">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"
-        stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"
+        stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"
         ><path d="M6 9.5 12 15.5 18 9.5"/></svg>数据集构建流程</button>
     <button class="btn btn-pri" type="button" data-nav="dsnew">新建数据集</button>
     </div>
@@ -6046,7 +6029,7 @@ function mdlBar(tab){
       <button class="hlp-t${S.jobHelp?' is-on':''}" type="button" data-act="jobhelp"
         aria-expanded="${!!S.jobHelp}">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"
-          stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"
+          stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"
           ><path d="M6 9.5 12 15.5 18 9.5"/></svg>训练流程</button>`:''}
   </div>
   ${tab==='job'&&S.jobHelp?`<div class="hlp-b"><div class="dsteps">
@@ -6587,7 +6570,7 @@ V.dsnew=()=>{
               ${readMeta?`<span class="fbox-m">${esc(readMeta)}</span>`:''}</span></span>
             <button class="icx" type="button" data-act="dsclear" aria-label="移掉 ${esc(NEWDS.fileName)}" title="移掉这个文件">
        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"
-         stroke="currentColor" stroke-width="2" stroke-linecap="round"
+         stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
          ><path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5"/></svg></button></div>`
         : `<label class="drop">把 .csv / .tsv 拖到这里，或点击选择
             <input type="file" hidden id="dsfile" accept=".csv,.tsv,.txt"></label>`}
@@ -6818,7 +6801,7 @@ V.chats=()=>{
     <span class="chcard-at num">${esc(x.at||'')}</span>
     <button class="chcard-x" type="button" data-sdel="${esc(x.id)}" aria-label="删除对话：${esc(x.title)}">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"
-        stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
         <path d="M4.5 6.6h15M9.4 6.6V4.8a1.2 1.2 0 0 1 1.2-1.2h2.8a1.2 1.2 0 0 1 1.2 1.2v1.8"/>
         <path d="M6.6 6.6 7.5 19a1.6 1.6 0 0 0 1.6 1.5h5.8A1.6 1.6 0 0 0 16.5 19l.9-12.4"/>
         <path d="M10.4 10.4v6M13.6 10.4v6"/></svg></button>
@@ -6975,7 +6958,7 @@ function researchChatHome(){
  <div class="research-top"><strong>科研对话</strong><button class="btn outbar-hist" type="button" data-go="chats">历史对话</button></div>
  <div class="land">
  <h1 class="greet">今天，想探索什么科学问题？</h1>
- <div class="research-domains"><div class="research-domain-list" aria-label="研究领域">${RESEARCH_DOMAINS.map(([id,n,ic,prompt])=>`<button class="research-domain" type="button" data-research-agent="${id}" aria-pressed="${researchAgent()&&researchAgent()[0]===id?'true':'false'}">${researchIcon(ic)}<span>${n}</span></button>`).join('')}</div><button type="button" class="research-domain-next" aria-label="查看更多研究领域"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="m9 5 7 7-7 7"/></svg></button></div>
+ <div class="research-domains"><div class="research-domain-list" aria-label="研究领域">${RESEARCH_DOMAINS.map(([id,n,ic,prompt])=>`<button class="research-domain" type="button" data-research-agent="${id}" aria-pressed="${researchAgent()&&researchAgent()[0]===id?'true':'false'}">${researchIcon(ic)}<span>${n}</span></button>`).join('')}</div><button type="button" class="research-domain-next" aria-label="查看更多研究领域"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m9 5 7 7-7 7"/></svg></button></div>
  <div class="land-ask">${composer()}</div>
  <div class="qks">${researchPromptButtons()}</div>
  </div></div>`;
@@ -8103,17 +8086,17 @@ function outBar(inline){
       aria-expanded="${L.length&&S.outOpen?'true':'false'}"
       title="${L.length?'这段对话产出的文件':'这段对话还没有产出文件'}">
       <svg width="14" height="14" style="width:0.875rem;height:0.875rem" viewBox="0 0 24 24"
-        fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.7"
+        fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.6"
         stroke-linecap="round" stroke-linejoin="round">
         <path d="M13 4.5H7A1.5 1.5 0 0 0 5.5 6v12A1.5 1.5 0 0 0 7 19.5h10a1.5 1.5 0 0 0 1.5-1.5V10zM13 4.5V10h5.5"/></svg>
       <span class="outbar-t">产出文件</span><span class="num">${L.length}</span></button>
     ${inline?'':`<button class="btn outbar-hist" type="button" data-go="chats" title="历史对话">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor"
-        stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
+        stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"
         ><circle cx="12" cy="12" r="8"/><path d="M12 7.5V12l3 2"/></svg>历史对话</button>
     <button class="btn btn-pri outbar-new" type="button" data-act="newchat" title="开一段新对话，这一段会留在「最近对话」里">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"
-        stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg>科研对话</button>`}
+        stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg>科研对话</button>`}
     ${L.length&&S.outOpen?`<div class="outbar-p">
       <div class="outbar-h"><strong class="t-md">这段对话的产出</strong>
         <span class="grow"></span>
@@ -9730,8 +9713,8 @@ function fixPjSid(){
   const k=pjSid(p.id);
   if(S.sid!==k){S.sid=k;if(!CONV[k])CONV[k]=[]}
 }
-const ICON_TRAIN='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5h16M7.5 16v-5M12 16V6.5M16.5 16v-7.5"/></svg>';
-const ICON_FLASK='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 3.5v6L4.6 18a2 2 0 0 0 1.8 3h11.2a2 2 0 0 0 1.8-3l-4.9-8.5v-6M8 3.5h8M7.6 14.5h8.8"/></svg>';
+const ICON_TRAIN='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5h16M7.5 16v-5M12 16V6.5M16.5 16v-7.5"/></svg>';
+const ICON_FLASK='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 3.5v6L4.6 18a2 2 0 0 0 1.8 3h11.2a2 2 0 0 0 1.8-3l-4.9-8.5v-6M8 3.5h8M7.6 14.5h8.8"/></svg>';
 /* 项目里的「实验」页签：这个课题名下的两类任务，各一组卡片。
    模型训练在前——它决定下一批送谁去测；实验任务按「谁在等」排，等你的在最前。 */
 function pjExpTab(p){
@@ -9744,7 +9727,7 @@ function pjExpTab(p){
   const add=(act,label,attr)=>`<button class="pjx-add" type="button" ${attr}
     aria-label="${label}" title="${label}">
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"
-      stroke="currentColor" stroke-width="1.9" stroke-linecap="round"
+      stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
       ><path d="M12 6v12M6 12h12"/></svg></button>`;
   const mcard=m=>{
     const failed=m.st==='failed';
@@ -9801,7 +9784,7 @@ V.project=()=>{
   <div class="pjx-top">
     <button class="pjx-back" type="button" data-nav="projects" aria-label="返回项目管理">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"
-        stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"
+        stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"
         ><path d="M14.5 5.5 8 12l6.5 6.5"/></svg></button>
     <div class="col pjx-title" style="gap:4px;min-width:0">
       <div class="pjx-title-row"><strong class="pjx-n">${esc(p.name)}</strong>${rsProjectShared(p.id)?rsProjectSharedBadge():''}</div>
@@ -9815,7 +9798,7 @@ V.project=()=>{
     <button class="btn btn-pri pjx-new" type="button" data-act="pjnew"
       title="科研对话">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"
-        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"
         ><path d="M12 5.5v13M5.5 12h13"/></svg>科研对话</button>
     </div>
   </div>
@@ -9837,7 +9820,7 @@ V.project=()=>{
           accept=".pdf,.txt,.md,.csv,.xlsx,.docx,.fasta" aria-label="选择要上传的文献或数据">
         <button class="pjx-add" type="button" data-act="kbadd" aria-label="添加资料" title="添加资料">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"
-            stroke="currentColor" stroke-width="1.9" stroke-linecap="round"
+            stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
             ><path d="M12 6v12M6 12h12"/></svg></button></div>
       <div class="pjx-side-b">
         ${(F.length+up.length+DC.length)?`
@@ -9876,7 +9859,7 @@ V.project=()=>{
         <a class="pjx-add" href="#shelf" target="_blank" rel="noopener"
           aria-label="添加工具" title="添加工具：到「生命科学工具」里启用，新标签页打开">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"
-            stroke="currentColor" stroke-width="1.9" stroke-linecap="round"
+            stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
             ><path d="M12 6v12M6 12h12"/></svg></a></div>
       <div class="pjx-side-b">
         <span class="lbl" style="padding:var(--s2) 0 0">工具</span>
@@ -9909,7 +9892,7 @@ V.project=()=>{
           <span class="pjx-conv-n">${esc(pjConvTitle(p,L))}</span>
           <span class="t-xs mut2 num">${SESSIONS.filter(x=>x.pid===p.id).length+1} 段</span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"
             ><path d="M6.5 9.5 12 15l5.5-5.5"/></svg></button>
         <span class="grow"></span>
       </div>
@@ -10037,7 +10020,7 @@ function fileBox(o){
     aria-label="下载 ${esc(o.name)}" title="下载"
     ${typeof o.make==='function'?'':'disabled title="这一条只有登记，没有可下的内容"'}>
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"
-      stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
+      stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"
       ><path d="M12 4.5v11M7.5 11.5 12 16l4.5-4.5M5 19.5h14"/></svg></button>`;
   return `<div class="fbox${open?' is-open':''}${o.inline?' is-inline':''}">
     <button class="fbox-r" type="button" ${o.inline?'disabled tabindex="-1"':'data-fbox="'+esc(o.k)+'" aria-expanded="'+open+'"'}>
@@ -10046,7 +10029,7 @@ function fileBox(o){
         <span class="fbox-n">${esc(o.name)}</span>
         ${meta?`<span class="fbox-m">${esc(meta)}</span>`:''}</span>
       ${o.inline?'':`<svg class="fbox-cv" width="15" height="15" viewBox="0 0 24 24" fill="none"
-        aria-hidden="true" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"
+        aria-hidden="true" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
         stroke-linejoin="round"><path d="M6 9.5 12 15.5 18 9.5"/></svg>`}
     </button>
     ${o.inline?dlBtn('fbox-dl is-row'):''}
@@ -12893,7 +12876,7 @@ function seekRunning(){
   <section class="card"><div class="card-b col" style="gap:var(--s5)">
     <div class="stages">
       ${SK_STAGES.map((n,i)=>`<div class="stg ${i<SK.stage?'dn':i===SK.stage?'on':''}">
-        <i>${i<SK.stage?'<svg width="9" height="9" style="width:0.5625rem;height:0.5625rem" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7" stroke="var(--on-dry)" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}</i>
+        <i>${i<SK.stage?'<svg width="9" height="9" style="width:0.5625rem;height:0.5625rem" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7" stroke="var(--on-dry)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}</i>
         <span>${n}</span></div>`).join('')}
     </div>
     <div class="col" style="gap:var(--s2)">
@@ -13951,7 +13934,7 @@ function smRepaint(){
 }
 function modelMenu(anchor,list,cur,title,onPick){
   const ck='<svg width="13" height="13" style="width:.8125rem;height:.8125rem" viewBox="0 0 24 24" fill="none">'
-    +'<path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.2" '
+    +'<path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" stroke-width="1.6" '
     +'stroke-linecap="round" stroke-linejoin="round"/></svg>';
   const html=`<div class="menu-l">${esc(title||'用哪个模型跑')}</div>`
     +(list.length?list.map(t=>`<button class="menu-i" type="button" data-pick="${esc(t.n)}"
@@ -13967,7 +13950,7 @@ function modelMenu(anchor,list,cur,title,onPick){
       <span><span class="nm">启用更多工具</span>
       <span class="sb">去工具目录，改的是注册表不是这一次</span></span>
       <span class="go-i"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"
-        ><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2"
+        ><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="1.6"
         stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>`;
   menu(anchor,html,v=>{if(v==='__shelf'){go('shelf');return}onPick(v)});
 }
@@ -14408,7 +14391,7 @@ const FEXT_K={fasta:'seq',a3m:'seq',fa:'seq',cif:'str',pdb:'str',csv:'tab',tsv:'
 function fileIc(ext){
   const d=FICO[FEXT_K[ext]||'doc'];
   return `<span class="fico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-    aria-hidden="true" stroke="currentColor" stroke-width="1.5"
+    aria-hidden="true" stroke="currentColor" stroke-width="1.6"
     stroke-linecap="round" stroke-linejoin="round">${d}</svg></span>`;
 }
 /* ---- 知识库文件预览 ----
@@ -15693,12 +15676,12 @@ function infHead(c,i,n){
       title="生成参数${(c.sys||c.par)?'（这一列改过）':''}"
       ${(c.sys||c.par)?'data-on="1"':''}>
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"
-        stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+        stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
         <path d="M4 7.5h7M15 7.5h5M4 16.5h5M13 16.5h7M13 4.5v6M9 13.5v6"/></svg></button>
     ${n>1?`<button class="icx" type="button" data-infdel="${esc(c.k)}"
       aria-label="移除第 ${i+1} 列" title="移除这一列">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"
-        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+        stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
         ><path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5"/></svg></button>`:''}
   </div>`;
 }
@@ -15722,7 +15705,7 @@ function inferHd(){
     <button class="btn btn-ic" type="button" data-act="infhist" aria-label="历史会话"
       title="历史会话${infHist().length?'（'+infHist().length+' 段）':''}">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor"
-        stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
+        stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"
         ><circle cx="12" cy="12" r="8"/><path d="M12 7.5V12l3 2"/></svg></button>`;
 }
 /* ---- 历史会话（bootcamp 3.9.4）----
@@ -15771,7 +15754,7 @@ function inferBody(){
       ?x.turns.map((q,t)=>`<div class="inf-q">${esc(q)}</div>${infCell(c,t)}`).join('')
       :`<div class="inf-wait">
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor"
-            stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"
+            stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"
             ><path d="M4.5 6.5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H11l-4 3.2V16.5h-.5a2 2 0 0 1-2-2zM8.5 9h7M8.5 12h4.5"/></svg>
           <span>等待输入</span></div>`}</div>
   </section>`;
@@ -15786,7 +15769,7 @@ function inferBody(){
       cols.length>=INF_MAX?' disabled title="最多并排 '+INF_MAX+' 列"'
       :(ps.length<2?' disabled title="只接到一个模型，先去「模型接入」再接一家"':'')}>
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"
-        stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg>添加模型</button>`:''}
+        stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg>添加模型</button>`:''}
   </div>
 
   <div class="inf-g" style="grid-template-columns:repeat(${cols.length},minmax(0,1fr))">
@@ -16301,7 +16284,7 @@ V.bnew=()=>{
               <button class="btn" type="button" data-act="bpickm">重新选择</button></div>`})()
           :`<button class="pick-add" type="button" data-act="bpickm">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg>添加模型</button>`}
+                stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg>添加模型</button>`}
         <span class="t-xs mut2">从已接入的模型中选择。
           <button class="lnk" type="button" data-go="set">新增模型</button></span>
       </div>
@@ -16320,7 +16303,7 @@ V.bnew=()=>{
               <button class="btn" type="button" data-act="bpickd">重新选择</button></div>`
           :`<button class="pick-add" type="button" data-act="bpickd">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg>选择数据集</button>`}
+                stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg>选择数据集</button>`}
         <span class="t-xs mut2">仅可选择已发布的数据集。<button class="lnk" type="button" data-go="dsets">去上传</button></span>
       </div>
       ${d?`<div class="field" style="max-width:34rem">
@@ -16777,7 +16760,7 @@ function render(){
          而且方向直接说明点下去往哪边动。 */
       const d=S.collapsed?'M9 7l5 5-5 5M14.5 7l5 5-5 5'   /* 展开：指向外 */
                          :'M15 7l-5 5 5 5M9.5 7l-5 5 5 5'; /* 折叠：指向内 */
-      b.innerHTML=`<svg width="14" height="14" style="width:0.875rem;height:0.875rem" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="${d}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+      b.innerHTML=`<svg width="14" height="14" style="width:0.875rem;height:0.875rem" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="${d}" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
       const t=S.collapsed?'展开侧栏':'折叠侧栏';b.setAttribute('aria-label',t);b.title=t;
       b.setAttribute('aria-expanded',String(!S.collapsed));
     }
@@ -19739,7 +19722,7 @@ function wbViewIcon(k){
     paper:'M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6zM14 3v6h6M8 13h8M8 17h6',
     empty:'M6 4h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM8 9h8M8 13h5',
     settings:'M4 7h16M4 17h16M9 4v6M15 14v6'};
-  return '<svg class="wb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+(paths[k]||paths.spark)+'"/></svg>';
+  return '<svg class="wb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+(paths[k]||paths.spark)+'"/></svg>';
 }
 function wbViewNote(text){
   return '<p class="wb-note" title="'+esc(text||'')+'">'+wbViewIcon('spark')+'<span><span class="wb-note-name">端砚观察</span>'+esc(text||'')+'</span></p>';
@@ -20118,7 +20101,7 @@ const rsActorName=s=>s?.members.find(m=>m.id===RS.actor)?.name||'ZHANG';
 function rsProject(id){return DB.projects.find(p=>p.id===id);}
 function rsShared(){return RS.data.shared.find(p=>p.id===RS.sharedPick);}
 function rsProjectShared(pid){return RS.data.shared.find(s=>s.projectId===pid);}
-function rsCopyIcon(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></svg>';}
+function rsCopyIcon(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></svg>';}
 function rsProjectCopyError(p){
  if(!RS.ready)return '正在读取本机项目';if(RS.error)return RS.error;if(!can('edit'))return '当前身份没有创建权限';if(!p)return '找不到来源项目';
  if((p.ownerId||'me')!=='me')return '仅项目所有者可以复制整个项目';const shared=rsProjectShared(p.id);if(shared&&shared.owner!=='me')return '仅共享项目所有者可以复制整个项目，请通过资产申请获取所需内容';return '';
@@ -20146,7 +20129,7 @@ function rsCopyProjectDialog(pid){
  return rsModalSave(async()=>{const copied=await rsCopyProject(pid,options);S.pid=copied.id;S.round=1;S.bind=copied.id;S.pq='';go('project');toast('已创建独立副本「'+copied.name+'」');});
  });const dialog=document.getElementById('dlg');dialog.classList.add('rs-copy-dialog');dialog.addEventListener('close',()=>dialog.classList.remove('rs-copy-dialog'),{once:true});const input=document.getElementById('rs-copy-name');input.addEventListener('input',()=>{document.getElementById('rs-copy-name-error').textContent='';input.removeAttribute('aria-invalid');});
 }
-function rsSharingIcon(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M22 21v-2a4 4 0 0 0-3-3.87M15 3.13a4 4 0 0 1 0 7.75"/><circle cx="9" cy="7" r="4"/></svg>';}
+function rsSharingIcon(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M22 21v-2a4 4 0 0 0-3-3.87M15 3.13a4 4 0 0 1 0 7.75"/><circle cx="9" cy="7" r="4"/></svg>';}
 function rsProjectSharedBadge(){return '<span class="project-shared-badge" data-project-shared>'+rsSharingIcon()+'共享项目</span>';}
 function rsProjectShareAction(p){
  const shared=rsProjectShared(p.id),active=shared?.members.some(m=>m.id==='me'&&m.status==='active');

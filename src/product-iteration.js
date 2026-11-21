@@ -1,7 +1,4 @@
-/* 课题标识：从课题 id 稳定取一个色位，从课题名取首字做标记。
-   色位只是展示用的分组，不代表任何业务含义；同一个课题每次渲染必须是同一个色，
-   所以用 id 的字符和取模，不用随机数、不用数组下标（翻页后下标会变）。 */
-function wbProjectHue(id){let n=0;for(let i=0;i<id.length;i++)n=(n*31+id.charCodeAt(i))>>>0;return n%5}
+/* 课题标识：所有课题用同一个干色标记，身份靠名字，不靠颜色。 */
 function wbProjectMark(p){
   /* 标记里放的是「课题」这个图标，不是课题名的首字：两个课题都叫 Barstar 开头时，
      首字只会让两张卡看起来一样。身份交给颜色，图标只说这是一个课题。 */
@@ -91,7 +88,7 @@ V.workbench=()=>{
  const date=new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'long',timeZone:'Asia/Shanghai'});
  return '<div class="page wb"><header class="wb-header"><div class="wb-header-copy"><span class="wb-kicker">工作台</span><h1>'+wbViewGreeting()+'，ZHANG</h1></div><span class="wb-date">'+esc(date)+'</span></header><div class="wb-layout">'+
  '<section class="wb-panel wb-tasks" aria-labelledby="wb-tasks-title" aria-roledescription="轮播"><div class="wb-panel-heading"><h2 id="wb-tasks-title">课题进展</h2>'+iterationProjectControls(window,ps.length)+'</div>'+
- (window.items.length?'<div class="wb-project-grid" style="--wb-project-slots:'+window.slots+'">'+window.items.map(p=>{const scope=workbenchData({pid:p.id});return '<article class="wb-project-card" data-wb-hue="'+wbProjectHue(p.id)+'" data-wb-project-id="'+esc(p.id)+'" aria-label="课题：'+esc(p.name)+'"><header class="wb-project-card-head">'+wbProjectMark(p)+'<h3><button class="wb-project-title" type="button" data-wb-project="'+esc(p.id)+'" title="'+esc(p.name)+'" aria-label="进入课题：'+esc(p.name)+'"><span>'+esc(p.name)+'</span>'+wbViewIcon('arrow')+'</button></h3></header>'+iterationTaskSection('experiment',scope.experiments||[],p.id)+iterationTaskSection('model',scope.modelTasks||[],p.id)+'</article>'}).join('')+'</div>':'<div class="wb-empty"><strong>还没有课题</strong><button class="btn btn-pri wb-button wb-button-primary" type="button" data-wb-create-project>新建项目</button></div>')+'</section>'+
+ (window.items.length?'<div class="wb-project-grid" style="--wb-project-slots:'+window.slots+'">'+window.items.map(p=>{const scope=workbenchData({pid:p.id});return '<article class="wb-project-card" data-wb-project-id="'+esc(p.id)+'" aria-label="课题：'+esc(p.name)+'"><header class="wb-project-card-head">'+wbProjectMark(p)+'<h3><button class="wb-project-title" type="button" data-wb-project="'+esc(p.id)+'" title="'+esc(p.name)+'" aria-label="进入课题：'+esc(p.name)+'"><span>'+esc(p.name)+'</span>'+wbViewIcon('arrow')+'</button></h3></header>'+iterationTaskSection('experiment',scope.experiments||[],p.id)+iterationTaskSection('model',scope.modelTasks||[],p.id)+'</article>'}).join('')+'</div>':'<div class="wb-empty"><strong>还没有课题</strong><button class="btn btn-pri wb-button wb-button-primary" type="button" data-wb-create-project>新建项目</button></div>')+'</section>'+
  '<section class="wb-panel wb-news" aria-labelledby="wb-news-title" aria-roledescription="轮播"><div class="wb-panel-heading"><div class="wb-panel-label">'+wbViewIcon('paper')+'<h2 id="wb-news-title">学术资讯</h2></div>'+iterationControls('news',ni,ps.length)+'</div>'+
  (np?'<div class="wb-news-context"><span title="'+esc(np.name)+'">'+esc(np.name)+'</span></div>':'')+
  (papers.length?'<ul class="wb-papers">'+papers.slice(0,1).map(wbViewPaper).join('')+'</ul>':'<div class="wb-empty wb-empty-news" role="status"><strong>'+(newsState==='loading'?'正在查找相关论文':newsState==='error'?'暂时无法获取论文':'暂无匹配论文')+'</strong><p>'+(newsState==='error'?'稍后重新进入工作台可重试。':'')+'</p></div>')+
@@ -433,7 +430,7 @@ function iterationMountDrawer(title,body,footer,state={}){
  const previous=RS.drawer,scroll=document.querySelector('.asset-drawer-body')?.scrollTop||0;
  document.querySelector('.asset-drawer')?.remove();
  const panel=document.createElement('section');panel.className='asset-drawer';panel.setAttribute('role','dialog');panel.setAttribute('aria-modal','false');panel.setAttribute('aria-labelledby','asset-drawer-title');
- panel.innerHTML='<header class="asset-drawer-head"><div><h2 id="asset-drawer-title" tabindex="-1">'+esc(title)+'</h2></div><button class="asset-drawer-close icb" type="button" aria-label="关闭详情"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5"/></svg></button></header><div class="asset-drawer-body">'+body+'</div>'+(footer?'<footer class="asset-drawer-footer">'+footer+'</footer>':'');
+ panel.innerHTML='<header class="asset-drawer-head"><div><h2 id="asset-drawer-title" tabindex="-1">'+esc(title)+'</h2></div><button class="asset-drawer-close icb" type="button" aria-label="关闭详情"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5"/></svg></button></header><div class="asset-drawer-body">'+body+'</div>'+(footer?'<footer class="asset-drawer-footer">'+footer+'</footer>':'');
  document.body.append(panel);RS.drawer={...state,trigger:state.trigger||previous?.trigger};panel.querySelector('.asset-drawer-close').onclick=()=>iterationCloseDrawer();
  iterationBindAcquisitions(panel);
  if(previous?.kind===state.kind&&previous?.assetId===state.assetId)panel.querySelector('.asset-drawer-body').scrollTop=scroll;else panel.querySelector('#asset-drawer-title').focus({preventScroll:true});
