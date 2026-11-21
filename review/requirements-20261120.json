@@ -427,7 +427,7 @@
     {
       "id": "R64",
       "area": "实验管理",
-      "title": "课题选择器与状态筛选统一高度、圆角、字号和垂直位置",
+      "title": "课题选择器与状态筛选同高对齐，分类筛选采用胶囊样式",
       "suite": "project-fixtures",
       "pattern": "filter controls share height"
     },
