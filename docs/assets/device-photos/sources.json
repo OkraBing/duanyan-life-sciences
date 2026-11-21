@@ -1,0 +1,110 @@
+[
+  {
+    "id": "flex",
+    "file": "opentrons-flex.png",
+    "alt": "Opentrons Flex NGS 工作站配置产品图",
+    "credit": "Opentrons",
+    "sourcePage": "https://opentrons.com/robots/flex",
+    "sourceImage": "https://opentrons.com/wp-content/uploads/2023/05/NGSWORKSTATION.png",
+    "note": "官网展示的 NGS 工作站配置，包含配套模块及耗材。"
+  },
+  {
+    "id": "star",
+    "file": "microlab-star.jpg",
+    "alt": "Hamilton Microlab STAR 产品图",
+    "credit": "Hamilton",
+    "sourcePage": "https://www.hamiltoncompany.com/Microlab-STAR",
+    "sourceImage": "https://7157e75ac0509b6a8f5c-5b19c577d01b9ccfe75d2f9e4b17ab55.ssl.cf1.rackcdn.com/LVFBBGIS-PDF-2-495794-4468539568.pdf",
+    "note": "Hamilton B-2201-01 STAR brochure，PDF 第 3 页（印刷页码 4）左侧 STAR 产品图；Poppler 正常色彩渲染后裁出，不使用右侧 STARlet 图。"
+  },
+  {
+    "id": "innova",
+    "file": "innova-44-44r.jpg",
+    "alt": "Eppendorf Innova 44/44R 系列产品图",
+    "credit": "Eppendorf",
+    "sourcePage": "https://www.eppendorf.com/us-en/Products/Lab-Shakers/Incubator-Shakers/New-Brunswick-Innova-44-44R-p-PF-11020",
+    "sourceImage": "https://www.eppendorf.com/product-media/img/global/246064/New-Brunswick_Shakers_Innova-44_product.jpg?imwidth=540",
+    "note": "官网 Innova 44/44R 系列页面的通用外观图，机身标识 Innova 44。"
+  },
+  {
+    "id": "q700",
+    "file": "q700.png",
+    "alt": "Qsonica Q700 超声波破碎仪及探头支架产品图",
+    "credit": "Qsonica",
+    "sourcePage": "https://www.sonicator.com/products/q700-sonicator",
+    "sourceImage": "https://cdn.shopify.com/s/files/1/1726/3473/products/q700-with-stand_grande.png?v=1496243695",
+    "note": "包含配套探头支架。"
+  },
+  {
+    "id": "5810r",
+    "file": "centrifuge-5810r.jpg",
+    "alt": "Eppendorf Centrifuge 5810 R 产品图",
+    "credit": "Eppendorf",
+    "sourcePage": "https://www.eppendorf.com/ph-en/Products/Centrifugation/Multipurpose-Centrifuges/Centrifuge-5810-5810R-p-PF-240994",
+    "sourceImage": "https://www.eppendorf.com/product-media/img/global/127768/Eppendorf_Centrifugation_Centrifuge-5810-5810-R_product.jpg?imwidth=920",
+    "note": "裁取官网双机图右侧、机身标注 Centrifuge 5810 R 的设备，保留整机。"
+  },
+  {
+    "id": "akta25",
+    "file": "akta-pure.png",
+    "alt": "Cytiva ÄKTA pure 系列产品图",
+    "credit": "Cytiva Korea",
+    "sourcePage": "https://www.cytivalifesciences.co.kr/model/akta-pure/",
+    "sourceImage": "https://www.cytivalifesciences.co.kr/wp-content/uploads/akta-pure-3-400x284-1-Photoroom.png",
+    "note": "ÄKTA pure 系列通用外观图，25 和 150 卡片共用；不表示两者配置或流量相同。"
+  },
+  {
+    "id": "akta150",
+    "file": "akta-pure.png",
+    "alt": "Cytiva ÄKTA pure 系列产品图",
+    "credit": "Cytiva Korea",
+    "sourcePage": "https://www.cytivalifesciences.co.kr/model/akta-pure/",
+    "sourceImage": "https://www.cytivalifesciences.co.kr/wp-content/uploads/akta-pure-3-400x284-1-Photoroom.png",
+    "note": "与 pure 25 共用厂商系列外观图。"
+  },
+  {
+    "id": "nanodrop",
+    "file": "nanodrop-one.jpg",
+    "alt": "Thermo Scientific NanoDrop One 产品图",
+    "credit": "Thermo Fisher Scientific",
+    "sourcePage": "https://www.thermofisher.com/order/catalog/product/ND-ONE-W",
+    "sourceImage": "https://assets.thermofisher.com/TFS-Assets/CAD/product-images/NanoDrop-One-no-bkgd.jpg-650.jpg",
+    "note": ""
+  },
+  {
+    "id": "octet",
+    "file": "octet-r8.jpg",
+    "alt": "Sartorius Octet R8 设备实拍图",
+    "credit": "大连理工大学生物工程学院 生物分析测试中心",
+    "sourcePage": "https://biotech.dlut.edu.cn/info/1408/5156.htm",
+    "sourceImage": "https://biotech.dlut.edu.cn/virtual_attach_file.vsb?afc=ILz75YL4Q2oR-DLCmU4MRr2MzvDL8UQ8MzvYMmvaUmf2MRv0gihFp2hmCIa0U1h7LkyZLkhRMRCDnmGsU8LYLzlYoz6knRWkMNMVMzNZnNVFUmf2nl-DL7rFU8MkU1baptveo4OeCtT062rmqkhXptQ0g478LR90Mz7iM1bw62q8c&oid=1637917895&tid=1408&nid=5156&e=.png",
+    "note": "设备页面明确标注型号 Octet R8、厂家 Sartorius；实拍图保留实验室背景。"
+  },
+  {
+    "id": "biacore",
+    "file": "biacore-8k.png",
+    "alt": "Cytiva Biacore 8K 产品图",
+    "credit": "Cytiva Korea",
+    "sourcePage": "https://www.cytivalifesciences.co.kr/model/biacore-8k/",
+    "sourceImage": "https://www.cytivalifesciences.co.kr/wp-content/uploads/Biacore-8K_-1-e1614835318826.png",
+    "note": ""
+  },
+  {
+    "id": "panta",
+    "file": "prometheus-panta.png",
+    "alt": "NanoTemper Prometheus Panta 产品图",
+    "credit": "NanoTemper",
+    "sourcePage": "https://nanotempertech.com/prometheus-panta/",
+    "sourceImage": "https://nanotempertech.com/wp-content/uploads/2026/06/Prometheus-Panta-Image-Product-scaled-1.webp",
+    "note": "从官网原图裁去左右空白及装饰线，保留完整机身；未改变设备结构或颜色。"
+  },
+  {
+    "id": "synergy",
+    "file": "synergy-h1.jpg",
+    "alt": "Agilent BioTek Synergy H1 产品图",
+    "credit": "Agilent",
+    "sourcePage": "https://www.agilent.com/en/product/microplate-instrumentation/microplate-readers/multimode-microplate-readers/biotek-synergy-h1-multimode-reader-1623193",
+    "sourceImage": "https://www.agilent.com/cs/publishingimages/Synergy-H1-Center-Standard-Angle-agilent-320x320.jpg",
+    "note": ""
+  }
+]

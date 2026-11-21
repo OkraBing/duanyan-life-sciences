@@ -2783,6 +2783,15 @@ dialog.rs-copy-dialog{width:min(600px,calc(100vw - 32px));max-width:600px;overfl
 @media(max-height:560px){.wb .wb-layout{grid-template-rows:235px auto}.wb .wb-news{min-height:180px}}
 @media(max-height:560px) and (max-width:600px){.wb .wb-layout{grid-template-rows:235px 150px auto}.wb .wb-news{min-height:150px}}
 
+/* Product photographs keep their native colors and complete silhouettes in both themes. */
+.device-art:has(.device-photo){background:#fff;padding:8px;overflow:hidden;box-sizing:border-box}
+.device-art .device-photo{display:block;width:100%;height:100%;min-width:0;min-height:0;object-fit:contain;object-position:center;filter:none;border-radius:3px}
+.device-capability .device-art:has(.device-photo){width:190px;height:160px;flex-basis:190px;padding:10px}
+@media(max-width:600px){.device-capability{gap:16px;align-items:flex-start}.device-capability .device-art:has(.device-photo){width:120px;height:120px;flex-basis:120px;padding:6px}}
+/* Keep card actions out of the text flow even when shared button styles are applied. */
+.device-card>.device-connect{position:absolute}
+@media(max-width:1100px){.device-card .device-copy h2{padding-top:40px}}
+
 /* Unified product typography, surfaces and interaction feedback — 20-round review. */
 :root{--page-title-size:28px;--meta-size:12px;--attention-ink:var(--ink-3);--attention-soft:var(--surface-2)}
 .iteration-head h1,.rs .rs-head h1,.shared-detail .iteration-head h1{font-size:var(--page-title-size);line-height:1.3;letter-spacing:-.025em}
@@ -20397,6 +20406,58 @@ const rsBindShared=rsBind;rsBind=function(root){rsBindShared(root);root.querySel
 };
 
 
+/* Real equipment photography; source and attribution ledger: assets/device-photos/CREDITS.md. */
+const DEVICE_PHOTOS={
+  "flex": {
+    "src": "assets/device-photos/opentrons-flex.png",
+    "alt": "Opentrons Flex NGS 工作站配置产品图"
+  },
+  "star": {
+    "src": "assets/device-photos/microlab-star.jpg",
+    "alt": "Hamilton Microlab STAR 产品图"
+  },
+  "innova": {
+    "src": "assets/device-photos/innova-44-44r.jpg",
+    "alt": "Eppendorf Innova 44/44R 系列产品图"
+  },
+  "q700": {
+    "src": "assets/device-photos/q700.png",
+    "alt": "Qsonica Q700 超声波破碎仪及探头支架产品图"
+  },
+  "5810r": {
+    "src": "assets/device-photos/centrifuge-5810r.jpg",
+    "alt": "Eppendorf Centrifuge 5810 R 产品图"
+  },
+  "akta25": {
+    "src": "assets/device-photos/akta-pure.png",
+    "alt": "Cytiva ÄKTA pure 系列产品图"
+  },
+  "akta150": {
+    "src": "assets/device-photos/akta-pure.png",
+    "alt": "Cytiva ÄKTA pure 系列产品图"
+  },
+  "nanodrop": {
+    "src": "assets/device-photos/nanodrop-one.jpg",
+    "alt": "Thermo Scientific NanoDrop One 产品图"
+  },
+  "octet": {
+    "src": "assets/device-photos/octet-r8.jpg",
+    "alt": "Sartorius Octet R8 设备实拍图"
+  },
+  "biacore": {
+    "src": "assets/device-photos/biacore-8k.png",
+    "alt": "Cytiva Biacore 8K 产品图"
+  },
+  "panta": {
+    "src": "assets/device-photos/prometheus-panta.png",
+    "alt": "NanoTemper Prometheus Panta 产品图"
+  },
+  "synergy": {
+    "src": "assets/device-photos/synergy-h1.jpg",
+    "alt": "Agilent BioTek Synergy H1 产品图"
+  }
+};
+
 /* Approved product iteration. No device execution, model calls or external writes. */
 WB.progressAuto=WB.auto=WB.newsAuto=false;
 WB.pagesByProject={};
@@ -20534,6 +20595,8 @@ function iterationConnectionTag(id){
  return state==='available'?'<button class="btn device-connect" type="button" data-device-apply="'+esc(id)+'" '+(!can('edit')?'disabled':'')+'>申请接入</button>':'<span class="device-connect device-state '+state+'">'+(state==='pending'?'申请中':'已接入')+'</span>';
 }
 function iterationEquipmentArt(d){
+ const photo=DEVICE_PHOTOS[d.id];
+ if(photo)return '<img class="device-photo" src="'+esc(photo.src)+'" alt="'+esc(photo.alt)+'" loading="lazy" decoding="async" width="160" height="150">';
  const tube='<path d="M33 15h22v8l-3 3v32c0 15-16 15-16 0V26l-3-3zM36 41h16"/>';
  const chassis='<path d="M14 20h59v62H14zM14 39h59M20 26h12M58 27h9M20 72h47M22 82v5M65 82v5"/><path d="M24 45h39v22H24z"/>';
  const shaker='<path d="M12 24h64v58H12zM17 30h54v34H17zM18 72h17M61 72h8M24 51l6-16 6 16zM44 51l6-16 6 16zM18 82v4M68 82v4"/>';
