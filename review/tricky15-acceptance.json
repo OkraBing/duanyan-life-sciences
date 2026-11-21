@@ -1,0 +1,149 @@
+{
+  "generatedAt": "2026-11-21T01:44:24.552Z",
+  "buildSha256": "d1e31e3d2dcf22ab4b3b073241f100e56191ff2221230d0910444513fd49f857",
+  "browser": "153.0.8010.12",
+  "rounds": 15,
+  "passedRounds": 15,
+  "cases": 52,
+  "requirements": {
+    "requirements": 70,
+    "passed": 70,
+    "failed": 0,
+    "integrationGroups": 142,
+    "extendedScripts": 0,
+    "failedScripts": []
+  },
+  "coverage": {
+    "eligible": 292,
+    "clicked": 292,
+    "uncovered": 0,
+    "disabledOnly": 3
+  },
+  "runtimeErrors": 0,
+  "approvalBoundary": "仅审查和修复当前已实现功能。LabOS 六项业务调整仍待用户确认，本轮不实施，不计作已完成功能。",
+  "pendingChanges": [
+    "设备型号、实例和运行状态分离",
+    "按能力配置操作节点",
+    "实验方案与每次运行分离",
+    "样品、转运与资源依赖",
+    "异常、取消与恢复机制",
+    "执行结果回流和项目资产关联"
+  ],
+  "findings": [
+    {
+      "id": "T15-F01",
+      "issue": "已缓存的旧版页面会覆盖新版工作台的已读记录。此前同版本标签页的修复无法约束仍在运行的旧代码。",
+      "change": "新版使用独立版本的已读存储，并一次性迁移旧版字符串或版本列表。旧页面后续写入不会再修改新版记录；同版本标签页继续同步。",
+      "evidence": "work/qa/tricky15-upgrade-before.log 保存失败；workbench-upgrade.cjs 使用实际已发布的 2da26a8 HTML 与当前页面在同源上下文中复现并验收。"
+    }
+  ],
+  "command": "npm run test:tricky15",
+  "legacyHtmlCommit": "2da26a893588cbe9d4f1311bb50dd0a360d73086",
+  "roundResults": [
+    {
+      "round": 1,
+      "name": "中文标题、圆角与主操作",
+      "status": "passed",
+      "cases": 2,
+      "ms": 1389
+    },
+    {
+      "round": 2,
+      "name": "内容基线、页面密度与项目卡片",
+      "status": "passed",
+      "cases": 4,
+      "ms": 1961
+    },
+    {
+      "round": 3,
+      "name": "简约配色、主题与状态可读性",
+      "status": "passed",
+      "cases": 3,
+      "ms": 6471
+    },
+    {
+      "round": 4,
+      "name": "文案减法与资源表单结构",
+      "status": "passed",
+      "cases": 2,
+      "ms": 1015
+    },
+    {
+      "round": 5,
+      "name": "键盘、菜单与错误定位",
+      "status": "passed",
+      "cases": 4,
+      "ms": 1267
+    },
+    {
+      "round": 6,
+      "name": "响应式、短屏与字体放大",
+      "status": "passed",
+      "cases": 2,
+      "ms": 3843
+    },
+    {
+      "round": 7,
+      "name": "工作台入口、已读与版本升级",
+      "status": "passed",
+      "cases": 6,
+      "ms": 11499
+    },
+    {
+      "round": 8,
+      "name": "设备目录、详情与接入申请",
+      "status": "passed",
+      "cases": 5,
+      "ms": 5253
+    },
+    {
+      "round": 9,
+      "name": "实验编排、并行与左右导航",
+      "status": "passed",
+      "cases": 2,
+      "ms": 11424
+    },
+    {
+      "round": 10,
+      "name": "实验异常、重试、结论与导出",
+      "status": "passed",
+      "cases": 3,
+      "ms": 13340
+    },
+    {
+      "round": 11,
+      "name": "共享资产分类与类型化详情",
+      "status": "passed",
+      "cases": 2,
+      "ms": 4167
+    },
+    {
+      "round": 12,
+      "name": "分支工作流、缩放与详情抽屉",
+      "status": "passed",
+      "cases": 2,
+      "ms": 8874
+    },
+    {
+      "round": 13,
+      "name": "成员权限与双向获取申请",
+      "status": "passed",
+      "cases": 6,
+      "ms": 16949
+    },
+    {
+      "round": 14,
+      "name": "项目副本、分享与资源版本",
+      "status": "passed",
+      "cases": 6,
+      "ms": 19076
+    },
+    {
+      "round": 15,
+      "name": "逐项需求、控件覆盖与确认边界",
+      "status": "passed",
+      "cases": 3,
+      "ms": 52325
+    }
+  ]
+}

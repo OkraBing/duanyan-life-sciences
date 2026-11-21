@@ -135,5 +135,5 @@ const url=process.env.DUANYAN_TEST_URL||'file://'+path.resolve(process.argv[2]||
   await tab.evaluate(key=>workbenchOpenTask(key),task.key);await home();assert.equal(await has(task.key),false);
   await tab.close();
  });
- assert.deepEqual(errors,[]);await browser.close();console.log('Workbench attention: '+checks.length+' groups passed.');
+ assert.deepEqual(errors,[]);await browser.close();const upgrade=await require('./workbench-upgrade.cjs').run();console.log('Workbench attention: '+(checks.length+upgrade.length)+' groups passed.');
 })().catch(e=>{console.error(e);process.exit(1)});

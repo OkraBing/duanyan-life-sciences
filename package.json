@@ -20,7 +20,9 @@
     "test:components": "node build.mjs && node review/interaction-components.cjs",
     "test:visual-style": "node build.mjs && node review/visual-style.cjs",
     "test:attention": "node build.mjs && node review/workbench-attention.cjs",
-    "test:tricky10": "node build.mjs && node review/tricky10.cjs"
+    "test:tricky10": "node build.mjs && node review/tricky10.cjs",
+    "test:tricky15": "node build.mjs && node review/tricky15.cjs",
+    "test:upgrade": "node build.mjs && node review/workbench-upgrade.cjs"
   },
   "devDependencies": {
     "playwright": "1.49.1"

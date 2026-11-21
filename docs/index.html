@@ -20967,10 +20967,17 @@ bRun=async function(id){
    Read receipts apply to one result version in this browser, never to task status. */
 const WB_TASK_OBSERVATIONS=new Map();
 function wbReadReceipts(){
- const saved=LS.get('wb_result_reads_v1',{});
- return saved&&typeof saved==='object'&&!Array.isArray(saved)?saved:{};
+ const saved=LS.get('wb_result_reads_v2',null);
+ const object=value=>value&&typeof value==='object'&&!Array.isArray(value);
+ if(saved!==null)return saved?.schema===2&&object(saved.byTask)?saved.byTask:{};
+ // Migrate once. Cached older HTML may continue writing v1; it cannot replace
+ // the current version's receipts after the two formats have been separated.
+ const legacy=LS.get('wb_result_reads_v1',{}),byTask={};
+ if(object(legacy))Object.entries(legacy).forEach(([key,value])=>{const versions=wbReadVersions(value);if(versions.length)byTask[key]=versions;});
+ wbSaveReadReceipts(byTask);return byTask;
 }
 function wbReadVersions(value){return Array.isArray(value)?value.filter(v=>typeof v==='string'):typeof value==='string'?[value]:[];}
+function wbSaveReadReceipts(byTask){LS.set('wb_result_reads_v2',{schema:2,byTask});}
 function wbResultVersion(task){
  if(task.status!=='done')return '';
  let result;
@@ -21033,12 +21040,12 @@ function wbRecordVisibleResults(root){
   }
   WB_TASK_OBSERVATIONS.set(t.key,{status:t.status,version});
  });
- if(changed)LS.set('wb_result_reads_v1',receipts);
+ if(changed)wbSaveReadReceipts(receipts);
 }
 const wbRenderWithAttention=render;
 render=function(){const result=wbRenderWithAttention();wbRecordVisibleResults(view);return result;};
 window.addEventListener('storage',event=>{
- if(event.key==='dy_wb_result_reads_v1'&&S.route==='workbench')render();
+ if((event.key==='dy_wb_result_reads_v2'||event.key===null)&&S.route==='workbench')render();
 });
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)wbRecordVisibleResults(view);});
 

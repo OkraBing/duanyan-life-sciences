@@ -1,0 +1,21 @@
+{
+  "approvalBoundary": "仅审查和修复当前已实现功能。LabOS 六项业务调整仍待用户确认，本轮不实施，不计作已完成功能。",
+  "pendingChanges": ["设备型号、实例和运行状态分离", "按能力配置操作节点", "实验方案与每次运行分离", "样品、转运与资源依赖", "异常、取消与恢复机制", "执行结果回流和项目资产关联"],
+  "rounds": [
+    {"name":"中文标题、圆角与主操作","sections":[2]},
+    {"name":"内容基线、页面密度与项目卡片","sections":[3,4]},
+    {"name":"简约配色、主题与状态可读性","sections":[8],"suite":"visual-style.cjs","suiteLabel":"中性配色、主题、状态与 hover 专项"},
+    {"name":"文案减法与资源表单结构","sections":[5]},
+    {"name":"键盘、菜单与错误定位","sections":[6]},
+    {"name":"响应式、短屏与字体放大","sections":[7]},
+    {"name":"工作台入口、已读与版本升级","sections":[9],"suite":"workbench-upgrade.cjs","suiteLabel":"历史已读迁移、真实旧版页面共存与元数据修改"},
+    {"name":"设备目录、详情与接入申请","sections":[10,11]},
+    {"name":"实验编排、并行与左右导航","sections":[12]},
+    {"name":"实验异常、重试、结论与导出","sections":[13]},
+    {"name":"共享资产分类与类型化详情","sections":[14]},
+    {"name":"分支工作流、缩放与详情抽屉","sections":[15]},
+    {"name":"成员权限与双向获取申请","sections":[16,17]},
+    {"name":"项目副本、分享与资源版本","sections":[18,19],"suite":"project-fixtures.cjs","suiteLabel":"所有课题的任务、实验、数据集、训练评测与推理完整性"},
+    {"name":"逐项需求、控件覆盖与确认边界","sections":[1,20]}
+  ]
+}
