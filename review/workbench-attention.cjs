@@ -58,6 +58,7 @@ const url=process.env.DUANYAN_TEST_URL||'file://'+path.resolve(process.argv[2]||
  });
  await check('read results stay hidden after reloading while archives and assets remain complete',async()=>{
   const before=await page.evaluate(()=>{const d=workbenchData({pid:'p1'});return [d.experiments.length,d.modelTasks.length,rsCandidates('p1').length]});
+  await page.clock.setFixedTime(new Date(Date.now()+120000));
   await page.reload();await page.waitForFunction(()=>RS.seedReady);await home();
   for(const key of [exp.key,train.key,batch.key])assert.equal(await has(key),false,key);
   assert.deepEqual(await page.evaluate(()=>{const d=workbenchData({pid:'p1'});return[d.experiments.length,d.modelTasks.length,rsCandidates('p1').length]}),before);

@@ -4,5 +4,11 @@
     "issue":"已缓存的旧版页面会覆盖新版工作台的已读记录。此前同版本标签页的修复无法约束仍在运行的旧代码。",
     "change":"新版使用独立版本的已读存储，并一次性迁移旧版字符串或版本列表。旧页面后续写入不会再修改新版记录；同版本标签页继续同步。",
     "evidence":"work/qa/tricky15-upgrade-before.log 保存失败；workbench-upgrade.cjs 使用实际已发布的 2da26a8 HTML 与当前页面在同源上下文中复现并验收。"
+  },
+  {
+    "id":"T15-F02",
+    "issue":"公网复验发现，初始化模型每次开页使用当前时间。跨分钟刷新会使同一结果获得新指纹，已查看的完成卡片重新出现在工作台。",
+    "change":"按输入、随机种子与计算结果保存初始化模型的首次时间；刷新或其他标签页重建同一结果时复用，实际训练和结果修订仍按新结果处理。",
+    "evidence":"work/publish/tricky15-online-attention.log 与 work/qa/tricky15-time-before.log 保存失败；新增跨分钟、跨日、多标签页的虚拟时间回归，修复后通过记录在 work/qa/tricky15-time-after.log。"
   }
 ]

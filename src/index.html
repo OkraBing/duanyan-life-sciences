@@ -18818,6 +18818,7 @@ document.querySelectorAll('#side [data-go]').forEach(b=>b.onclick=()=>go(b.datas
    所以三个项目的数字各不相同，差的项目就是差。 */
 (function seedModels(){
   const was=S.pid;
+  const savedTimes=LS.get('seed_model_times_v1',{})||{},nextTimes={};
   DB.projects.forEach(p=>{
     S.pid=p.id;
     const pub=DSETS(p.id).filter(d=>d.st==='pub');
@@ -18833,7 +18834,14 @@ document.querySelectorAll('#side [data-go]').forEach(b=>b.onclick=()=>go(b.datas
       const ms=Math.round(now()-t0);
       if(!r.ok)return;
       const tgt=d?d.target:k;
-      addModel(p.id,Object.assign({target:tgt,ds:(d?d.id:null),
+      /* 重建同一初始化结果不是一次新训练。只为相同输入和计算结果复用首次时间；
+         实际训练仍由 addModel 使用本次时间，结果修订也会生成不同的指纹。 */
+      const timeKey=p.id+':'+tgt+':'+seed;
+      const version=fp32(JSON.stringify({ds:d?{id:d.id,fp:d.fp}:null,result:r}));
+      const previous=savedTimes[timeKey];
+      const at=previous?.version===version&&typeof previous.at==='string'?previous.at:nowStamp();
+      nextTimes[timeKey]={version,at};
+      addModel(p.id,Object.assign({at,target:tgt,ds:(d?d.id:null),
         /* 种子和数据来源要跟着模型走。少了它们，这个模型就复现不了，
            而「每个模型都能追溯到它依据的数据集版本」是这个产品立项时写的话。 */
         seed:seed,
@@ -18849,6 +18857,7 @@ document.querySelectorAll('#side [data-go]').forEach(b=>b.onclick=()=>go(b.datas
         w:r.w,sites:r.sites||null,cols:r.cols},verdictOf(r)));
     });
   });
+  LS.set('seed_model_times_v1',nextTimes);
   S.pid=was;
 })();
 /* ================= 留存：新建的项目与对话，刷新后还在 =================

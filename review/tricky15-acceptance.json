@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-21T01:44:24.552Z",
-  "buildSha256": "d1e31e3d2dcf22ab4b3b073241f100e56191ff2221230d0910444513fd49f857",
+  "generatedAt": "2026-11-21T01:55:57.752Z",
+  "buildSha256": "bc7b5d4eef8a206e618120d656988662becd2c94dd6e75c260bd5a67346268ec",
   "browser": "153.0.8010.12",
   "rounds": 15,
   "passedRounds": 15,
@@ -9,7 +9,7 @@
     "requirements": 70,
     "passed": 70,
     "failed": 0,
-    "integrationGroups": 142,
+    "integrationGroups": 143,
     "extendedScripts": 0,
     "failedScripts": []
   },
@@ -35,115 +35,233 @@
       "issue": "已缓存的旧版页面会覆盖新版工作台的已读记录。此前同版本标签页的修复无法约束仍在运行的旧代码。",
       "change": "新版使用独立版本的已读存储，并一次性迁移旧版字符串或版本列表。旧页面后续写入不会再修改新版记录；同版本标签页继续同步。",
       "evidence": "work/qa/tricky15-upgrade-before.log 保存失败；workbench-upgrade.cjs 使用实际已发布的 2da26a8 HTML 与当前页面在同源上下文中复现并验收。"
+    },
+    {
+      "id": "T15-F02",
+      "issue": "公网复验发现，初始化模型每次开页使用当前时间。跨分钟刷新会使同一结果获得新指纹，已查看的完成卡片重新出现在工作台。",
+      "change": "按输入、随机种子与计算结果保存初始化模型的首次时间；刷新或其他标签页重建同一结果时复用，实际训练和结果修订仍按新结果处理。",
+      "evidence": "work/publish/tricky15-online-attention.log 与 work/qa/tricky15-time-before.log 保存失败；新增跨分钟、跨日、多标签页的虚拟时间回归，修复后通过记录在 work/qa/tricky15-time-after.log。"
     }
   ],
   "command": "npm run test:tricky15",
-  "legacyHtmlCommit": "2da26a893588cbe9d4f1311bb50dd0a360d73086",
+  "outputDirectory": "work/qa/tricky15/release-final",
+  "report": "work/qa/tricky15/release-final/report.html",
+  "legacyPublishedCommit": "2da26a893588cbe9d4f1311bb50dd0a360d73086",
   "roundResults": [
     {
       "round": 1,
       "name": "中文标题、圆角与主操作",
       "status": "passed",
       "cases": 2,
-      "ms": 1389
+      "sections": [
+        {
+          "name": "标题、圆角、主操作的统一",
+          "status": "passed"
+        }
+      ],
+      "ms": 1403
     },
     {
       "round": 2,
       "name": "内容基线、页面密度与项目卡片",
       "status": "passed",
       "cases": 4,
-      "ms": 1961
+      "sections": [
+        {
+          "name": "页头、面包屑与内容对齐",
+          "status": "passed"
+        },
+        {
+          "name": "工作台密度、字号与卡片层级",
+          "status": "passed"
+        }
+      ],
+      "ms": 1931
     },
     {
       "round": 3,
       "name": "简约配色、主题与状态可读性",
       "status": "passed",
       "cases": 3,
-      "ms": 6471
+      "sections": [
+        {
+          "name": "深浅主题、状态对比和减少动态",
+          "status": "passed"
+        }
+      ],
+      "ms": 6460
     },
     {
       "round": 4,
       "name": "文案减法与资源表单结构",
       "status": "passed",
       "cases": 2,
-      "ms": 1015
+      "sections": [
+        {
+          "name": "逐屏文案减法与资源表单排版",
+          "status": "passed"
+        }
+      ],
+      "ms": 1030
     },
     {
       "round": 5,
       "name": "键盘、菜单与错误定位",
       "status": "passed",
       "cases": 4,
-      "ms": 1267
+      "sections": [
+        {
+          "name": "键盘焦点、表单报错和必填反馈",
+          "status": "passed"
+        }
+      ],
+      "ms": 1277
     },
     {
       "round": 6,
       "name": "响应式、短屏与字体放大",
       "status": "passed",
       "cases": 2,
-      "ms": 3843
+      "sections": [
+        {
+          "name": "多视口、短屏与字体放大",
+          "status": "passed"
+        }
+      ],
+      "ms": 3842
     },
     {
       "round": 7,
       "name": "工作台入口、已读与版本升级",
       "status": "passed",
       "cases": 6,
-      "ms": 11499
+      "sections": [
+        {
+          "name": "工作台所有内容入口与轮播",
+          "status": "passed"
+        }
+      ],
+      "ms": 12665
     },
     {
       "round": 8,
       "name": "设备目录、详情与接入申请",
       "status": "passed",
       "cases": 5,
-      "ms": 5253
+      "sections": [
+        {
+          "name": "设备目录的全部设备和筛选",
+          "status": "passed"
+        },
+        {
+          "name": "设备申请、确认与重载",
+          "status": "passed"
+        }
+      ],
+      "ms": 5266
     },
     {
       "round": 9,
       "name": "实验编排、并行与左右导航",
       "status": "passed",
       "cases": 2,
-      "ms": 11424
+      "sections": [
+        {
+          "name": "实验编排三模板及所有节点",
+          "status": "passed"
+        }
+      ],
+      "ms": 11423
     },
     {
       "round": 10,
       "name": "实验异常、重试、结论与导出",
       "status": "passed",
       "cases": 3,
-      "ms": 13340
+      "sections": [
+        {
+          "name": "实验状态、记录、异常、重试与结论",
+          "status": "passed"
+        }
+      ],
+      "ms": 13326
     },
     {
       "round": 11,
       "name": "共享资产分类与类型化详情",
       "status": "passed",
       "cases": 2,
-      "ms": 4167
+      "sections": [
+        {
+          "name": "共享资产的全部分类与条目",
+          "status": "passed"
+        }
+      ],
+      "ms": 4216
     },
     {
       "round": 12,
       "name": "分支工作流、缩放与详情抽屉",
       "status": "passed",
       "cases": 2,
-      "ms": 8874
+      "sections": [
+        {
+          "name": "工作流分支、缩放、平移与抽屉",
+          "status": "passed"
+        }
+      ],
+      "ms": 8838
     },
     {
       "round": 13,
       "name": "成员权限与双向获取申请",
       "status": "passed",
       "cases": 6,
-      "ms": 16949
+      "sections": [
+        {
+          "name": "成员邀请、角色、移除与转交",
+          "status": "passed"
+        },
+        {
+          "name": "双向申请、审批与独立副本",
+          "status": "passed"
+        }
+      ],
+      "ms": 16853
     },
     {
       "round": 14,
       "name": "项目副本、分享与资源版本",
       "status": "passed",
       "cases": 6,
-      "ms": 19076
+      "sections": [
+        {
+          "name": "共享创建、分享与项目副本",
+          "status": "passed"
+        },
+        {
+          "name": "工具与数据库全部创建和版本动作",
+          "status": "passed"
+        }
+      ],
+      "ms": 19013
     },
     {
       "round": 15,
       "name": "逐项需求、控件覆盖与确认边界",
       "status": "passed",
       "cases": 3,
-      "ms": 52325
+      "sections": [
+        {
+          "name": "逐项需求与当前构建复核",
+          "status": "passed"
+        },
+        {
+          "name": "控件覆盖补扫与最终一致性",
+          "status": "passed"
+        }
+      ],
+      "ms": 53514
     }
   ]
 }
