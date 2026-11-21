@@ -108,7 +108,7 @@ fs.mkdirSync(output,{recursive:true});
    await page.reload();await page.evaluate(id=>go('labdet',{labPick:id}),batchId);
    assert.match(await page.locator('.lv-conclusion').innerText(),/不支持假设/);
    await go('workbench');await page.evaluate(()=>{WB.progressProject='p2';render()});
-   await page.locator('[data-task-kind="experiment"] [data-wb-task-open]').first().click();assert.equal(await page.evaluate(()=>S.labPick),'B-DEMO-EX');
+   await page.locator('[data-wb-project-id=p2] [data-task-kind="experiment"] [data-wb-task-open]').first().click();assert.equal(await page.evaluate(()=>S.labPick),'B-DEMO-EX');
    const row=await page.evaluate(id=>workbenchData().experiments.find(t=>t.id===id),batchId);assert.equal(row.status,'done');assert.equal(row.label,'有结论');assert.match(row.detail,/不支持假设/);
  });
  await check('upstream retry invalidates descendants and archives published conclusion',async()=>{

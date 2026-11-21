@@ -8,12 +8,13 @@ const url=process.env.DUANYAN_TEST_URL||'file://'+path.resolve(process.argv[2]||
  await context.route(/^https?:\/\//,r=>new URL(r.request().url()).origin===new URL(url).origin?r.continue():r.request().url().includes('api.crossref.org')?r.fulfill({contentType:'application/json',body:JSON.stringify({message:{items:[]}})}):r.abort());
  const check=async(name,fn)=>{await fn();checks.push(name);console.log('PASS '+name);};
  const home=()=>page.evaluate(()=>{WB.progressProject='p1';go('workbench')});
+ const p1=selector=>page.locator('[data-wb-project-id=p1] '+selector);
  const has=key=>page.evaluate(key=>{const d=workbenchData();return wbAttentionTasks(d.tasks).some(t=>t.key===key)},key);
  async function clickCard(kind,key){
   await home();await page.evaluate(kind=>{WB.pagesByProject.p1[kind]=0;render()},kind);
   for(let i=0;i<100;i++){
    const card=page.locator('[data-wb-task-open="'+key+'"]');if(await card.count()){await card.click();return;}
-   const next=page.locator('[data-wb-section-page="'+kind+'"][data-delta="1"]');assert(await next.count()&&!await next.isDisabled(),'missing '+key);await next.click();
+   const next=p1('[data-wb-section-page="'+kind+'"][data-delta="1"]');assert(await next.count()&&!await next.isDisabled(),'missing '+key);await next.click();
   }throw new Error('pagination did not end');
  }
  const response=await page.goto(url+'#workbench');
@@ -37,13 +38,13 @@ const url=process.env.DUANYAN_TEST_URL||'file://'+path.resolve(process.argv[2]||
   await clickCard('experiment',exp.key);assert.deepEqual(await page.evaluate(()=>[S.route,S.labPick]),['labdet',exp.id]);
   assert(await page.locator('.lv-conclusion').isVisible());await home();assert.equal(await has(exp.key),false);
   assert(await page.evaluate(id=>workbenchData({pid:'p1'}).experiments.some(t=>t.id===id),exp.id));
-  assert.equal(await page.locator('[data-task-kind="experiment"] h3 small').innerText(),String(rows.experiments.filter(t=>['active','failed','done'].includes(t.status)).length-1));
-  await page.locator('[data-wb-list="experiment"]').click();assert(await page.locator('[data-labgo="'+exp.id+'"]').isVisible());
+  assert.equal(await p1('[data-task-kind="experiment"] h4 small').innerText(),String(rows.experiments.filter(t=>['active','failed','done'].includes(t.status)).length-1));
+  await p1('[data-wb-list="experiment"]').click();assert(await page.locator('[data-labgo="'+exp.id+'"]').isVisible());
   assert(await page.evaluate(id=>BATCHES.some(b=>b.id===id),exp.id));
  });
  await check('experiment archive views consume unread conclusions but lists alone do not',async()=>{
   const other=rows.experiments.find(t=>t.status==='done'&&t.key!==exp.key);assert(other);
-  await home();await page.locator('[data-wb-list="experiment"]').click();assert.equal(await has(other.key),true);
+  await home();await p1('[data-wb-list="experiment"]').click();assert.equal(await has(other.key),true);
   await page.locator('[data-labgo="'+other.id+'"]').click();await home();assert.equal(await has(other.key),false);
   await page.evaluate(id=>{BATCHES.find(b=>b.id===id).workflow.conclusion.text+=' 补充一次独立复核。';render()},other.id);
   assert.equal(await has(other.key),true);
@@ -106,19 +107,19 @@ const url=process.env.DUANYAN_TEST_URL||'file://'+path.resolve(process.argv[2]||
    for(const t of workbenchData({pid:'p1'}).tasks)if(t.status==='done'&&t.isTask)workbenchOpenTask(t.key);
    WB.progressProject='p1';WB.pagesByProject.p1={model:999,experiment:999};go('workbench');
   });
-  assert.deepEqual(await page.locator('.wb-task-section-head small').allTextContents(),['0','0']);
-  assert.equal(await page.locator('.wb-empty-tasks').count(),2);assert.match(await page.locator('.wb-empty-tasks').first().innerText(),/暂无需要关注/);
+  assert.deepEqual(await p1('.wb-task-section-head small').allTextContents(),['0','0']);
+  assert.equal(await p1('.wb-empty-tasks').count(),2);assert.match(await p1('.wb-empty-tasks').first().innerText(),/暂无需要关注/);
   assert.deepEqual(await page.evaluate(()=>WB.pagesByProject.p1),{model:0,experiment:0});
-  assert(await page.locator('[data-wb-list="experiment"]').isVisible());assert(await page.locator('[data-wb-list-select]').count());
-  await page.locator('[data-wb-list="experiment"]').click();assert(await page.locator('.lv-exp').count()>0);
+  assert(await p1('[data-wb-list="experiment"]').isVisible());assert(await p1('[data-wb-list-select]').count());
+  await p1('[data-wb-list="experiment"]').click();assert(await page.locator('.lv-exp').count()>0);
  });
  await check('another open tab updates when a result is read',async()=>{
   const tab=await context.newPage();await tab.goto(url+'#workbench');await tab.waitForFunction(()=>RS.seedReady);
   const key=await tab.evaluate(()=>{WB.progressProject='p3';render();return workbenchData({pid:'p3'}).experiments.find(t=>t.status==='done').key});
-  const count=await tab.locator('[data-task-kind="experiment"] h3 small').innerText();assert(await tab.locator('[data-wb-task-open="'+key+'"]').isVisible());
+  const count=await tab.locator('[data-wb-project-id=p3] [data-task-kind="experiment"] h4 small').innerText();while(!await tab.locator('[data-wb-task-open="'+key+'"]').count())await tab.locator('[data-wb-project-id=p3] [data-wb-section-page=experiment][data-delta="1"]').click();assert(await tab.locator('[data-wb-task-open="'+key+'"]').isVisible());
   await page.evaluate(key=>workbenchOpenTask(key),key);
   await tab.waitForFunction(key=>!document.querySelector('[data-wb-task-open="'+key+'"]'),key);
-  assert.equal(await tab.locator('[data-task-kind="experiment"] h3 small').innerText(),String(+count-1));await tab.close();
+  assert.equal(await tab.locator('[data-wb-project-id=p3] [data-task-kind="experiment"] h4 small').innerText(),String(+count-1));await tab.close();
  });
  await check('a stale running tab cannot erase a newer result read in another tab',async()=>{
   const tab=await context.newPage();await tab.goto(url+'#workbench');await tab.waitForFunction(()=>RS.seedReady);

@@ -32,14 +32,14 @@
     {
       "id": "R05",
       "area": "工作台",
-      "title": "课题进展整卡仅由用户手动圆点切换，不自动轮播、不展示暂停按钮",
+      "title": "桌面同时展示三个课题，超出后左右手动切换，不自动轮播",
       "probe": "progress_carousel",
       "design": true
     },
     {
       "id": "R06",
       "area": "工作台",
-      "title": "实验任务、模型任务同时展示为小标题，不使用 tab",
+      "title": "每张课题卡同时显示实验、模型两组任务，不使用 tab",
       "probe": "parallel_task_sections",
       "design": true
     },
@@ -53,7 +53,7 @@
     {
       "id": "R08",
       "area": "工作台",
-      "title": "灵感、资讯直接轮播，删除全部 A/B/C 分组",
+      "title": "无 A/B/C 分组，资讯手动切换，灵感每天固定一条",
       "probe": "no_abc",
       "design": true
     },
@@ -108,7 +108,7 @@
     {
       "id": "R16",
       "area": "工作台",
-      "title": "实验状态与环节进度同步，查看列表保留课题范围",
+      "title": "实验状态与详情一致，每个课题的列表跳转保留自身范围",
       "suite": "workbench",
       "pattern": "project progress scopes"
     },
@@ -473,6 +473,13 @@
       "title": "任务按关注状态筛选，完成结果查看后退出工作台，重跑与新版本重新提示",
       "suite": "workbench-attention",
       "pattern": "read results stay hidden"
+    },
+    {
+      "id": "R71",
+      "area": "工作台",
+      "title": "任务行简化为图标、名称和状态，详情入口保留完整任务身份",
+      "suite": "product-iteration",
+      "pattern": "compact tasks keep name status"
     }
   ]
 }

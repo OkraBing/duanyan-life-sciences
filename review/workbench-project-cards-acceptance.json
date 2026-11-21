@@ -1,0 +1,28 @@
+{
+  "generatedAt": "2026-11-21T02:29:47.248Z",
+  "buildSha256": "ef388de33546a980370c81d05d24df553df1ed20c17a4730adf8650ca7666697",
+  "requirements": {
+    "requirements": 71,
+    "passed": 71,
+    "failed": 0,
+    "integrationGroups": 144,
+    "extendedScripts": 0,
+    "failedScripts": []
+  },
+  "interactionChecks": {
+    "checks": [
+      "bounded three-card navigation and focus",
+      "p1 four real model-menu destinations",
+      "p2 four real model-menu destinations",
+      "p3 four real model-menu destinations",
+      "light minimal rows",
+      "dark minimal rows",
+      "touch card rows do not overlap pagination"
+    ],
+    "errors": []
+  },
+  "design": "work/design/workbench-structured-20261121/three-projects.png",
+  "prompt": "work/design/workbench-structured-20261121/three-projects-prompt.md",
+  "imageMode": "built-in image_gen",
+  "report": "work/qa/requirements-audit-20261120/report.html"
+}

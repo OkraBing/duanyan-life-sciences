@@ -1,6 +1,7 @@
 /* Approved product iteration. No device execution, model calls or external writes. */
 WB.progressAuto=WB.auto=WB.newsAuto=false;
 WB.pagesByProject={};
+WB.projectStart=0;
 /* A single, dated idea stays stable across project switches and reloads. */
 function iterationDailyIdea(pool,projects){
  const date=wbToday(),valid=idea=>idea&&typeof idea.question==='string'&&idea.question.trim()&&projects.some(p=>p.id===idea.pid);
@@ -30,30 +31,57 @@ function iterationStepProject(delta){
  const ps=workbenchData().projects;if(!ps.length)return;
  const i=Math.max(0,ps.findIndex(p=>p.id===WB.progressProject));WB.progressProject=ps[(i+delta+ps.length)%ps.length].id;
 }
+function iterationProjectSlots(){return view.clientWidth>=1000?3:view.clientWidth>=660?2:1;}
+function iterationProjectWindow(projects){
+ const slots=iterationProjectSlots(),max=Math.max(0,projects.length-slots);
+ let start=Math.min(max,Math.max(0,WB.projectStart||0));
+ const selected=projects.findIndex(p=>p.id===WB.progressProject);
+ if(selected>=0&&(selected<start||selected>=start+slots))start=Math.min(max,selected);
+ WB.projectStart=start;WB.projectSlots=slots;WB.projectViewport=view.clientWidth+':'+innerHeight;
+ return {slots,start,items:projects.slice(start,start+slots),max};
+}
+function iterationProjectControls(window,total){
+ if(total<=window.slots)return '';
+ return '<div class="wb-project-controls" role="group" aria-label="切换课题">'+
+ '<button class="btn wb-project-step" type="button" data-wb-project-window="-1" aria-label="上一组课题" '+(!window.start?'disabled':'')+'>'+wbViewIcon('left')+'</button>'+
+ '<span class="wb-project-range">'+(window.start+1)+'–'+Math.min(total,window.start+window.slots)+' / '+total+'</span>'+
+ '<button class="btn wb-project-step" type="button" data-wb-project-window="1" aria-label="下一组课题" '+(window.start>=window.max?'disabled':'')+'>'+wbViewIcon('right')+'</button></div>';
+}
+function iterationCompactTask(t){
+ const kind=t.kind==='experiment'?'实验':t.kind==='train'?'模型训练':t.kind==='eval'?'模型评测':'模型推理';
+ const status=t.status==='done'?(t.kind==='experiment'?'有结论':'待查看'):t.status==='active'?
+  (t.rawStatus==='queued'?'排队中':t.kind==='experiment'?'进行中':t.kind==='train'?'训练中':t.kind==='eval'?'评测中':'推理中'):
+  t.statusText||t.label||'状态待确认';
+ return '<li><button class="wb-task-row" type="button" data-wb-task-open="'+esc(t.key)+'" title="'+esc(t.id+' · '+(t.name||t.id))+'" aria-label="查看'+kind+'：'+esc(t.name||t.id)+'，'+esc(t.projectName||'未关联课题')+'，'+esc(t.id)+'，'+esc(status)+'">'+
+ '<span class="wb-task-symbol is-'+esc(t.kind)+'">'+wbViewIcon(t.kind==='experiment'?'flask':'model')+'</span>'+
+ '<span class="wb-task-main"><strong>'+esc(t.name||t.id)+'</strong></span>'+
+ '<span class="wb-task-state"><span class="wb-status is-'+esc(t.status)+'">'+esc(status)+'</span></span></button></li>';
+}
 function iterationTaskSection(kind,tasks,pid){
  tasks=wbAttentionTasks(tasks);
  const model=kind==='model',rank={failed:0,active:1,draft:2,unknown:3,done:4,canceled:5};
  const sorted=tasks.slice().sort((a,b)=>(rank[a.status]??3)-(rank[b.status]??3));
- const size=innerHeight<730?1:innerHeight>=850?3:2;
+ const size=innerHeight<850?1:2;
  const state=WB.pagesByProject[pid]||(WB.pagesByProject[pid]={experiment:0,model:0});
  const pages=Math.max(1,Math.ceil(sorted.length/size));state[kind]=Math.max(0,Math.min(pages-1,state[kind]||0));
  const rows=sorted.slice(state[kind]*size,(state[kind]+1)*size);
- const foot=pages>1?'<div class="wb-pagination"><button type="button" class="wb-icon-button" data-wb-section-page="'+kind+'" data-delta="-1" aria-label="上一页'+(model?'模型':'实验')+'任务" '+(!state[kind]?'disabled':'')+'>'+wbViewIcon('left')+'</button><span>'+ (state[kind]+1)+' / '+pages+'</span><button type="button" class="wb-icon-button" data-wb-section-page="'+kind+'" data-delta="1" aria-label="下一页'+(model?'模型':'实验')+'任务" '+(state[kind]+1===pages?'disabled':'')+'>'+wbViewIcon('right')+'</button></div>':'<span>'+tasks.length+' 项</span>';
- const destination=model?'<select data-wb-list-select aria-label="前往模型任务列表"><option value="">查看全部</option><option value="train">模型训练</option><option value="eval">模型评测</option><option value="batch">批量推理</option><option value="online">在线推理</option></select>':'<button type="button" class="wb-list-link" data-wb-list="experiment">查看全部 '+wbViewIcon('right')+'</button>';
- return '<section class="wb-task-section" data-task-kind="'+kind+'"><div class="wb-task-section-head"><h3>'+(model?'模型任务':'实验任务')+'<small>'+tasks.length+'</small></h3></div>'+(rows.length?'<ul class="wb-task-list">'+rows.map(wbViewTask).join('')+'</ul>':'<div class="wb-empty-tasks">暂无需要关注的'+(model?'模型':'实验')+'任务</div>')+'<div class="wb-task-section-foot">'+foot+destination+'</div></section>';
+ const project=rsProject(pid),noun=model?'模型':'实验';
+ const foot=pages>1?'<div class="wb-pagination"><button type="button" class="wb-icon-button" data-wb-section-page="'+kind+'" data-wb-pid="'+esc(pid)+'" data-delta="-1" aria-label="'+esc(project?.name||'课题')+'：上一页'+noun+'任务" '+(!state[kind]?'disabled':'')+'>'+wbViewIcon('left')+'</button><span>'+ (state[kind]+1)+' / '+pages+'</span><button type="button" class="wb-icon-button" data-wb-section-page="'+kind+'" data-wb-pid="'+esc(pid)+'" data-delta="1" aria-label="'+esc(project?.name||'课题')+'：下一页'+noun+'任务" '+(state[kind]+1===pages?'disabled':'')+'>'+wbViewIcon('right')+'</button></div>':'';
+ const menu=model?'<span class="wb-task-group-menu"><select data-wb-list-select data-wb-pid="'+esc(pid)+'" aria-label="'+esc(project?.name||'课题')+'：前往模型任务列表"><option value="">查看全部</option><option value="train">模型训练</option><option value="eval">模型评测</option><option value="batch">批量推理</option><option value="online">在线推理</option></select></span>':'';
+ return '<section class="wb-task-section" data-task-kind="'+kind+'"><div class="wb-task-section-head"><h4><button type="button" class="wb-task-group-link" data-wb-list="'+(model?'train':'experiment')+'" data-wb-pid="'+esc(pid)+'" aria-label="'+esc(project?.name||'课题')+'：查看全部'+noun+'任务">'+noun+'<small>'+tasks.length+'</small>'+(!model?wbViewIcon('right'):'')+'</button></h4>'+menu+'</div>'+(rows.length?'<ul class="wb-task-list">'+rows.map(iterationCompactTask).join('')+'</ul>':'<div class="wb-empty-tasks">暂无需要关注的'+noun+'任务</div>')+'<div class="wb-task-section-foot">'+foot+'</div></section>';
 }
 V.workbench=()=>{
  const d=wbPrepare(),ps=d.projects||[];
  if(!ps.some(p=>p.id===WB.progressProject))WB.progressProject=ps[0]?.id||'';
- const p=ps.find(p=>p.id===WB.progressProject),scope=workbenchData({pid:p?.id}),pi=Math.max(0,ps.findIndex(x=>x.id===p?.id));
+ const window=iterationProjectWindow(ps);
  const idea=WB.ideas[WB.idea||0],ip=ps.find(p=>p.id===idea?.pid);
  const np=ps.find(p=>p.id===WB.newsProject)||ps[0],ni=Math.max(0,ps.findIndex(p=>p.id===np?.id));
  const papers=WB.papers.filter(p=>np&&(p.pids||[p.pid]).includes(np.id)),newsState=wbNewsState(WB,np?.id);
  const ref=wbViewHref(idea?.sourceURL);
  const date=new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'long',timeZone:'Asia/Shanghai'});
  return '<div class="page wb"><header class="wb-header"><div class="wb-header-copy"><span class="wb-kicker">工作台</span><h1>'+wbViewGreeting()+'，ZHANG</h1></div><span class="wb-date">'+esc(date)+'</span></header><div class="wb-layout">'+
- '<section class="wb-panel wb-tasks" aria-labelledby="wb-tasks-title" aria-roledescription="轮播"><div class="wb-panel-heading"><h2 id="wb-tasks-title">课题进展</h2>'+iterationControls('progress',pi,ps.length)+'</div>'+
- (p?'<div class="wb-progress-project"><div><h3 title="'+esc(p.name)+'">'+esc(p.name)+'</h3><p>'+esc(goalText(DB.projects.find(x=>x.id===p.id))||p.stateText||'')+'</p></div><button class="wb-list-link" type="button" data-wb-project="'+esc(p.id)+'">进入课题 '+wbViewIcon('arrow')+'</button></div><div class="wb-task-columns">'+iterationTaskSection('experiment',scope.experiments||[],p.id)+iterationTaskSection('model',scope.modelTasks||[],p.id)+'</div>':'<div class="wb-empty"><strong>还没有课题</strong><button class="btn btn-pri wb-button wb-button-primary" type="button" data-wb-create-project>新建项目</button></div>')+'</section>'+
+ '<section class="wb-panel wb-tasks" aria-labelledby="wb-tasks-title" aria-roledescription="轮播"><div class="wb-panel-heading"><h2 id="wb-tasks-title">课题进展</h2>'+iterationProjectControls(window,ps.length)+'</div>'+
+ (window.items.length?'<div class="wb-project-grid" style="--wb-project-slots:'+window.slots+'">'+window.items.map(p=>{const scope=workbenchData({pid:p.id});return '<article class="wb-project-card" data-wb-project-id="'+esc(p.id)+'" aria-label="课题：'+esc(p.name)+'"><header class="wb-project-card-head"><h3><button class="wb-project-title" type="button" data-wb-project="'+esc(p.id)+'" title="'+esc(p.name)+'" aria-label="进入课题：'+esc(p.name)+'"><span>'+esc(p.name)+'</span>'+wbViewIcon('arrow')+'</button></h3></header>'+iterationTaskSection('experiment',scope.experiments||[],p.id)+iterationTaskSection('model',scope.modelTasks||[],p.id)+'</article>'}).join('')+'</div>':'<div class="wb-empty"><strong>还没有课题</strong><button class="btn btn-pri wb-button wb-button-primary" type="button" data-wb-create-project>新建项目</button></div>')+'</section>'+
  '<section class="wb-panel wb-news" aria-labelledby="wb-news-title" aria-roledescription="轮播"><div class="wb-panel-heading"><div class="wb-panel-label">'+wbViewIcon('paper')+'<h2 id="wb-news-title">学术资讯</h2></div>'+iterationControls('news',ni,ps.length)+'</div>'+
  (np?'<div class="wb-news-context"><span title="'+esc(np.name)+'">'+esc(np.name)+'</span></div>':'')+
  (papers.length?'<ul class="wb-papers">'+papers.slice(0,1).map(wbViewPaper).join('')+'</ul>':'<div class="wb-empty wb-empty-news" role="status"><strong>'+(newsState==='loading'?'正在查找相关论文':newsState==='error'?'暂时无法获取论文':'暂无匹配论文')+'</strong><p>'+(newsState==='error'?'稍后重新进入工作台可重试。':'')+'</p></div>')+
@@ -66,6 +94,7 @@ wbBind=function(root){
  if(S.route!=='workbench'){WB.onPage=false;return;}
  const entering=!WB.onPage;WB.onPage=true;
  const on=(s,event,fn)=>root.querySelectorAll(s).forEach(e=>e.addEventListener(event,ev=>fn(e,ev)));
+ on('[data-wb-project-window]','click',e=>{const ps=workbenchData().projects;WB.projectStart=Math.max(0,Math.min(Math.max(0,ps.length-iterationProjectSlots()),WB.projectStart+Number(e.dataset.wbProjectWindow)));WB.progressProject=ps[WB.projectStart]?.id||'';render();(view.querySelector('[data-wb-project-window="'+e.dataset.wbProjectWindow+'"]:not(:disabled)')||view.querySelector('[data-wb-project-window]:not(:disabled)'))?.focus({preventScroll:true});});
  for(const kind of ['progress','news']){
   const selector='[data-wb-'+kind+'-dot]',key='wb'+kind[0].toUpperCase()+kind.slice(1)+'Dot';
   on(selector,'click',e=>{iterationSelectSlide(kind,+e.dataset[key]);render();});
@@ -79,15 +108,15 @@ wbBind=function(root){
  }
  const alignIndicators=()=>root.querySelectorAll('.wb-carousel-dots [aria-current="true"]').forEach(e=>{if(e.isConnected){const track=e.parentElement;track.scrollLeft=Math.max(0,e.offsetLeft-(track.clientWidth-e.offsetWidth)/2);}});
  requestAnimationFrame(alignIndicators);
- wbLayoutObserver=new ResizeObserver(alignIndicators);root.querySelectorAll('.wb-carousel-dots').forEach(e=>wbLayoutObserver.observe(e));
- on('[data-wb-section-page]','click',e=>{const state=WB.pagesByProject[WB.progressProject];if(state)state[e.dataset.wbSectionPage]+=+e.dataset.delta;render();});
+ wbLayoutObserver=new ResizeObserver(()=>{if(WB.projectViewport!==view.clientWidth+':'+innerHeight){render();return;}alignIndicators();});root.querySelectorAll('.wb-carousel-dots,.wb-project-grid').forEach(e=>wbLayoutObserver.observe(e));
+ on('[data-wb-section-page]','click',e=>{const state=WB.pagesByProject[e.dataset.wbPid||WB.progressProject];if(state)state[e.dataset.wbSectionPage]+=+e.dataset.delta;render();});
  on('[data-wb-prompt]','click',e=>wbAsk(e.dataset.wbPid,e.dataset.wbPrompt));
  on('[data-wb-idea-detail]','click',e=>wbReadIdea(+e.dataset.wbIdeaDetail));
  on('[data-wb-project]','click',e=>workbenchOpenProject(e.dataset.wbProject));
  on('[data-wb-create-project]','click',e=>{go('projects');act('newproj',e);});
  on('[data-wb-task-open]','click',e=>workbenchOpenTask(e.dataset.wbTaskOpen));
- on('[data-wb-list]','click',e=>workbenchOpenList(e.dataset.wbList,'all',WB.progressProject));
- on('[data-wb-list-select]','change',e=>{if(e.value)workbenchOpenList(e.value,'all',WB.progressProject);});
+ on('[data-wb-list]','click',e=>workbenchOpenList(e.dataset.wbList,'all',e.dataset.wbPid||WB.progressProject));
+ on('[data-wb-list-select]','change',e=>{if(e.value)workbenchOpenList(e.value,'all',e.dataset.wbPid||WB.progressProject);});
  // Legacy callers may request a tick; manual slides never advance on a clock.
  WB.tick=()=>{};
  const subs=wbSubscriptions(),signature=JSON.stringify(subs);
