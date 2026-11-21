@@ -3035,7 +3035,7 @@ body[data-route=toolnew] .rs-form-footer,body[data-route=databasenew] .rs-form-f
 .wb-dashboard .wb-idea-banner-head{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:6px}
 .wb-dashboard .wb-inspiration-label{display:flex;align-items:center;gap:7px;margin:0;font-size:12px;line-height:20px;font-weight:600;color:var(--dry-ink)}
 .wb-dashboard .wb-inspiration-label>.wb-icon{width:15px;height:15px}
-.wb-dashboard .wb-refresh-idea{width:28px;height:28px;min-height:28px;margin:-3px -4px -3px 0;border-radius:7px;color:var(--ink-3)}
+.wb-dashboard .wb-refresh-idea{width:28px;height:28px;min-height:28px;margin:-3px 0 -3px 0;border-radius:7px;color:var(--ink-3)}
 .wb-dashboard .wb-refresh-idea>.wb-icon{width:15px;height:15px}
 .wb-dashboard .wb-idea-banner-body{display:flex;gap:20px;align-items:center;min-width:0}
 .wb-dashboard .wb-inspiration .wb-question{display:block;flex:1;min-width:0;overflow:visible;-webkit-line-clamp:unset;margin:0;font-size:14px;line-height:1.7;font-weight:450;text-decoration:none;color:var(--ink);cursor:text;white-space:normal;overflow-wrap:anywhere}
@@ -3205,6 +3205,122 @@ body[data-route=toolnew] .rs-form-footer,body[data-route=databasenew] .rs-form-f
 [data-theme="dark"]{--wet-warm:#D9AE72}
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--wet-warm:#D9AE72}}
 .nav[data-navid="lab"] svg,.nav[data-navid="devices"] svg{color:var(--wet-warm)}
+
+/* ===== 工作台视觉打磨 · 第三到第十轮（2026-11-21） =====
+   原则：减描边、加层次；字阶收敛；数字等宽对齐；颜色只承担语义。
+   不改任何文案，只动样式。 */
+
+/* 三、字阶收敛成四档 + 一档极小号。原先 17/15/14/13/12/11/10 混用，
+   档位之间差 1px 的地方人眼分不出，只会让版面显得毛。 */
+.wb-dashboard .wb-panel-heading h2{font-size:15px;line-height:22px;font-weight:600;letter-spacing:-.01em}
+.wb-dashboard .wb-project-card-head h3{font-size:14px;font-weight:600}
+.wb-dashboard .wb-task-main>strong{font-size:13px;font-weight:500;line-height:1.45}
+.wb-dashboard .wb-task-detail,.wb-dashboard .wb-task-meta{font-size:12px;line-height:1.5}
+.wb-dashboard .wb-paper-title{font-size:13px;line-height:1.5;-webkit-line-clamp:2}
+.wb-dashboard .wb-paper-description{font-size:12px;line-height:1.6;-webkit-line-clamp:3}
+.wb-dashboard .wb-inspiration-label,.wb-dashboard .wb-task-section-head h3{font-size:12px;font-weight:600;letter-spacing:.02em}
+
+/* 四、所有数字走等宽并开表格数字：计数、分数、百分比纵向排列时才对得齐。 */
+.wb-dashboard .wb-status,.wb-dashboard .wb-task-progress,.wb-dashboard .wb-pagination>span,
+.wb-dashboard .wb-project-range,.wb-dashboard .wb-task-section-head small,.wb-dashboard .wb-date{
+  font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+
+/* 五、圆角做成阶梯：面板 14 / 卡 10 / 控件 8 / 标签全圆。
+   原先从外到内都是 10px，嵌套起来像一摞同样大小的盒子。 */
+.wb-dashboard .wb-panel{border-radius:14px}
+.wb-dashboard .wb-project-card,.wb-dashboard .wb-paper-card{border-radius:10px}
+.wb-dashboard .wb-icon-button,.wb-dashboard .wb-idea-explore.btn{border-radius:8px}
+.wb-dashboard .wb-paper-topic{border-radius:999px;padding:3px 8px}
+
+/* 六、描边减法。卡中卡中卡全是 1px 实线，页面被切得很碎。
+   内层改成极轻的底色分层，只有外层面板留一条边。 */
+.wb-dashboard .wb-panel{border:1px solid var(--line-2);box-shadow:0 1px 2px rgba(16,20,26,.03)}
+.wb-dashboard .wb-project-card{border:0;background:var(--surface-2)}
+.wb-dashboard .wb-paper-card{border:0;background:var(--surface-2)}
+.wb-dashboard .wb-project-card-head{border-bottom:1px solid var(--line-2)}
+.wb-dashboard .wb-task-row{border-bottom:0}
+.wb-dashboard .wb-task-list>li+li .wb-task-row{border-top:1px solid color-mix(in srgb,var(--line-2) 60%,transparent)}
+
+/* 七、状态标签去掉灰底方块。原先状态词和进度数挤在一个灰块里，
+   两种不同的信息粘成一团，十几行排下来像一叠收据。
+   状态只用颜色和字重，进度数右对齐、等宽，两者分开读。 */
+.wb-dashboard .wb-project-card .wb-status{background:transparent;padding:0;min-width:64px;gap:2px;
+  align-items:flex-end;text-align:right;font-size:11px;line-height:16px;border-radius:0}
+.wb-dashboard .wb-project-card .wb-status.is-failed{color:var(--err);font-weight:600}
+.wb-dashboard .wb-project-card .wb-status.is-active{color:var(--ink-2)}
+.wb-dashboard .wb-project-card .wb-status.is-done{color:var(--ok-ink)}
+.wb-dashboard .wb-project-card .wb-status.is-draft{color:var(--ink-4)}
+.wb-dashboard .wb-project-card .wb-task-symbol{width:20px;height:20px;background:transparent!important;color:var(--ink-4)}
+.wb-dashboard .wb-project-card .wb-task-symbol svg{width:16px;height:16px}
+
+/* 八、图标统一尺寸与颜色，异常时才变色。原先烧瓶图标各自带灰底方块，
+   视觉重量比它承载的信息大得多。 */
+.wb-dashboard .wb-task-symbol{width:20px;height:20px;background:transparent!important;color:var(--ink-4)}
+.wb-dashboard .wb-task-symbol svg{width:16px;height:16px}
+.wb-dashboard .wb-task-row:has(.is-failed) .wb-task-symbol{color:var(--err)}
+.wb-dashboard .wb-panel-label>.wb-icon,.wb-dashboard .wb-inspiration-label>.wb-icon{width:14px;height:14px}
+
+/* 九、间距走 4 的倍数，三级：面板 20、卡 16、行 8。 */
+.wb-dashboard .wb-panel-heading{padding:18px 20px 12px}
+.wb-dashboard .wb-project-grid{gap:16px;padding:0 20px 20px}
+.wb-dashboard .wb-project-card{padding:16px}
+.wb-dashboard .wb-paper-stack{gap:12px;padding:0 20px 20px}
+.wb-dashboard .wb-paper-card{padding:16px}
+.wb-dashboard .wb-inspiration{padding:16px 20px}
+/* 论文卡等高时让页脚贴底，卡片下沿才对得齐 */
+.wb-dashboard .wb-paper-copy{flex:1 1 auto}
+.wb-dashboard .wb-paper-foot{margin-top:auto}
+
+/* 十、交互态。原先卡片全是静态的，鼠标放上去没有任何回应，
+   这是「看着像截图」的主要原因之一。 */
+.wb-dashboard .wb-project-card,.wb-dashboard .wb-paper-card{
+  transition:background .14s ease,box-shadow .14s ease}
+.wb-dashboard .wb-paper-card:hover{background:var(--surface);box-shadow:0 1px 3px rgba(16,20,26,.06)}
+.wb-dashboard .wb-task-row{border-radius:8px;transition:background .12s ease}
+.wb-dashboard .wb-task-row:hover{background:color-mix(in srgb,var(--surface) 70%,transparent)}
+.wb-dashboard :is(.wb-icon-button,.wb-task-view-all,.wb-project-title):focus-visible{
+  outline:2px solid var(--focus);outline-offset:2px;border-radius:8px}
+
+/* 十一、黑底按钮降权。整屏最强的视觉信号原先给了「去探索」——
+   它是一条推测性的建议，不是会产生后果的动作。改成描边的次级按钮，
+   把黑底留给真的会改变什么的操作。 */
+.wb-dashboard .wb-idea-explore.btn{background:var(--surface);color:var(--ink-2);
+  border:1px solid var(--line);font-weight:500}
+.wb-dashboard .wb-idea-explore.btn:hover{background:var(--surface-2);border-color:var(--ink-4);color:var(--ink)}
+
+/* ===== 第二遍打磨 ===== */
+
+/* 十二、论文的标题与摘要根本没在截断：别处把 display 改成了 flow-root，
+   -webkit-line-clamp 只在 -webkit-box 上生效，于是第三张卡的摘要直接溢出被切掉，
+   最后一行只剩半个字。把 display 补回去。 */
+.wb-dashboard .wb-paper-title,.wb-dashboard .wb-paper-description{
+  display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}
+
+/* 十三、「暂未获取新结果」是系统状态，不该和论文内容同一个重量。降到标题区的小字。 */
+.wb-dashboard .wb-news-state{margin:6px 0 0;font-size:11px;line-height:16px;color:var(--ink-4)}
+
+/* 十四、分组标题和它的计数：计数降一档颜色，和标题拉开，别让两个数字抢。 */
+.wb-dashboard .wb-task-section-head{margin-bottom:6px}
+.wb-dashboard .wb-task-section-head small{color:var(--ink-4);font-weight:400;margin-left:6px}
+
+/* 十五、行内三列对齐：图标、正文、状态。图标列固定宽度，正文和状态之间留够气口，
+   状态列给一个固定宽度，十几行排下来右边缘才是一条直线。 */
+.wb-dashboard .wb-project-card .wb-task-row{grid-template-columns:20px minmax(0,1fr) 76px;gap:12px}
+.wb-dashboard .wb-task-main{gap:2px}
+
+/* 十六、侧栏分组标题统一：字号、字间距、颜色各自为政会让整条侧栏显得松散。 */
+#side .lbl{font-size:11px;letter-spacing:.06em;color:var(--ink-4);font-weight:500}
+
+/* 十七、页头：标题与右侧日期基线对齐，日期不再比标题高出半行。 */
+.wb-dashboard .wb-header{align-items:baseline}
+.wb-dashboard .wb-date{font-size:12px;color:var(--ink-4)}
+
+/* 十八、面板之间的层次：课题进展是主面板，灵感与资讯是辅面板。
+   主面板底色用纸白，辅面板压一档，不靠边框而靠明度区分主次。 */
+.wb-dashboard .wb-tasks{background:var(--surface)}
+.wb-dashboard .wb-inspiration,.wb-dashboard .wb-news{background:var(--paper)}
+.wb-dashboard .wb-inspiration .wb-project-card,
+.wb-dashboard .wb-news .wb-paper-card{background:var(--surface)}
 
 </style>
 
@@ -20831,7 +20947,7 @@ function iterationTaskSection(kind,tasks,pid){
  const project=rsProject(pid),noun=model?'模型任务':'实验',hidden=Math.max(0,attention.length-rows.length);
  return '<section class="wb-task-section" data-task-kind="'+kind+'"><div class="wb-task-section-head"><h4>'+noun+'<small>'+attention.length+'</small></h4></div>'+
  (rows.length?'<ul class="wb-task-list">'+rows.map(iterationCompactTask).join('')+'</ul>':'<div class="wb-empty-tasks">暂无需要关注的'+(model?'模型':'实验')+'任务</div>')+
- '<div class="wb-task-section-foot">'+(hidden?'<span class="wb-task-more-count">还有 '+hidden+' 项</span>':'')+'<button class="wb-task-view-all" type="button" data-wb-list="'+(model?'train':'experiment')+'" data-wb-pid="'+esc(pid)+'" aria-label="'+esc(project?.name||'课题')+'：查看全部'+(model?'模型任务':'实验任务')+'">查看全部 '+wbViewIcon('right')+'</button></div></section>';
+ '<div class="wb-task-section-foot">'+'<button class="wb-task-view-all" type="button" data-wb-list="'+(model?'train':'experiment')+'" data-wb-pid="'+esc(pid)+'" aria-label="'+esc(project?.name||'课题')+'：查看全部'+(model?'模型任务':'实验任务')+'">'+(hidden?'还有 '+hidden+' 项':'查看全部')+' '+wbViewIcon('right')+'</button></div></section>';
 }
 
 V.workbench=()=>{
@@ -21562,10 +21678,10 @@ function dashboardTaskProgress(t){
 }
 function dashboardSummary(data){
  const failed=data.experiments.filter(t=>t.status==='failed'),active=data.experiments.filter(t=>t.status==='active'),ready=wbAttentionTasks(data.experiments).filter(t=>t.status==='done');
- if(failed.length){const groups=new Set(failed.map(t=>t.pid));return '有 '+failed.length+' 项实验异常，分布在 '+groups.size+' 个课题；请先查看异常环节。';}
- if(active.length)return '有 '+active.length+' 项实验正在进行，可以查看各环节的最新记录。';
- if(ready.length)return '有 '+ready.length+' 项实验已有结论，等待你查看。';
- return '当前没有需要关注的实验，可以继续推进模型任务或探索新的研究问题。';
+ if(failed.length){const groups=new Set(failed.map(t=>t.pid));return failed.length+' 项实验异常，分布在 '+groups.size+' 个课题';}
+ if(active.length)return active.length+' 项实验进行中';
+ if(ready.length)return ready.length+' 项实验已有结论';
+ return '没有需要关注的实验';
 }
 function dashboardRefreshIdea(){
  const data=iterationPrepareWorkbench(),pool=WB.ideas.filter(x=>data.projects.some(p=>p.id===x.pid)),previous=WB.dailyIdea;
@@ -21597,7 +21713,7 @@ V.workbench=()=>{
  return '<div class="page wb wb-dashboard"><header class="wb-header"><div class="wb-header-copy"><span class="wb-kicker">工作台</span><h1>'+wbViewGreeting()+'，ZHANG</h1></div><span class="wb-date">'+esc(date)+'</span></header><div class="wb-layout">'+
  '<section class="wb-panel wb-inspiration" aria-labelledby="wb-ideas-title"><div class="wb-idea-banner-head"><h2 id="wb-ideas-title" class="wb-inspiration-label">'+wbViewIcon('spark')+'今日灵感</h2></div>'+(idea?'<div class="wb-idea-banner-body"><p class="wb-question" aria-live="polite">'+esc(idea.question)+'</p><div class="wb-idea-actions">'+refresh+'<button type="button" class="btn btn-pri wb-idea-explore" data-wb-prompt="'+esc(idea.question)+'" data-wb-pid="'+esc(idea.pid)+'" aria-label="去探索，关联课题：'+esc(ps.find(p=>p.id===idea.pid)?.name||idea.project||'')+'">去探索</button></div></div>':'<div class="wb-empty-idea">为课题补充研究目标，开始探索新问题。</div>')+'</section>'+
  '<section class="wb-panel wb-tasks" aria-labelledby="wb-tasks-title" aria-roledescription="轮播"><div class="wb-panel-heading"><div class="wb-progress-heading"><h2 id="wb-tasks-title">课题进展</h2>'+iterationProjectControls(window,ps.length)+'</div><div class="wb-agent-summary'+(wex.failed?' is-alert':'')+'" aria-live="polite">'+wbViewIcon('spark')+'<p>'+esc(dashboardSummary(d))+'</p></div></div>'+(window.items.length?'<div class="wb-project-grid" style="--wb-project-slots:'+window.slots+'">'+window.items.map(p=>{const scope=workbenchData({pid:p.id});return '<article class="wb-project-card" data-wb-project-id="'+esc(p.id)+'" aria-label="课题：'+esc(p.name)+'"><header class="wb-project-card-head"><h3><button class="wb-project-title" type="button" data-wb-project="'+esc(p.id)+'" title="'+esc(p.name)+'" aria-label="进入课题：'+esc(p.name)+'"><span>'+esc(p.name)+'</span>'+wbViewIcon('right')+'</button></h3></header>'+iterationTaskSection('experiment',scope.experiments||[],p.id)+iterationTaskSection('model',scope.modelTasks||[],p.id)+'</article>'}).join('')+'</div>':'<div class="wb-empty"><strong>还没有课题</strong><button class="btn btn-pri" type="button" data-wb-create-project>新建项目</button></div>')+'</section>'+
- '<section class="wb-panel wb-news" aria-labelledby="wb-news-title"><div class="wb-panel-heading"><div class="wb-progress-heading"><div class="wb-panel-label">'+wbViewIcon('paper')+'<h2 id="wb-news-title">学术资讯</h2></div>'+dashboardNewsControls(WB.newsPage,pages)+'</div><p class="wb-news-agent">'+'我为你找到可能相关的最新论文'+'</p>'+(papers.length&&WB.papersError?'<p class="wb-news-state" role="status">暂未获取新结果，保留现有论文。</p>':'')+'</div><ul class="wb-paper-stack">'+papers.slice(WB.newsPage*pageSize,(WB.newsPage+1)*pageSize).map(p=>dashboardPaper(p,ps)).join('')+'</ul>'+(!papers.length?'<div class="wb-empty-news"><p>'+(WB.papersBusy?'正在查找可能相关的最新论文':WB.papersError?'暂时无法获取论文，请稍后重试。':'暂无匹配论文，为课题补充关键词。')+'</p></div>':'')+'</section></div></div>';
+ '<section class="wb-panel wb-news" aria-labelledby="wb-news-title"><div class="wb-panel-heading"><div class="wb-progress-heading"><div class="wb-panel-label">'+wbViewIcon('paper')+'<h2 id="wb-news-title">学术资讯</h2></div>'+dashboardNewsControls(WB.newsPage,pages)+'</div>'+(papers.length&&WB.papersError?'<p class="wb-news-state" role="status">暂未获取新结果，保留现有论文。</p>':'')+'</div><ul class="wb-paper-stack">'+papers.slice(WB.newsPage*pageSize,(WB.newsPage+1)*pageSize).map(p=>dashboardPaper(p,ps)).join('')+'</ul>'+(!papers.length?'<div class="wb-empty-news"><p>'+(WB.papersBusy?'正在查找可能相关的最新论文':WB.papersError?'暂时无法获取论文，请稍后重试。':'暂无匹配论文，为课题补充关键词。')+'</p></div>':'')+'</section></div></div>';
 };
 const dashboardOriginalBind=wbBind;
 wbBind=function(root){

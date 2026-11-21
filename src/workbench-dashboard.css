@@ -5,7 +5,7 @@
 .wb-dashboard .wb-idea-banner-head{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:6px}
 .wb-dashboard .wb-inspiration-label{display:flex;align-items:center;gap:7px;margin:0;font-size:12px;line-height:20px;font-weight:600;color:var(--dry-ink)}
 .wb-dashboard .wb-inspiration-label>.wb-icon{width:15px;height:15px}
-.wb-dashboard .wb-refresh-idea{width:28px;height:28px;min-height:28px;margin:-3px -4px -3px 0;border-radius:7px;color:var(--ink-3)}
+.wb-dashboard .wb-refresh-idea{width:28px;height:28px;min-height:28px;margin:-3px 0 -3px 0;border-radius:7px;color:var(--ink-3)}
 .wb-dashboard .wb-refresh-idea>.wb-icon{width:15px;height:15px}
 .wb-dashboard .wb-idea-banner-body{display:flex;gap:20px;align-items:center;min-width:0}
 .wb-dashboard .wb-inspiration .wb-question{display:block;flex:1;min-width:0;overflow:visible;-webkit-line-clamp:unset;margin:0;font-size:14px;line-height:1.7;font-weight:450;text-decoration:none;color:var(--ink);cursor:text;white-space:normal;overflow-wrap:anywhere}

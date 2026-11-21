@@ -69,7 +69,7 @@ function iterationTaskSection(kind,tasks,pid){
  const project=rsProject(pid),noun=model?'模型任务':'实验',hidden=Math.max(0,attention.length-rows.length);
  return '<section class="wb-task-section" data-task-kind="'+kind+'"><div class="wb-task-section-head"><h4>'+noun+'<small>'+attention.length+'</small></h4></div>'+
  (rows.length?'<ul class="wb-task-list">'+rows.map(iterationCompactTask).join('')+'</ul>':'<div class="wb-empty-tasks">暂无需要关注的'+(model?'模型':'实验')+'任务</div>')+
- '<div class="wb-task-section-foot">'+(hidden?'<span class="wb-task-more-count">还有 '+hidden+' 项</span>':'')+'<button class="wb-task-view-all" type="button" data-wb-list="'+(model?'train':'experiment')+'" data-wb-pid="'+esc(pid)+'" aria-label="'+esc(project?.name||'课题')+'：查看全部'+(model?'模型任务':'实验任务')+'">查看全部 '+wbViewIcon('right')+'</button></div></section>';
+ '<div class="wb-task-section-foot">'+'<button class="wb-task-view-all" type="button" data-wb-list="'+(model?'train':'experiment')+'" data-wb-pid="'+esc(pid)+'" aria-label="'+esc(project?.name||'课题')+'：查看全部'+(model?'模型任务':'实验任务')+'">'+(hidden?'还有 '+hidden+' 项':'查看全部')+' '+wbViewIcon('right')+'</button></div></section>';
 }
 
 V.workbench=()=>{
