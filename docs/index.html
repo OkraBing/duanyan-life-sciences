@@ -2797,6 +2797,11 @@ dialog.rs-copy-dialog{width:min(600px,calc(100vw - 32px));max-width:600px;overfl
 #view .device-card>.device-connect{position:absolute}
 @media(max-width:1100px){.device-card .device-copy h2{padding-top:40px}}
 
+/* Experiment list cards stop at the progress strip; evidence stays in the detail view. */
+.lv-exp .lv-exp-progress{margin-bottom:0}
+.lv-exp>.row:first-child{min-height:24px}
+.lv-exp>.row>.lv-small,.lv-exp-progress>.lv-small{margin:0}
+
 /* Unified product typography, surfaces and interaction feedback — 20-round review. */
 :root{--page-title-size:28px;--meta-size:12px;--attention-ink:var(--ink-3);--attention-soft:var(--surface-2)}
 .iteration-head h1,.rs .rs-head h1,.shared-detail .iteration-head h1{font-size:var(--page-title-size);line-height:1.3;letter-spacing:-.025em}
@@ -20002,13 +20007,46 @@ function labPublish(b,verdict,text,evidence){
  w.events.push({at:nowStamp(),text:'发布结论：'+verdict,by:'我 · 人工复核'});
  if(!labPersistMutation(b,old)){return '结论未保存';}return '';
 }
+/* Synthetic exception scenarios; only recognizable, untouched examples are upgraded. */
+const LAB_EXCEPTION_EXAMPLES={
+ 'B-P1-002':{stage:'affinity',name:'亲和力测定 · 基线复核',done:['stability'],reason:'BLI 参考孔基线持续漂移，当前结合曲线暂不纳入 KD 拟合；更换参考孔后重新采集。',event:'亲和力表征发现参考基线漂移；稳定性表征已完成，等待补采结合曲线。'},
+ 'B-DEMO-EX':{stage:'purify',name:'蛋白纯化与表征 · 流路检查',reason:'纯化过程中柱压升高、流速下降，已暂停纯化；检查流路与滤膜后再恢复运行。',event:'蛋白纯化因流路异常暂停，后续质控和表征尚未开始。'},
+ 'B-P3-002':{stage:'activity',name:'酶活测定 · 空白对照复核',running:['stability'],reason:'酶活空白孔背景信号偏高，当前批次暂不参与 kcat 拟合；检查底物和缓冲液后重测空白对照。',event:'酶活表征的空白对照异常；独立分样的稳定性表征继续采集曲线。'},
+ 'B-P4-002':{stage:'qc',name:'候选表征 · 浓度复测',reason:'同一样本的两次浓度读数差异较大，已暂停后续表征，待重新混匀后复测。',event:'样品质控发现重复浓度读数不一致，等待复测后再分样。'}
+};
+function labIsUntouchedExceptionExample(b){
+ const w=b?.workflow,scenario=LAB_EXCEPTION_EXAMPLES[b?.id];
+ if(!scenario||!w||w.exceptionExampleVersion>=2||w.source!=='demo'||w.phase!=='ready'||w.mode!=='parallel'||w.conclusion)return false;
+ const qc=w.steps.findIndex(s=>s.stage==='qc'),legacy=b.id==='B-DEMO-EX';
+ const originalNames=legacy?['蛋白纯化后表征 · 异常示例','蛋白纯化与表征 · 流路检查']:[b.id==='B-P3-002'?'酶活与稳定性表征 · 质控复核':'亲和力与稳定性表征 · 质控复核'];
+ if(!originalNames.includes(b.name))return false;
+ const expected=legacy?'演示：样品浓度记录与交接清单不一致，暂停后续表征并核对样本。':'样本浓度与交接清单不一致，已暂停后续表征，等待补测浓度。';
+ if(qc<0||w.steps[qc].result!==expected||!w.steps.some(s=>s.stage===scenario.stage))return false;
+ if((w.events||[]).some(e=>e.text!=='质控异常，等待样本浓度复核'||e.by!=='ZHANG'))return false;
+ return w.steps.every((s,i)=>!s.at&&!(s.history||[]).length&&(s.attempt||1)===1&&s.state===(i<qc?'done':i===qc?'exception':'pending')&&(i===qc||s.result===(i<qc?(legacy?'演示：环节完成':'样本与质控记录已复核，输入输出交接完整。'):'')));
+}
+function labApplyExceptionExample(b){
+ const scenario=LAB_EXCEPTION_EXAMPLES[b?.id],w=b?.workflow;if(!scenario||!w)return b;
+ const failed=w.steps.find(s=>s.stage===scenario.stage);if(!failed)return b;
+ const done=new Set(scenario.done||[]);
+ const before=id=>{const step=w.steps.find(s=>s.id===id);for(const dependency of step?.after||[]){if(!done.has(dependency)){done.add(dependency);before(dependency);}}};before(failed.id);
+ w.steps.forEach(s=>{
+  s.state=s.id===failed.id?'exception':done.has(s.id)?'done':(scenario.running||[]).includes(s.stage)?'running':'pending';
+  s.result=s.state==='exception'?scenario.reason:s.state==='running'?'独立分样的稳定性表征正在采集曲线。':s.state==='done'?(s.stage==='qc'?'浓度与样品检查已通过，满足后续表征的输入要求。':s.stage==='stability'?'热转变曲线与重复样本已复核，稳定性结果已记录。':'该环节已完成，样本与操作记录交接完整。'):'';
+  s.evidence=['done','exception'].includes(s.state)?'ELN/'+b.id+'/'+s.id+'/v1':'';
+ });
+ b.name=scenario.name;w.exceptionExampleVersion=2;
+ w.events=[{at:w.events?.[0]?.at||nowStamp(),by:'ZHANG',text:scenario.event}];return b;
+}
+
 function labInit(){
  // Explicitly illustrative stage records, never inferred from vendor status logs.
  BATCHES.forEach((b,i)=>{if(!['B-2409','B-2411','B-2412'].includes(b.id))return;const steps=labPlan();steps.forEach(s=>{s.state=i<2?'done':['prep','qc'].includes(s.id)?'done':['affinity','stability'].includes(s.id)?'running':'pending';s.result=s.state==='done'?'演示：该环节已完成记录':'演示：等待后续记录';s.evidence=s.state==='done'?'演示记录（无真实测量文件）':'';});b.workflow={schema:1,source:'demo',phase:'ready',template:'characterize',mode:'parallel',assays:['affinity','stability'],sampleIds:['DEMO-SAMPLE'],sampleSource:'演示样本清单；未绑定真实样品',aliquot:'演示：亲和力与稳定性使用独立分样',steps,conclusion:i<2?{published:true,verdict:i===0?'支持假设':'证据不足',text:i===0?'演示：候选需要结合亲和力与稳定性证据继续复核。':'演示：部分样本的数据不足，需要补充验证。',evidence:'演示结论，不用于科研判断',by:'演示数据'}:null,events:[]};});
- if(!BATCHES.some(b=>b.id==='B-DEMO-EX')){const steps=labPlan('full');steps.forEach((s,i)=>{s.state=i<steps.findIndex(x=>x.id==='qc')?'done':s.id==='qc'?'exception':'pending';if(i<steps.findIndex(x=>x.id==='qc')){s.result='演示：环节完成';s.evidence='演示记录（无真实文件）';}if(s.id==='qc')s.result='演示：样品浓度记录与交接清单不一致，暂停后续表征并核对样本。';});BATCHES.push({id:'B-DEMO-EX',pid:'p2',round:2,name:'蛋白纯化后表征 · 异常示例',n:24,vendor:'演示流程',status:'in_production',results:'none',ctx:{assay:['BLI','nanoDSF']},log:[['示例数据初始化','2026-11-20 00:00']],workflow:{schema:1,source:'demo',phase:'ready',template:'full',mode:'parallel',assays:['affinity','stability'],sampleSource:'演示样品交接清单',sampleIds:['DEMO-EX'],aliquot:'质控放行后再分样',steps,conclusion:null,events:[]}});}
+ if(!BATCHES.some(b=>b.id==='B-DEMO-EX')){const steps=labPlan('full');steps.forEach((s,i)=>{s.state=i<steps.findIndex(x=>x.id==='qc')?'done':s.id==='qc'?'exception':'pending';if(i<steps.findIndex(x=>x.id==='qc')){s.result='演示：环节完成';s.evidence='演示记录（无真实文件）';}if(s.id==='qc')s.result='演示：样品浓度记录与交接清单不一致，暂停后续表征并核对样本。';});BATCHES.push({id:'B-DEMO-EX',pid:'p2',round:2,name:'蛋白纯化与表征 · 流路检查',n:24,vendor:'演示流程',status:'in_production',results:'none',ctx:{assay:['BLI','nanoDSF']},log:[['示例数据初始化','2026-11-20 00:00']],workflow:{schema:1,source:'demo',phase:'ready',template:'full',mode:'parallel',assays:['affinity','stability'],sampleSource:'演示样品交接清单',sampleIds:['DEMO-EX'],aliquot:'质控放行后再分样',steps,conclusion:null,events:[]}});}
  const saved=LS.get('lab_workflow_v1',null);if(saved?.schema===1&&Array.isArray(saved.batches))saved.batches.forEach(x=>{if(!x||!x.id||!x.workflow||!Array.isArray(x.workflow.steps))return;const b=BATCHES.find(b=>b.id===x.id);if(b)b.workflow=x.workflow;else if(x.localLab&&DB.projects.some(p=>p.id===x.pid))BATCHES.unshift(x);});
  // Materialize the requested sample fixtures; never rewrite user sample lists or shared versions.
  BATCHES.forEach(b=>{const w=b.workflow;if(w?.source==='demo'&&w.sampleIds?.length===1&&/^DEMO-(SAMPLE|EX)$/.test(w.sampleIds[0]))w.sampleIds=Array.from({length:b.n},(_,i)=>'R'+b.round+'-S'+String(i+1).padStart(3,'0'));});
+ const example=BATCHES.find(b=>b.id==='B-DEMO-EX');if(labIsUntouchedExceptionExample(example)){labApplyExceptionExample(example);labPersist();}
 }
 const labIcon=()=>'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16v12H4zM8 8V4h8v4M8 13h8M8 17h3M15 16h2v2h-2z"/></svg>';
 const labBadge=(st,label)=>`<span class="lv-state is-${esc(st)}">${esc(label||labStatusLabels[st]||st)}</span>`;
@@ -20059,7 +20097,7 @@ function labCounts(pid='all'){const list=BATCHES.filter(b=>pid==='all'||b.pid===
 function labStats(workbench=false,pid='all'){const c=labCounts(pid);return `<div class="lv-stats">${['exception','normal','conclusion'].map(k=>`<button type="button" class="lv-stat" ${workbench?'data-lv-wb-status':'data-lv-filter'}="${k}" aria-label="查看${labStatusLabels[k]}实验">${labBadge(k)}<strong>${c[k]}</strong></button>`).join('')}</div>`;}
 function labCardV2(b){
  const s=labSummary(b),w=b.workflow;
- return `<article class="lv-exp is-${s.status}" role="button" tabindex="0" data-labgo="${esc(b.id)}" aria-label="查看实验进展与结论：${esc(b.name||b.id)}"><div class="row" style="justify-content:space-between;gap:10px">${labBadge(s.status)}<span class="lv-small">${esc(b.id)}</span></div><h2 class="lv-exp-title">${esc(b.name||(b.ctx?.assay?.join(' / ')+' · Round '+b.round))}</h2><p class="lv-small">${esc(pnOf(b.pid))} · ${b.n} 个样本 ${w?.source==='demo'?' · 演示流程':''}</p><div class="lv-exp-progress"><div class="lv-bar" aria-hidden="true">${w?.steps.map(st=>`<i class="${esc(st.state)}"></i>`).join('')||'<i></i>'}</div><span class="lv-small">${s.total?s.done+'/'+s.total+' 环节':'未记录环节'}</span></div><div class="lv-current"><strong>${esc(s.current)}</strong><br>${esc(s.detail)}</div></article>`;
+ return `<article class="lv-exp is-${s.status}" role="button" tabindex="0" data-labgo="${esc(b.id)}" aria-label="查看实验进展与结论：${esc(b.name||b.id)}"><div class="row" style="justify-content:space-between;gap:10px">${labBadge(s.status)}<span class="lv-small">${esc(b.id)}</span></div><h2 class="lv-exp-title">${esc(b.name||(b.ctx?.assay?.join(' / ')+' · Round '+b.round))}</h2><p class="lv-small">${esc(pnOf(b.pid))} · ${b.n} 个样本 ${w?.source==='demo'?' · 演示流程':''}</p><div class="lv-exp-progress"><div class="lv-bar" aria-hidden="true">${w?.steps.map(st=>`<i class="${esc(st.state)}"></i>`).join('')||'<i></i>'}</div><span class="lv-small">${s.total?s.done+'/'+s.total+' 环节':'未记录环节'}</span></div></article>`;
 }
 V.lab=()=>{
  const f=LABUI.filter==='all'&&S.lflt==='run'?'normal':LABUI.filter==='all'&&S.lflt==='past'?'conclusion':LABUI.filter;
@@ -21008,7 +21046,7 @@ rsBind=function(root){
 /* Keep progress cards direct and concise; original data and export provenance are preserved. */
 labCardV2=function(b){
  const s=labSummary(b),w=b.workflow,title=(b.name||b.ctx?.assay?.join(' / ')+' · 第 '+b.round+' 轮').replace(' · 异常示例','');
- return '<article class="lv-exp is-'+s.status+'" role="button" tabindex="0" data-labgo="'+esc(b.id)+'" aria-label="查看实验进展与结论：'+esc(title)+'"><div class="row" style="justify-content:space-between;gap:10px">'+labBadge(s.status)+'<span class="lv-small">'+esc(b.id.includes('DEMO')?'':b.id)+'</span></div><h2 class="lv-exp-title">'+esc(title)+'</h2><p class="lv-small">'+esc(pnOf(b.pid))+' · '+b.n+' 个样本</p><div class="lv-exp-progress"><div class="lv-bar" aria-hidden="true">'+(w?.steps.map(st=>'<i class="'+esc(st.state)+'"></i>').join('')||'<i></i>')+'</div><span class="lv-small">'+(s.total?s.done+'/'+s.total+' 环节':'未记录环节')+'</span></div><div class="lv-current"><strong>'+esc(s.current)+'</strong><br>'+esc(iterationHumanText(s.detail))+'</div></article>';
+ return '<article class="lv-exp is-'+s.status+'" role="button" tabindex="0" data-labgo="'+esc(b.id)+'" aria-label="查看实验进展与结论：'+esc(title)+'"><div class="row" style="justify-content:space-between;gap:10px">'+labBadge(s.status)+'<span class="lv-small">'+esc(b.id.includes('DEMO')?'':b.id)+'</span></div><h2 class="lv-exp-title">'+esc(title)+'</h2><p class="lv-small">'+esc(pnOf(b.pid))+' · '+b.n+' 个样本</p><div class="lv-exp-progress"><div class="lv-bar" aria-hidden="true">'+(w?.steps.map(st=>'<i class="'+esc(st.state)+'"></i>').join('')||'<i></i>')+'</div><span class="lv-small">'+(s.total?s.done+'/'+s.total+' 环节':'未记录环节')+'</span></div></article>';
 };
 V.lab=()=>{
  const f=LABUI.filter==='all'&&S.lflt==='run'?'normal':LABUI.filter==='all'&&S.lflt==='past'?'conclusion':LABUI.filter,pid=DB.projects.some(p=>p.id===S.labProject)?S.labProject:'all',rank={exception:0,normal:1,draft:2,conclusion:3,unknown:4};
@@ -21085,7 +21123,8 @@ function fixtureExperiment(p,index,status,dataset,profile){
   s.evidence=['done','exception'].includes(s.state)?'ELN/'+id+'/'+s.id+'/v1':'';
  });
  const workflow={schema:1,source:'demo',phase:status==='draft'?'draft':'ready',template:profile.template,mode:'parallel',assays:profile.assays.slice(),sampleIds,sampleSource:dataset.id+' · '+dataset.name+' · v1',aliquot:'同一份样本清单，各表征分支使用独立分样，完成后汇总结果。',steps,conclusion:status==='conclusion'?{published:true,verdict:'支持假设',text:conclusion,evidence:'ELN/'+id+'/analysis-v1',by:'ZHANG',at:nowStamp()}:null,events:[{at:nowStamp(),by:'ZHANG',text:status==='conclusion'?'已复核表征结果并发布实验结论':status==='exception'?'质控异常，等待样本浓度复核':status==='draft'?'保存实验编排草稿':'前处理完成，进入并行表征'}]};
- return {id,pid:p.id,name:(profile.label==='kcat'?'酶活与稳定性表征':'亲和力与稳定性表征')+' · '+({normal:'第 2 批',exception:'质控复核',conclusion:'第 1 批',draft:'下一批方案'}[status]),resultRows:dataset.rows.slice(0,24).map(r=>rsClone(r)),resultCsv:[dataset.cols.map(c=>c.k).join(','),...dataset.rows.slice(0,24).map(r=>dataset.cols.map(c=>'"'+String(r[c.k]??'').replace(/"/g,'""')+'"').join(','))].join('\n'),round:p.rounds.slice(-1)[0]?.i||1,n:sampleIds.length,vendor:'蛋白实验平台',status:status==='conclusion'?'done':status==='draft'?'draft':'in_production',results:status==='conclusion'?'all':'none',ctx:{host:profile.label==='kcat'?'E. coli':'HEK293',assay:profile.label==='kcat'?['酶活测定','nanoDSF']:['BLI','nanoDSF'],reps:'n = 3',buffer:profile.label==='kcat'?'Tris pH 8.0':'PBS pH 7.4',temp:profile.label==='kcat'?'37℃':'25℃'},log:[['draft',nowStamp()],...(status==='conclusion'?[['done',nowStamp()]]:[])],workflow,localLab:true,example:true,fixtureSchema:PROJECT_FIXTURE_SCHEMA,datasetId:dataset.id};
+ const batch={id,pid:p.id,name:(profile.label==='kcat'?'酶活与稳定性表征':'亲和力与稳定性表征')+' · '+({normal:'第 2 批',exception:'质控复核',conclusion:'第 1 批',draft:'下一批方案'}[status]),resultRows:dataset.rows.slice(0,24).map(r=>rsClone(r)),resultCsv:[dataset.cols.map(c=>c.k).join(','),...dataset.rows.slice(0,24).map(r=>dataset.cols.map(c=>'"'+String(r[c.k]??'').replace(/"/g,'""')+'"').join(','))].join('\n'),round:p.rounds.slice(-1)[0]?.i||1,n:sampleIds.length,vendor:'蛋白实验平台',status:status==='conclusion'?'done':status==='draft'?'draft':'in_production',results:status==='conclusion'?'all':'none',ctx:{host:profile.label==='kcat'?'E. coli':'HEK293',assay:profile.label==='kcat'?['酶活测定','nanoDSF']:['BLI','nanoDSF'],reps:'n = 3',buffer:profile.label==='kcat'?'Tris pH 8.0':'PBS pH 7.4',temp:profile.label==='kcat'?'37℃':'25℃'},log:[['draft',nowStamp()],...(status==='conclusion'?[['done',nowStamp()]]:[])],workflow,localLab:true,example:true,fixtureSchema:PROJECT_FIXTURE_SCHEMA,datasetId:dataset.id};
+ return status==='exception'?labApplyExceptionExample(batch):batch;
 }
 function fixtureTraining(p,index,dataset,profile){
  const trained=dsTrain(dataset,{seed:dataset.seed});if(!trained.ok)throw new Error('示例训练数据不完整：'+p.name+' '+trained.why);
@@ -21115,9 +21154,17 @@ function restoreProjectFixtures(fixtures){
   p.tools=p.tools||[];['ProteinMPNN','Protenix','自主实验网络'].forEach(n=>{if(!p.tools.includes(n))p.tools.push(n);});
  }
 }
+async function upgradeProjectExceptionExamples(){
+ const next=rsClone(RS.data);let templatesChanged=false,recordsChanged=false;
+ for(const row of next.projectFixtures?.projects||[])for(const b of row.experiments||[]){if(labIsUntouchedExceptionExample(b)){labApplyExceptionExample(b);templatesChanged=true;}}
+ for(const b of BATCHES){if(labIsUntouchedExceptionExample(b)){labApplyExceptionExample(b);recordsChanged=true;}}
+ // Published shared assets are versioned snapshots and are deliberately not rewritten.
+ if(templatesChanged)await rsSave(next);
+ if(recordsChanged)labPersist();
+}
 async function seedProjectFixtures(){
  if(LS.get('examples_disabled',false))return;
- if(RS.data.projectFixtures?.schema===PROJECT_FIXTURE_SCHEMA){restoreProjectFixtures(RS.data.projectFixtures);return;}
+ if(RS.data.projectFixtures?.schema===PROJECT_FIXTURE_SCHEMA){restoreProjectFixtures(RS.data.projectFixtures);await upgradeProjectExceptionExamples();return;}
  const fixtures={schema:PROJECT_FIXTURE_SCHEMA,projects:[],at:nowStamp()};
  DB.projects.filter(p=>(p.ownerId||'me')==='me').forEach((p,index)=>{
   const profile=fixtureProfile(p),referenceSequence=PRJ_WT[p.id]||PRJ_WT[profile.parent]||PRJ_WT.p1;PRJ_WT[p.id]=referenceSequence;

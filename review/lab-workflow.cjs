@@ -33,7 +33,7 @@ fs.mkdirSync(output,{recursive:true});
    await go('lab');assert.equal(await page.locator('.lv-exp').count(),4);
    assert.deepEqual(await page.evaluate(()=>labCounts()),{normal:1,exception:1,conclusion:2,draft:0});
    await page.locator('.lv-filter[data-lv-filter="exception"]').click();assert.equal(await page.locator('.lv-exp').count(),1);
-   await page.locator('[data-labgo="B-DEMO-EX"]').click();assert.match(await page.locator('[data-lv-stage="qc"] .lv-stage-result').innerText(),/样品浓度/);
+   await page.locator('[data-labgo="B-DEMO-EX"]').click();assert.match(await page.locator('[data-lv-stage="purify"] .lv-stage-result').innerText(),/柱压/);
    await page.evaluate(()=>go('labdet',{labPick:'B-2412'}));
    assert.equal(await page.locator('[data-lv-stage="affinity"] .lv-state').innerText(),'进行中');assert.equal(await page.locator('[data-lv-stage="stability"] .lv-state').innerText(),'进行中');
    await page.screenshot({path:path.join(output,'experiment-detail.png'),fullPage:true});

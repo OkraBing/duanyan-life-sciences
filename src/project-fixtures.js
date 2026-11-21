@@ -28,7 +28,8 @@ function fixtureExperiment(p,index,status,dataset,profile){
   s.evidence=['done','exception'].includes(s.state)?'ELN/'+id+'/'+s.id+'/v1':'';
  });
  const workflow={schema:1,source:'demo',phase:status==='draft'?'draft':'ready',template:profile.template,mode:'parallel',assays:profile.assays.slice(),sampleIds,sampleSource:dataset.id+' · '+dataset.name+' · v1',aliquot:'同一份样本清单，各表征分支使用独立分样，完成后汇总结果。',steps,conclusion:status==='conclusion'?{published:true,verdict:'支持假设',text:conclusion,evidence:'ELN/'+id+'/analysis-v1',by:'ZHANG',at:nowStamp()}:null,events:[{at:nowStamp(),by:'ZHANG',text:status==='conclusion'?'已复核表征结果并发布实验结论':status==='exception'?'质控异常，等待样本浓度复核':status==='draft'?'保存实验编排草稿':'前处理完成，进入并行表征'}]};
- return {id,pid:p.id,name:(profile.label==='kcat'?'酶活与稳定性表征':'亲和力与稳定性表征')+' · '+({normal:'第 2 批',exception:'质控复核',conclusion:'第 1 批',draft:'下一批方案'}[status]),resultRows:dataset.rows.slice(0,24).map(r=>rsClone(r)),resultCsv:[dataset.cols.map(c=>c.k).join(','),...dataset.rows.slice(0,24).map(r=>dataset.cols.map(c=>'"'+String(r[c.k]??'').replace(/"/g,'""')+'"').join(','))].join('\n'),round:p.rounds.slice(-1)[0]?.i||1,n:sampleIds.length,vendor:'蛋白实验平台',status:status==='conclusion'?'done':status==='draft'?'draft':'in_production',results:status==='conclusion'?'all':'none',ctx:{host:profile.label==='kcat'?'E. coli':'HEK293',assay:profile.label==='kcat'?['酶活测定','nanoDSF']:['BLI','nanoDSF'],reps:'n = 3',buffer:profile.label==='kcat'?'Tris pH 8.0':'PBS pH 7.4',temp:profile.label==='kcat'?'37℃':'25℃'},log:[['draft',nowStamp()],...(status==='conclusion'?[['done',nowStamp()]]:[])],workflow,localLab:true,example:true,fixtureSchema:PROJECT_FIXTURE_SCHEMA,datasetId:dataset.id};
+ const batch={id,pid:p.id,name:(profile.label==='kcat'?'酶活与稳定性表征':'亲和力与稳定性表征')+' · '+({normal:'第 2 批',exception:'质控复核',conclusion:'第 1 批',draft:'下一批方案'}[status]),resultRows:dataset.rows.slice(0,24).map(r=>rsClone(r)),resultCsv:[dataset.cols.map(c=>c.k).join(','),...dataset.rows.slice(0,24).map(r=>dataset.cols.map(c=>'"'+String(r[c.k]??'').replace(/"/g,'""')+'"').join(','))].join('\n'),round:p.rounds.slice(-1)[0]?.i||1,n:sampleIds.length,vendor:'蛋白实验平台',status:status==='conclusion'?'done':status==='draft'?'draft':'in_production',results:status==='conclusion'?'all':'none',ctx:{host:profile.label==='kcat'?'E. coli':'HEK293',assay:profile.label==='kcat'?['酶活测定','nanoDSF']:['BLI','nanoDSF'],reps:'n = 3',buffer:profile.label==='kcat'?'Tris pH 8.0':'PBS pH 7.4',temp:profile.label==='kcat'?'37℃':'25℃'},log:[['draft',nowStamp()],...(status==='conclusion'?[['done',nowStamp()]]:[])],workflow,localLab:true,example:true,fixtureSchema:PROJECT_FIXTURE_SCHEMA,datasetId:dataset.id};
+ return status==='exception'?labApplyExceptionExample(batch):batch;
 }
 function fixtureTraining(p,index,dataset,profile){
  const trained=dsTrain(dataset,{seed:dataset.seed});if(!trained.ok)throw new Error('示例训练数据不完整：'+p.name+' '+trained.why);
@@ -58,9 +59,17 @@ function restoreProjectFixtures(fixtures){
   p.tools=p.tools||[];['ProteinMPNN','Protenix','自主实验网络'].forEach(n=>{if(!p.tools.includes(n))p.tools.push(n);});
  }
 }
+async function upgradeProjectExceptionExamples(){
+ const next=rsClone(RS.data);let templatesChanged=false,recordsChanged=false;
+ for(const row of next.projectFixtures?.projects||[])for(const b of row.experiments||[]){if(labIsUntouchedExceptionExample(b)){labApplyExceptionExample(b);templatesChanged=true;}}
+ for(const b of BATCHES){if(labIsUntouchedExceptionExample(b)){labApplyExceptionExample(b);recordsChanged=true;}}
+ // Published shared assets are versioned snapshots and are deliberately not rewritten.
+ if(templatesChanged)await rsSave(next);
+ if(recordsChanged)labPersist();
+}
 async function seedProjectFixtures(){
  if(LS.get('examples_disabled',false))return;
- if(RS.data.projectFixtures?.schema===PROJECT_FIXTURE_SCHEMA){restoreProjectFixtures(RS.data.projectFixtures);return;}
+ if(RS.data.projectFixtures?.schema===PROJECT_FIXTURE_SCHEMA){restoreProjectFixtures(RS.data.projectFixtures);await upgradeProjectExceptionExamples();return;}
  const fixtures={schema:PROJECT_FIXTURE_SCHEMA,projects:[],at:nowStamp()};
  DB.projects.filter(p=>(p.ownerId||'me')==='me').forEach((p,index)=>{
   const profile=fixtureProfile(p),referenceSequence=PRJ_WT[p.id]||PRJ_WT[profile.parent]||PRJ_WT.p1;PRJ_WT[p.id]=referenceSequence;

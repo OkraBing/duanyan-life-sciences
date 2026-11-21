@@ -79,3 +79,8 @@
 /* Keep card actions out of the text flow even when shared button styles are applied. */
 #view .device-card>.device-connect{position:absolute}
 @media(max-width:1100px){.device-card .device-copy h2{padding-top:40px}}
+
+/* Experiment list cards stop at the progress strip; evidence stays in the detail view. */
+.lv-exp .lv-exp-progress{margin-bottom:0}
+.lv-exp>.row:first-child{min-height:24px}
+.lv-exp>.row>.lv-small,.lv-exp-progress>.lv-small{margin:0}
