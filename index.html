@@ -3029,8 +3029,8 @@ body[data-route=toolnew] .rs-form-footer,body[data-route=databasenew] .rs-form-f
 @media(max-width:600px){.lab-workflow-panel .lab-flow-map{margin-top:12px;padding-inline:6px}.lab-experiment-detail .lab-workflow-panel{padding-inline:8px}.lab-workflow-head{padding-top:16px}.lab-map-branches .lab-map-node{margin-inline:4px;width:calc(100% - 8px);padding-inline:5px}.lab-flow-map .lab-map-node{min-height:76px}}
 
 /* A restrained two-column workbench: compact inspiration, actionable progress, paper feed. */
-.page.wb.wb-dashboard{--wb-task-min-row:68px;--wb-paper-min-row:178px;grid-template-rows:50px minmax(0,1fr);gap:16px}
-.wb-dashboard .wb-layout{grid-template-columns:minmax(0,1.8fr) minmax(310px,1fr);grid-template-rows:auto minmax(0,1fr);gap:16px}
+.page.wb.wb-dashboard{--wb-paper-min-row:178px;grid-template-rows:50px minmax(0,1fr);gap:16px}
+.wb-dashboard .wb-layout{grid-template-columns:minmax(0,1.8fr) minmax(310px,1fr);grid-template-rows:auto minmax(516px,1fr);gap:16px}
 .wb-dashboard .wb-inspiration{grid-column:1;grid-row:1;align-self:stretch;height:auto;max-height:none;padding:14px 18px;background:linear-gradient(115deg,color-mix(in srgb,var(--dry-soft) 65%,var(--surface)),var(--surface) 85%)}
 .wb-dashboard .wb-idea-banner-head{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:6px}
 .wb-dashboard .wb-inspiration-label{display:flex;align-items:center;gap:7px;margin:0;font-size:12px;line-height:20px;font-weight:600;color:var(--dry-ink)}
@@ -3052,20 +3052,28 @@ body[data-route=toolnew] .rs-form-footer,body[data-route=databasenew] .rs-form-f
 .wb-dashboard .wb-agent-summary>p,.wb-dashboard .wb-news-agent{font-size:12px;line-height:1.7;margin:0;color:var(--ink-3)}
 .wb-dashboard .wb-news-agent{margin-top:8px}
 .wb-dashboard .wb-project-grid{gap:12px;padding:0 16px 16px;overflow:hidden}
-.wb-dashboard .wb-project-card{padding:14px;min-height:0;overflow:hidden}
+.wb-dashboard .wb-project-card{display:grid;gap:0;padding:14px;min-height:0;overflow:hidden}
 .wb-dashboard .wb-project-card-head{min-height:44px;margin-bottom:8px;padding-bottom:10px}
 .wb-dashboard .wb-project-card-head h3{font-size:15px}
-.wb-dashboard .wb-project-card .wb-task-list{gap:4px;overflow:visible}
-.wb-dashboard .wb-project-card .wb-task-list>li{height:auto;flex:1 1 0;min-height:var(--wb-task-min-row);max-height:96px}
-.wb-dashboard .wb-project-card .wb-task-row{display:grid;grid-template-columns:28px minmax(0,1fr) max-content;gap:8px;align-items:start;padding:6px 0;min-height:0}
-.wb-dashboard .wb-project-card .wb-task-symbol{width:28px;height:28px;margin-top:1px;display:grid;place-items:center;border-radius:8px;background:var(--surface-2)!important;color:var(--ink-3)}
+.wb-dashboard .wb-project-card .wb-task-list{gap:2px;overflow:visible;justify-content:flex-start;flex:1}
+.wb-dashboard .wb-project-card .wb-task-list>li{height:44px;flex:0 0 44px;min-height:44px;max-height:none}
+.wb-dashboard .wb-project-card .wb-task-row{display:grid;grid-template-columns:28px minmax(0,1fr) max-content;gap:8px;align-items:center;padding:4px 0;height:44px;min-height:44px}
+.wb-dashboard .wb-project-card .wb-task-symbol{width:28px;height:28px;margin-top:0;display:grid;place-items:center;border-radius:8px;background:var(--surface-2)!important;color:var(--ink-3)}
 .wb-dashboard .wb-project-card .wb-task-symbol>.wb-icon{width:16px;height:16px}
-.wb-dashboard .wb-project-card .wb-task-main{display:flex;flex-direction:column;gap:3px}
+.wb-dashboard .wb-project-card .wb-task-main{display:flex;flex-direction:column;gap:2px}
 .wb-dashboard .wb-project-card .wb-task-main>strong{font-size:13px;line-height:18px;font-weight:500}
-.wb-dashboard .wb-task-description{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;line-height:16px;color:var(--ink-3)}
-.wb-dashboard .wb-task-context{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;line-height:14px;color:var(--ink-3)}
-.wb-dashboard .wb-project-card .wb-task-state{padding-top:0;align-items:flex-end;font-size:11px;max-width:66px}
-.wb-dashboard .wb-project-card .wb-status{line-height:18px}
+.wb-dashboard .wb-task-description{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11.5px;line-height:16px;color:var(--ink-3)}
+.wb-dashboard .wb-project-card .wb-task-state{padding:0;align-items:center;font-size:11px;max-width:76px;min-width:56px}
+.wb-dashboard .wb-project-card .wb-status{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;min-width:52px;padding:3px 6px;border-radius:6px;background:var(--surface-2);font-size:10px;line-height:14px;text-align:center;font-weight:400}
+.wb-dashboard .wb-tag-detail{font-size:10px;line-height:14px;color:var(--ink-3)}
+.wb-dashboard .wb-task-section-head h4{display:flex;align-items:center;gap:6px}
+.wb-dashboard .wb-task-section-head h4 small{font-size:11px;font-weight:400;color:var(--ink-3)}
+.wb-dashboard .wb-task-section-foot{justify-content:space-between!important;gap:8px}
+.wb-dashboard .wb-task-more-count{font-size:11px;color:var(--ink-3)}
+.wb-dashboard .wb-task-view-all{display:inline-flex;align-items:center;gap:4px;margin-left:auto;padding:2px 0;min-height:24px;border:0;background:transparent;font:inherit;font-size:11px;color:var(--dry-ink);cursor:pointer}
+.wb-dashboard .wb-task-view-all>.wb-icon{width:12px;height:12px}
+.wb-dashboard .wb-task-view-all:hover{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+.wb-dashboard .wb-task-view-all:focus-visible{outline:2px solid var(--focus);outline-offset:3px;border-radius:4px}
 .wb-dashboard .wb-news-controls{display:flex;gap:5px;align-items:center;margin-left:auto}
 .wb-dashboard .wb-news-controls .wb-project-range{min-width:36px;font-size:11px}
 .wb-dashboard .wb-news-controls .wb-project-step.btn{width:28px;height:28px;min-height:28px}
@@ -3081,13 +3089,41 @@ body[data-route=toolnew] .rs-form-footer,body[data-route=databasenew] .rs-form-f
 .wb-dashboard .wb-paper-open:hover{background:var(--surface-2)}.wb-dashboard .wb-paper-open>.wb-icon{width:16px;height:16px}
 .wb-dashboard .wb-paper-open:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 .wb-dashboard .wb-empty-idea{font-size:13px;line-height:1.6;color:var(--ink-3)}
-@media(max-height:760px) and (min-width:901px){.page.wb.wb-dashboard{--wb-task-min-row:64px;--wb-paper-min-row:162px;grid-template-rows:44px minmax(0,1fr);gap:12px}.wb-dashboard .wb-layout{gap:12px}.wb-dashboard .wb-inspiration{padding:10px 16px}.wb-dashboard .wb-panel-heading{padding:12px 16px 8px}.wb-dashboard .wb-project-grid{padding:0 12px 12px}.wb-dashboard .wb-project-card{padding:10px}.wb-dashboard .wb-project-card-head{min-height:36px;padding-bottom:6px;margin-bottom:5px}.wb-dashboard .wb-project-card .wb-task-row{padding-block:4px}.wb-dashboard .wb-project-card .wb-task-section+.wb-task-section{margin-top:6px;padding-top:8px}.wb-dashboard .wb-paper-stack{padding:0 12px 12px}.wb-dashboard .wb-paper-card{padding:12px;gap:8px}.wb-dashboard .wb-paper-title{-webkit-line-clamp:2}.wb-dashboard .wb-paper-description{-webkit-line-clamp:3}}
-@media(max-width:900px){body[data-route=workbench] #view{overflow:auto}.page.wb.wb-dashboard{height:auto;min-height:100%;grid-template-rows:auto 1fr}.wb-dashboard .wb-layout{grid-template-columns:1fr;grid-template-rows:auto 460px 620px}.wb-dashboard .wb-inspiration{grid-column:1;grid-row:1}.wb-dashboard .wb-tasks{grid-column:1;grid-row:2}.wb-dashboard .wb-news{grid-column:1;grid-row:3}.wb-dashboard .wb-paper-stack{--wb-paper-min-row:164px}}
-@media(max-width:600px){.wb-dashboard .wb-layout{grid-template-rows:auto 480px 600px;gap:12px}.wb-dashboard .wb-inspiration{padding:12px 14px}.wb-dashboard .wb-idea-banner-body{gap:12px;align-items:flex-start;flex-direction:column}.wb-dashboard .wb-idea-explore.btn{align-self:flex-end;min-height:36px}.wb-dashboard .wb-inspiration .wb-question{font-size:14px}.wb-dashboard .wb-panel-heading{padding:12px 14px 10px}.wb-dashboard .wb-panel-heading h2{font-size:16px}.wb-dashboard .wb-agent-summary>p,.wb-dashboard .wb-news-agent{font-size:12px}.wb-dashboard .wb-project-grid{padding:0 12px 12px}.wb-dashboard .wb-project-card{padding:12px}.wb-dashboard .wb-project-card-head h3{font-size:15px}.wb-dashboard .wb-project-card .wb-task-symbol{display:grid}.wb-dashboard .wb-project-card .wb-task-section-foot{height:28px;min-height:28px}.wb-dashboard .wb-project-card .wb-pagination .wb-icon-button{height:28px;min-height:28px}.wb-dashboard .wb-paper-stack{padding:0 12px 12px}.wb-dashboard .wb-paper-card{padding:12px}}
-@media(max-height:560px) and (min-width:901px){body[data-route=workbench] #view{overflow:auto}.page.wb.wb-dashboard{height:auto;min-height:100%;grid-template-rows:44px auto}.wb-dashboard .wb-layout{grid-template-rows:auto 440px}.wb-dashboard .wb-news{min-height:550px}}
-@media(pointer:coarse){.wb-dashboard .wb-refresh-idea,.wb-dashboard .wb-news-controls .wb-project-step.btn,.wb-dashboard .wb-paper-open{width:40px;height:40px;min-height:40px}.wb-dashboard .wb-project-card .wb-task-section-foot{height:40px;min-height:40px}}
+@media(max-height:850px) and (min-width:901px){.page.wb.wb-dashboard{--wb-paper-min-row:162px;grid-template-rows:44px minmax(0,1fr);gap:12px}.wb-dashboard .wb-layout{gap:12px}.wb-dashboard .wb-inspiration{padding:10px 16px}.wb-dashboard .wb-panel-heading{padding:12px 16px 8px}.wb-dashboard .wb-project-grid{padding:0 12px 12px}.wb-dashboard .wb-project-card{padding:10px}.wb-dashboard .wb-project-card-head{min-height:36px;padding-bottom:6px;margin-bottom:5px}.wb-dashboard .wb-project-card .wb-task-row{padding-block:4px}.wb-dashboard .wb-project-card .wb-task-section+.wb-task-section{margin-top:6px;padding-top:8px}.wb-dashboard .wb-paper-stack{padding:0 12px 12px}.wb-dashboard .wb-paper-card{padding:12px;gap:8px}.wb-dashboard .wb-paper-title{-webkit-line-clamp:2}.wb-dashboard .wb-paper-description{-webkit-line-clamp:3}}
+@media(max-width:900px){body[data-route=workbench] #view{overflow:auto}.page.wb.wb-dashboard{height:auto;min-height:100%;grid-template-rows:auto 1fr}.wb-dashboard .wb-layout{grid-template-columns:1fr;grid-template-rows:auto 584px 620px}.wb-dashboard .wb-inspiration{grid-column:1;grid-row:1}.wb-dashboard .wb-tasks{grid-column:1;grid-row:2}.wb-dashboard .wb-news{grid-column:1;grid-row:3}.wb-dashboard .wb-paper-stack{--wb-paper-min-row:164px}}
+@media(max-width:600px){.wb-dashboard .wb-layout{grid-template-rows:auto 600px 600px;gap:12px}.wb-dashboard .wb-inspiration{padding:12px 14px}.wb-dashboard .wb-idea-banner-body{gap:12px;align-items:flex-start;flex-direction:column}.wb-dashboard .wb-idea-explore.btn{align-self:flex-end;min-height:36px}.wb-dashboard .wb-inspiration .wb-question{font-size:14px}.wb-dashboard .wb-panel-heading{padding:12px 14px 10px}.wb-dashboard .wb-panel-heading h2{font-size:16px}.wb-dashboard .wb-agent-summary>p,.wb-dashboard .wb-news-agent{font-size:12px}.wb-dashboard .wb-project-grid{padding:0 12px 12px}.wb-dashboard .wb-project-card{padding:12px}.wb-dashboard .wb-project-card-head h3{font-size:15px}.wb-dashboard .wb-project-card .wb-task-symbol{display:grid}.wb-dashboard .wb-project-card .wb-task-section-foot{height:28px;min-height:28px}.wb-dashboard .wb-project-card .wb-pagination .wb-icon-button{height:28px;min-height:28px}.wb-dashboard .wb-paper-stack{padding:0 12px 12px}.wb-dashboard .wb-paper-card{padding:12px}}
+@media(max-height:560px) and (min-width:901px){body[data-route=workbench] #view{overflow:auto}.page.wb.wb-dashboard{height:auto;min-height:100%;grid-template-rows:44px auto}.wb-dashboard .wb-layout{grid-template-rows:auto 516px}.wb-dashboard .wb-news{min-height:550px}}
+@media(pointer:coarse){.wb-dashboard .wb-layout{grid-template-rows:auto minmax(564px,1fr)}.wb-dashboard .wb-task-view-all{min-height:40px}.wb-dashboard .wb-refresh-idea,.wb-dashboard .wb-news-controls .wb-project-step.btn,.wb-dashboard .wb-paper-open{width:40px;height:40px;min-height:40px}.wb-dashboard .wb-project-card .wb-task-section-foot{height:40px;min-height:40px}}
 
 .wb-dashboard .wb-news-state{font-size:11px;line-height:1.6;color:var(--ink-3);margin:5px 0 0;padding:0}
+
+@media(max-height:700px) and (min-width:901px){body[data-route=workbench] #view{overflow:auto}.page.wb.wb-dashboard{height:auto;min-height:100%;grid-template-rows:44px auto}.wb-dashboard .wb-news{min-height:620px}}
+@media(max-height:850px) and (min-width:901px){
+ .wb-dashboard .wb-tasks>.wb-panel-heading{padding:8px 14px 6px}
+ .wb-dashboard .wb-tasks .wb-project-step.btn{width:24px;height:24px;min-height:24px}
+ .wb-dashboard .wb-tasks .wb-panel-heading h2{line-height:22px}
+ .wb-dashboard .wb-agent-summary{margin-top:6px}
+ .wb-dashboard .wb-agent-summary>p{line-height:18px}
+ .wb-dashboard .wb-project-card .wb-task-list>li{height:40px;min-height:40px;flex-basis:40px}
+ .wb-dashboard .wb-project-card .wb-task-row{height:40px;min-height:40px;padding-block:2px}
+ .wb-dashboard .wb-project-card .wb-task-section+.wb-task-section{margin-top:4px;padding-top:4px}
+}
+
+@media(pointer:coarse){
+ .wb-dashboard .wb-task-view-all{min-height:44px}
+ .wb-dashboard .wb-project-card .wb-task-section-foot{height:44px;min-height:44px}
+ .wb-dashboard .wb-project-card .wb-task-list>li{height:44px;min-height:44px;flex-basis:44px}
+ .wb-dashboard .wb-project-card .wb-task-row{height:44px;min-height:44px;padding-block:4px}
+}
+@media(pointer:coarse) and (max-width:900px){.wb-dashboard .wb-layout{grid-template-rows:auto 640px 620px}}
+
+.wb-dashboard .wb-project-card-head{margin-bottom:0;min-height:0}
+.wb-dashboard .wb-project-title>span{-webkit-line-clamp:1;white-space:nowrap;text-overflow:ellipsis}
+/* Reserve room for three rows, the group heading and its full-list action. */
+.wb-dashboard .wb-project-card{grid-template-rows:44px minmax(190px,1fr) minmax(211px,1fr)}
+@media(max-height:850px) and (min-width:901px){.wb-dashboard .wb-project-card{grid-template-rows:36px minmax(178px,1fr) minmax(187px,1fr)}}
+@media(max-width:600px){.wb-dashboard .wb-project-card{grid-template-rows:44px minmax(194px,1fr) minmax(215px,1fr)}}
+@media(pointer:coarse){.wb-dashboard .wb-project-card{grid-template-rows:44px minmax(210px,1fr) minmax(231px,1fr)}}
 
 </style>
 
@@ -20672,18 +20708,14 @@ function iterationCompactTask(t){
  '<span class="wb-task-state"><span class="wb-status is-'+esc(t.status)+'">'+esc(status)+'</span></span></button></li>';
 }
 function iterationTaskSection(kind,tasks,pid){
- tasks=wbAttentionTasks(tasks);
- const model=kind==='model',rank={failed:0,active:1,draft:2,unknown:3,done:4,canceled:5};
- const sorted=tasks.slice().sort((a,b)=>(rank[a.status]??3)-(rank[b.status]??3));
- const size=dashboardTaskSize(pid,kind);
- const state=WB.pagesByProject[pid]||(WB.pagesByProject[pid]={experiment:0,model:0});
- const pages=Math.max(1,Math.ceil(sorted.length/size));state[kind]=Math.max(0,Math.min(pages-1,state[kind]||0));
- const rows=sorted.slice(state[kind]*size,(state[kind]+1)*size);
- const project=rsProject(pid),noun=model?'模型':'实验';
- const foot=pages>1?'<div class="wb-pagination"><button type="button" class="wb-icon-button" data-wb-section-page="'+kind+'" data-wb-pid="'+esc(pid)+'" data-delta="-1" aria-label="'+esc(project?.name||'课题')+'：上一页'+noun+'任务" '+(!state[kind]?'disabled':'')+'>'+wbViewIcon('left')+'</button><span>'+ (state[kind]+1)+' / '+pages+'</span><button type="button" class="wb-icon-button" data-wb-section-page="'+kind+'" data-wb-pid="'+esc(pid)+'" data-delta="1" aria-label="'+esc(project?.name||'课题')+'：下一页'+noun+'任务" '+(state[kind]+1===pages?'disabled':'')+'>'+wbViewIcon('right')+'</button></div>':'';
- const menu=model?'<span class="wb-task-group-menu"><select data-wb-list-select data-wb-pid="'+esc(pid)+'" aria-label="'+esc(project?.name||'课题')+'：前往模型任务列表"><option value="">查看全部</option><option value="train">模型训练</option><option value="eval">模型评测</option><option value="batch">批量推理</option><option value="online">在线推理</option></select></span>':'';
- return '<section class="wb-task-section" data-task-kind="'+kind+'"><div class="wb-task-section-head"><h4><button type="button" class="wb-task-group-link" data-wb-list="'+(model?'train':'experiment')+'" data-wb-pid="'+esc(pid)+'" aria-label="'+esc(project?.name||'课题')+'：查看全部'+noun+'任务">'+noun+'<small>'+tasks.length+'</small>'+(!model?wbViewIcon('right'):'')+'</button></h4>'+menu+'</div>'+(rows.length?'<ul class="wb-task-list">'+rows.map(iterationCompactTask).join('')+'</ul>':'<div class="wb-empty-tasks">暂无需要关注的'+noun+'任务</div>')+'<div class="wb-task-section-foot">'+foot+'</div></section>';
+ const attention=wbAttentionTasks(tasks),model=kind==='model',rank={failed:0,active:1,unknown:2,done:3};
+ const rows=attention.slice().sort((a,b)=>(rank[a.status]??4)-(rank[b.status]??4)).slice(0,3);
+ const project=rsProject(pid),noun=model?'模型任务':'实验',hidden=Math.max(0,attention.length-rows.length);
+ return '<section class="wb-task-section" data-task-kind="'+kind+'"><div class="wb-task-section-head"><h4>'+noun+'<small>'+attention.length+'</small></h4></div>'+
+ (rows.length?'<ul class="wb-task-list">'+rows.map(iterationCompactTask).join('')+'</ul>':'<div class="wb-empty-tasks">暂无需要关注的'+(model?'模型':'实验')+'任务</div>')+
+ '<div class="wb-task-section-foot">'+(hidden?'<span class="wb-task-more-count">还有 '+hidden+' 项</span>':'')+'<button class="wb-task-view-all" type="button" data-wb-list="'+(model?'train':'experiment')+'" data-wb-pid="'+esc(pid)+'" aria-label="'+esc(project?.name||'课题')+'：查看全部'+(model?'模型任务':'实验任务')+'">查看全部 '+wbViewIcon('arrow')+'</button></div></section>';
 }
+
 V.workbench=()=>{
  const d=wbPrepare(),ps=d.projects||[];
  if(!ps.some(p=>p.id===WB.progressProject))WB.progressProject=ps[0]?.id||'';
@@ -21374,7 +21406,7 @@ window.addEventListener('storage',event=>{
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)wbRecordVisibleResults(view);});
 
 /* Research workbench: one quiet idea banner, progress on the left, papers on the right. */
-WB.taskRowsByProject={};WB.newsPage=0;WB.newsPageSize=2;
+WB.newsPage=0;WB.newsPageSize=2;
 function dashboardProjectSlots(){
  const grid=view.querySelector('.wb-dashboard .wb-project-grid');
  const content=Math.max(280,view.clientWidth-(innerWidth<=600?32:72));
@@ -21382,7 +21414,6 @@ function dashboardProjectSlots(){
  return width>=920?3:width>=580?2:1;
 }
 iterationProjectSlots=dashboardProjectSlots;
-function dashboardTaskSize(pid,kind){return WB.taskRowsByProject[pid]?.[kind]||1;}
 function dashboardDescription(t){
  const clean=s=>iterationHumanText(s||'').replace(/\s+/g,' ').trim();
  if(t.kind==='experiment'){
@@ -21397,11 +21428,20 @@ function dashboardDescription(t){
 }
 const dashboardMinimalTask=iterationCompactTask;
 iterationCompactTask=function(t){
- const html=dashboardMinimalTask(t),copy=dashboardDescription(t),kind={experiment:'实验',train:'模型训练',eval:'模型评测',infer:'模型推理'}[t.kind]||'任务';
+ const descriptionId='wb-description-'+encodeURIComponent(t.key),html=dashboardMinimalTask(t),copy=dashboardDescription(t),kind={experiment:'实验',train:'模型训练',eval:'模型评测',infer:'模型推理'}[t.kind]||'任务';
  const path={train:'M5 18h14M7 15V9M12 15V5M17 15v-4M4 7l4-3 5 2 6-3',eval:'M8 3h8v3h3v15H5V6h3V3zM8 6h8M8 11l2 2 4-4M8 17h8',infer:'M4 5h7v6H4zM13 13h7v6h-7zM15 5h5v5M20 5l-7 7M4 15v4h5'}[t.kind];
  const icon=path?'<svg class="wb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+path+'"/></svg>':wbViewIcon('flask');
- return html.replace(/<span class="wb-task-symbol[^>]*>[\s\S]*?<\/span>/,'<span class="wb-task-symbol is-'+esc(t.kind)+'" title="'+kind+'">'+icon+'</span>').replace('</strong></span>','</strong><span class="wb-task-description" title="'+esc(copy.description)+'">'+esc(copy.description)+'</span><span class="wb-task-context">'+esc(copy.meta)+'</span></span>');
+ let rendered=html.replace(/<span class="wb-task-symbol[^>]*>[\s\S]*?<\/span>/,'<span class="wb-task-symbol is-'+esc(t.kind)+'" title="'+kind+'">'+icon+'</span>').replace('</strong></span>','</strong><span id="'+esc(descriptionId)+'" class="wb-task-description" title="'+esc(copy.description)+'">'+esc(copy.description)+'</span></span>');
+ const progress=dashboardTaskProgress(t);
+ rendered=rendered.replace('<button ', '<button aria-describedby="'+esc(descriptionId)+'" ');
+ return rendered.replace(/(<span class="wb-status[^"]*")>([^<]*)<\/span>/,'$1 title="'+esc(copy.meta)+'">$2'+(progress?'<span class="wb-tag-detail">'+esc(progress)+'</span>':'')+'</span>');
 };
+function dashboardTaskProgress(t){
+ if(t.kind==='experiment'){const b=BATCHES.find(b=>b.id===t.id&&b.pid===t.pid),s=b&&labSummary(b);return s?.total?s.done+'/'+s.total+' 环节':'';}
+ if(t.kind==='infer'&&t.itemCount)return(t.succeeded||0)+'/'+t.itemCount+' 行';
+ if(typeof t.progress==='number')return t.progress+'%';
+ return t.status==='done'?'100%':'';
+}
 function dashboardSummary(data){
  const failed=data.experiments.filter(t=>t.status==='failed'),active=data.experiments.filter(t=>t.status==='active'),ready=wbAttentionTasks(data.experiments).filter(t=>t.status==='done');
  if(failed.length){const groups=new Set(failed.map(t=>t.pid));return '有 '+failed.length+' 项实验异常，分布在 '+groups.size+' 个课题；建议先查看异常环节。';}
@@ -21433,16 +21473,11 @@ V.workbench=()=>{
  const date=new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'long',timeZone:'Asia/Shanghai'});
  return '<div class="page wb wb-dashboard"><header class="wb-header"><div class="wb-header-copy"><span class="wb-kicker">工作台</span><h1>'+wbViewGreeting()+'，ZHANG</h1></div><span class="wb-date">'+esc(date)+'</span></header><div class="wb-layout">'+
  '<section class="wb-panel wb-inspiration" aria-labelledby="wb-ideas-title"><div class="wb-idea-banner-head"><h2 id="wb-ideas-title" class="wb-inspiration-label">'+wbViewIcon('spark')+'今日灵感</h2><button class="wb-icon-button wb-refresh-idea" type="button" data-wb-refresh-idea aria-label="刷新今日灵感" title="换个问题" '+(!idea?'disabled':'')+'>'+wbViewIcon('refresh')+'</button></div>'+(idea?'<div class="wb-idea-banner-body"><p class="wb-question" aria-live="polite">'+esc(idea.question)+'</p><button type="button" class="btn btn-pri wb-idea-explore" data-wb-prompt="'+esc(idea.question)+'" data-wb-pid="'+esc(idea.pid)+'" aria-label="去探索，关联课题：'+esc(ps.find(p=>p.id===idea.pid)?.name||idea.project||'')+'">去探索 '+wbViewIcon('arrow')+'</button></div>':'<div class="wb-empty-idea">为课题补充研究目标，开始探索新问题。</div>')+'</section>'+
- '<section class="wb-panel wb-tasks" aria-labelledby="wb-tasks-title" aria-roledescription="轮播"><div class="wb-panel-heading"><div class="wb-progress-heading"><h2 id="wb-tasks-title">实验进展</h2>'+iterationProjectControls(window,ps.length)+'</div><div class="wb-agent-summary" aria-live="polite">'+wbViewIcon('spark')+'<p>'+esc(dashboardSummary(d))+'</p></div></div>'+(window.items.length?'<div class="wb-project-grid" style="--wb-project-slots:'+window.slots+'">'+window.items.map(p=>{const scope=workbenchData({pid:p.id});return '<article class="wb-project-card" data-wb-project-id="'+esc(p.id)+'" aria-label="课题：'+esc(p.name)+'"><header class="wb-project-card-head"><h3><button class="wb-project-title" type="button" data-wb-project="'+esc(p.id)+'" aria-label="进入课题：'+esc(p.name)+'"><span>'+esc(p.name)+'</span>'+wbViewIcon('arrow')+'</button></h3></header>'+iterationTaskSection('experiment',scope.experiments||[],p.id)+iterationTaskSection('model',scope.modelTasks||[],p.id)+'</article>'}).join('')+'</div>':'<div class="wb-empty"><strong>还没有课题</strong><button class="btn btn-pri" type="button" data-wb-create-project>新建项目</button></div>')+'</section>'+
+ '<section class="wb-panel wb-tasks" aria-labelledby="wb-tasks-title" aria-roledescription="轮播"><div class="wb-panel-heading"><div class="wb-progress-heading"><h2 id="wb-tasks-title">课题进展</h2>'+iterationProjectControls(window,ps.length)+'</div><div class="wb-agent-summary" aria-live="polite">'+wbViewIcon('spark')+'<p>'+esc(dashboardSummary(d))+'</p></div></div>'+(window.items.length?'<div class="wb-project-grid" style="--wb-project-slots:'+window.slots+'">'+window.items.map(p=>{const scope=workbenchData({pid:p.id});return '<article class="wb-project-card" data-wb-project-id="'+esc(p.id)+'" aria-label="课题：'+esc(p.name)+'"><header class="wb-project-card-head"><h3><button class="wb-project-title" type="button" data-wb-project="'+esc(p.id)+'" title="'+esc(p.name)+'" aria-label="进入课题：'+esc(p.name)+'"><span>'+esc(p.name)+'</span>'+wbViewIcon('arrow')+'</button></h3></header>'+iterationTaskSection('experiment',scope.experiments||[],p.id)+iterationTaskSection('model',scope.modelTasks||[],p.id)+'</article>'}).join('')+'</div>':'<div class="wb-empty"><strong>还没有课题</strong><button class="btn btn-pri" type="button" data-wb-create-project>新建项目</button></div>')+'</section>'+
  '<section class="wb-panel wb-news" aria-labelledby="wb-news-title"><div class="wb-panel-heading"><div class="wb-progress-heading"><div class="wb-panel-label">'+wbViewIcon('paper')+'<h2 id="wb-news-title">学术资讯</h2></div>'+dashboardNewsControls(WB.newsPage,pages)+'</div><p class="wb-news-agent">'+'我为你找到可能相关的最新论文'+'</p>'+(papers.length&&WB.papersError?'<p class="wb-news-state" role="status">暂未获取新结果，保留现有论文。</p>':'')+'</div><ul class="wb-paper-stack">'+papers.slice(WB.newsPage*pageSize,(WB.newsPage+1)*pageSize).map(p=>dashboardPaper(p,ps)).join('')+'</ul>'+(!papers.length?'<div class="wb-empty-news"><p>'+(WB.papersBusy?'正在查找可能相关的最新论文':WB.papersError?'暂时无法获取论文，请稍后重试。':'暂无匹配论文，为课题补充关键词。')+'</p></div>':'')+'</section></div></div>';
 };
 function dashboardFit(root){
  let changed=false;
- root.querySelectorAll('.wb-project-card .wb-task-list').forEach(list=>{
-  const pid=list.closest('[data-wb-project-id]').dataset.wbProjectId,kind=list.closest('[data-task-kind]').dataset.taskKind,style=getComputedStyle(list),min=parseFloat(style.getPropertyValue('--wb-task-min-row'))||60,gap=parseFloat(style.rowGap)||4;
-  const size=Math.max(1,Math.min(3,Math.floor((list.clientHeight+gap)/(min+gap))));
-  const old=dashboardTaskSize(pid,kind);if(size!==old){WB.taskRowsByProject[pid]||={};WB.taskRowsByProject[pid][kind]=size;if(WB.pagesByProject[pid])WB.pagesByProject[pid][kind]=Math.floor(WB.pagesByProject[pid][kind]*old/size);changed=true;}
- });
  const stack=root.querySelector('.wb-paper-stack');if(stack?.clientHeight){const min=parseFloat(getComputedStyle(stack).getPropertyValue('--wb-paper-min-row'))||178,size=Math.max(1,Math.min(3,Math.floor((stack.clientHeight+10)/(min+10))));if(size!==WB.newsPageSize){WB.newsPage=Math.floor(WB.newsPage*(WB.newsPageSize||2)/size);WB.newsPageSize=size;changed=true;}}
  return changed;
 }
@@ -21452,7 +21487,7 @@ wbBind=function(root){
  root.querySelector('[data-wb-refresh-idea]')?.addEventListener('click',dashboardRefreshIdea);
  root.querySelectorAll('[data-wb-news-page]').forEach(b=>b.addEventListener('click',()=>{WB.newsPage+=Number(b.dataset.wbNewsPage);render();(view.querySelector('[data-wb-news-page="'+b.dataset.wbNewsPage+'"]:not(:disabled)')||view.querySelector('[data-wb-news-page]:not(:disabled)'))?.focus({preventScroll:true});}));
  let scheduled=false;const fit=()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;if(S.route!=='workbench')return;const slots=dashboardProjectSlots();if(slots!==WB.projectSlots||dashboardFit(view)){render();return;}WB.projectViewport=view.clientWidth+':'+innerHeight;});};
- wbLayoutObserver=new ResizeObserver(fit);root.querySelectorAll('.wb-project-grid,.wb-task-list,.wb-paper-stack').forEach(e=>wbLayoutObserver.observe(e));fit();
+ wbLayoutObserver=new ResizeObserver(fit);root.querySelectorAll('.wb-project-grid,.wb-paper-stack').forEach(e=>wbLayoutObserver.observe(e));fit();
 };
 
 

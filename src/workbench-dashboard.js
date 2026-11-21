@@ -1,5 +1,5 @@
 /* Research workbench: one quiet idea banner, progress on the left, papers on the right. */
-WB.taskRowsByProject={};WB.newsPage=0;WB.newsPageSize=2;
+WB.newsPage=0;WB.newsPageSize=2;
 function dashboardProjectSlots(){
  const grid=view.querySelector('.wb-dashboard .wb-project-grid');
  const content=Math.max(280,view.clientWidth-(innerWidth<=600?32:72));
@@ -7,7 +7,6 @@ function dashboardProjectSlots(){
  return width>=920?3:width>=580?2:1;
 }
 iterationProjectSlots=dashboardProjectSlots;
-function dashboardTaskSize(pid,kind){return WB.taskRowsByProject[pid]?.[kind]||1;}
 function dashboardDescription(t){
  const clean=s=>iterationHumanText(s||'').replace(/\s+/g,' ').trim();
  if(t.kind==='experiment'){
@@ -22,11 +21,20 @@ function dashboardDescription(t){
 }
 const dashboardMinimalTask=iterationCompactTask;
 iterationCompactTask=function(t){
- const html=dashboardMinimalTask(t),copy=dashboardDescription(t),kind={experiment:'实验',train:'模型训练',eval:'模型评测',infer:'模型推理'}[t.kind]||'任务';
+ const descriptionId='wb-description-'+encodeURIComponent(t.key),html=dashboardMinimalTask(t),copy=dashboardDescription(t),kind={experiment:'实验',train:'模型训练',eval:'模型评测',infer:'模型推理'}[t.kind]||'任务';
  const path={train:'M5 18h14M7 15V9M12 15V5M17 15v-4M4 7l4-3 5 2 6-3',eval:'M8 3h8v3h3v15H5V6h3V3zM8 6h8M8 11l2 2 4-4M8 17h8',infer:'M4 5h7v6H4zM13 13h7v6h-7zM15 5h5v5M20 5l-7 7M4 15v4h5'}[t.kind];
  const icon=path?'<svg class="wb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+path+'"/></svg>':wbViewIcon('flask');
- return html.replace(/<span class="wb-task-symbol[^>]*>[\s\S]*?<\/span>/,'<span class="wb-task-symbol is-'+esc(t.kind)+'" title="'+kind+'">'+icon+'</span>').replace('</strong></span>','</strong><span class="wb-task-description" title="'+esc(copy.description)+'">'+esc(copy.description)+'</span><span class="wb-task-context">'+esc(copy.meta)+'</span></span>');
+ let rendered=html.replace(/<span class="wb-task-symbol[^>]*>[\s\S]*?<\/span>/,'<span class="wb-task-symbol is-'+esc(t.kind)+'" title="'+kind+'">'+icon+'</span>').replace('</strong></span>','</strong><span id="'+esc(descriptionId)+'" class="wb-task-description" title="'+esc(copy.description)+'">'+esc(copy.description)+'</span></span>');
+ const progress=dashboardTaskProgress(t);
+ rendered=rendered.replace('<button ', '<button aria-describedby="'+esc(descriptionId)+'" ');
+ return rendered.replace(/(<span class="wb-status[^"]*")>([^<]*)<\/span>/,'$1 title="'+esc(copy.meta)+'">$2'+(progress?'<span class="wb-tag-detail">'+esc(progress)+'</span>':'')+'</span>');
 };
+function dashboardTaskProgress(t){
+ if(t.kind==='experiment'){const b=BATCHES.find(b=>b.id===t.id&&b.pid===t.pid),s=b&&labSummary(b);return s?.total?s.done+'/'+s.total+' 环节':'';}
+ if(t.kind==='infer'&&t.itemCount)return(t.succeeded||0)+'/'+t.itemCount+' 行';
+ if(typeof t.progress==='number')return t.progress+'%';
+ return t.status==='done'?'100%':'';
+}
 function dashboardSummary(data){
  const failed=data.experiments.filter(t=>t.status==='failed'),active=data.experiments.filter(t=>t.status==='active'),ready=wbAttentionTasks(data.experiments).filter(t=>t.status==='done');
  if(failed.length){const groups=new Set(failed.map(t=>t.pid));return '有 '+failed.length+' 项实验异常，分布在 '+groups.size+' 个课题；建议先查看异常环节。';}
@@ -58,16 +66,11 @@ V.workbench=()=>{
  const date=new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'long',timeZone:'Asia/Shanghai'});
  return '<div class="page wb wb-dashboard"><header class="wb-header"><div class="wb-header-copy"><span class="wb-kicker">工作台</span><h1>'+wbViewGreeting()+'，ZHANG</h1></div><span class="wb-date">'+esc(date)+'</span></header><div class="wb-layout">'+
  '<section class="wb-panel wb-inspiration" aria-labelledby="wb-ideas-title"><div class="wb-idea-banner-head"><h2 id="wb-ideas-title" class="wb-inspiration-label">'+wbViewIcon('spark')+'今日灵感</h2><button class="wb-icon-button wb-refresh-idea" type="button" data-wb-refresh-idea aria-label="刷新今日灵感" title="换个问题" '+(!idea?'disabled':'')+'>'+wbViewIcon('refresh')+'</button></div>'+(idea?'<div class="wb-idea-banner-body"><p class="wb-question" aria-live="polite">'+esc(idea.question)+'</p><button type="button" class="btn btn-pri wb-idea-explore" data-wb-prompt="'+esc(idea.question)+'" data-wb-pid="'+esc(idea.pid)+'" aria-label="去探索，关联课题：'+esc(ps.find(p=>p.id===idea.pid)?.name||idea.project||'')+'">去探索 '+wbViewIcon('arrow')+'</button></div>':'<div class="wb-empty-idea">为课题补充研究目标，开始探索新问题。</div>')+'</section>'+
- '<section class="wb-panel wb-tasks" aria-labelledby="wb-tasks-title" aria-roledescription="轮播"><div class="wb-panel-heading"><div class="wb-progress-heading"><h2 id="wb-tasks-title">实验进展</h2>'+iterationProjectControls(window,ps.length)+'</div><div class="wb-agent-summary" aria-live="polite">'+wbViewIcon('spark')+'<p>'+esc(dashboardSummary(d))+'</p></div></div>'+(window.items.length?'<div class="wb-project-grid" style="--wb-project-slots:'+window.slots+'">'+window.items.map(p=>{const scope=workbenchData({pid:p.id});return '<article class="wb-project-card" data-wb-project-id="'+esc(p.id)+'" aria-label="课题：'+esc(p.name)+'"><header class="wb-project-card-head"><h3><button class="wb-project-title" type="button" data-wb-project="'+esc(p.id)+'" aria-label="进入课题：'+esc(p.name)+'"><span>'+esc(p.name)+'</span>'+wbViewIcon('arrow')+'</button></h3></header>'+iterationTaskSection('experiment',scope.experiments||[],p.id)+iterationTaskSection('model',scope.modelTasks||[],p.id)+'</article>'}).join('')+'</div>':'<div class="wb-empty"><strong>还没有课题</strong><button class="btn btn-pri" type="button" data-wb-create-project>新建项目</button></div>')+'</section>'+
+ '<section class="wb-panel wb-tasks" aria-labelledby="wb-tasks-title" aria-roledescription="轮播"><div class="wb-panel-heading"><div class="wb-progress-heading"><h2 id="wb-tasks-title">课题进展</h2>'+iterationProjectControls(window,ps.length)+'</div><div class="wb-agent-summary" aria-live="polite">'+wbViewIcon('spark')+'<p>'+esc(dashboardSummary(d))+'</p></div></div>'+(window.items.length?'<div class="wb-project-grid" style="--wb-project-slots:'+window.slots+'">'+window.items.map(p=>{const scope=workbenchData({pid:p.id});return '<article class="wb-project-card" data-wb-project-id="'+esc(p.id)+'" aria-label="课题：'+esc(p.name)+'"><header class="wb-project-card-head"><h3><button class="wb-project-title" type="button" data-wb-project="'+esc(p.id)+'" title="'+esc(p.name)+'" aria-label="进入课题：'+esc(p.name)+'"><span>'+esc(p.name)+'</span>'+wbViewIcon('arrow')+'</button></h3></header>'+iterationTaskSection('experiment',scope.experiments||[],p.id)+iterationTaskSection('model',scope.modelTasks||[],p.id)+'</article>'}).join('')+'</div>':'<div class="wb-empty"><strong>还没有课题</strong><button class="btn btn-pri" type="button" data-wb-create-project>新建项目</button></div>')+'</section>'+
  '<section class="wb-panel wb-news" aria-labelledby="wb-news-title"><div class="wb-panel-heading"><div class="wb-progress-heading"><div class="wb-panel-label">'+wbViewIcon('paper')+'<h2 id="wb-news-title">学术资讯</h2></div>'+dashboardNewsControls(WB.newsPage,pages)+'</div><p class="wb-news-agent">'+'我为你找到可能相关的最新论文'+'</p>'+(papers.length&&WB.papersError?'<p class="wb-news-state" role="status">暂未获取新结果，保留现有论文。</p>':'')+'</div><ul class="wb-paper-stack">'+papers.slice(WB.newsPage*pageSize,(WB.newsPage+1)*pageSize).map(p=>dashboardPaper(p,ps)).join('')+'</ul>'+(!papers.length?'<div class="wb-empty-news"><p>'+(WB.papersBusy?'正在查找可能相关的最新论文':WB.papersError?'暂时无法获取论文，请稍后重试。':'暂无匹配论文，为课题补充关键词。')+'</p></div>':'')+'</section></div></div>';
 };
 function dashboardFit(root){
  let changed=false;
- root.querySelectorAll('.wb-project-card .wb-task-list').forEach(list=>{
-  const pid=list.closest('[data-wb-project-id]').dataset.wbProjectId,kind=list.closest('[data-task-kind]').dataset.taskKind,style=getComputedStyle(list),min=parseFloat(style.getPropertyValue('--wb-task-min-row'))||60,gap=parseFloat(style.rowGap)||4;
-  const size=Math.max(1,Math.min(3,Math.floor((list.clientHeight+gap)/(min+gap))));
-  const old=dashboardTaskSize(pid,kind);if(size!==old){WB.taskRowsByProject[pid]||={};WB.taskRowsByProject[pid][kind]=size;if(WB.pagesByProject[pid])WB.pagesByProject[pid][kind]=Math.floor(WB.pagesByProject[pid][kind]*old/size);changed=true;}
- });
  const stack=root.querySelector('.wb-paper-stack');if(stack?.clientHeight){const min=parseFloat(getComputedStyle(stack).getPropertyValue('--wb-paper-min-row'))||178,size=Math.max(1,Math.min(3,Math.floor((stack.clientHeight+10)/(min+10))));if(size!==WB.newsPageSize){WB.newsPage=Math.floor(WB.newsPage*(WB.newsPageSize||2)/size);WB.newsPageSize=size;changed=true;}}
  return changed;
 }
@@ -77,5 +80,5 @@ wbBind=function(root){
  root.querySelector('[data-wb-refresh-idea]')?.addEventListener('click',dashboardRefreshIdea);
  root.querySelectorAll('[data-wb-news-page]').forEach(b=>b.addEventListener('click',()=>{WB.newsPage+=Number(b.dataset.wbNewsPage);render();(view.querySelector('[data-wb-news-page="'+b.dataset.wbNewsPage+'"]:not(:disabled)')||view.querySelector('[data-wb-news-page]:not(:disabled)'))?.focus({preventScroll:true});}));
  let scheduled=false;const fit=()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;if(S.route!=='workbench')return;const slots=dashboardProjectSlots();if(slots!==WB.projectSlots||dashboardFit(view)){render();return;}WB.projectViewport=view.clientWidth+':'+innerHeight;});};
- wbLayoutObserver=new ResizeObserver(fit);root.querySelectorAll('.wb-project-grid,.wb-task-list,.wb-paper-stack').forEach(e=>wbLayoutObserver.observe(e));fit();
+ wbLayoutObserver=new ResizeObserver(fit);root.querySelectorAll('.wb-project-grid,.wb-paper-stack').forEach(e=>wbLayoutObserver.observe(e));fit();
 };

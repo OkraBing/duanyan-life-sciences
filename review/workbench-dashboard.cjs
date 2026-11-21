@@ -17,7 +17,7 @@ function contrast(a,b){const lum=c=>c.slice(0,3).map(v=>(v/=255)<=.04045?v/12.92
  await check('01 compact idea above progress, full-height papers to the right',async p=>{
   const r=await p.evaluate(()=>{const box=s=>{const b=document.querySelector(s).getBoundingClientRect();return{x:b.x,y:b.y,right:b.right,bottom:b.bottom,height:b.height}};return{idea:box('.wb-inspiration'),progress:box('.wb-tasks'),news:box('.wb-news')}});
   assert.equal(r.idea.x,r.progress.x);assert(r.idea.bottom<r.progress.y);assert(r.news.x>r.progress.right);assert.equal(r.news.y,r.idea.y);assert(Math.abs(r.news.bottom-r.progress.bottom)<1);assert(r.idea.height<r.progress.height*.3);
-  for(const name of ['今日灵感','实验进展','学术资讯'])assert(await p.getByRole('heading',{name,exact:true}).isVisible());
+  for(const name of ['今日灵感','课题进展','学术资讯'])assert(await p.getByRole('heading',{name,exact:true}).isVisible());
   await p.screenshot({path:path.join(out,'desktop.png')});
  });
  await check('02 inspiration is plain selectable text and uses a native dark primary action',async p=>{
@@ -50,11 +50,23 @@ function contrast(a,b){const lum=c=>c.slice(0,3).map(v=>(v/=255)<=.04045?v/12.92
   const card=p.locator('.wb-project-card').last(),pid=await card.getAttribute('data-wb-project-id');await card.locator('.wb-project-title').click();assert.equal(await p.evaluate(()=>S.pid),pid);assert.equal(await p.evaluate(()=>S.route),'project');
  });
  await check('08 tasks show type icons, real descriptions and compact progress context',async p=>{
-  const types=new Set();for(const row of await p.locator('[data-wb-task-open]').all()){const data=await p.evaluate(key=>{const t=workbenchData().tasks.find(x=>x.key===key);return{t,copy:dashboardDescription(t)}},await row.getAttribute('data-wb-task-open'));types.add(data.t.kind);assert.equal(await row.locator('strong').innerText(),data.t.name);assert.equal(await row.locator('.wb-task-description').innerText(),data.copy.description);assert(data.copy.description);assert.equal(await row.locator('.wb-task-symbol svg').count(),1);assert(await row.locator('.wb-status').innerText());assert(await row.locator('.wb-task-context').innerText());}assert(types.has('experiment')&&types.has('train'));
+  const types=new Set();for(const row of await p.locator('[data-wb-task-open]').all()){const data=await p.evaluate(key=>{const t=workbenchData().tasks.find(x=>x.key===key);return{t,copy:dashboardDescription(t)}},await row.getAttribute('data-wb-task-open'));types.add(data.t.kind);assert.equal(await row.locator('strong').innerText(),data.t.name);assert.equal(await row.locator('.wb-task-description').innerText(),data.copy.description);assert(data.copy.description);assert.equal(await row.locator('.wb-task-symbol svg').count(),1);assert(await row.locator('.wb-status').innerText());assert(await row.locator('.wb-tag-detail').innerText());assert(await row.getAttribute('aria-describedby'));}assert(types.has('experiment')&&types.has('train'));
  });
- await check('09 attention task pagination reaches every eligible record for every project',async p=>{
-  const projects=await p.evaluate(()=>workbenchData().projects.map(p=>p.id));for(const pid of projects){await p.evaluate(pid=>{const ps=workbenchData().projects;WB.progressProject=pid;WB.projectStart=Math.min(ps.findIndex(x=>x.id===pid),Math.max(0,ps.length-iterationProjectSlots()));render()},pid);await settle(p);
-   for(const kind of ['experiment','model']){await p.evaluate(({pid,kind})=>{WB.pagesByProject[pid][kind]=0;render()},{pid,kind});const expected=await p.evaluate(({pid,kind})=>{const d=workbenchData({pid});return wbAttentionTasks(kind==='experiment'?d.experiments:d.modelTasks).map(t=>t.key)},{pid,kind}),seen=new Set();for(let i=0;i<100;i++){const section=p.locator('[data-wb-project-id="'+pid+'"] [data-task-kind="'+kind+'"]');for(const key of await section.locator('[data-wb-task-open]').evaluateAll(es=>es.map(e=>e.dataset.wbTaskOpen)))seen.add(key);const next=section.locator('[data-delta="1"]');if(!await next.count()||await next.isDisabled())break;await next.click();}assert.deepEqual(seen,new Set(expected),pid+' '+kind);}
+ await check('09 each group shows at most three tasks without pagination and full lists retain project scope',async p=>{
+  const projects=await p.evaluate(()=>workbenchData().projects.map(p=>p.id));
+  for(const pid of projects){
+   for(const kind of ['experiment','model']){
+    await p.evaluate(pid=>{WB.progressProject=pid;go('workbench')},pid);await settle(p);
+    const expected=await p.evaluate(({pid,kind})=>{const d=workbenchData({pid}),rank={failed:0,active:1,unknown:2,done:3};return wbAttentionTasks(kind==='experiment'?d.experiments:d.modelTasks).sort((a,b)=>(rank[a.status]??4)-(rank[b.status]??4)).map(t=>({key:t.key,id:t.id,kind:t.kind,type:t.type}))},{pid,kind});
+    const section=p.locator('[data-wb-project-id="'+pid+'"] [data-task-kind="'+kind+'"]');
+    assert.deepEqual(await section.locator('[data-wb-task-open]').evaluateAll(es=>es.map(e=>e.dataset.wbTaskOpen)),expected.slice(0,3).map(t=>t.key));
+    assert.equal(await section.locator('[data-wb-section-page],.wb-pagination,select').count(),0);
+    if(expected.length>3)assert.match(await section.locator('.wb-task-more-count').innerText(),new RegExp(String(expected.length-3)));
+    else assert.equal(await section.locator('.wb-task-more-count').count(),0);
+    await section.getByRole('button',{name:/查看全部/}).click();
+    if(kind==='experiment'){assert.deepEqual(await p.evaluate(()=>[S.route,S.labProject]),['lab',pid]);for(const t of expected)assert(await p.locator('[data-labgo="'+t.id+'"]').count());}
+    else {assert.deepEqual(await p.evaluate(()=>[S.route,S.mtab,S.mdlProj]),['mdl','job',pid]);for(const t of expected){if(t.type==='batch')continue;assert(await p.locator('[data-jobpick="'+t.id+'"]').count(),t.key);}await p.locator('[data-mtab="batch"]').click();for(const t of expected.filter(t=>t.type==='batch'))assert(await p.locator('[data-bjob="'+t.id+'"]').count(),t.key);}
+   }
   }
  });
  await check('10 agent summary counts current exceptions and follows state changes',async p=>{
@@ -65,7 +77,7 @@ function contrast(a,b){const lum=c=>c.slice(0,3).map(v=>(v/=255)<=.04045?v/12.92
   const before=await p.evaluate(()=>[WB.projectStart,WB.newsPage,WB.ideas[0]?.question]);await p.clock.install();await p.clock.runFor(60000);assert.deepEqual(await p.evaluate(()=>[WB.projectStart,WB.newsPage,WB.ideas[0]?.question]),before);assert.equal(await p.locator('[data-wb-progress-auto],[data-wb-idea-auto],[data-wb-news-auto],.wb-topic-select,.wb-task-tabs').count(),0);
  });
  await check('12 desktop rows fit without overlap, mobile reflows without horizontal scroll',async p=>{
-  for(const [width,height]of [[1920,1080],[1440,900],[1366,768],[1280,720],[1122,607],[768,900],[390,844]]){await p.setViewportSize({width,height});await settle(p);const fit=await p.evaluate(()=>({horizontal:view.scrollWidth-view.clientWidth,vertical:view.scrollHeight-view.clientHeight,rows:[...document.querySelectorAll('.wb-task-row')].map(e=>e.scrollHeight-e.clientHeight),overflow:[...document.querySelectorAll('.wb-paper-foot')].some(e=>e.getBoundingClientRect().bottom>e.parentElement.getBoundingClientRect().bottom+1)}));assert(fit.horizontal<=1,JSON.stringify({width,fit}));assert(fit.rows.every(x=>x<=1),JSON.stringify({width,fit}));assert(!fit.overflow);if(width>=1280)assert(fit.vertical<=1,JSON.stringify({width,fit}));if(width===390)await p.screenshot({path:path.join(out,'mobile.png')});}
+  for(const [width,height]of [[1920,1080],[1440,900],[1366,768],[1280,720],[1122,607],[768,900],[390,844]]){await p.setViewportSize({width,height});await settle(p);const fit=await p.evaluate(()=>({horizontal:view.scrollWidth-view.clientWidth,vertical:view.scrollHeight-view.clientHeight,rows:[...document.querySelectorAll('.wb-task-row')].map(e=>e.scrollHeight-e.clientHeight),overlap:[...document.querySelectorAll('.wb-task-row')].some(e=>e.getBoundingClientRect().bottom>e.closest('.wb-task-section').querySelector('.wb-task-section-foot').getBoundingClientRect().top+1),overflow:[...document.querySelectorAll('.wb-paper-foot')].some(e=>e.getBoundingClientRect().bottom>e.parentElement.getBoundingClientRect().bottom+1)}));assert(fit.horizontal<=1,JSON.stringify({width,fit}));assert(fit.rows.every(x=>x<=1),JSON.stringify({width,fit}));assert(!fit.overflow);assert(!fit.overlap,JSON.stringify({width,fit}));if(width>=1280)assert(fit.vertical<=1,JSON.stringify({width,fit}));if(width===390)await p.screenshot({path:path.join(out,'mobile.png')});}
  });
  await check('13 empty loading and failed papers remain distinct, cached papers stay available',async p=>{
   await p.evaluate(()=>{WB.papers=[];WB.didLoad=true;WB.querySignature=JSON.stringify(wbSubscriptions());WB.papersBusy=true;const original=wbCurated;wbCurated=()=>[];window.dashboardTestCurated=original;render()});assert.match(await p.locator('.wb-empty-news').innerText(),/正在查找/);
@@ -73,7 +85,7 @@ function contrast(a,b){const lum=c=>c.slice(0,3).map(v=>(v/=255)<=.04045?v/12.92
   await p.evaluate(()=>{wbCurated=window.dashboardTestCurated;WB.papers=wbCurated();WB.papersError='offline';render()});assert(await p.locator('.wb-paper-open').count());assert.match(await p.locator('.wb-news-state').innerText(),/保留/);
  });
  await check('14 light dark contrast and keyboard focus remain clear',async p=>{
-  for(const theme of ['light','dark']){await p.evaluate(t=>{document.documentElement.dataset.theme=t;render()},theme);for(const selector of ['.wb-question','.wb-idea-explore','.wb-paper-title','.wb-paper-description','.wb-task-description','.wb-task-context']){const c=await p.locator(selector).first().evaluate(e=>{const rgb=s=>(s.match(/[\d.]+/g)||[]).map(Number);let n=e,bg;while(n){bg=rgb(getComputedStyle(n).backgroundColor);if(bg.length===3||bg[3]===1)break;n=n.parentElement;}return{fg:rgb(getComputedStyle(e).color),bg}});assert(contrast(c.fg,c.bg)>=4.5,theme+' '+selector);}
+  for(const theme of ['light','dark']){await p.evaluate(t=>{document.documentElement.dataset.theme=t;render()},theme);for(const selector of ['.wb-question','.wb-idea-explore','.wb-paper-title','.wb-paper-description','.wb-task-description','.wb-tag-detail']){const c=await p.locator(selector).first().evaluate(e=>{const rgb=s=>(s.match(/[\d.]+/g)||[]).map(Number);let n=e,bg;while(n){bg=rgb(getComputedStyle(n).backgroundColor);if(bg.length===3||bg[3]===1)break;n=n.parentElement;}return{fg:rgb(getComputedStyle(e).color),bg}});assert(contrast(c.fg,c.bg)>=4.5,theme+' '+selector);}
    await p.locator('[data-wb-refresh-idea]').focus();assert.equal(await p.locator('[data-wb-refresh-idea]').evaluate(e=>getComputedStyle(e).outlineStyle),'solid');if(theme==='dark')await p.screenshot({path:path.join(out,'dark.png')});}
  });
  await check('15 long questions stay fully readable and an empty workspace offers creation',async p=>{

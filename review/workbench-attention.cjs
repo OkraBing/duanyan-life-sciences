@@ -11,12 +11,14 @@ const url=process.env.DUANYAN_TEST_URL||'file://'+path.resolve(process.argv[2]||
  const p1=selector=>page.locator('[data-wb-project-id=p1] '+selector);
  const has=key=>page.evaluate(key=>{const d=workbenchData();return wbAttentionTasks(d.tasks).some(t=>t.key===key)},key);
  async function clickCard(kind,key){
-  await home();await page.evaluate(kind=>{WB.pagesByProject.p1[kind]=0;render()},kind);
-  for(let i=0;i<100;i++){
-   const card=page.locator('[data-wb-task-open="'+key+'"]');if(await card.count()){await card.click();return;}
-   const next=p1('[data-wb-section-page="'+kind+'"][data-delta="1"]');assert(await next.count()&&!await next.isDisabled(),'missing '+key);await next.click();
-  }throw new Error('pagination did not end');
+  await home();const card=page.locator('[data-wb-task-open="'+key+'"]');if(await card.count()){await card.click();return;}
+  const t=await page.evaluate(key=>workbenchData().tasks.find(t=>t.key===key),key);
+  await p1('[data-wb-list="'+(kind==='experiment'?'experiment':'train')+'"]').click();
+  if(kind==='experiment')await page.locator('[data-labgo="'+t.id+'"]').click();
+  else if(t.type==='batch'){await page.locator('[data-mtab=batch]').click();await page.locator('[data-bjob="'+t.id+'"]').first().click();}
+  else await page.locator('[data-jobpick="'+t.id+'"]').first().click();
  }
+
  const response=await page.goto(url+'#workbench');
  if(url.startsWith('https:')){assert.equal(response.status(),200);const hash=b=>crypto.createHash('sha256').update(b).digest('hex');assert.equal(hash(await response.body()),hash(fs.readFileSync(path.resolve(__dirname,'../docs/index.html'))));}
  await page.waitForFunction(()=>RS.seedReady);
@@ -99,24 +101,24 @@ const url=process.env.DUANYAN_TEST_URL||'file://'+path.resolve(process.argv[2]||
   await page.reload();await page.waitForFunction(()=>RS.seedReady);await home();assert.equal(await has(local.key),true);
   await clickCard('model',local.key);await home();assert.equal(await has(local.key),false);
  });
- await check('empty attention sections clamp pagination and retain full list access',async()=>{
+ await check('empty attention sections remove task controls and retain full list access',async()=>{
   await page.evaluate(()=>{
    const p=rsProject('p1');p.models=p.models.filter(m=>!['running','queued','failed'].includes(m.st));
    for(let i=BATCHES.length-1;i>=0;i--)if(BATCHES[i].pid==='p1'&&['normal','exception'].includes(labSummary(BATCHES[i]).status))BATCHES.splice(i,1);
    for(const j of BJ())if(bDs(j)?.pid==='p1'&&['part','fail','run'].includes(j.st))j.st='stop';
    for(const t of workbenchData({pid:'p1'}).tasks)if(t.status==='done'&&t.isTask)workbenchOpenTask(t.key);
-   WB.progressProject='p1';WB.pagesByProject.p1={model:999,experiment:999};go('workbench');
+   WB.progressProject='p1';go('workbench');
   });
   assert.deepEqual(await p1('.wb-task-section-head small').allTextContents(),['0','0']);
   assert.equal(await p1('.wb-empty-tasks').count(),2);assert.match(await p1('.wb-empty-tasks').first().innerText(),/暂无需要关注/);
-  assert.deepEqual(await page.evaluate(()=>WB.pagesByProject.p1),{model:0,experiment:0});
-  assert(await p1('[data-wb-list="experiment"]').isVisible());assert(await p1('[data-wb-list-select]').count());
+  assert.equal(await p1('[data-wb-section-page]').count(),0);
+  assert(await p1('[data-wb-list="experiment"]').isVisible());assert(await p1('[data-wb-list=train]').isVisible());
   await p1('[data-wb-list="experiment"]').click();assert(await page.locator('.lv-exp').count()>0);
  });
  await check('another open tab updates when a result is read',async()=>{
   const tab=await context.newPage();await tab.goto(url+'#workbench');await tab.waitForFunction(()=>RS.seedReady);
   const key=await tab.evaluate(()=>{WB.progressProject='p3';render();return workbenchData({pid:'p3'}).experiments.find(t=>t.status==='done').key});
-  const count=await tab.locator('[data-wb-project-id=p3] [data-task-kind="experiment"] h4 small').innerText();while(!await tab.locator('[data-wb-task-open="'+key+'"]').count())await tab.locator('[data-wb-project-id=p3] [data-wb-section-page=experiment][data-delta="1"]').click();assert(await tab.locator('[data-wb-task-open="'+key+'"]').isVisible());
+  const count=await tab.locator('[data-wb-project-id=p3] [data-task-kind="experiment"] h4 small').innerText();assert(await tab.locator('[data-wb-task-open="'+key+'"]').isVisible());
   await page.evaluate(key=>workbenchOpenTask(key),key);
   await tab.waitForFunction(key=>!document.querySelector('[data-wb-task-open="'+key+'"]'),key);
   assert.equal(await tab.locator('[data-wb-project-id=p3] [data-task-kind="experiment"] h4 small').innerText(),String(+count-1));await tab.close();

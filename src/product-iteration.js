@@ -64,18 +64,14 @@ function iterationCompactTask(t){
  '<span class="wb-task-state"><span class="wb-status is-'+esc(t.status)+'">'+esc(status)+'</span></span></button></li>';
 }
 function iterationTaskSection(kind,tasks,pid){
- tasks=wbAttentionTasks(tasks);
- const model=kind==='model',rank={failed:0,active:1,draft:2,unknown:3,done:4,canceled:5};
- const sorted=tasks.slice().sort((a,b)=>(rank[a.status]??3)-(rank[b.status]??3));
- const size=dashboardTaskSize(pid,kind);
- const state=WB.pagesByProject[pid]||(WB.pagesByProject[pid]={experiment:0,model:0});
- const pages=Math.max(1,Math.ceil(sorted.length/size));state[kind]=Math.max(0,Math.min(pages-1,state[kind]||0));
- const rows=sorted.slice(state[kind]*size,(state[kind]+1)*size);
- const project=rsProject(pid),noun=model?'模型':'实验';
- const foot=pages>1?'<div class="wb-pagination"><button type="button" class="wb-icon-button" data-wb-section-page="'+kind+'" data-wb-pid="'+esc(pid)+'" data-delta="-1" aria-label="'+esc(project?.name||'课题')+'：上一页'+noun+'任务" '+(!state[kind]?'disabled':'')+'>'+wbViewIcon('left')+'</button><span>'+ (state[kind]+1)+' / '+pages+'</span><button type="button" class="wb-icon-button" data-wb-section-page="'+kind+'" data-wb-pid="'+esc(pid)+'" data-delta="1" aria-label="'+esc(project?.name||'课题')+'：下一页'+noun+'任务" '+(state[kind]+1===pages?'disabled':'')+'>'+wbViewIcon('right')+'</button></div>':'';
- const menu=model?'<span class="wb-task-group-menu"><select data-wb-list-select data-wb-pid="'+esc(pid)+'" aria-label="'+esc(project?.name||'课题')+'：前往模型任务列表"><option value="">查看全部</option><option value="train">模型训练</option><option value="eval">模型评测</option><option value="batch">批量推理</option><option value="online">在线推理</option></select></span>':'';
- return '<section class="wb-task-section" data-task-kind="'+kind+'"><div class="wb-task-section-head"><h4><button type="button" class="wb-task-group-link" data-wb-list="'+(model?'train':'experiment')+'" data-wb-pid="'+esc(pid)+'" aria-label="'+esc(project?.name||'课题')+'：查看全部'+noun+'任务">'+noun+'<small>'+tasks.length+'</small>'+(!model?wbViewIcon('right'):'')+'</button></h4>'+menu+'</div>'+(rows.length?'<ul class="wb-task-list">'+rows.map(iterationCompactTask).join('')+'</ul>':'<div class="wb-empty-tasks">暂无需要关注的'+noun+'任务</div>')+'<div class="wb-task-section-foot">'+foot+'</div></section>';
+ const attention=wbAttentionTasks(tasks),model=kind==='model',rank={failed:0,active:1,unknown:2,done:3};
+ const rows=attention.slice().sort((a,b)=>(rank[a.status]??4)-(rank[b.status]??4)).slice(0,3);
+ const project=rsProject(pid),noun=model?'模型任务':'实验',hidden=Math.max(0,attention.length-rows.length);
+ return '<section class="wb-task-section" data-task-kind="'+kind+'"><div class="wb-task-section-head"><h4>'+noun+'<small>'+attention.length+'</small></h4></div>'+
+ (rows.length?'<ul class="wb-task-list">'+rows.map(iterationCompactTask).join('')+'</ul>':'<div class="wb-empty-tasks">暂无需要关注的'+(model?'模型':'实验')+'任务</div>')+
+ '<div class="wb-task-section-foot">'+(hidden?'<span class="wb-task-more-count">还有 '+hidden+' 项</span>':'')+'<button class="wb-task-view-all" type="button" data-wb-list="'+(model?'train':'experiment')+'" data-wb-pid="'+esc(pid)+'" aria-label="'+esc(project?.name||'课题')+'：查看全部'+(model?'模型任务':'实验任务')+'">查看全部 '+wbViewIcon('arrow')+'</button></div></section>';
 }
+
 V.workbench=()=>{
  const d=wbPrepare(),ps=d.projects||[];
  if(!ps.some(p=>p.id===WB.progressProject))WB.progressProject=ps[0]?.id||'';

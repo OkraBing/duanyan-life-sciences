@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-21T04:06:12.438Z",
-  "buildSha256": "9f9b77a1bc4b82a8f32802d13470e3077ff4e86c342884cde35a034b22bc5b10",
+  "generatedAt": "2026-11-21T04:23:05.518Z",
+  "buildSha256": "40304fd1580ae46800205d29ba29f426d6cf4d392c715344be76b222c1866483",
   "requirements": {
-    "requirements": 74,
-    "passed": 74,
+    "requirements": 75,
+    "passed": 75,
     "failed": 0,
     "integrationGroups": 159,
     "extendedScripts": 0,
@@ -11,7 +11,7 @@
   },
   "preview": {
     "status": "passed",
-    "url": "http://127.0.0.1:8843/?v=9f9b77a1bc4b#workbench",
+    "url": "http://127.0.0.1:8843/?v=40304fd1580a#workbench",
     "evidence": "正在服务的 HTML 与本轮验收构建逐字节一致。"
   },
   "dashboardChecks": [
@@ -23,7 +23,7 @@
     "06 paper arrows reach every paper with bounded navigation and keyboard focus",
     "07 project windows keep every project reachable and independent",
     "08 tasks show type icons, real descriptions and compact progress context",
-    "09 attention task pagination reaches every eligible record for every project",
+    "09 each group shows at most three tasks without pagination and full lists retain project scope",
     "10 agent summary counts current exceptions and follows state changes",
     "11 manual navigation never changes on a timer",
     "12 desktop rows fit without overlap, mobile reflows without horizontal scroll",
@@ -32,6 +32,23 @@
     "15 long questions stay fully readable and an empty workspace offers creation"
   ],
   "runtimeErrors": [],
+  "touch": {
+    "horizontal": 0,
+    "overlap": false,
+    "rowHeights": [
+      44,
+      44,
+      44,
+      44,
+      44,
+      44
+    ],
+    "actions": [
+      44,
+      44
+    ],
+    "internalControls": 0
+  },
   "scope": "Isolated browser storage, deterministic Crossref responses; no real model generation or device execution.",
   "screenshots": "work/qa/dashboard-v2/",
   "report": "work/qa/requirements-audit-20261120/report.html"
