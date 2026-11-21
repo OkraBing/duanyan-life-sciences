@@ -30,7 +30,7 @@ const checks=[],errors=[],requests=[];let browser;
  await page.evaluate(()=>document.documentElement.dataset.theme='light');await page.setViewportSize({width:390,height:844});await go('devices');
  assert(await page.locator('#view').evaluate(e=>e.scrollWidth<=e.clientWidth+1));
  assert(await page.locator('.device-card').evaluateAll(cards=>cards.every(card=>{
-  const button=card.querySelector('.device-connect');if(!button)return true;const b=button.getBoundingClientRect();
+  const button=card.querySelector('.device-connect');if(!button)return true;const b=button.getBoundingClientRect();if(getComputedStyle(button).position!=='absolute')return false;
   return [...card.querySelectorAll('h2,p,.device-model')].every(text=>{const range=document.createRange();range.selectNodeContents(text);return [...range.getClientRects()].every(r=>r.right<=b.left||r.left>=b.right||r.bottom<=b.top||r.top>=b.bottom);});
  })), 'mobile action must not overlap text');
  for(const card of await page.locator('.device-card').all())assert((await card.boundingBox()).width<=390);
