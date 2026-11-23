@@ -53,16 +53,19 @@ function contrast(a,b){const lum=c=>c.slice(0,3).map(v=>(v/=255)<=.04045?v/12.92
   }
  });
 
- await check('04 分页能遍历到全部课题，边界处按钮禁用',async p=>{
+ await check('04 「换一批」能轮到全部课题，到底后回到第一组',async p=>{
   const expected=await p.evaluate(()=>workbenchData().projects.map(x=>x.id)),seen=new Set();
-  assert(await p.locator('[data-rh-project-page="-1"]').isDisabled());
-  for(let i=0;i<20;i++){
-   for(const id of await p.locator('[data-wb-project-id]').evaluateAll(es=>es.map(e=>e.dataset.wbProjectId)))seen.add(id);
-   const next=p.locator('[data-rh-project-page="1"]');
-   if(!await next.count()||await next.isDisabled())break;
-   await next.click();await settle(p);
-  }
-  assert.deepEqual(seen,new Set(expected));
+  const firstBatch=await p.locator('[data-wb-project-id]').evaluateAll(es=>es.map(e=>e.dataset.wbProjectId));
+  firstBatch.forEach(id=>seen.add(id));
+  const btn=p.locator('[data-rh-project-shuffle]');
+  if(expected.length>3){assert.equal(await btn.count(),1);
+   for(let i=0;i<10&&seen.size<expected.length;i++){await btn.click();await settle(p);
+    for(const id of await p.locator('[data-wb-project-id]').evaluateAll(es=>es.map(e=>e.dataset.wbProjectId)))seen.add(id);}
+   assert.deepEqual(seen,new Set(expected));
+   // 再点，应绕回第一组
+   await btn.click();await settle(p);
+   assert.deepEqual(await p.locator('[data-wb-project-id]').evaluateAll(es=>es.map(e=>e.dataset.wbProjectId)),firstBatch);
+  }else assert.equal(await btn.count(),0);
  });
 
  await check('05 每张卡都能进到自己的课题',async p=>{
