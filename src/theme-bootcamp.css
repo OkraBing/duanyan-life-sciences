@@ -117,3 +117,11 @@ h1.pjx-n{font-size:18px!important;font-weight:600!important;margin:0!important;l
 .ms-head-actions>.btn{height:32px!important;line-height:30px!important}
 .fsq,.pjx-f .fsq,.file-badge{font-size:10px!important}
 .st-main>h2{font-size:18px!important;font-weight:600!important}
+/* Tricky R10：可点的东西悬停要有回应 */
+.rh-link:hover{text-decoration:underline;color:var(--dry-ink)}
+.rh-activity:hover{background:var(--surface-2)!important;border-radius:var(--r2)}
+.pcard:hover,.project-card-wrap:has(> .pcard:hover){border-color:var(--ink-4)!important;box-shadow:var(--sh-2)!important}
+.ms-file:has(> .ms-file-main:hover){background:var(--surface-2)}
+.ms-file-main:hover strong{text-decoration:underline;text-underline-offset:.15em}
+.ms-nav:hover{background:var(--surface-2)!important}
+.rh-enter:hover{text-decoration:underline!important}

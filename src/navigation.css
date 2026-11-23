@@ -170,7 +170,7 @@
 
 /* 资料空间中栏：原先跟着文件表一起撑到 6240px，回收站被推到页面最底下看不见。
    改成吸顶、与视口等高、自身可滚，回收站用 margin-top:auto 贴在栏底。 */
-.ms-sidebar{position:sticky;top:0;align-self:start;height:100vh;max-height:100vh;overflow-y:auto;box-sizing:border-box}
+@media(min-width:601px){.ms-sidebar{position:sticky;top:0;align-self:start;height:100vh;max-height:100vh;overflow-y:auto;box-sizing:border-box}}
 
 /* 实验卡环节进度条：原先深灰实心 + 异常段空心描红 + 浅灰，三种质感打架。
    统一成实心：完成用墨蓝（干流程），异常用胭脂实心，未到用分割线色；4px 圆角细条。 */
