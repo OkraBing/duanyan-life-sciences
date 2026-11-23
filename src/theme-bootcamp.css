@@ -104,3 +104,6 @@ a{text-underline-offset:.15em}
 .rh-next-action{min-height:28px!important;padding:4px 0!important}
 .ms-row-actions .ms-more{min-height:32px!important;min-width:32px!important}
 h1.pjx-n{font-size:18px!important;font-weight:600!important;margin:0!important;line-height:1.4!important;min-width:0;overflow-wrap:anywhere}
+/* Tricky R4：超长名称两行截断，卡片不再被撑高；资料空间课题列表可滚动、有 fade 提示 */
+.rh-project header h3,.ms-spaces strong,.projects-page .pcard-t>strong{display:-webkit-box!important;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden!important;overflow-wrap:anywhere}
+.ms-project-nav{max-height:min(40vh,320px)!important;overflow:auto!important;overscroll-behavior:contain;scrollbar-width:thin;mask-image:linear-gradient(to bottom,#000 calc(100% - 24px),transparent)}

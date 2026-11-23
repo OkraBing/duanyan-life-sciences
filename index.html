@@ -3988,6 +3988,9 @@ a{text-underline-offset:.15em}
 .rh-next-action{min-height:28px!important;padding:4px 0!important}
 .ms-row-actions .ms-more{min-height:32px!important;min-width:32px!important}
 h1.pjx-n{font-size:18px!important;font-weight:600!important;margin:0!important;line-height:1.4!important;min-width:0;overflow-wrap:anywhere}
+/* Tricky R4：超长名称两行截断，卡片不再被撑高；资料空间课题列表可滚动、有 fade 提示 */
+.rh-project header h3,.ms-spaces strong,.projects-page .pcard-t>strong{display:-webkit-box!important;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden!important;overflow-wrap:anywhere}
+.ms-project-nav{max-height:min(40vh,320px)!important;overflow:auto!important;overscroll-behavior:contain;scrollbar-width:thin;mask-image:linear-gradient(to bottom,#000 calc(100% - 24px),transparent)}
 
 
 /* 项目卡标题被挤成两行、断在「结合界 / 面」：标题被写死 max-width:calc(100% - 55px)，
@@ -22878,7 +22881,7 @@ function researchDiscoveries(projects){
 }
 function researchCard(p,i){
  const state=researchProjectState(p),source=DB.projects.find(x=>x.id===p.id),goal=source?goalText(source):p.description;
- return '<article class="rh-project '+(i===0?'is-featured ':'')+'tone-'+state.tone+'" data-wb-project-id="'+esc(p.id)+'"><header><span class="rh-project-symbol color-'+i%3+'">'+rhIcon(i===1?'model':i===2?'settings':'protein')+'</span><h3>'+esc(p.name)+'</h3><span class="rh-badge '+state.tone+'">'+esc(state.badge)+'</span></header><div class="rh-card-section">'+rhIcon('goal')+'<div><h4>研究目标</h4><p title="'+esc(goal)+'">'+esc(goal||'尚未设置研究目标')+'</p></div></div><div class="rh-card-section">'+rhIcon('chart')+'<div><h4>最近进展</h4><p title="'+esc(state.description)+'">'+esc(state.description)+'</p></div></div><div class="rh-next">'+rhIcon('calendar')+'<button class="rh-next-action" type="button" '+(state.task||state.draft?'data-wb-task-open="'+esc((state.task||state.draft).key)+'"':'data-wb-project="'+esc(p.id)+'"')+'>下一步：<strong>'+esc(state.next)+'</strong></button><span class="rh-badge '+state.tone+'">'+esc(state.tone==='alert'?'待处理':state.tone==='ready'?'待查看':state.draft?'待完善':'进行中')+'</span></div><button class="rh-enter" type="button" data-wb-project="'+esc(p.id)+'" aria-label="进入课题：'+esc(p.name)+'">进入课题 '+rhIcon('arrow')+'</button></article>';
+ return '<article class="rh-project '+(i===0?'is-featured ':'')+'tone-'+state.tone+'" data-wb-project-id="'+esc(p.id)+'"><header><span class="rh-project-symbol color-'+i%3+'">'+rhIcon(i===1?'model':i===2?'settings':'protein')+'</span><h3 title="'+esc(p.name)+'">'+esc(p.name)+'</h3><span class="rh-badge '+state.tone+'">'+esc(state.badge)+'</span></header><div class="rh-card-section">'+rhIcon('goal')+'<div><h4>研究目标</h4><p title="'+esc(goal)+'">'+esc(goal||'尚未设置研究目标')+'</p></div></div><div class="rh-card-section">'+rhIcon('chart')+'<div><h4>最近进展</h4><p title="'+esc(state.description)+'">'+esc(state.description)+'</p></div></div><div class="rh-next">'+rhIcon('calendar')+'<button class="rh-next-action" type="button" '+(state.task||state.draft?'data-wb-task-open="'+esc((state.task||state.draft).key)+'"':'data-wb-project="'+esc(p.id)+'"')+'>下一步：<strong>'+esc(state.next)+'</strong></button><span class="rh-badge '+state.tone+'">'+esc(state.tone==='alert'?'待处理':state.tone==='ready'?'待查看':state.draft?'待完善':'进行中')+'</span></div><button class="rh-enter" type="button" data-wb-project="'+esc(p.id)+'" aria-label="进入课题：'+esc(p.name)+'">进入课题 '+rhIcon('arrow')+'</button></article>';
 }
 V.workbench=()=>{
  const data=wbPrepare(),all=data.projects||[],ps=all.filter(p=>(p.name+' '+p.description+' '+p.target).toLowerCase().includes(RESEARCH_HOME.query.toLowerCase()));
