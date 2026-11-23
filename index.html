@@ -3005,7 +3005,7 @@ body[data-route=workbench] #view{background:var(--paper)}
 .rh-card-section>.rh-icon,.rh-next>.rh-icon,.rh-project-toolbar h2>.rh-icon{color:var(--ink-3)}.rh-link{font-weight:500}.rh-header p{font-weight:400}.rh-search{border-color:var(--line);border-radius:var(--r2)}
 @media(min-width:1101px) and (min-height:650px){
  body[data-route=workbench] #view{overflow:auto;padding:0}
- .page.wb.wb-workstation{display:grid;min-height:100%;grid-template-rows:40px 128px auto auto;align-content:start;gap:var(--s5);padding:var(--s6) 0 28px}
+ .page.wb.wb-workstation{display:grid;min-height:100%;grid-template-rows:40px auto auto auto;align-content:start;gap:var(--s5);padding:var(--s6) 0 28px}
  .rh-header{margin:0}.rh-header h1{font-size:var(--page-title-size)}.rh-header p{font-size:13px}.rh-header-actions{gap:14px}.rh-new{padding:8px 15px}
  .rh-activities{min-height:0;padding:14px 18px}.rh-section-heading h2,.rh-discover-heading h2{font-size:17px;line-height:24px}.rh-activity-grid{margin-top:14px;gap:18px}.rh-avatar{width:36px;height:36px;font-size:17px}.rh-activity-copy strong{font-size:13px}.rh-activity-copy small{font-size:12px}
  .rh-projects{margin:0;padding:0;min-height:0;display:flex;flex-direction:column}.rh-project-toolbar{flex:none;height:48px;padding:0 0 12px;gap:16px}.rh-project-toolbar h2{font-size:21px;line-height:28px;gap:9px}.rh-project-toolbar h2>.rh-icon{width:24px;height:24px}.rh-search{padding:6px 10px}.rh-project-toolbar .rh-search{flex-basis:320px}.rh-link{font-size:13px}.rh-project-grid{flex:none;min-height:0;gap:14px;align-items:start}
@@ -3013,7 +3013,7 @@ body[data-route=workbench] #view{background:var(--paper)}
  .rh-discoveries{min-height:0;margin:0;padding:0 18px 8px;display:flex;flex-direction:column;overflow:hidden}.rh-discover-heading{min-height:50px;height:50px;flex:none;gap:22px}.rh-tabs{gap:18px}.rh-tabs button{font-size:14px;border-bottom-width:2px;font-weight:500}.rh-discoveries #rh-feed{flex:1;min-height:0;display:flex;flex-direction:column}.rh-discovery-row{min-height:0;flex:none;padding:10px;gap:12px}.rh-discovery-icon{width:34px;height:34px}.rh-discovery-icon .rh-icon,.rh-discovery-icon .wb-icon{width:20px;height:20px}.rh-discovery-copy{gap:3px}.rh-discovery-copy strong{font-size:13px;line-height:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rh-discovery-copy small{font-size:11px;line-height:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rh-pagination{margin-top:4px;gap:9px;font-size:11px}.rh-pagination button{padding:3px 7px}.rh-empty{margin:0;padding:16px;font-size:13px}
 }
 @media(min-width:1101px) and (min-height:650px) and (max-height:850px){
- .page.wb.wb-workstation{grid-template-rows:34px 104px auto auto;gap:12px;padding:14px 22px}.rh-header h1{font-size:23px}.rh-activities{padding:10px 16px}.rh-activity-grid{margin-top:10px}.rh-project-toolbar{height:42px;padding-bottom:8px}.rh-project{padding:12px;gap:5px;grid-template-rows:44px auto auto 34px 32px}.rh-project header h3{font-size:14px;line-height:20px}.rh-enter{height:32px;min-height:32px;font-size:13px}.rh-discover-heading{min-height:44px;height:44px}.rh-discovery-row{padding-block:5px}.rh-discoveries{padding-bottom:5px}.rh-discovery-copy small{line-height:15px}
+ .page.wb.wb-workstation{grid-template-rows:34px auto auto auto;gap:12px;padding:14px 0}.rh-header h1{font-size:23px}.rh-activities{padding:10px 16px}.rh-activity-grid{margin-top:10px}.rh-project-toolbar{height:42px;padding-bottom:8px}.rh-project{padding:12px;gap:5px;grid-template-rows:44px auto auto 34px 32px}.rh-project header h3{font-size:14px;line-height:20px}.rh-enter{height:32px;min-height:32px;font-size:13px}.rh-discover-heading{min-height:44px;height:44px}.rh-discovery-row{padding-block:5px}.rh-discoveries{padding-bottom:5px}.rh-discovery-copy small{line-height:15px}
 }
 /* Reuse the original research-chat illustration as a non-interactive backdrop. */
 .page.wb.wb-workstation{position:relative;isolation:isolate}
@@ -3027,6 +3027,12 @@ body[data-route=workbench] #view{background:var(--paper)}
 @media(min-width:1101px) and (min-height:1000px){
  .rh-card-section p{-webkit-line-clamp:3;min-height:57px}
 }
+
+/* 课题卡的待办区（下一步 + 状态）做成浅灰底的一块，和上面的目标/进展正文分开。
+   用 --surface-2 而不是写死颜色，深色模式自动跟着 token 走；行高从网格的 42px 放成 auto，容纳内距。 */
+.rh-project .rh-next{margin:0;padding:9px 12px;border-top:0;border-radius:var(--r2);background:var(--surface-2);min-height:0}
+.rh-project{grid-template-rows:48px auto auto auto 36px}
+@media(min-width:1101px) and (min-height:650px) and (max-height:850px){.rh-project{grid-template-rows:44px auto auto auto 32px}}
 
 body[data-route="materials"] #view,body[data-route="files"] #view{padding:0;background:var(--surface)}
 .ms-shell{display:grid;grid-template-columns:240px minmax(0,1fr);min-height:calc(100vh - 48px);color:var(--ink)}
@@ -3239,6 +3245,12 @@ html[data-theme=dark] .st-icon,html[data-theme=dark] .st-intro>img{filter:invert
  #side .nav{min-height:30px}
  #side #navAcct{padding-top:8px;padding-bottom:8px}
 }
+
+/* 响应式走查（work/audit-responsive）：
+   FND-001 页头标题被挤成单字竖排。页头是 .row.wrap，但标题所在的 .col.grow 是 flex:1 1 0% + min-width:0，
+   行永远能靠把标题压到 0 来“装下”兄弟（按钮 + 搜索框），于是从不换行——360 宽下「科研工具」变成 2px 宽、4 行，
+   430 宽下「公共数据库」3 行。给标题列一个最小宽度，装不下就让行换行，而不是压标题。 */
+.row.wrap>.col.grow:has(>h1){min-width:min(100%,14rem)}
 
 /* ===== 视觉走查：只动样式、层级与配色，文案一个字不改（2026-11-21） ===== */
 

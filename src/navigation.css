@@ -157,3 +157,9 @@
  #side .nav{min-height:30px}
  #side #navAcct{padding-top:8px;padding-bottom:8px}
 }
+
+/* 响应式走查（work/audit-responsive）：
+   FND-001 页头标题被挤成单字竖排。页头是 .row.wrap，但标题所在的 .col.grow 是 flex:1 1 0% + min-width:0，
+   行永远能靠把标题压到 0 来“装下”兄弟（按钮 + 搜索框），于是从不换行——360 宽下「科研工具」变成 2px 宽、4 行，
+   430 宽下「公共数据库」3 行。给标题列一个最小宽度，装不下就让行换行，而不是压标题。 */
+.row.wrap>.col.grow:has(>h1){min-width:min(100%,14rem)}
