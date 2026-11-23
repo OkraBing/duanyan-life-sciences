@@ -38,20 +38,20 @@ fs.mkdirSync(output,{recursive:true});
    assert.equal(await page.locator('[data-lv-stage="affinity"] .lv-state').innerText(),'进行中');assert.equal(await page.locator('[data-lv-stage="stability"] .lv-state').innerText(),'进行中');
    await page.screenshot({path:path.join(output,'experiment-detail.png'),fullPage:true});
  });
- await check('template, schedule dependencies and independent physical inputs',async()=>{
+ await check('scientific design, derived dependencies and independent physical inputs',async()=>{
    await page.evaluate(()=>act('labnew'));
-   await page.locator('[data-lv-field="name"]').fill('R5 蛋白表征验证');
-   await page.locator('[data-lv-field="template"]').selectOption('full');
-   assert.equal(await page.locator('[data-lv-field="name"]').inputValue(),'R5 蛋白表征验证');
-   assert(await page.evaluate(()=>labForm().steps.some(s=>s.id==='harvest')));
-   await page.locator('[data-lv-mode="serial"]').check();
-   assert.deepEqual(await page.evaluate(()=>{const s=labForm().steps.find(s=>s.id==='stability');return [s.after,s.inputFrom]}),[['affinity'],['qc']]);
-   await page.locator('[data-lv-mode="parallel"]').check();
-   assert.deepEqual(await page.evaluate(()=>labForm().steps.find(s=>s.id==='stability').after),['qc']);
-   await page.locator('[data-lv-field="template"]').selectOption('characterize');
+   await page.locator('[data-al-field="name"]').fill('R5 蛋白表征验证');
+   await page.locator('[data-al-origin="construct"]').check();
+   assert.equal(await page.locator('[data-al-field="name"]').inputValue(),'R5 蛋白表征验证');
+   assert(await page.evaluate(()=>alPlan(alForm()).some(s=>s.id==='harvest')));
+   await page.locator('[data-al-view=execution]').click();
+   await page.locator('[data-al-field="mode"]').selectOption('serial');
+   assert.deepEqual(await page.evaluate(()=>{const s=alPlan(alForm()).find(s=>s.id==='stability');return [s.after,s.inputFrom]}),[['affinity'],['aliquot']]);
+   await page.locator('[data-al-field="mode"]').selectOption('parallel');
+   assert.deepEqual(await page.evaluate(()=>alPlan(alForm()).find(s=>s.id==='stability').after),['aliquot']);
  });
  await check('validation catches missing samples, incompatible devices, cycles and resource collision',async()=>{
-   await page.locator('[data-lv-save="ready"]').click();assert(await page.locator('.lv-error-summary').isVisible());
+   await page.locator('[data-al-panel="preflight"]').first().click();assert(await page.locator('#dlg button[value=ok]').isDisabled());await page.keyboard.press('Escape');
    const validation=await page.evaluate(()=>{
      const f=labCopy(labForm());Object.assign(f,{samples:'S1',sourceRef:'交接清单 v1',aliquot:'独立分样'});
      f.steps.find(s=>s.id==='affinity').deviceId='nanodrop';const badDevice=labValidate(f);
@@ -65,15 +65,15 @@ fs.mkdirSync(output,{recursive:true});
    assert(validation[0]);assert.match(validation[1],/循环/);assert.match(validation[2],/同一个设备/);assert.equal(validation[3],undefined);
  });
  let batchId;
- await check('draft edit, valid creation, deduplicated sample IDs and frozen plan',async()=>{
-   await page.locator('[data-lv-save="draft"]').click();batchId=await page.evaluate(()=>S.labPick);
+ await check('legacy draft migration, deduplicated sample IDs and frozen manual plan',async()=>{
+   // Existing manual-record schemas remain supported; autonomous creation is tested separately.
+   await page.evaluate(()=>{LABUI.form=labNewForm();Object.assign(LABUI.form,{name:'历史手工实验',pid:'p2',samples:'S1\nS2\nS1',sourceRef:'交接清单 v2',aliquot:'独立分样'});labSave(true);});
+   batchId=await page.evaluate(()=>S.labPick);
    assert.equal(await page.evaluate(()=>BATCHES.find(b=>b.id===S.labPick).workflow.phase),'draft');
    await page.locator('[data-lv-edit]').click();
-   await page.locator('[data-lv-field="samples"]').fill('S1\nS2\nS1');
-   await page.locator('[data-lv-field="sourceRef"]').fill('样本交接清单 v2，ELN-001');
-   await page.locator('[data-lv-field="aliquot"]').fill('S1/S2 各分出 A、B 两份，分别交接至 BLI 和稳定性检测；余量由负责人确认。');
-   for(const id of ['prep','qc','affinity','stability']){await page.locator('[data-composer-node="'+id+'"]').click();await page.locator('[data-lv-resource="'+id+'"]').fill('LAB-'+id);await page.locator('[data-lv-sop="'+id+'"]').fill('SOP-v1');}
-   await page.locator('[data-lv-save="ready"]').click();
+   assert.equal(await page.locator('[data-al-field=name]').inputValue(),'历史手工实验');
+   assert.deepEqual(await page.evaluate(()=>alForm().materials.map(m=>m.id)),['S1','S2']);
+   await page.evaluate(id=>{const f=labNewForm();Object.assign(f,{editing:id,pid:'p2',name:'历史手工实验',samples:'S1\nS2\nS1',sourceRef:'交接清单 v2',aliquot:'独立分样'});f.steps.forEach(s=>{s.resource='LAB-'+s.id;s.sop='SOP-v1'});LABUI.form=f;labSave(false);},batchId);
    assert.equal(await page.evaluate(()=>S.labPick),batchId);
    const record=await page.evaluate(()=>{const b=BATCHES.find(b=>b.id===S.labPick);return {n:b.n,states:b.workflow.steps.map(s=>s.state),source:b.workflow.source,phase:b.workflow.phase,instances:BATCHES.filter(x=>x.id===b.id).length}});
    assert.equal(record.n,2);assert(record.states.every(s=>s==='pending'));assert.equal(record.source,'manual');assert.equal(record.instances,1);assert.equal(record.phase,'ready');
@@ -108,7 +108,7 @@ fs.mkdirSync(output,{recursive:true});
    await page.reload();await page.evaluate(id=>go('labdet',{labPick:id}),batchId);
    assert.match(await page.locator('.lv-conclusion').innerText(),/不支持假设/);
    await go('workbench');await page.evaluate(()=>{WB.progressProject='p2';render()});
-   await page.locator('[data-wb-project-id=p2] [data-task-kind="experiment"] [data-wb-task-open]').first().click();assert.equal(await page.evaluate(()=>S.labPick),'B-DEMO-EX');
+   await page.locator('[data-wb-project-id=p2] [data-wb-task-open]').first().click();assert.equal(await page.evaluate(()=>S.labPick),'B-DEMO-EX');
    const row=await page.evaluate(id=>workbenchData().experiments.find(t=>t.id===id),batchId);assert.equal(row.status,'done');assert.equal(row.label,'有结论');assert.match(row.detail,/不支持假设/);
  });
  await check('upstream retry invalidates descendants and archives published conclusion',async()=>{

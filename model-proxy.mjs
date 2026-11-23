@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-/* 端砚 · 生命科学 —— 本地模型代理
+/* 端砚 · 生命科学 —— 本地 Demo 后端
  *
  * 做两件事：
  *   1. 把 index.html 当静态页发出来（于是页面有了同源的后端）；
- *   2. 把页面发来的 POST /api/model/chat 转给 DeepSeek，转的时候才带上密钥。
+ *   2. 提供模型在线部署 API，有 DeepSeek 凭证时也可启用同源模型代理。
  *
  * 密钥从环境变量读，**不写进这个文件，也不写进页面**。
  * 页面那一侧因此一个凭据都不持有——这正是「后端代理」那个选项的意思。
@@ -23,17 +23,22 @@
  */
 import http from 'node:http';
 import { readFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { dirname, extname, resolve, sep } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { openDeployments } from './online-deployments.mjs';
 
 const KEY  = process.env.DEEPSEEK_API_KEY || '';
 const PAGE = resolve(process.argv[2] || './index.html');
 const PORT = Number(process.env.PORT || 8787);
 const UP   = 'https://api.deepseek.com/chat/completions';
-
-if (!KEY) {
-  console.error('没读到 DEEPSEEK_API_KEY。先 export 一下再跑，密钥不要写进任何文件。');
-  process.exit(1);
-}
+const ROOT = dirname(fileURLToPath(import.meta.url));
+const DEPLOYMENTS = await openDeployments(resolve(process.env.DUANYAN_DEPLOYMENTS_FILE || resolve(ROOT, 'work', 'online-services.json')));
+const SITE_CONFIG = KEY
+  ? 'window.DUANYAN_CONFIG = { managedProxy: false, proxyEndpoint: "/api/model/chat" };'
+  : await readFile(resolve(ROOT, 'site-config.js'), 'utf8');
+const assets = resolve(dirname(PAGE), 'assets');
+const assetTypes = { '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg',
+  '.webp': 'image/webp', '.svg': 'image/svg+xml', '.gif': 'image/gif' };
 
 const send = (res, code, type, body) => {
   res.writeHead(code, { 'content-type': type, 'cache-control': 'no-store' });
@@ -41,11 +46,15 @@ const send = (res, code, type, body) => {
 };
 
 const server = http.createServer(async (req, res) => {
-  if (req.method === 'GET' && req.url === '/site-config.js') {
-    return send(res, 200, 'application/javascript; charset=utf-8',
-      'window.DUANYAN_CONFIG = Object.freeze({ managedProxy: false, proxyEndpoint: "/api/model/chat" });');
+  const path = req.url.split('?')[0];
+  if (await DEPLOYMENTS(req, path, (status, body) =>
+    send(res, status, 'application/json; charset=utf-8', JSON.stringify(body)))) return;
+  if (req.method === 'GET' && path === '/site-config.js') {
+    return send(res, 200, 'application/javascript; charset=utf-8', SITE_CONFIG +
+      '\nwindow.DUANYAN_CONFIG = Object.freeze({ ...window.DUANYAN_CONFIG, deploymentApi: "/api/deployments" });');
   }
-  if (req.method === 'POST' && req.url === '/api/model/chat') {
+  if (req.method === 'POST' && path === '/api/model/chat') {
+    if (!KEY) return send(res, 503, 'application/json; charset=utf-8', '{"error":"同源 DeepSeek 代理未配置"}');
     let raw = '';
     req.on('data', c => {
       raw += c;
@@ -90,7 +99,15 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  if (req.method === 'GET' && (req.url === '/' || req.url.startsWith('/?') || req.url === '/index.html')) {
+  if (req.method === 'GET' && path.startsWith('/assets/')) {
+    try {
+      const file = resolve(assets, decodeURIComponent(path.slice('/assets/'.length)));
+      const type = assetTypes[extname(file).toLowerCase()];
+      if (type && file.startsWith(assets + sep)) return send(res, 200, type, await readFile(file));
+    } catch {}
+    return send(res, 404, 'text/plain; charset=utf-8', 'not found');
+  }
+  if (req.method === 'GET' && (path === '/' || path === '/index.html')) {
     try {
       send(res, 200, 'text/html; charset=utf-8', await readFile(PAGE));
     } catch (e) {
@@ -104,8 +121,7 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, '127.0.0.1', () => {
   console.log('页面   http://127.0.0.1:' + PORT);
-  console.log('代理   POST /api/model/chat  →  ' + UP);
+  console.log('在线部署   /api/deployments');
+  if (KEY) console.log('代理   POST /api/model/chat  →  ' + UP);
   console.log('页面   ' + PAGE);
-  console.log('密钥   从 DEEPSEEK_API_KEY 读到了（不回显，不落盘）');
-  console.log('\n在页面侧栏「模型接入」里保持「后端代理」，地址 /api/model/chat，点「测一次」。');
 });

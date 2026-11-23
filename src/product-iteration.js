@@ -517,7 +517,6 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&RS.drawer&&!documen
 const iterationBind=rsBind;
 rsBind=function(root){
  iterationBind(root);iterationBindAcquisitions(root);
- root.querySelectorAll('[data-dataset-train]').forEach(e=>e.onclick=()=>{const found=dsFind(e.dataset.datasetTrain);if(!found||found.d.st!=='pub'||!can('edit'))return;S.pid=found.pid;trReset();NEWTR.ds=found.d.id;NEWTR.name=(found.d.name+' · 训练').slice(0,50);go('trainnew');});
  if(S.route!=='shareddetail'){if(RS.drawer)iterationCloseDrawer(false);return;}
  const s=rsShared();if(!s||!rsMember(s)){iterationCloseDrawer(false);return;}
  root.querySelectorAll('[data-shared-asset-tab]').forEach(e=>e.onclick=()=>{RS.assetTab=e.dataset.sharedAssetTab;RS.assetPick='';render();});
@@ -556,13 +555,26 @@ rsBind=function(root){
 };
 /* Keep progress cards direct and concise; original data and export provenance are preserved. */
 labCardV2=function(b){
- const s=labSummary(b),w=b.workflow,title=(b.name||b.ctx?.assay?.join(' / ')+' · 第 '+b.round+' 轮').replace(' · 异常示例','');
- return '<article class="lv-exp is-'+s.status+'" role="button" tabindex="0" data-labgo="'+esc(b.id)+'" aria-label="查看实验进展与结论：'+esc(title)+'"><div class="row" style="justify-content:space-between;gap:10px">'+labBadge(s.status)+'<span class="lv-small">'+esc(b.id.includes('DEMO')?'':b.id)+'</span></div><h2 class="lv-exp-title">'+esc(title)+'</h2><p class="lv-small">'+esc(pnOf(b.pid))+' · '+b.n+' 个样本</p><div class="lv-exp-progress"><div class="lv-bar" aria-hidden="true">'+(w?.steps.map(st=>'<i class="'+esc(st.state)+'"></i>').join('')||'<i></i>')+'</div><span class="lv-small">'+(s.total?s.done+'/'+s.total+' 环节':'未记录环节')+'</span></div></article>';
+ const summary=labSummary(b), workflow=b.workflow;
+ const title=(b.name||b.ctx?.assay?.join(' / ')||b.id).replace(' · 异常示例','');
+ const hasProgress=summary.total&& !['draft','waiting'].includes(summary.status);
+ const action=summary.status==='draft'?(workflow?.phase==='draft'&&can('edit')?'继续编辑':'查看草稿'):summary.status==='conclusion'?'查看实验结论':'查看实验详情';
+ const methods=workflow?.source==='autonomous'?alTaskMethods(workflow):b.ctx?.assay?.join('、');
+ const context=summary.status==='exception'?summary.detail:summary.status==='conclusion'?workflow?.conclusion?.verdict:summary.current;
+ return `<article class="lv-exp is-${summary.status}" role="button" tabindex="0" data-labgo="${esc(b.id)}" aria-label="${action}：${esc(title)}">
+  <div class="row" style="justify-content:space-between;gap:10px">${labBadge(summary.status,summary.label)}<span class="lv-small">${esc(b.id.includes('DEMO')?'':b.id)}</span></div>
+  <h2 class="lv-exp-title">${esc(title)}</h2>
+  <p class="lv-small">${esc(pnOf(b.pid))} · ${b.n} 个${workflow?.source==='autonomous'?'候选':''}样本</p>
+  ${methods?`<p class="lv-small lv-card-summary">${esc(methods)}</p>`:''}
+  ${context?`<p class="lv-small lv-card-summary">${esc(context)}</p>`:''}
+  ${hasProgress?`<div class="lv-exp-progress"><div class="lv-bar" aria-hidden="true">${workflow.steps.map(step=>'<i class="'+esc(step.state)+'"></i>').join('')}</div><span class="lv-small">${summary.done}/${summary.total} 环节</span></div>`:''}
+  <span class="lv-card-action">${action} →</span>
+ </article>`;
 };
 V.lab=()=>{
- const f=LABUI.filter==='all'&&S.lflt==='run'?'normal':LABUI.filter==='all'&&S.lflt==='past'?'conclusion':LABUI.filter,pid=DB.projects.some(p=>p.id===S.labProject)?S.labProject:'all',rank={exception:0,normal:1,draft:2,conclusion:3,unknown:4};
+ const f=LABUI.filter==='all'&&S.lflt==='run'?'normal':LABUI.filter==='all'&&S.lflt==='past'?'conclusion':LABUI.filter,pid=DB.projects.some(p=>p.id===S.labProject)?S.labProject:'all',rank={exception:0,normal:1,waiting:2,draft:3,conclusion:4,unknown:5};
  const rows=BATCHES.filter(b=>(pid==='all'||b.pid===pid)&&(f==='all'||labSummary(b).status===f)).sort((a,b)=>rank[labSummary(a).status]-rank[labSummary(b).status]);
- return '<div class="page lv iteration-page"><header class="iteration-head"><div><h1>实验管理</h1><p>查看实验进展与结论</p></div><div class="rs-actions"><button class="btn" data-go="devices" type="button">查看设备列表</button><button class="btn btn-pri" data-act="labnew" type="button">发起实验</button></div></header><div class="lv-toolbar"><select class="input" style="max-width:250px" data-lv-project-filter aria-label="按课题筛选实验"><option value="all" '+(pid==='all'?'selected':'')+'>全部课题</option>'+DB.projects.filter(p=>(p.ownerId||'me')==='me').map(p=>'<option value="'+esc(p.id)+'" '+(p.id===pid?'selected':'')+'>'+esc(p.name)+'</option>').join('')+'</select><div class="lv-filters" role="group" aria-label="实验状态">'+[['all','全部实验'],['normal','正常进行中'],['exception','异常'],['conclusion','有结论'],['draft','草稿']].map(([k,n])=>'<button class="pill lv-filter'+(f===k?' is-on':'')+'" type="button" data-lv-filter="'+k+'" aria-pressed="'+(f===k)+'">'+n+'</button>').join('')+'</div><span class="lv-small">'+rows.length+' 项实验</span></div><div class="lv-cards">'+rows.map(labCardV2).join('')+'</div>'+(!rows.length?'<p class="lv-empty">当前筛选下暂无实验</p>':'')+'</div>';
+ return '<div class="page lv iteration-page"><header class="iteration-head"><div><h1>实验管理</h1><p>查看实验进展与结论</p></div><div class="rs-actions"><button class="btn" data-go="devices" type="button">查看设备列表</button><button class="btn btn-pri" data-act="labnew" type="button">发起实验</button></div></header><div class="lv-toolbar"><select class="input" style="max-width:250px" data-lv-project-filter aria-label="按课题筛选实验"><option value="all" '+(pid==='all'?'selected':'')+'>全部课题</option>'+DB.projects.filter(p=>(p.ownerId||'me')==='me').map(p=>'<option value="'+esc(p.id)+'" '+(p.id===pid?'selected':'')+'>'+esc(p.name)+'</option>').join('')+'</select><div class="lv-filters" role="group" aria-label="实验状态">'+[['all','全部实验'],['normal','正常进行中'],['waiting','待就绪'],['exception','异常'],['conclusion','有结论'],['draft','草稿']].map(([k,n])=>'<button class="pill lv-filter'+(f===k?' is-on':'')+'" type="button" data-lv-filter="'+k+'" aria-pressed="'+(f===k)+'">'+n+'</button>').join('')+'</div><span class="lv-small">'+rows.length+' 项实验</span></div><div class="lv-cards">'+rows.map(labCardV2).join('')+'</div>'+(!rows.length?'<p class="lv-empty">当前筛选下暂无实验</p>':'')+'</div>';
 };
 const iterationLabDetail=V.labdet;
 V.labdet=()=>iterationLabDetail().replace(/<div class="lv-note">[\s\S]*?<\/div>/,'').replace(/演示：/g,'').replace(/ · 演示流程/g,'').replace('演示流程尚无人工操作记录','暂无操作记录');

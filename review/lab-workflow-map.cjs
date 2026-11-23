@@ -6,7 +6,7 @@ const checks=[],errors=[];let browser;
 (async()=>{
  browser=await chromium.launch();const page=await browser.newPage({viewport:{width:1512,height:1100},reducedMotion:'reduce'});page.setDefaultTimeout(7000);page.on('pageerror',e=>errors.push(e.message));await page.route(/^https?:\/\//,r=>target.startsWith('http')&&new URL(r.request().url()).host===new URL(target).host?r.continue():r.abort());
  const response=await page.goto(target);if(target.startsWith('http')){assert.equal(response.status(),200);assert((await response.body()).equals(fs.readFileSync(path.join(root,'docs/index.html'))),'HTTPS build differs from accepted local build');}await page.waitForFunction(()=>RS.seedReady);
- const open=async()=>page.evaluate(()=>go('labdet',{labPick:'B-P4-002'}));await open();
+ const open=async()=>{await page.evaluate(()=>alVisitBatch('B-P4-002'));await page.locator('[data-al-view=execution]').click();};await open();
  assert.equal(await page.locator('.lab-workflow-panel').count(),1);assert.equal(await page.locator('.lab-workflow-head h2').innerText(),'流程与样品交接');
  const expected=await page.evaluate(()=>BATCHES.find(b=>b.id===S.labPick).workflow.steps.map(s=>({id:s.id,title:s.title,state:s.state})));
  assert.deepEqual(await page.locator('.lab-map-node').evaluateAll(es=>es.map(e=>({id:e.dataset.labFlowStep,title:e.querySelector('strong').textContent,state:e.className.match(/is-(\w+)/)[1]}))),expected);

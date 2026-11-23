@@ -1,0 +1,115 @@
+/* Navigation v2: keep the existing theme tokens and small-screen navigation. */
+.settings-layout{display:grid;grid-template-columns:10rem minmax(0,1fr);gap:var(--s6);max-width:73.75rem;margin-inline:auto}
+.settings-layout>.page{min-width:0;margin:0;padding-top:var(--s6)}
+.settings-menu{position:sticky;top:var(--s4);align-self:start;display:grid;gap:var(--s1);margin-top:var(--s6);padding-inline-end:var(--s4);border-inline-end:1px solid var(--line)}
+.settings-menu>a{display:flex;align-items:center;min-height:2.5rem;padding:var(--s2) var(--s3);border-radius:6px;color:var(--ink-2);text-decoration:none}
+.settings-menu>a:hover{background:var(--surface-2)}
+.settings-menu>a[aria-current="page"]{background:var(--dry-soft);color:var(--dry-ink);font-weight:600}
+.settings-menu>a:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+@media(max-width:600px){
+ .settings-layout{grid-template-columns:minmax(0,1fr);gap:var(--s3)}
+ .settings-layout>.page{padding-top:0}
+ .settings-menu{position:static;margin-top:var(--s4);padding:0 0 var(--s3);border-inline-end:0;border-bottom:1px solid var(--line)}
+ .settings-menu>a{min-height:2.75rem}
+}
+.navigation-tooltip{position:fixed;z-index:1000;pointer-events:none;background:var(--ink);color:var(--paper);font-size:12px;line-height:20px;padding:6px 10px;border-radius:5px;box-shadow:0 3px 10px #18233414}
+.navigation-tooltip::before{content:"";position:absolute;right:100%;top:calc(50% - 5px);border-top:5px solid transparent;border-bottom:5px solid transparent;border-right:6px solid var(--ink)}
+#side .nav{border-radius:6px}
+#side .nav[aria-current="page"]{background:var(--dry-soft);color:var(--dry-ink);font-weight:600;box-shadow:none}
+#side .nav[aria-current="page"]::before{display:none}
+@media(min-width:861px){
+ #side{flex-basis:232px;border-right:1px solid var(--line);background:var(--surface)}
+ #side[data-collapsed="1"]{flex-basis:72px}
+ #navT{flex:0 0 auto}
+ #side .nav{min-height:36px}
+ #side[data-collapsed="1"] .nav{width:48px;min-height:40px;flex:none;justify-content:center;padding:0}
+ #side[data-collapsed="1"] .nav-group{align-items:center;padding:10px 12px;margin:0}
+ #side[data-collapsed="1"] .nav-group.is-sep{border-top:1px solid var(--line)}
+ #side[data-collapsed="1"] #navS{margin-top:auto}
+ #side[data-collapsed="1"] #navAcct{margin-top:0}
+ #side[data-collapsed="1"] .acct-me{display:none}
+ #side[data-collapsed="1"] .acct-row{flex-direction:column;gap:8px}
+ #side[data-collapsed="1"] .acct-b{justify-content:center;padding:0}
+ #side[data-collapsed="1"] .brand{padding:24px 0 20px}
+}
+@media(min-width:861px){
+ #side .nav:not([aria-current="page"]) svg{color:var(--ink-3)}
+ #side .nav-group{padding-bottom:14px}
+ #side .nav-group .lbl{padding-top:10px;padding-bottom:8px}
+}
+
+/* One project list; origin remains visible independently of status and progress. */
+.projects-page .pcard{position:relative}
+.navigation-project-source{display:inline-flex;align-items:center;flex:none;font-size:11px;line-height:20px;padding:2px 8px;border-radius:4px;color:var(--ink-3);background:var(--surface-2);font-weight:400}
+.navigation-progress{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:11px;color:var(--ink-3);margin:12px 0;text-align:left}
+.navigation-progress-count{margin-left:auto;font-variant-numeric:tabular-nums}
+.navigation-progress progress{appearance:none;display:block;flex-basis:100%;width:100%;height:5px;border:0;border-radius:4px;overflow:hidden;background:var(--line)}
+.navigation-progress progress::-webkit-progress-bar{background:var(--line)}
+.navigation-progress progress::-webkit-progress-value{background:var(--ink-3);border-radius:4px}
+.navigation-progress progress::-moz-progress-bar{background:var(--ink-3);border-radius:4px}
+.navigation-progress-note{display:block;font-size:11px;color:var(--ink-3);margin:12px 0}
+.projects-page .shared-project-card{height:100%;box-sizing:border-box}
+
+.navigation-project-status{display:inline-flex;align-items:center;gap:8px;margin-left:auto;flex:none}.navigation-project-status .pcard-st{margin-left:0}.navigation-project-status .navigation-project-source{border:1px solid var(--line);line-height:18px;padding:1px 8px;white-space:nowrap}
+
+.projects-page .pcard-t>.navigation-project-source{margin-left:auto;flex:none;white-space:nowrap}
+
+.projects-page .pcard-t{justify-content:flex-start;gap:10px;flex-wrap:wrap}
+.projects-page .pcard-t>.navigation-project-source{margin-left:0}
+.projects-page .project-card-wrap{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:12px;background:var(--surface);overflow:hidden}
+.projects-page .project-card-wrap>.pcard{border:0;border-radius:0;flex:1;width:100%;box-shadow:none}
+.project-team-row{display:flex;justify-content:space-between;align-items:center;gap:12px;border-top:1px solid var(--line-2);padding:16px 20px}
+.project-team-identity{display:flex;align-items:center;gap:10px;min-width:0}
+.project-team-identity strong{display:block;font-size:11px;font-weight:500;color:var(--ink-2)}
+.project-team-identity small{display:block;font-size:10px;color:var(--ink-3);margin-top:4px}
+.project-team-avatars{display:flex;padding-left:6px}
+.project-team-avatar{display:grid;place-items:center;flex:none;width:27px;height:27px;border:2px solid var(--surface);border-radius:50%;margin-left:-6px;background:var(--surface-2);color:var(--ink-3);font-size:10px}
+.project-team-action{font-size:11px;white-space:nowrap;flex:none;min-height:32px}
+@media(max-width:600px){.project-team-row{padding:14px;gap:8px}.projects-header>[data-project-join],.projects-header>[data-act="newproj"]{min-height:44px}.project-team-action{min-height:44px}}
+
+.project-card-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 20px;border-top:1px solid var(--line-2);flex-wrap:wrap}
+.projects-page .project-card-footer>.pcard-f{margin:0;padding:0;border:0;min-height:0;flex:1;gap:10px}
+.project-card-footer .project-team-row{padding:0;border:0;gap:10px}
+.project-team-caption{display:none}
+.project-team-avatars{border:0;background:none;padding:0 0 0 6px;cursor:pointer}
+.project-team-avatars:focus-visible{outline:2px solid var(--focus);outline-offset:3px;border-radius:20px}
+@media(max-width:600px){.project-card-footer{padding:14px;gap:10px}.project-card-footer .project-team-row{padding:0}.project-team-avatars{min-height:44px}.project-card-footer .project-team-action{padding:5px 8px}}
+.projects-page .pcard-t>strong{flex:0 1 auto;max-width:calc(100% - 55px)}
+
+.pjx-title-row button.project-shared-badge{font:inherit;font-size:12px;cursor:pointer}.pjx-title-row button.project-shared-badge:hover{background:var(--dry-soft);border-color:var(--dry)}.pjx-title-row button.project-shared-badge:focus-visible{outline:2px solid var(--focus);outline-offset:3px}
+/* Shared title label stays interactive without button chrome. */
+.pjx-title-row button.project-shared-badge,.pjx-title-row button.project-shared-badge:hover{background:transparent;border:0;box-shadow:none;padding:0 2px;border-radius:0;color:var(--dry-ink)}
+.pjx-title-row button.project-shared-badge:hover{text-decoration:underline;text-underline-offset:4px}
+
+.project-team-add{display:grid;place-items:center;width:25px;height:25px;flex:none;margin-left:5px;border:1px dashed var(--ink-4);border-radius:50%;color:var(--ink-3);font-size:17px;line-height:1;background:var(--surface)}.project-team-avatars:hover .project-team-add{border-color:var(--dry);color:var(--dry-ink);background:var(--dry-soft)}
+
+.projects-page .project-update{display:block;flex:none;margin:0 20px 20px;padding:16px;border:1px solid var(--line);border-radius:7px;background:var(--surface-2);font-size:11px;color:var(--ink-3)}
+.project-update-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;font-size:11px}.project-update-head>span{font-weight:500}.project-update-head time{font-size:10px;color:var(--ink-4)}
+.project-update>strong{display:block;font-size:14px;color:var(--ink);font-weight:600;line-height:1.6}.project-update>p{font-size:11px;line-height:1.8;margin:7px 0 0;color:var(--ink-3);overflow-wrap:anywhere}
+.project-update-action{border:0;background:none;color:var(--dry-ink);font:inherit;font-size:11px;cursor:pointer;padding:0;margin-top:14px;min-height:28px}.project-update-action:hover{text-decoration:underline}
+.projects-page .project-update.is-confirm{border-color:color-mix(in srgb,var(--ink-4) 40%,var(--line));background:var(--surface-2)}.project-update.is-confirm .project-update-action{border:1px solid var(--line);border-radius:5px;padding:5px 10px;background:var(--surface)}
+.project-update.is-not-started{border-style:dashed}.project-task-progress{margin-top:12px;font-size:10px}.project-task-progress progress{margin-top:7px;width:100%}
+@media(max-width:600px){.projects-page .project-update{margin:0 14px 14px}.project-update-action{min-height:44px}}
+
+.projects-page .project-card-wrap>.pcard{min-height:0;flex:0 0 auto}.projects-page .project-card-wrap{align-self:start}
+
+.projects-page .project-start{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 20px 18px;color:var(--ink-3);font-size:12px}
+.project-start .project-update-action{margin-top:0}
+.projects-page .project-card-wrap:not(:has(.project-update)) .pcard-g{min-height:0}
+@media(max-width:600px){.projects-page .project-start{margin:0 14px 14px}}
+/* Equal card height across all rows, including cards without progress. */
+.projects-page .pgrid{grid-auto-rows:1fr;align-items:stretch}
+.projects-page .project-card-wrap{align-self:stretch;height:100%;min-height:0}
+.projects-page .project-card-wrap>.pcard{height:auto}
+.projects-page .project-card-footer{margin-top:auto}
+
+/* Fixed progress panel size keeps descriptions and actions aligned. */
+.projects-page .project-update{box-sizing:border-box;height:220px;display:flex;flex-direction:column;min-width:0}
+.project-update-head{flex:none}.project-update>strong{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:1;overflow:hidden;flex:none}
+.project-update>p{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;flex:none}
+.project-update .project-update-action{align-self:flex-start;margin-top:auto;flex:none}
+.project-task-progress{flex:none}
+
+@media(max-width:600px){.projects-page .project-update{height:244px}.project-update>p{-webkit-line-clamp:3}.project-update>strong{-webkit-line-clamp:2}}
+.projects-page .project-update{align-items:stretch;justify-content:flex-start;text-align:left}
+.project-update>strong,.project-update>p,.project-task-progress{text-align:left;width:100%}

@@ -136,6 +136,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 .dw-h{display:flex;align-items:center;gap:var(--s3);flex:0 0 auto;
   padding:var(--s4) var(--s5);border-bottom:1px solid var(--line-2)}
 .dw-b{flex:1 1 auto;min-height:0;overflow-y:auto;padding:var(--s5)}
+.dw-action-footer{padding:var(--s4) var(--s5);border-top:1px solid var(--line-2)}
 /* 抽屉里不要再套一层自己的滚动区：列清单本来有 272px 的高度上限，
    接在表格下面时是为了不把页面撑太长，但在抽屉里就成了「框里还有一个小框」，
    两层滚动条互相抢。抽屉本身会滚，里面放开。 */
@@ -2721,6 +2722,10 @@ dialog.rs-copy-dialog{width:min(600px,calc(100vw - 32px));max-width:600px;overfl
 /* @include workbench-project-cards.css */
 /* @include lab-workflow-map.css */
 /* @include workbench-dashboard.css */
+/* @include workbench-reference.css */
+/* @include resource-space.css */
+/* @include scheduled-tasks.css */
+/* @include navigation.css */
 /* ===== 视觉走查：只动样式、层级与配色，文案一个字不改（2026-11-21） ===== */
 
 /* 一、工作台的层级是倒挂的：最大的字给了寒暄，而「有几项实验异常」
@@ -2749,7 +2754,7 @@ dialog.rs-copy-dialog{width:min(600px,calc(100vw - 32px));max-width:600px;overfl
 :root{--wet-warm:#8A5A20}
 [data-theme="dark"]{--wet-warm:#D9AE72}
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--wet-warm:#D9AE72}}
-.nav[data-navid="lab"] svg,.nav[data-navid="devices"] svg{color:var(--wet-warm)}
+.nav:is([data-navid="lab"],[data-navid="devices"]):where(:not([aria-current="page"])) svg{color:var(--wet-warm)}
 
 /* ===== 工作台视觉打磨 · 第三到第十轮（2026-11-21） =====
    原则：减描边、加层次；字阶收敛；数字等宽对齐；颜色只承担语义。
@@ -3017,6 +3022,12 @@ dialog.rs-copy-dialog{width:min(600px,calc(100vw - 32px));max-width:600px;overfl
   .inbox-row .request-status{grid-column:2;grid-row:1;justify-self:end}
   .inbox-actions{grid-column:2;grid-row:2}
   .inbox-actions .btn{min-height:40px}}
+/* @include chat-history.css */
+.tool-methods{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:16px 0 24px}.tool-method{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:18px;text-align:left;color:var(--ink);cursor:pointer}.tool-method strong,.tool-method small{display:block}.tool-method small{margin-top:8px;line-height:1.6;color:var(--ink-3)}.tool-method.is-on{border-color:var(--dry);background:var(--surface-2);box-shadow:inset 0 0 0 1px var(--dry)}.tool-config{border-top:1px solid var(--line);padding-top:22px}.tool-config textarea{font-family:monospace;tab-size:4;line-height:1.7;resize:vertical}.tool-config .rs-fields-grid>*{min-width:0}@media(max-width:650px){.tool-methods{grid-template-columns:1fr}.tool-method{padding:12px}.tool-method small{margin-top:4px}}
+/* @include tool-list.css */
+/* @include tool-ide.css */
+/* @include tool-wizard.css */
+/* @include autonomous-lab.css */
 </style>
 
 <div id="app">
@@ -3042,6 +3053,7 @@ dialog.rs-copy-dialog{width:min(600px,calc(100vw - 32px));max-width:600px;overfl
     <div id="navA" class="nav-group"></div>
     <div id="navB" class="nav-group is-sep"></div>
     <div id="navC" class="nav-group is-sep"></div>
+    <div id="navT" class="nav-group is-sep"></div>
     <div id="navD" class="nav-group is-sep"></div>
     <div id="navH" class="nav-group nav-hist"></div>
     <div id="navS" class="nav-group is-sep"></div>
@@ -3292,7 +3304,7 @@ const S={
   collapsed:LS.get('collapsed',0), askFiles:[], capf:'全部', capPick:null, ask:'',
   ptab:'kb', ptab2:'route', mtab:LS.get('mtab','cur'), tid:null, toolN:null, cq:'', cf:'全部', pq:'', pf:'全部', ibf:'全部', jpf:'全部', dsid:null, chat:{}, bind:'p1', sid:null, shcap:'全部', dcap:'全部', dq:'', seek:'', vdiff:null,
   as:LS.get('as',0), failPage:1, depth:LS.get('depth','fast'), group:LS.get('group',0),
-  bq:'', bDrawer:null, bTab:'log'
+  bq:'', bDrawer:null, bTab:'log', checkpointPick:null
 };
 /* 八处代码直接取 p.rounds[len-1]，所以项目必须至少有一轮。
    产品自己建的项目一定带 Round 1（见新建项目那一段），走不到零轮次；
@@ -3947,7 +3959,7 @@ function domOf(p){const x=p||PRJ();return DOMAINS.find(d=>d.k===(x&&x.dom))||DOM
 /* 三组各有一个组名，说的是「这一组是什么东西」，不是把下面几项再念一遍：
      工作     —— 你现在做事的地方，和做过的事归档的地方
      干湿闭环 —— 这一组只放实验管理（送出去的批次走到哪了）。
-     数据集和模型制备归「资源」：它们是这条环要用的料和工具，
+     数据集和模型管理归「资源」：它们是这条环要用的料和工具，
      而「环」本身转起来的那一步是湿实验
      资源     —— 外面现成的，不是你攒的
    每一项的 title 写的是「哪个研究动作需要它」（R16）——
@@ -3958,29 +3970,32 @@ const NAV=[
   ['A','研究',[
     ['workbench','工作台',"M3.5 4.5h7v7h-7zM13.5 4.5h7v4h-7zM13.5 11.5h7v8h-7zM3.5 14.5h7v5h-7z",'了解课题进展、发现研究灵感与学术资讯'],
     ['chat','科研对话',"M5 6.5A2.5 2.5 0 0 1 7.5 4h9A2.5 2.5 0 0 1 19 6.5v7a2.5 2.5 0 0 1-2.5 2.5H11l-4 3.5V16A2.5 2.5 0 0 1 5 13.5zM12 7.5v5M9.5 10h5",'用一句话发起任务'],
-    ['projects','项目管理',"M3.5 7.5a2 2 0 0 1 2-2h3.6l2 2.2h7.4a2 2 0 0 1 2 2v7.8a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2zM7.5 13.5h9",'按课题管理多轮的数据、模型与实验'],
-    ['shared','共享项目',"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 3a4 4 0 1 1 0 8 4 4 0 0 1 0-8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75",'共同管理课题资产与工作流']]],
+    ['projects','课题项目',"M3.5 7.5a2 2 0 0 1 2-2h3.6l2 2.2h7.4a2 2 0 0 1 2 2v7.8a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2zM7.5 13.5h9",'按课题管理多轮的数据、模型与实验'],
+  ]],
   ['B','实验',[
     ['lab','实验管理',"M9.5 3.5v5.6L4.7 17.6A2.2 2.2 0 0 0 6.6 21h10.8a2.2 2.2 0 0 0 1.9-3.4L14.5 9.1V3.5M8 3.5h8M7.3 14.5h9.4",'查看实验环节进度、异常与结论'],
     ['devices','设备管理',"M4 8h16v12H4zM8 8V4h8v4M8 13h8M8 17h3",'查看蛋白实验设备能力、型号与输入输出要求']]],
   /* 资源是「我自己攒下来的」：我的数据集、我训的模型。
-     市场是「外面有什么、接没接」：生命科学工具、生命科学数据。
+     市场是「外面有什么、接没接」：科研工具、公共数据库。
      两件事混在一组里，同一个词（数据集／数据库）指两样东西。 */
   ['C','资源',[
-    ['dsets','我的数据集',"M4.5 6A1.5 1.5 0 0 1 6 4.5h12A1.5 1.5 0 0 1 19.5 6v12a1.5 1.5 0 0 1-1.5 1.5H6A1.5 1.5 0 0 1 4.5 18zM4.5 9.5h15M4.5 14.5h15M10 9.5v10",'用于模型训练的数据集'],
-    ['mdl','模型制备',"M6.5 5a2 2 0 1 1 0 4a2 2 0 0 1 0-4zM17.5 5a2 2 0 1 1 0 4a2 2 0 0 1 0-4zM12 15a2 2 0 1 1 0 4a2 2 0 0 1 0-4zM8.5 7h7M7.4 8.8l3.6 6.5M16.6 8.8 13 15.3",'训练、评测打分模型，以及模型推理']]],
+    ['dsets','数据集',"M4.5 6A1.5 1.5 0 0 1 6 4.5h12A1.5 1.5 0 0 1 19.5 6v12a1.5 1.5 0 0 1-1.5 1.5H6A1.5 1.5 0 0 1 4.5 18zM4.5 9.5h15M4.5 14.5h15M10 9.5v10",'用于模型训练的数据集'],
+    ['mdl','模型',"M6.5 5a2 2 0 1 1 0 4a2 2 0 0 1 0-4zM17.5 5a2 2 0 1 1 0 4a2 2 0 0 1 0-4zM12 15a2 2 0 1 1 0 4a2 2 0 0 1 0-4zM8.5 7h7M7.4 8.8l3.6 6.5M16.6 8.8 13 15.3",'训练、评测打分模型，以及模型推理'],
+    ['tools','工具',"M4.5 4.5h6v6h-6zM13.5 4.5h6v6h-6zM4.5 13.5h6v6h-6zM16.5 13.5v6M13.5 16.5h6",'管理自己的科研工具与版本']]],
+  ['T','任务',[
+    ['schedules','定时任务','M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20zM12 6v6l-4 3','按计划管理科研任务']]],
   ['D','市场',[
-    ['shelf','生命科学工具',"M4.5 4.5h6v6h-6zM13.5 4.5h6v6h-6zM4.5 13.5h6v6h-6zM16.5 13.5v6M13.5 16.5h6",'查看和启用工具'],
-    ['data','生命科学数据',"M5 7c0-1.7 3.1-3 7-3s7 1.3 7 3-3.1 3-7 3-7-1.3-7-3zM5 7v10c0 1.7 3.1 3 7 3s7-1.3 7-3V7M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3",'某个库接没接、许可是什么']]],
+    ['shelf','科研工具',"M4.5 4.5h6v6h-6zM13.5 4.5h6v6h-6zM4.5 13.5h6v6h-6zM16.5 13.5v6M13.5 16.5h6",'查看和启用工具'],
+    ['data','公共数据库',"M5 7c0-1.7 3.1-3 7-3s7 1.3 7 3-3.1 3-7 3-7-1.3-7-3zM5 7v10c0 1.7 3.1 3 7 3s7-1.3 7-3V7M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3",'某个库接没接、许可是什么']]],
   /* 照 bootcamp：系统配置这一类钉在导航最下面、账户上面。
      它不是一个研究动作，所以不进上面那几组；但「对话里那句话会不会被真的回答」
      取决于它，所以必须有入口（R16）。
-     在线推理和批量推理曾经也钉在这里，现在并进「模型制备」做页签了——
+     在线推理和批量推理曾经也钉在这里，现在并进「模型管理」做页签了——
      导航不为每一件和模型有关的事各开一格。 */
   ['S','',[
-    ['set','模型接入',"M9 4v4M15 4v4M6.5 8h11v3.5a5.5 5.5 0 0 1-11 0zM12 17v3.5",'管理外部模型的接入']]],
+    ['settings','设置',"M12 3v3M12 18v3M3 12h3M18 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8",'管理偏好设置与模型接入']]],
   /* 「模型接入」原先单独钉在底部。它不是一个研究动作，当时就不好归组；
-     现在并进「模型制备」做一个标签页——那一页本来就是「模型这件事在哪儿办」，
+     现在并进「模型管理」做一个标签页——那一页本来就是「模型这件事在哪儿办」，
      对话走哪个模型也是模型的事。底部那一格腾给账户。 */
 ];
 
@@ -4033,10 +4048,8 @@ function paintNav(force){
     const CAPNAME=domOf().caps;
     host.querySelectorAll('.nav[data-navid]').forEach(b=>{
       const id=b.dataset.navid;
-      /* 正在看一段旧对话时，亮的是「最近对话」里的那一条，不是「新建对话」——
-         两处同时亮，看不出自己在哪儿。 */
       const cur=id.indexOf('pw:')===0?(S.route==='pw'&&S.pid===id.slice(3))
-        :((S.route===id||NAV_PARENT[S.route]===id)&&!(id==='chat'&&SESSIONS.some(x=>x.id===S.sid&&!x.arch)));
+        :(S.route===id||NAV_PARENT[S.route]===id);
       b.setAttribute('aria-current',cur?'page':'false');
       /* 四个能力的名字跟当前项目的研究对象走：蛋白是「结构预测」，
          小分子就该是「构象与对接」。动作不变，名词由领域包给。 */
@@ -4209,18 +4222,15 @@ function newChat(){
   go('chat');paintNav(1);
 }
 function openSession(x){
-  S.sid=x.id;S.bind=x.pid||null;S.outOpen=false;
+  S.sid=x.id;S.bind=x.pid||null;S.outOpen=false;S.ask='';S.useTools=[];S.useDocs=[];
   if(x.pid)S.pid=x.pid;
   go('chat');
-  /* 这条记录在这个浏览器里还没跑过，所以只有标题和当初问的那句话。
-     把那句话送进去跑一遍，对话就真的在这儿了——而不是一条点开是空白的记录。 */
+  // 旧示例只有问题时仅预填，继续提问由用户主动发送。
   const L=convOf(x.id);
-  if(!L.length&&x.q){
-    setTimeout(()=>{const ta=document.getElementById('ask');
-      if(ta){ta.value=x.q;S.ask=x.q}
-      agentSend();},60);
-  }
+  if(!L.length&&x.q){const ta=document.getElementById('ask');if(ta){ta.value=x.q;S.ask=x.q}}
+
 }
+
 function paintBanner(){
   let el=document.getElementById('asbar');
   if(!S.as){if(el)el.remove();return}
@@ -4431,6 +4441,7 @@ function drawer(o){
           ><path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5"/></svg></button>
     </div>
     <div class="dw-b">${o.body}</div>
+    ${o.footer?'<div class="dw-action-footer">'+o.footer+'</div>':''}
   </aside>`;
 }
 function modal(title,bodyHTML,okText,onOk){
@@ -4617,11 +4628,11 @@ const ABIL=[
     '排个序','排序','排名次']}
  /* 不要 '排一下'：它藏在「安排一下」里。跟刚撑掉的 'tm' 是同一类错——
     短词做关键词要先问一句「它会不会是别的词的一截」。 */,
- {id:'train', n:'模型制备', hue:'dry', when:'要拿已有的实测数据训一个打分器出来。',
+ {id:'train', n:'模型', hue:'dry', when:'要拿已有的实测数据训一个打分器出来。',
  eg:'用这个项目的实测数据训一个打分模型',
   say:'请确认训练设置。',
   obj:['打分模型','预测器','回归模型'],
-  kw:['训练','训一个','模型制备','微调','回归','留出','训模型']},
+  kw:['训练','训一个','模型管理','微调','回归','留出','训模型']},
  {id:'dset', n:'建数据集', hue:'ink', when:'手上有一份表格或 CSV，要把它建成能用来训练的数据集。',
  eg:'上传一份数据建成数据集',
   say:'请上传数据并确认数据集设置。',
@@ -5289,13 +5300,21 @@ function toolMenu(btn){
 /* 训出来的模型存在项目上，跟着项目走 */
 function PMODELS(pid){const p=DB.projects.find(x=>x.id===(pid||S.pid));
   if(!p)return [];if(!p.models)p.models=[];return p.models}
-/* 「模型制备」挂在导航的「资源」下，回答的是「我手上一共有哪些模型」，
+/* 「模型管理」挂在导航的「资源」下，回答的是「我手上一共有哪些模型」，
    不是「这个项目里有哪些」——和数据集那一屏同一个道理。所以这三张表跨项目，
    每行标关联项目，点一下回到那个项目；上面给一个项目筛选器。
    底层存储不动：模型确实是从某个项目长出来的。 */
 function ALL_MODELS(){
   const out=[];
-  DB.projects.forEach(p=>PMODELS(p.id).forEach(m=>out.push(Object.assign({_pid:p.id,_pn:p.name},m))));
+  DB.projects.forEach(p=>PMODELS(p.id).forEach(m=>{
+    const record=Object.assign({_pid:p.id,_pn:p.name},m);
+    if(m.kind==='ds'&&!m.featK?.length&&m.w?.length&&m.mu?.length===m.w.length&&m.sg?.length===m.w.length){
+      const dataset=DSETS(p.id).find(d=>d.id===m.ds&&d.st==='pub'&&d.target===m.target);
+      const features=dataset?dsNumericFeatures(dataset):[];
+      if(features.length+1===m.w.length)record.featK=features;
+    }
+    out.push(record);
+  }));
   return out;
 }
 /* 按编号找一条，不管它在哪个项目下 */
@@ -5725,36 +5744,23 @@ V.labdet=()=>{
 </div>`;
 };
 
-/* ================= 数据集 =================
-   四步说明条照 bootcamp「我的数据集」的做法：把这件事的全过程摆在页顶，可收起。
-   研究员第一次来不知道「发布锁定」是干嘛的，摆出来比写在某个按钮的 title 里强。 */
-/* 这一段用端砚的口径写：陈述式、名词起头、不带口语。
-   产品别处仍用自己的说话方式，但「数据集构建流程」是平台级的规程说明，
-   和端砚「科学数据」那一档读起来应当是同一种文体。 */
-const DSET_STEPS=[
- ['准备数据','整理为单表结构：首列为样本 ID，其余各列为特征或目标字段，每行对应一个样本。'],
- ['上传与列解析','上传后自动解析列名、数据类型与缺失率，由您指定目标列与特征列。'],
- ['发布锁定','发布时冻结切分比例、随机种子与内容指纹，版本内容此后不再变更。'],
- ['训练引用','训练产出的模型文件记录其引用的数据集版本；数据更新需重新建集，已有模型仍指向原版本。']];
+/* ================= 数据集 ================= */
 V.dsets=()=>{
-  const pr=PRJ();
-  const open=S.dsHelp===1;   // 默认收起：这四步只在第一次建集时要读一遍
   /* 这一页只管自己建的：有目标列、切分和指纹，能拿去训。
-     外部公共库在「市场 → 生命科学数据」，那边只有许可和接口，只能取回——
+     外部公共库在「市场 → 公共数据库」，那边只有许可和接口，只能取回——
      两类东西差得太远，原先并成两个页签，同一个词指两样东西。 */
   return `<div class="page">
   <div class="pg-hd">
     <div class="row wrap" style="align-items:flex-end">
       <div class="col grow" style="gap:6px">
-        <h1>我的数据集</h1>
+        <h1>数据集</h1>
         <p class="mut t-md" style="margin:0;max-width:60ch"
           >用于模型训练的数据集，可按项目筛选</p>
       </div>
     </div>
   </div>
 
-  <div class="col" style="gap:var(--s3)">
-    <div class="row wrap" style="gap:var(--s3);align-items:center">
+  <div class="row wrap" style="gap:var(--s3);align-items:center">
     <span class="ctl ctl-sel fbar-sel">
       <label class="sr" for="dsproj">按项目筛选</label>
       <select id="dsproj" data-ic="proj">
@@ -5763,26 +5769,12 @@ V.dsets=()=>{
           >${esc(x.name)}（${(x.dsets||[]).length}）</option>`).join('')}
       </select><span class="car" aria-hidden="true"></span></span>
     <span class="grow"></span>
-    <button class="hlp-t${open?' is-on':''}" type="button" data-act="dshelp" aria-expanded="${open}">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"
-        stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"
-        ><path d="M6 9.5 12 15.5 18 9.5"/></svg>数据集构建流程</button>
     <button class="btn btn-pri" type="button" data-nav="dsnew">新建数据集</button>
-    </div>
-    ${open?`<div class="hlp-b"><div class="dsteps">
-      ${DSET_STEPS.map(([n,d],i)=>`<div class="dstep">
-        <span class="dstep-i num">${i+1}</span>
-        <span class="col" style="gap:2px;min-width:0">
-          <strong class="t-md">${esc(n)}</strong>
-          <span class="t-sm mut">${esc(d)}</span></span></div>`).join('')}
-    </div></div>`:''}
   </div>
   ${dsBody()}
 </div>`;
 };
 
-/* 数据集这一屏有两个入口：导航栏的「数据集」，和模型制备里的「我的数据集」。
-   同一份内容写两遍一定会分叉，所以抽成一个函数，两边都调它。 */
 function dsBody(){
   /* 「我手上一共有哪些能训的数据」是研究员真会问的问题，
      而同一张变体表也可能要跨项目复用。所以列表跨项目，带来源一列，
@@ -5817,7 +5809,6 @@ function dsBody(){
         ${atCell(d.st==='pub'?(d.pubAt||d.at):d.at)}
         ${acts([
           {n:'详情',attr:`data-dspick="${esc(d.id)}"`},
-          {n:'训练',attr:`data-dataset-train="${esc(d.id)}"`,off:d.st!=='pub'?'请先发布数据集':!can('edit')?'当前身份没有编辑权限':''},
           {n:'发布',attr:`data-dspub="${esc(d.id)}"`,
            off:d.st==='pub'?('已于 '+(d.pubAt||d.at)+' 发布锁定'):'',
            tip:'发布后内容锁定，可用于训练'},
@@ -5833,8 +5824,7 @@ function dsBody(){
          <button class="btn" type="button" data-dsproj="all">看全部</button></div>`
       :`<div class="empty" style="padding:var(--s6)"><div class="col" style="gap:4px">
          <strong class="t-md" style="color:var(--ink)">还没有数据集</strong>
-         <span class="t-sm">项目实测的数据不用建集也能直接训。外部数据传一份进来，
-           上面那四步会把它变成一个可引用的版本。</span></div>
+         <span class="t-sm">上传外部数据并发布后，可在模型训练中引用该数据集版本。</span></div>
          <button class="btn" type="button" data-nav="dsnew">新建数据集</button></div>`)}
     </div></section>
 
@@ -5908,30 +5898,21 @@ function toolDetail(n){
   </div>`,'知道了',()=>{});
 }
 
-/* 模型制备分四屏，顺序就是这件事本身的顺序：
-   手上有哪些模型 → 拿什么数据训 → 训练跑到哪一步 → 训出来的到底行不行。
-   右上角的动作跟着当前这一屏走。只有「我的数据集」和「模型训练任务」有新建动作——
-   模型是训出来的，评测是训练顺带产出的，这两屏凭空「新建」没有意义。 */
-/* 「我的数据集」那一页和导航栏的「数据集」是同一屏，留两个入口只会让人以为是两样东西。
-   这里只留和模型直接相关的三屏；要建数据集，新建训练任务的表单里有直达的入口。 */
-/* 后两格是大模型那条线：选哪一家（在线推理）、整份数据集怎么跑（批量推理）。
-   它们和前三格不是一类模型——前三格是自己训的打分器，后两格是接进来的大模型——
-   但都是「模型这件事在哪儿办」，所以收在同一页，用副标题把这件事说清楚。 */
-const MDL_TABS=[['cur','我的模型'],['job','模型训练'],['eval','模型评测'],
-  ['infer','在线推理'],['batch','批量推理']];
+const MDL_TABS=[['cur','模型库'],['job','模型制备'],['eval','模型评测'],['batch','模型推理']];
 const MDL_SUB={
-  cur:'训练出的打分模型。部署后可在对话和排序任务中使用',
-  job:'训练任务的进度与结果',
-  eval:'模型在留出集上的评测结果',
+  cur:'查看模型、评测结果与部署状态',
+  job:'跟踪训练任务的进度与结果',
+  eval:'查看模型的留出集评测结果',
   infer:'与已接入的模型对话，或并排比较回答',
-  batch:'让模型逐条处理一份数据集，输出结果文件'};
+  services:'管理模型库版本发布的在线服务',
+  batch:'查看推理任务的执行进度、所用版本和结果'};
 /* 训练这件事新手最常漏的是第三步：训出来的模型默认是停用的，
    不启用就 @ 不到、排序任务里也选不着，而界面上看不出「它还没被挂上去」。
    所以这三步里真正要写的是那一步。 */
 const TRAIN_STEPS=[
   ['选训练数据','用这个项目已回流的实测值，或选一份已发布的数据集。数据集发布后内容锁定，训练引用的才是确定的那一版。'],
   ['配置并训练','选基础模型和训练方法。闭式解一次算完，同时在留出集上评一次，并和两条基线比。'],
-  ['启用后才能被调用','去「我的模型」把它打开。启用之后对话里 @ 得到，设计任务排序时也能选它；不启用它只是一条记录。']];
+  ['启用后才能被调用','去「模型库」部署模型。启用之后对话里 @ 得到，设计任务排序时也能选它；不启用它只是一条记录。']];
 /* 两件事各有一张表单页：发起训练要同时看基础模型、方法、数据和切分；
    建数据集要同时看文件、列、目标列和切分。 */
 /* 第二项是路由名；前面加 @ 表示它是一个动作，不是一页。
@@ -5940,7 +5921,7 @@ const TRAIN_STEPS=[
    「导入模型」原先是单独写死在页头里的一颗次级按钮，于是三格里只有它长得不一样——
    它是「我的模型」这一格唯一的主操作，就该和「新建训练任务」一个样子。 */
 const MDL_ACT={cur:['导入模型','@mdlimport'],job:['新建训练任务','trainnew'],
-  eval:['新建评测任务','@prospnew'],batch:['新建批量推理任务','bnew']};
+  eval:['新建评测任务','@prospnew'],batch:['新建批量推理','bnew']};
 /* 全产品一套运行态：排队中 / 进行中 / 已完成 / 异常 / 已取消。
    原先训练任务叫「异常」、通用任务叫「失败」，同一件事两个名字。
    统一到 bootcamp 的「异常」——跑挂的任务留在列表里，并写清在哪一步停的，
@@ -6087,8 +6068,11 @@ function mdlEmpty(what,zero,note,n){
     <span class="t-sm">${esc(note)}</span></div>
     <button class="btn" type="button" data-nav="trainnew">新建训练任务</button></div>`;
 }
-V.mdl=()=>{
-  const tab=MDL_TABS.some(t=>t[0]===S.mtab)?S.mtab:'cur';
+V.mdl=(activeTab=S.mtab)=>{
+  const tab=['infer','services'].includes(activeTab)||MDL_TABS.some(t=>t[0]===activeTab)?activeTab:'cur';
+  const selected=tab==='infer'||tab==='services'?'batch':tab;
+  const deploymentModel=selected!=='batch'&&DEPLOY_UI.form?mdlFind(DEPLOY_UI.form.modelId):null;
+  const serviceDrawer=DEPLOY_UI.inlineTab===tab||tab==='services'&&!DEPLOY_UI.inlineTab?deployServiceDrawer():'';
   /* 停在哪一格要记住：不记的话，在「在线推理」里刷新一下就掉回「我的模型」。 */
   if(LS.get('mtab','cur')!==tab)LS.set('mtab',tab);
   const act=MDL_ACT[tab];
@@ -6096,7 +6080,7 @@ V.mdl=()=>{
   <div class="pg-hd">
     <div class="row wrap" style="align-items:flex-end">
       <div class="col grow" style="gap:6px">
-        <h1>模型制备</h1>
+        <h1>模型</h1>
         <p class="mut t-md pg-sub">${esc(MDL_SUB[tab]||MDL_SUB.cur)}</p>
       </div>
       <!-- flex:0 0 auto：左边标题那一列是 grow，不写这句的话这一排会被压窄、
@@ -6114,16 +6098,18 @@ V.mdl=()=>{
       </div>
     </div>
     <div class="tabs">
-      ${MDL_TABS.map(([k,n])=>{const c=mdlCount(k);return `<button class="tab${tab===k?' is-on':''}" type="button"
-        data-mtab="${k}" aria-selected="${tab===k}">${esc(n)}${c==null?'':`<span class="tab-c num">${c}</span>`}</button>`}).join('')}
+      ${MDL_TABS.map(([k,n])=>{const c=mdlCount(k);return `<button class="tab${selected===k?' is-on':''}" type="button"
+        data-mtab="${k}" aria-selected="${selected===k}">${esc(n)}${c==null?'':`<span class="tab-c num">${c}</span>`}</button>`}).join('')}
     </div>
   </div>
-  ${tab==='infer'?'':tab==='batch'?`<div class="row wrap" style="gap:var(--s3);align-items:center">
+  ${tab==='services'?'':tab==='infer'?'<div><button class="btn" type="button" data-go="batch">返回推理任务</button></div>':tab==='batch'?`<div class="row wrap" style="gap:var(--s3);align-items:center">
     <label class="fbar-q"><span class="sr">搜索批量推理任务</span>${SEARCH_IC}
-      <input id="bq" value="${esc(S.bq||'')}" placeholder="搜索任务名称或编号"></label></div>`:mdlBar(tab)}
+      <input id="bq" value="${esc(S.bq||'')}" placeholder="搜索任务名称或编号"></label>
+    <span class="grow"></span><button class="btn btn-gh" type="button" data-go="infer">在线试用</button></div>`:mdlBar(tab)}
   ${tab==='cur'?mdlCur():tab==='job'?mdlJob():tab==='eval'?mdlEval()
-    :tab==='infer'?inferBody():batchBody()}
-  ${S.jobPick?jobDrawer(mdlFind(S.jobPick)):''}
+    :tab==='services'?deployServices():tab==='infer'?inferBody():batchBody()}
+  ${deploymentModel?deploymentForm(deploymentModel):serviceDrawer||
+    (tab==='job'&&S.checkpointPick?checkpointDrawer(mdlFind(S.checkpointPick)):S.jobPick?jobDrawer(mdlFind(S.jobPick)):'')}
   ${S.projDw?projDrawer(S.projDw):''}
 </div>`;
 };
@@ -6143,6 +6129,7 @@ function mdlCur(){
   const q=(S.mq||'').trim().toLowerCase();
   const L=MDL_LIST().filter(m=>inLib(m)).filter(m=>!q||
     [m.id,m.target,m.name,m.base,m.method,m.ds,m._pn].join(' ').toLowerCase().indexOf(q)>=0);
+  const statusById=deployStatusByModel();
   return `
   <section class="card"><div class="card-h"><strong>模型</strong>
     <span class="grow"></span><span class="t-sm mut2 num">共 ${L.length} 条</span></div>
@@ -6150,7 +6137,7 @@ function mdlCur(){
     ${L.length?`<div class="tbl-wrap is-list"><table>
       <caption class="vh">训出来的模型</caption>
       <thead><tr><th scope="col" class="c-nm">模型名称/ID</th>
-        <th scope="col">关联项目</th><th scope="col">部署</th>
+        <th scope="col">关联项目</th><th scope="col">在线部署</th>
         <th scope="col">预测目标</th>
         <!-- 基础模型从这张表上撑掉：每行都是 Descriptor Baseline，
              一列里每行都一样就不传达任何信息（R176），
@@ -6160,24 +6147,24 @@ function mdlCur(){
         <th scope="col">训练数据</th><th scope="col">排序准确度</th>
         <th scope="col">更新时间</th>
         <th scope="col">操作</th></tr></thead>
-      <tbody>${L.map(m=>`<tr>
+      <tbody>${L.map(m=>{const status=statusById(m.id);return `<tr>
         ${nmCell(m.name||('打分器 · '+tgtName(m.target)),m.id)}
         ${projCell(m)}
-        <td><span class="t-xs ${mdlOn(m.id)?'c-ok':'mut2'}">${mdlOn(m.id)?'已部署':'未部署'}</span></td>
+        <td><span class="t-xs ${status.active?'c-ok':'mut2'}"${status.title?' title="'+esc(status.title)+'"':''}>${status.label}</span></td>
         <td class="t-sm num">${esc(tgtName(m.target))}</td>
         <td class="t-sm">${esc(m.method||'SFT')}</td>
         <td class="t-sm num">${dsLabel(m)}</td>
-        <td class="t-sm num">${m.rho.toFixed(3)}</td>
+        <td class="t-sm num">${Number.isFinite(m.rho)?m.rho.toFixed(3):'—'}</td>
         ${atCell(m.at)}
         ${acts([
-          {n:mdlOn(m.id)?'下线':'部署',attr:`data-mdlen="${esc(m.id)}"`,
-           off:!mdlOn(m.id)&&!canScore(m)?whyNoScore(m):'',
-           tip:mdlOn(m.id)?'下线后不再用于对话和排序任务':'部署后可在对话和排序任务中使用'},
+          status.serviceId?{n:'查看服务',attr:`data-deploy-service="${esc(status.serviceId)}"`}
+            :{n:'部署',attr:`data-deploy-model="${esc(m.id)}"`,tip:'打开在线部署设置'},
+          {n:'发布',attr:`data-model-publish="${esc(m.id)}"`,tip:'发布到关联课题的共享项目'},
           {n:'详情',attr:`data-jobpick="${esc(m.id)}"`},
           {n:'删除',attr:`data-mdel="${esc(m.id)}"`},
           {n:'下载权重',attr:`data-mdl="${esc(m.id)}"`}
         ])}
-      </tr>`).join('')}</tbody></table></div>
+      </tr>`}).join('')}</tbody></table></div>
       <span class="t-xs mut2">「排序准确度」为 Spearman ρ，衡量候选排序是否正确。与基线的对比见「模型评测」。</span>`
     :(q?`<div class="empty" style="padding:var(--s6)"><div class="col" style="gap:4px">
        <strong class="t-md" style="color:var(--ink)">没有匹配的模型</strong>
@@ -6243,10 +6230,7 @@ function mdlJob(){
         ${atCell(m.at)}
         ${acts([
           {n:'详情',attr:`data-jobpick="${esc(m.id)}"`},
-          {n:'同步到我的模型',attr:`data-mdlsync="${esc(m.id)}"`,
-           off:['queued','running','canceled'].includes(m.st)?'训练完成后可同步模型':m.st==='failed'?'训练失败，没有可同步的权重'
-             :(inLib(m)?'已经在「我的模型」里了':''),
-           tip:'同步之后才能在「我的模型」里启用，启用了对话里才 @ 得到'},
+          {n:'查看 checkpoint',attr:`data-checkpoint-pick="${esc(m.id)}"`},
           {n:'复制',attr:`data-trcopy="${esc(m.id)}"`,tip:'新建一条训练任务，沿用这一条的参数'},
           {n:'删除',attr:`data-mdel="${esc(m.id)}"`}
         ])}
@@ -6256,6 +6240,54 @@ function mdlJob(){
     :mdlEmpty('训练任务','还没有训练任务','训练任务会保留在这里，包括失败的任务。',
         ALL_MODELS().length)}
     </div></section>`;
+}
+
+/* 当前训练使用闭式解，一次训练保存一份最终权重。 */
+function trainingCheckpoints(task){
+  if(!task||task.imported||['queued','running','failed','canceled'].includes(task.st)||
+      !task.w?.length)return [];
+  return [task];
+}
+function checkpointEvaluated(model){
+  return Number.isFinite(model.rho)&&Number.isFinite(model.rmse);
+}
+function checkpointDrawer(task){
+  if(!task)return '';
+  const results=trainingCheckpoints(task);
+  const st=TRAIN_ST[task.st]||TRAIN_ST.done;
+  const summary=task.imported?'这条记录来自模型导入，没有训练 checkpoint。'
+    :['queued','running'].includes(task.st)?'训练完成后，保存的 checkpoint 会出现在这里。'
+    :'此任务没有可用的 checkpoint。';
+  const item=(label,value)=>`<div class="krow"><span class="t-sm mut2">${esc(label)}</span>
+    <span class="t-sm" style="min-width:0;overflow-wrap:anywhere">${value}</span></div>`;
+  return drawer({title:'训练 checkpoint',close:'checkpointclose',
+    chip:`<span class="chip ${st[1]}">${st[0]}</span>`,
+    body:`<div class="col" style="gap:var(--s5)">
+      <div class="col" style="gap:var(--s2)"><strong>${esc(task.name||task.id)}</strong>
+        <span class="t-sm mut2">${esc(task.id)}${task._pn?' · '+esc(task._pn):''}</span></div>
+      ${results.length?results.map(model=>{
+        const synced=inLib(model),evaluated=checkpointEvaluated(model),runnable=canScore(model);
+        return `<section class="card">
+          <div class="card-h row wrap" style="gap:var(--s2)">
+            <strong class="grow">最终 checkpoint</strong>
+            <span class="chip ${synced?'c-ok':'c-mut'}">${synced?'已同步至模型库':'未同步'}</span>
+          </div>
+          <div class="card-b col" style="gap:var(--s3)">
+            ${item('版本标识',esc(model.id))}
+            ${item('生成时间',esc(model.at||'—'))}
+            ${item('训练数据',dsLabel(model))}
+            ${item('预测目标',esc(tgtName(model.target)||'—'))}
+            ${item('权重参数',esc(model.w.length)+' 个')}
+            ${item('留出集评测',evaluated?'Spearman ρ '+model.rho.toFixed(3)+' · RMSE '+model.rmse.toFixed(3):'暂无结果')}
+            <div class="row wrap" style="gap:var(--s2);padding-top:var(--s2)">
+              <button class="btn" type="button" data-checkpoint-eval="${esc(model.id)}"${evaluated?'':' disabled title="暂无可查看的评测结果"'}>评测</button>
+              <button class="btn" type="button" data-checkpoint-infer="${esc(model.id)}"${runnable?'':' disabled title="此 checkpoint 缺少完整的推理参数"'}>推理</button>
+              <button class="btn btn-pri" type="button" data-checkpoint-sync="${esc(model.id)}"${synced?' disabled title="已经在模型库中"':''}>同步到模型库</button>
+            </div>
+          </div>
+        </section>`;
+      }).join(''):`<div class="empty">${esc(summary)}</div>`}
+    </div>`});
 }
 
 /* ================= 前瞻评测 =================
@@ -6346,6 +6378,7 @@ function jobDrawer(m){
         ${row('用时',m.ms==null?null:m.ms+' ms')}
         ${row('创建时间',esc(m.at))}
       </div>
+      ${deployEntry(m)}
       ${m.st==='failed'
         ?`<div class="col" style="gap:4px"><span class="lbl">失败原因</span>
             <span class="t-md">${esc(m.why||'—')}</span>
@@ -6360,9 +6393,9 @@ function jobDrawer(m){
           <div class="col" style="gap:4px">
             <span class="lbl">留出集指标</span>
             <div class="col" style="gap:2px">
-              ${row('排序准确度','Spearman ρ '+m.rho.toFixed(3))}
-              ${row('预测误差','RMSE '+m.rmse.toFixed(3))}
-              ${row('误差水平',m.sd?(m.rmse/m.sd).toFixed(2)+'　（RMSE ÷ 留出集标准差，小于 1 才比猜均值准）':'—')}
+              ${row('排序准确度',Number.isFinite(m.rho)?'Spearman ρ '+m.rho.toFixed(3):'—')}
+              ${row('预测误差',Number.isFinite(m.rmse)?'RMSE '+m.rmse.toFixed(3):'—')}
+              ${row('误差水平',m.sd&&Number.isFinite(m.rmse)?(m.rmse/m.sd).toFixed(2)+'　（RMSE ÷ 留出集标准差，小于 1 才比猜均值准）':'—')}
               ${row('正则强度','λ = '+m.lam+(m.lamBy?'　'+esc(m.lamBy):''))}
               ${row('系数个数',num(m.w?m.w.length:null))}
             </div></div>
@@ -7466,11 +7499,15 @@ function makeSplit(n,ratio,seed){
 }
 /* 在一个数据集上训。和项目内打分器共用岭回归与同一套评测规矩，
    区别只是特征从哪儿来：这里是用户自己选的列。 */
+function dsNumericFeatures(ds){
+  const numeric=new Set((ds.cols||[]).filter(c=>c.type==='数值').map(c=>c.k));
+  return (ds.feats||[]).filter(key=>numeric.has(key));
+}
 function dsTrain(ds,opt){
   const o=opt||{};
   const num=k=>{const c=ds.cols.find(x=>x.k===k);return c&&c.type==='数值'};
   if(!num(ds.target))return {ok:false,why:'目标列「'+ds.target+'」不是数值列，这一版只做回归'};
-  const F=(ds.feats||[]).filter(num);
+  const F=dsNumericFeatures(ds);
   if(!F.length)return {ok:false,why:'没有可用的数值特征列'};
   const use=[],Y=[];
   ds.split.train.concat(ds.split.test).forEach(()=>{});
@@ -7989,7 +8026,7 @@ FLOW.rank=f=>{
     const any=ALL_MODELS().filter(m=>m.st!=='failed'&&canScore(m));
     return [mkCard('note',{title:'还没有能用的打分器',
       text:any.length
-        ?('有 '+any.length+' 个训好的模型，但一个都没启用。去「模型制备 → 我的模型」'
+        ?('有 '+any.length+' 个训好的模型，但一个都没启用。去「模型 → 模型库」'
           +'把要用的那个打开——启用之后这里和设计任务里才选得到它。')
         :'请先训练一个模型，例如说「用这个项目的实测数据训一个打分模型」。'})];
   }
@@ -8003,7 +8040,7 @@ FLOW.rank=f=>{
       fields:[
         {k:'mdl',label:'打分器',v:named?(named.id+'　'+(named.name||tgtName(named.target))
             +'　'+(named._pn||'')):opts[0],ty:'sel',opts:opts,
-         hint:'只列启用过、而且真能打分的。启用在「模型制备 → 我的模型」'},
+         hint:'只列启用过、而且真能打分的。启用在「模型 → 模型库」'},
         {k:'who',label:'给哪一批打',v:SELF,ty:'sel',opts:[SELF].concat(rOpts),
          hint:'打分器训练时见过的那些候选会单独标出来——给它们打分不叫预测'},
         {k:'n',label:'表里先看几条',v:'10',ty:'num',hint:'完整结果在产出的 CSV 里'}
@@ -8026,7 +8063,7 @@ FLOW.train=f=>{
       mkCard('note',{title:'训练集',
         text:'留出集从头到尾不参与任何一步：标准化、λ、特征选择都只用训练集和验证集。'
           +'评测的时候会和两条基线比：永远猜均值的，和只用一个特征的。'}),
-      mkCard('form',{cap:'train',title:'模型制备',sub:'训练打分模型',
+      mkCard('form',{cap:'train',title:'模型',sub:'训练打分模型',
         fields:[
           {k:'ds',label:'数据集',v:cur,ty:'sel',opts:[SELF].concat(dsOpts),
            hint:nDraft?(nDraft+' 个草稿没列进来：草稿还能改，改完发布才能拿来训——'
@@ -8054,7 +8091,7 @@ FLOW.train=f=>{
   return [
     mkCard('note',{title:'训练集来自这个项目已经测出来的数据',
       text:'共 '+CANDS().length+' 条候选，其中有实测值的会进训练集。'}),
-    mkCard('form',{cap:'train',title:'模型制备',sub:'用本项目数据训练打分模型',
+    mkCard('form',{cap:'train',title:'模型',sub:'用本项目数据训练打分模型',
       fields:[
         {k:'ds',label:'数据集',v:'本项目实测（'+pr.name+'）',ty:'sel',
          opts:['本项目实测（'+pr.name+'）'],
@@ -8112,6 +8149,7 @@ function outBar(inline){
      下面整段对话会跟着上下跳一次。没有产出时它是灰的，点不开。 */
   const pv=inline?null:backPrev();
   return `<div class="outbar${inline?' is-inline':''}">
+    ${!inline&&S.route==='chat'?`<strong class="history-conversation-title">${esc((SESSIONS.find(x=>x.id===S.sid)||{}).title||'科研对话')}</strong>`:''}
     ${pv?`<button class="btn btn-gh outbar-back" type="button" data-act="goback">← ${esc(pv.n)}</button>`:''}
     ${inline?'':'<span class="grow"></span>'}
     <button class="outbar-b" type="button" data-act="outtoggle" ${L.length?'':'disabled'}
@@ -8710,7 +8748,7 @@ SUBMIT.train=(c,v)=>{
         trainIds:r.trainIds||null,
         lib:false,   /* 训完要自己同步进「我的模型」，和 bootcamp 一样 */
         base:v.base,method:v.method,upd:v.upd,lamBy:r.lamBy,bl:r.base,
-        kind:'ds',w:r.w,cols:r.cols},verdictOf(r)));
+        kind:'ds',w:r.w,mu:r.mu,sg:r.sg,featK:r.featK,cols:r.cols},verdictOf(r)));
       cur.arts=emit(S.pid,[{name:'模型_'+mdl.id+'_'+slug(ds.target)+'_ridge.json',n:'模型权重',
         note:ds.id+'　留出 ρ='+r.rho.toFixed(3),kind:'dat',mime:'application/json',
         make:()=>JSON.stringify({model:mdl.id,kind:'ridge',
@@ -9658,7 +9696,7 @@ function grid(){
         <span class="grow"></span>
         <span class="t-sm mut2"><b class="num">${nt}</b> 个任务</span>
       </span>
-    </button>${rsProjectCopyAction(p,'card')}</div>`}).join('')+`</div>`;
+    </button></div>`}).join('')+`</div>`;
 }
 
 
@@ -9766,7 +9804,7 @@ function pjExpTab(p){
     const st=(TRAIN_ST[m.st]||TRAIN_ST.done);
     const rho=(typeof m.rho==='number'&&isFinite(m.rho))?m.rho:null;
     return `<button class="pjx-card" type="button" data-pjjob="${esc(m.id)}"
-      title="去模型制备看这次训练的详情">
+      title="在「模型 → 模型制备」中查看训练详情">
       <span class="pjx-card-h">
         <span class="pjx-card-ic is-dry">${ICON_TRAIN}</span>
         <span class="pjx-card-n">${esc(m.name||(m.target?'打分器 · '+tgtName(m.target):'训练任务'))}</span>
@@ -9819,13 +9857,12 @@ V.project=()=>{
         stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"
         ><path d="M14.5 5.5 8 12l6.5 6.5"/></svg></button>
     <div class="col pjx-title" style="gap:4px;min-width:0">
-      <div class="pjx-title-row"><strong class="pjx-n">${esc(p.name)}</strong>${rsProjectShared(p.id)?rsProjectSharedBadge():''}</div>
+      <div class="pjx-title-row"><strong class="pjx-n">${esc(p.name)}</strong>${rsProjectShared(p.id)?'<button class="project-shared-badge" type="button" data-project-members="'+esc(rsProjectShared(p.id).id)+'" aria-label="查看协作者" aria-haspopup="dialog">'+rsSharingIcon()+'共享项目</button>':''}</div>
       <span class="t-xs mut2" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
         >${esc(goalText(p))}</span>
     </div>
     <div class="pjx-actions">
-    ${rsProjectCopyAction(p)}
-    ${rsProjectShareAction(p)}
+    ${rsProjectShared(p.id)?'':rsProjectShareAction(p)}
     ${outBar(1)}
     <button class="btn btn-pri pjx-new" type="button" data-act="pjnew"
       title="科研对话">
@@ -9889,7 +9926,7 @@ V.project=()=>{
         <!-- 这一页只能开关已经接进来的。要添新的得去市场，所以开一个新标签页，
              免得把人从项目里带走。 -->
         <a class="pjx-add" href="#shelf" target="_blank" rel="noopener"
-          aria-label="添加工具" title="添加工具：到「生命科学工具」里启用，新标签页打开">
+          aria-label="添加工具" title="添加工具：到「科研工具」里启用，新标签页打开">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"
             stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
             ><path d="M12 6v12M6 12h12"/></svg></a></div>
@@ -11078,7 +11115,7 @@ V.shelf=()=>{
 return `<div class="page">
   <div class="row wrap" style="align-items:flex-end">
     <div class="col grow" style="gap:6px">
-      <h1>生命科学工具</h1>
+      <h1>科研工具</h1>
 
     </div>
     <label class="fbar-q"><span class="sr">搜索工具</span>${SEARCH_IC}
@@ -13460,7 +13497,7 @@ function regDataset(){
   const train=all.filter(c=>DISPOSITION[c.disposition].train);
   const ver='v'+(REGD().filter(x=>x.pid===p.id).length+1)+'.'+String(p.rounds.length);
   modal('登记为可复用数据集',`<div class="col" style="gap:var(--s4)">
-    <p class="t-md mut" style="margin:0">把「${esc(p.name)}」当前的训练集冻结成一个版本，登记进生命科学数据。
+    <p class="t-md mut" style="margin:0">把「${esc(p.name)}」当前的训练集冻结成一个版本，登记进公共数据库。
       登记后其他成员可以看到，能否取用由可见范围决定。</p>
     <div class="fgrid">
       ${fRow('数据集名称',1,`<input id="rgn" class="input" maxlength="40" value="${esc(p.name)} 训练集">`)}
@@ -13491,7 +13528,7 @@ function regDataset(){
     toast(`已登记 ${n} ${ver}`);
   });
 }
-/* ================= 生命科学数据 =================
+/* ================= 公共数据库 =================
    这一批是端砚「科学数据」里 `学科领域 = 生命科学` 的条目，2026-11-13 从页面上抄下来的：
    名称、简介、大小、引用数、许可、任务标签都照原样，没有改写也没有补齐。
    页面上没有的两件事由本产品自己标：
@@ -13551,7 +13588,7 @@ const DATASRC=[
   s:'突变效应预测的标准基准，用来判断零样本打分在这条靶点上可不可信。',
   mode:'基准 · 突变', size:'未核实', cite:'未核实', lic:'未核实', wired:0, api:'未接入'}];
 
-/* ================= 生命科学数据页 =================
+/* ================= 公共数据库页 =================
    卡片结构照端砚「科学数据」：名称 + 学科/任务标签 + 简介 + 大小/引用/许可。
    本产品多一格「接口」——对这个工作台来说，能不能按编号取回来，比它有多大更要紧。 */
 V.data=()=>{
@@ -13591,7 +13628,7 @@ V.data=()=>{
   return `<div class="page">
   <div class="row wrap" style="align-items:flex-end">
     <div class="col grow" style="gap:6px">
-      <h1>生命科学数据</h1>
+      <h1>公共数据库</h1>
     </div>
     <div class="field" style="width:auto"><label class="sr" for="dq">搜索</label>
       <input id="dq" class="input" value="${esc(S.dq||'')}" placeholder="搜数据源、机构、模态"
@@ -13624,9 +13661,9 @@ const JOBV={};                       // route -> 'list' | 'new'
 const ROUTE_MOVED={
   home:'workbench',
   wetlab:'lab',          // 湿实验 → 实验管理
-  models:'mdl',          // 模型页 → 模型制备
-  library:'shelf',       // 工具库 → 生命科学工具
-  dataset:'data',        // 数据集 → 生命科学数据
+  models:'mdl',          // 模型页 → 模型管理
+  library:'shelf',       // 工具库 → 科研工具
+  dataset:'data',        // 数据集 → 公共数据库
   design:'chat',         // 设计发射台 → 在对话里发起
   intake:'chat',         // 输入页 → 在对话里粘序列
   viewer:'chat',         // 结构查看 → 对话里的三维卡
@@ -13639,7 +13676,7 @@ const ROUTE_MOVED={
   config:'projects',
   account:'projects'};
 function ROUTE_HOME(r){return V[r]?r:(ROUTE_MOVED[r]||'chat')}
-/* 直接敲 #infer / #batch 进来：落到模型制备，并把那一格选上。
+/* 直接敲 #infer / #batch 进来：落到模型管理，并把那一格选上。
    只翻页签，不改 location.hash 的写法交给启动那一段。 */
 function bootTab(h){if(MDL_TAB_ROUTE[h]){S.mtab=MDL_TAB_ROUTE[h];return 'mdl'}return h}
 function jobView(r){return JOBV[r]||'launch'}
@@ -15725,7 +15762,7 @@ function infCell(c,t){
   return `<div class="inf-a${an.err?' is-err':''}">${nm}${esc(an.t)}${
     an.u?`<div class="inf-u num">${esc(an.u)}</div>`:''}</div>`;
 }
-/* 这一页是「模型制备」下的一格，所以拆成两半：
+/* 这一页是「模型管理」下的一格，所以拆成两半：
    页头那几个控件（单模型／模型对比、新建对话）交给页壳，正文自己画。 */
 function inferHd(){
   const x=INF();
@@ -15913,21 +15950,11 @@ function inferSend(){
 }
 
 /* ---------------- 批量推理 ---------------- */
-/* 照 bootcamp「09 批量推理」：一份已发布的数据集逐条跑完，出一个结果文件。
-   在线推理是一条一条问，几百条走不完；这一页是那之后的动作。
-
-   数据从哪儿来：这个产品的「我的数据集」是一张表（建集时列和切分就定死了），
-   所以输入 = 一份**已发布**的数据集 + 一个**提示词列**。
-   只认已发布的，理由和训练那条路一样：发布之后内容锁死，这一跑才说得清跑的是哪一版。
-
-   执行是真的：并发池、单请求超时（掐断，不是等它自己回来）、失败重试、
-   中途终止、重跑只补没成的那几条。结果文件是逐行 JSONL，按真实返回写。 */
-/* 部分失败也是红的：它和全败一样是个要处理的问题，只是数量不同——
-   数量由旁边的「22 / 24」说。不拿紫色去标它，紫色在这个产品里是「湿实验」的语义色，
-   借来表示一个和实验无关的状态，等于把配色读坏。 */
+/* 批量任务逐条处理已发布的数据集，保留执行方式与模型记录。
+   在线服务发送提示词，本机任务环境执行打分模型。两者共用进度、失败记录和导出。 */
 const B_ST={draft:['草稿','c-mut'],run:['执行中','c-dry'],done:['已完成','c-ok'],
   part:['部分失败','c-err'],fail:['失败','c-err'],stop:['已终止','c-mut']};
-function bSt(j){return B_ST[j&&j.st]||B_ST.draft}
+function bSt(j){return j?.st==='run'&&!j.t0?['执行中断','c-mut']:(B_ST[j&&j.st]||B_ST.draft)}
 const B_CONC_MAX=8, B_TMO=[5,600], B_RETRY_MAX=5;
 let BJOBS=null;
 function BJ(){
@@ -15959,7 +15986,8 @@ function bSeed(){
 function bHydrate(o){
   o=o||{};
   return {id:o.id||'B-001',pid:o.pid||null,name:String(o.name||''),desc:String(o.desc||''),
-    sid:o.sid||'proxy',mdl:String(o.mdl||''),ds:o.ds||'',col:o.col||'',modelId:o.modelId||null,example:!!o.example,
+    sid:o.sid||'proxy',mdl:String(o.mdl||''),ds:o.ds||'',col:o.col||'',modelId:o.modelId||null,
+    serviceLabel:String(o.serviceLabel||''),format:o.format==='csv'?'csv':'jsonl',example:!!o.example,
     sys:String(o.sys||''),par:String(o.par||''),
     conc:+o.conc||1,tmo:+o.tmo||60,retry:o.retry==null?3:+o.retry,
     st:B_ST[o.st]?o.st:'draft',at:o.at||nowStamp(),ms:+o.ms||0,n:+o.n||0,
@@ -15972,7 +16000,8 @@ function bHydrate(o){
    悄悄存不下，等人下次来下载才发现是空的，那比直接说出来糟得多。 */
 function bSave(){
   const pack=()=>JSON.stringify(BJ().map(j=>({id:j.id,pid:j.pid||null,name:j.name,desc:j.desc,sid:j.sid,
-    mdl:j.mdl,ds:j.ds,col:j.col,modelId:j.modelId||null,example:!!j.example,sys:j.sys,par:j.par,conc:j.conc,tmo:j.tmo,retry:j.retry,
+    mdl:j.mdl,ds:j.ds,col:j.col,modelId:j.modelId||null,serviceLabel:j.serviceLabel||'',format:j.format||'jsonl',
+    example:!!j.example,sys:j.sys,par:j.par,conc:j.conc,tmo:j.tmo,retry:j.retry,
     st:j.st,at:j.at,ms:j.ms,n:j.n,err:j.err,resultVersion:j.resultVersion||0,dropped:j.dropped,out:j.dropped?[]:j.out})));
   try{localStorage.setItem('dy_bjobs',pack());return true}catch(e){}
   const L=BJ();
@@ -15992,6 +16021,46 @@ function bNextId(){
 /* 只认已发布的数据集，而且得有行 */
 function bDsets(){return ALL_DSETS().filter(d=>d.st==='pub'&&(d.rows||[]).length)}
 function bDs(j){const h=j&&j.ds?dsFind(j.ds):null;return h?h.d:null}
+const B_LOCAL='local-scoring';
+const B_ENV='本机浏览器';
+const B_MODES={local:'推理任务环境',online:'在线模型服务'};
+function bMode(j){return j.sid===B_LOCAL?'local':'online'}
+function bService(j){return j.serviceLabel||(msFind(j.sid)||{}).label||j.sid}
+function bLocalModels(){
+  return ALL_MODELS().filter(m=>!['queued','running','canceled','failed'].includes(m.st)&&canScore(m));
+}
+function bBadFeatures(model,d){
+  if(model.kind!=='ds')return [];
+  return bMissingColumns(model.featK,d);
+}
+function bMissingColumns(features,d){
+  const cols=new Set((d.cols||[]).map(c=>c.k));
+  return features.filter(k=>!cols.has(k));
+}
+function bNumericInput(features,row){
+  const input=Object.create(null);
+  for(const key of features){
+    const value=row[key];
+    if(value==null||String(value).trim()===''||!Number.isFinite(+value))return {error:'缺少有效特征：'+key};
+    input[key]=+value;
+  }
+  return {input:input};
+}
+function bLocalScore(model,candidates,row,col,i){
+  const variant=String(row.variant||row.id||i+1);
+  let input;
+  if(model.kind==='ds'){
+    const parsed=bNumericInput(model.featK,row);
+    if(parsed.error)return parsed;
+    input=parsed.input;
+  }else{
+    input=candidates.get(String(row[col]??'').trim());
+    if(!input)return {error:'模型所在项目没有对应的候选 ID'};
+  }
+  const value=scoreWith(model,input);
+  if(!Number.isFinite(value))return {error:'模型无法为这一行打分'};
+  return {output:JSON.stringify({variant:variant,target:model.target,prediction:+value.toFixed(4),model:model.id})};
+}
 function bCount(j){
   const out=j.out||[];let ok=0,bad=0,done=0,pt=0,ct=0,tok=0;
   out.forEach(o=>{if(!o)return;done++;if(o.ok){ok++;if(o.pt)pt+=o.pt;if(o.ct)ct+=o.ct}else bad++});
@@ -16015,22 +16084,47 @@ function bTick(j){
   if(t-B_PAINT<220)return;          // 几百条逐条重绘会把页面拖垮，节流到 ~4.5 帧/秒
   B_PAINT=t;j.ms=Math.round(t-j.t0);render();
 }
-async function bRun(id){
+async function bRun(id,token=''){
   const j=bFind(id);if(!j)return;
-  if(j.st==='run'){toast('这一条正在跑');return}
-  /* 系列可能在建完之后被删了。不拦的话 MC.cfg 会回落到后端代理那条，
-     于是这一跑抛的是「还没填 API Key」——人会跑去填密钥，而真正的原因是系列没了。 */
-  if(j.sid!=='proxy'&&j.sid!=='legacy'&&!msFind(j.sid)){
-    j.st='fail';j.err='这条任务用的模型系列已经删掉了，新建一条换个模型';bSave();render();return}
-  const d=bDs(j);
-  if(!d){j.st='fail';j.err='这份数据集不在了，换一份再跑';bSave();render();return}
+  if(j.st==='run'&&j.t0>0){toast('这一条正在跑');return}
+  const local=bMode(j)==='local', d=bDs(j);
+  const reject=why=>{j.st='fail';j.err=why;bSave();render()};
+  const model=local?bLocalModels().find(m=>m.id===j.modelId):null;
+  const deploymentId=deployBatchId(j.sid);
+  let deployment=null;
+  if(deploymentId){
+    let services;
+    try{services=(await deployRequest()).services}catch(error){toast(error.message);return}
+    if(bFind(id)!==j||j.st==='run'&&j.t0>0)return;
+    deployment=services.find(s=>s.id===deploymentId);
+    if(!deployment||deployment.state!=='running')return reject('这条任务使用的在线服务已停止或已移除');
+    if(deployment.model.id!==j.modelId)return reject('服务绑定的版本已变更，请新建推理任务');
+    if(deployment.auth==='token'&&!token){
+      modal('输入在线服务令牌',`<div class="field"><label class="label" for="batch-service-token">调用令牌</label>
+        <input class="input" id="batch-service-token" type="password" autocomplete="off"></div>`,'开始推理',()=>{
+        const value=document.getElementById('batch-service-token').value.trim();
+        if(!/^[0-9a-f]{64}$/.test(value)){toast('请输入有效的在线服务令牌');return false}
+        bRun(id,value);
+      });
+      return;
+    }
+  }
+  if(local&&!model)return reject('这个打分模型已移除或无法运行');
+  if(!local&&!deployment&&j.sid!=='proxy'&&j.sid!=='legacy'&&!msFind(j.sid))return reject('这条任务用的在线模型服务已移除');
+  if(!d)return reject('这份数据集已移除');
   const rows=d.rows||[];
-  if(!rows.length){j.st='fail';j.err='这份数据集里一行数据都没有';bSave();render();return}
-  if(!(j.col in rows[0])){j.st='fail';j.err='数据集里没有「'+j.col+'」这一列了';bSave();render();return}
+  if(!rows.length)return reject('这份数据集里一行数据都没有');
+  if(!deployment&&(!local||model.kind==='proj')&&!(j.col in rows[0]))return reject('数据集里没有「'+j.col+'」这一列');
+  const missing=deployment?bMissingColumns(deployment.model.features,d):local?bBadFeatures(model,d):[];
+  if(missing.length)return reject('数据集缺少模型需要的特征：'+missing.join('、'));
+  const candidates=local&&model.kind==='proj'
+    ?new Map(CANDS(model._pid).map(c=>[String(c.id),c])):null;
   let par=null;
-  if((j.par||'').trim()){const v=infParse(j.par.trim());
-    if(!v.ok){j.st='fail';j.err='生成参数有问题：'+v.why;bSave();render();return}
-    par=v.v}
+  if(!local&&!deployment&&(j.par||'').trim()){
+    const v=infParse(j.par.trim());
+    if(!v.ok)return reject('生成参数有问题：'+v.why);
+    par=v.v;
+  }
   j.resultVersion=(Number(j.resultVersion)||0)+1;
   j.n=rows.length;j.dropped=0;j.err='';j.stop=false;j.st='run';j.t0=now();
   if(!Array.isArray(j.out))j.out=[];
@@ -16039,8 +16133,16 @@ async function bRun(id){
   for(let i=0;i<rows.length;i++){const o=j.out[i];if(!o||!o.ok)todo.push(i)}
   bSave();render();
   const one=async i=>{
+    if(local){
+      const t0=now(), result=bLocalScore(model,candidates,rows[i],j.col,i);
+      j.out[i]=result.error?{i:i,ok:false,err:result.error,tries:1}
+        :{i:i,ok:true,t:result.output,ms:Math.round(now()-t0),tries:1};
+      return;
+    }
     const txt=String(rows[i][j.col]==null?'':rows[i][j.col]);
-    if(!txt.trim()){j.out[i]={i:i,ok:0,err:'这一行的「'+j.col+'」是空的，没发请求',ms:0,tries:0};return}
+    if(!deployment&&!txt.trim()){j.out[i]={i:i,ok:0,err:'这一行的「'+j.col+'」是空的，没发请求',ms:0,tries:0};return}
+    const numeric=deployment?bNumericInput(deployment.model.features,rows[i]):null;
+    if(numeric?.error){j.out[i]={i:i,ok:false,err:numeric.error,tries:0};return}
     const msgs=[];
     if((j.sys||'').trim())msgs.push({role:'system',content:j.sys.trim()});
     msgs.push({role:'user',content:txt});
@@ -16052,21 +16154,29 @@ async function bRun(id){
         /* [LOADING_BY_CALLER] 挂起态在池子起来之前就写好了：
            j.st='run' 之后 render() 过一次，列表那一行是进度条 + 「执行中」。
            这里只负责取数。 */
-        const r=await MC.chat(msgs,{on:{sid:j.sid,name:j.mdl},params:par,
-          max:900,timeout:j.tmo*1000});
+        let r;
+        if(deployment){
+          const options=deployJson('POST',{rows:[numeric.input]});
+          if(token)options.headers.Authorization='Bearer '+token;
+          options.signal=AbortSignal.timeout(j.tmo*1000);
+          const out=await deployRequest('/'+deployment.id+'/predict',options);
+          r={text:JSON.stringify({prediction:out.predictions[0],model:out.modelVersion,target:out.target})};
+        }else{
+          r=await MC.chat(msgs,{on:{sid:j.sid,name:j.mdl},params:par,max:900,timeout:j.tmo*1000});
+        }
         j.out[i]={i:i,ok:1,t:r.text||'',ms:Math.round(now()-t0),tries:k+1,
           pt:(r.usage&&r.usage.prompt_tokens)||0,ct:(r.usage&&r.usage.completion_tokens)||0};
         return;
       }catch(e){
-        last=modelErr(e);
+        last=deployment?e.message:modelErr(e);
         /* 没密钥、生成参数不对这类，重试一百次还是同一个结果，不白花时间。 */
-        if(String(e.message||e)==='NOKEY')break;
+        if(String(e.message||e)==='NOKEY'||deployment&&e.status<500)break;
       }
     }
     j.out[i]={i:i,ok:0,t:'',err:last||'请求失败',ms:0,tries:k};
   };
   let p=0;
-  const conc=Math.max(1,Math.min(B_CONC_MAX,j.conc|0||1));
+  const conc=local?1:Math.max(1,Math.min(B_CONC_MAX,j.conc|0||1));
   const worker=async()=>{
     while(true){
       if(j.stop)return;
@@ -16074,6 +16184,7 @@ async function bRun(id){
       if(i===undefined)return;
       await one(i);
       bTick(j);
+      if(local&&p%48===0)await new Promise(resolve=>setTimeout(resolve,0));
     }
   };
   await Promise.all(Array.from({length:Math.max(1,Math.min(conc,todo.length))},worker));
@@ -16090,26 +16201,38 @@ async function bRun(id){
          fail:'全部失败，原因见任务详情',
          stop:'已终止，已保留 '+c.ok+' 条结果'}[j.st]);
 }
-function bStop(id){const j=bFind(id);if(!j||j.st!=='run')return;j.stop=true;toast('正在终止，等待已发出的请求返回')}
+function bStop(id){const j=bFind(id);if(!j||j.st!=='run'||!j.t0)return;j.stop=true;toast('正在终止，等待已发出的请求返回')}
 
 /* ---- 结果文件 ---- */
 /* 逐行 JSONL：一行一个样本，按真实返回写。失败的那几行单出一个 badcase 文件，
    两个文件合在一起才是这一跑的全部，所以行号（i）两边都留着。 */
-function bJsonl(j,kind){
+function bResultRows(j,kind){
   const d=bDs(j), rows=(d&&d.rows)||[];
   const out=[];
   (j.out||[]).forEach(o=>{
     if(!o)return;
     if(kind==='bad'&&o.ok)return;
     if(kind!=='bad'&&!o.ok)return;
-    const rec={i:o.i,input:String((rows[o.i]||{})[j.col]==null?'':(rows[o.i]||{})[j.col])};
+    const row=rows[o.i]||{};
+    const rec={i:o.i,input:j.col?String(row[j.col]??''):row};
     if(o.ok){rec.output=o.t;rec.ms=o.ms;
       if(o.pt||o.ct)rec.usage={prompt_tokens:o.pt||0,completion_tokens:o.ct||0};
       if(o.tries>1)rec.tries=o.tries}
     else{rec.error=o.err||'';rec.tries=o.tries||0}
-    out.push(JSON.stringify(rec));
+    out.push(rec);
   });
-  return out.join('\n')+(out.length?'\n':'');
+  return out;
+}
+function bResultFile(j,kind){
+  const rows=bResultRows(j,kind), csv=j.format==='csv', ext=csv?'csv':'jsonl';
+  let body='';
+  if(rows.length&&csv){
+    const keys=kind==='bad'?['i','input','error','tries']:['i','input','output','ms','usage','tries'];
+    const cell=x=>typeof x==='object'&&x!==null?JSON.stringify(x):typeof x==='string'&&/^[\s]*[=+@-]/.test(x)?"'"+x:x;
+    body='\uFEFF'+[csvRow(keys),...rows.map(r=>csvRow(keys.map(k=>cell(r[k]))))].join('\r\n')+'\r\n';
+  }else if(rows.length)body=rows.map(r=>JSON.stringify(r)).join('\n')+'\n';
+  return {name:j.name+(kind==='bad'?'_badcase':'_result')+'.'+ext,
+    body:body,mime:csv?'text/csv;charset=utf-8':'application/x-ndjson',count:rows.length};
 }
 function bDlModal(id){
   const j=bFind(id);if(!j)return;
@@ -16124,14 +16247,14 @@ function bDlModal(id){
       <label class="row"><input type="radio" name="bdl" value="bad"${c.bad?'':' disabled'}>
         <span>Badcase　<span class="t-sm mut2 num">${c.bad} 行</span>${
           c.bad?'':'<span class="t-sm mut2">　没有失败的行</span>'}</span></label>
-      <p class="hint" style="margin:0">逐行 JSONL：一行一个样本，带行号、原文和模型返回。</p>
+      <p class="hint" style="margin:0">${j.format==='csv'?'CSV':'JSONL'} 文件，每行对应一条输入，保留行号和结果。</p>
     </div>`,'下载',()=>{
       const d=document.getElementById('dlg');
       const k=(d.querySelector('input[name="bdl"]:checked')||{}).value||'ok';
-      const body=bJsonl(j,k);
-      if(!body){toast('这一份是空的');return}
-      dl(j.name+(k==='bad'?'_badcase':'_result')+'.jsonl',body,'application/x-ndjson')
-        .then(r=>{if(r==='saved')toast('下载了 '+(body.split('\n').length-1)+' 行')});
+      const file=bResultFile(j,k);
+      if(!file.count){toast('这一份是空的');return}
+      dl(file.name,file.body,file.mime)
+        .then(r=>{if(r==='saved')toast('下载了 '+file.count+' 行')});
     });
 }
 
@@ -16142,25 +16265,25 @@ function batchBody(){
   const L=q?all.filter(j=>(j.name+' '+j.id).toLowerCase().indexOf(q)>=0):all;
   const row=j=>{
     const c=bCount(j), st=bSt(j), d=bDs(j);
-    const run=j.st==='run';
+    const run=j.st==='run'&&j.t0>0;
     return `<tr>
       <td class="c-nm"><div class="col" style="gap:1px">
         <button class="lnk" type="button" data-bjob="${esc(j.id)}"
           style="text-align:left;font-weight:600">${esc(j.name)}</button>
         <span class="t-xs mut2 num">${esc(j.id)}</span>
       </div></td>
+      <td class="t-sm" style="max-width:12rem;overflow-wrap:anywhere">${esc(j.mdl||'—')}
+        ${j.modelId?'<div class="t-xs mut2 num">'+esc(j.modelId)+'</div>':''}</td>
+      <td class="t-sm">${esc(B_MODES[bMode(j)])}</td>
+      <td class="t-sm">${d?esc(d.name):'<span class="c-err">已移除</span>'}</td>
       <td><span class="chip ${st[1]}">${esc(st[0])}</span></td>
-      <td style="min-width:9rem">${run
+      <td style="min-width:6rem">${run
         ? `<div class="col" style="gap:4px">
              <div class="pbar"><i style="width:${bPct(j)}%"></i></div>
              <span class="t-xs mut2 num">${c.done} / ${c.n}</span></div>`
         : `<span class="t-sm num">${c.n?(c.ok+' / '+c.n):'—'}</span>`}</td>
-      <td class="t-sm num" style="max-width:12rem;word-break:break-all">${esc(j.mdl||'—')}</td>
-      <td class="t-sm">${d?esc(d.name)+'<span class="mut2 num">　'+(d.rows||[]).length+' 行</span>'
-        :'<span class="c-err">已不在</span>'}</td>
-      <td class="t-sm num c-at">${esc(j.at||'—')}</td>
       ${acts([
-        {n:'详情',attr:'data-bjob="'+esc(j.id)+'"'},
+        {n:c.done?'查看结果':'详情',attr:'data-bjob="'+esc(j.id)+'"'},
         j.dropped?{n:'下载结果',off:'结果未保存（本机存储已满），请重跑'}
           :(c.done?{n:'下载结果',attr:'data-bjdl="'+esc(j.id)+'"'}
                   :{n:'下载结果',off:'还没有结果'}),
@@ -16176,9 +16299,9 @@ function batchBody(){
     <div class="tbl-wrap is-list">
       <table aria-label="批量推理任务">
         <thead><tr>
-          <th scope="col">任务名称 / 编号</th><th scope="col">状态</th>
-          <th scope="col">进度</th><th scope="col">模型</th>
-          <th scope="col">数据集</th><th scope="col">创建时间</th><th scope="col">操作</th>
+          <th scope="col">任务名称 / 编号</th><th scope="col">模型版本</th>
+          <th scope="col">执行方式</th><th scope="col">输入数据</th>
+          <th scope="col">状态</th><th scope="col">进度</th><th scope="col">操作</th>
         </tr></thead>
         <tbody>${L.map(row).join('')||
           `<tr><td colspan="7"><div class="empty">没有匹配的任务。
@@ -16199,15 +16322,18 @@ function batchBody(){
           :'<button class="btn btn-pri" type="button" data-go="dsets">去建数据集</button>'}
       </div>
     </div></div></div>`}
-  ${S.bDrawer?bDrawer(S.bDrawer):''}
+  ${S.route!=='bnew'&&S.bDrawer?bDrawer(S.bDrawer):''}
 </div>`;
 }
 
 /* ---- 详情抽屉：任务详情 / 运行日志（照 bootcamp 09.11 与 09.12） ---- */
 function bDrawer(id){
   const j=bFind(id);if(!j)return '';
-  const c=bCount(j), st=bSt(j), d=bDs(j);
+  const c=bCount(j), st=bSt(j), d=bDs(j), local=bMode(j)==='local';
+  const running=j.st==='run'&&j.t0>0;
   const tab=S.bTab==='log'?'log':'cfg';
+  const ver=j.modelId&&mdlFind(j.modelId);
+  const successes=(j.out||[]).filter(o=>o&&o.ok).slice(0,6);
   const kv=(k,v)=>`<div class="row" style="gap:var(--s4);align-items:flex-start">
     <span class="t-sm mut2" style="flex:0 0 7rem">${esc(k)}</span>
     <span class="t-sm grow" style="word-break:break-word">${v}</span></div>`;
@@ -16216,23 +16342,33 @@ function bDrawer(id){
     ${kv('任务编号','<span class="num">'+esc(j.id)+'</span>')}
     ${kv('创建时间','<span class="num">'+esc(j.at)+'</span>')}
     ${j.desc?kv('任务描述',esc(j.desc)):''}
-    ${kv('模型','<span class="num">'+esc(j.mdl||'—')+'</span>　<span class="mut2">'
-      +esc(((msFind(j.sid)||{}).label)||(j.sid==='proxy'?'后端代理':'已删掉的系列'))+'</span>')}
-    ${kv('数据集',d?esc(d.name)+'　<span class="mut2 num">'+esc(d.id)+'　'+(d.rows||[]).length+' 行</span>'
+    ${kv('执行方式',B_MODES[bMode(j)])}
+    ${kv(local?'任务环境':'在线模型服务',esc(local?B_ENV:bService(j)))}
+    ${kv('模型版本',esc(j.mdl||'—')+(j.modelId?' · '+esc(j.modelId):'')+
+      (ver?' <button class="lnk" type="button" data-bmodel="'+esc(ver.id)+'">查看模型详情</button>':''))}
+    ${kv('输出格式',j.format==='csv'?'CSV':'JSONL')}
+    ${kv('数据集',d?esc(d.name)+'　<span class="mut2 num">'+esc(d.id)+
+      (d.version?' · '+esc(d.version):'')+'　'+(d.rows||[]).length+' 行</span>'
       :'<span class="c-err">已不在</span>')}
-    ${kv('提示词列','<span class="num">'+esc(j.col)+'</span>')}
-    ${kv('System Prompt',j.sys?('<span style="white-space:pre-wrap">'+esc(j.sys)+'</span>'):'<span class="mut2">没填</span>')}
-    ${kv('生成参数',j.par?('<pre class="num" style="margin:0;white-space:pre-wrap;font-size:0.6875rem">'+esc(j.par)+'</pre>')
-      :'<span class="mut2">没填</span>')}
-    ${kv('执行参数','<span class="num">并发 '+j.conc+'　超时 '+j.tmo+' 秒　重试 '+j.retry+' 次</span>')}
+    ${j.col?kv(local?'候选 ID 列':'提示词列',esc(j.col)):''}
+    ${local?'':kv('System Prompt',j.sys?('<span style="white-space:pre-wrap">'+esc(j.sys)+'</span>'):'<span class="mut2">没填</span>')
+      +kv('生成参数',j.par?('<pre class="num" style="margin:0;white-space:pre-wrap;font-size:0.6875rem">'+esc(j.par)+'</pre>'):'<span class="mut2">没填</span>')
+      +kv('执行参数','<span class="num">并发 '+j.conc+'　超时 '+j.tmo+' 秒　重试 '+j.retry+' 次</span>')}
   </div>`;
+  const resultTable=successes.length?`<div class="col" style="gap:var(--s2)">
+    <span class="lbl">推理结果预览</span>
+    <div class="tbl-wrap is-prev"><table aria-label="推理结果预览">
+      <thead><tr><th scope="col">行号</th><th scope="col">输出</th></tr></thead>
+      <tbody>${successes.map(o=>`<tr><td class="t-sm num">${o.i+1}</td>
+        <td class="t-sm" style="white-space:pre-wrap;overflow-wrap:anywhere">${esc(String(o.t??'').slice(0,350))}</td></tr>`).join('')}</tbody>
+    </table></div></div>`:'';
   const log=`<div class="col" style="gap:var(--s4)">
     <div class="col" style="gap:var(--s3)">
       ${kv('任务进度','<span class="num">'+bPct(j)+'%　'+c.done+' / '+c.n+'</span>')}
       ${kv('总样本','<span class="num">'+c.n+'</span>')}
       ${kv('成功','<span class="num">'+c.ok+'</span>')}
       ${kv('失败 / Badcase','<span class="num">'+c.bad+'</span>')}
-      ${kv('Token 用量',c.hasTok?('<span class="num">'+c.tok.toLocaleString()+'</span>')
+      ${local?'':kv('Token 用量',c.hasTok?('<span class="num">'+c.tok.toLocaleString()+'</span>')
         :'<span class="mut2">这家服务没回报用量</span>')}
       ${kv('运行时长',j.ms?('<span class="num">'+(j.ms/1000).toFixed(1)+' 秒</span>')
         :'<span class="mut2">还没跑过</span>')}
@@ -16240,6 +16376,7 @@ function bDrawer(id){
     ${j.err?`<p class="t-sm" style="margin:0;color:var(--err)">${esc(j.err)}</p>`:''}
     ${j.dropped?`<p class="t-sm" style="margin:0;color:var(--err)">这一条的结果没留住：这台机器的存储满了，
       旧结果被丢掉了。重跑一次就有了。</p>`:''}
+    ${resultTable}
     ${fails.length?`<div class="col" style="gap:var(--s2)">
       <span class="lbl">失败 ${fails.length} 行</span>
       <div class="tbl-wrap is-prev"><table aria-label="失败的行">
@@ -16254,7 +16391,7 @@ function bDrawer(id){
     <div class="row wrap" style="gap:var(--s3)">
       <button class="btn" type="button" data-bjdl="${esc(j.id)}"${
         (!c.done||j.dropped)?' disabled title="还没有结果"':''}>下载结果</button>
-      ${j.st==='run'?`<button class="btn" type="button" data-bstop="${esc(j.id)}">终止</button>`
+      ${running?`<button class="btn" type="button" data-bstop="${esc(j.id)}">终止</button>`
         :`<button class="btn" type="button" data-brun="${esc(j.id)}">${
           c.ok&&c.ok<c.n?('重跑没成的 '+(c.n-c.ok)+' 行'):'重跑'}</button>`}
     </div>
@@ -16270,168 +16407,148 @@ function bDrawer(id){
     </div>`});
 }
 
-/* ---- 新建：照 bootcamp 09.02 的三段（基本信息 / 数据配置 / 高级配置） ---- */
-const NEWB={name:'',desc:'',sid:'',mdl:'',ds:'',col:'',sys:'',par:'',
-  conc:1,tmo:60,retry:3,err:''};
-function bReset(){Object.assign(NEWB,{name:'',desc:'',sid:'',mdl:'',ds:'',col:'',
-  sys:'',par:'',conc:1,tmo:60,retry:3,err:''})}
-function bNewDs(){return NEWB.ds?((dsFind(NEWB.ds)||{}).d||null):null}
-V.bnew=()=>{
-  const ps=msPairs(), dss=bDsets(), d=bNewDs();
-  const cols=d?(d.cols||[]).map(x=>x.k):[];
-  const cur=NEWB.sid?NEWB.sid+'|'+NEWB.mdl:'';
-  const n=d?(d.rows||[]).length:0;
-  /* 预览第一行：这一跑到底会把什么发出去，看一眼就知道选错没有。 */
-  const pv=(d&&NEWB.col&&n)?String((d.rows[0]||{})[NEWB.col]==null?'':(d.rows[0]||{})[NEWB.col]):'';
-  return `
-<div class="page">
-  <div class="pg-hd">
-    <button class="btn btn-gh pg-back" type="button" data-go="batch">← 模型制备 · 批量推理</button>
-    <div class="col" style="gap:6px"><h1>新建批量推理任务</h1></div>
-  </div>
-
-  <div class="card"><div class="card-h"><strong>基本信息</strong></div><div class="card-b">
-    <div class="col" style="gap:var(--s5)">
-      <div class="field" style="max-width:34rem">
-        <label class="label" for="bname">任务名称<span class="c-err">　*</span></label>
-        <input id="bname" class="input" maxlength="50" spellcheck="false"
-          value="${esc(NEWB.name)}" placeholder="R6_候选注释">
-        <span class="t-xs mut2">2–50 个字符，中文、英文、数字和 - _ .，不能以符号开头</span>
-      </div>
-      <div class="field" style="max-width:34rem">
-        <label class="label" for="bdesc">任务描述</label>
-        <textarea id="bdesc" class="input" rows="2" maxlength="200"
-          placeholder="选填">${esc(NEWB.desc)}</textarea>
-      </div>
-      <div class="field" style="max-width:34rem">
-        <span class="label">模型<span class="c-err">　*</span></span>
-        ${cur?(()=>{const ser=NEWB.sid==='mine'?{builtin:1,_mine:1}:(msFind(NEWB.sid)||(NEWB.sid==='proxy'?msProxy():null));
-            const m=ser?(ser.models||[]).find(y=>y.name===NEWB.mdl):null;
-            return `<div class="pick">
-              <span class="prov-mk is-sm" aria-hidden="true">${esc(ser?(ser.builtin?'端':provOf(ser.prov).mk):'?')}</span>
-              <span class="col grow" style="gap:1px;min-width:0">
-                <strong class="t-md num">${esc(NEWB.mdl)}</strong>
-                <span class="t-xs mut2">${esc(ser?(ser._mine?'我的模型':msSeries(ser)):'这条系列已经删掉了')}</span></span>
-              ${ser&&!ser._mine?msChip((m&&m.st)||(ser.builtin?'na':'untested')):''}
-              <button class="btn" type="button" data-act="bpickm">重新选择</button></div>`})()
-          :`<button class="pick-add" type="button" data-act="bpickm">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"
-                stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg>添加模型</button>`}
-        <span class="t-xs mut2">从已接入的模型中选择。
-          <button class="lnk" type="button" data-go="set">新增模型</button></span>
-      </div>
+/* 推理任务留在列表中，新建时用抽屉填写执行方式和数据。 */
+const NEWB_DEFAULT={name:'',desc:'',mode:'local',modelId:'',sid:'',mdl:'',ds:'',col:'',
+  format:'csv',sys:'',par:'',conc:1,tmo:60,retry:3,err:''};
+const NEWB={...NEWB_DEFAULT};
+function bReset(){Object.assign(NEWB,NEWB_DEFAULT)}
+function bNewDs(){return bDsets().find(d=>d.id===NEWB.ds)||null}
+function bOnlineOptions(){return deployBatchChoices().concat(msPairs())}
+function bNewBody(){
+  const local=NEWB.mode==='local';
+  const d=bNewDs(), n=d?.rows.length||0, cols=(d?.cols||[]).map(x=>x.k);
+  const models=local?bLocalModels():bOnlineOptions();
+  const selected=local?NEWB.modelId:(NEWB.sid?NEWB.sid+'|'+NEWB.mdl:'');
+  const options=models.map(x=>local
+    ?[x.id,(x.name||x.id)+' · '+x.id]
+    :[x.sid+'|'+x.name,x.label]);
+  const model=local?models.find(x=>x.id===selected):models.find(x=>x.sid+'|'+x.name===selected);
+  const service=model?.service;
+  const needColumn=(!local&&!service)||model?.kind==='proj';
+  const columnLabel=local?'候选 ID 列':'提示词列';
+  const features=service?.model.features||(local&&model?.kind==='ds'?model.featK:null);
+  const missing=d&&features?bMissingColumns(features,d):[];
+  const compatible=features
+    ?(missing.length?'缺少模型需要的特征：'+missing.join('、'):'模型需要的特征：'+features.join('、')):'';
+  const pv=n&&NEWB.col?String(d.rows[0][NEWB.col]??''):'';
+  return `<div class="col" style="gap:var(--s5)">
+    ${NEWB.err?`<p role="alert" class="t-sm c-err" style="margin:0">${esc(NEWB.err)}</p>`:''}
+    <div class="field">
+      <label class="label" for="bname">任务名称 <span class="c-err">*</span></label>
+      <input id="bname" class="input" maxlength="50" spellcheck="false" value="${esc(NEWB.name)}" placeholder="候选数据_批量评分">
     </div>
-  </div></div>
-
-  <div class="card"><div class="card-h"><strong>数据配置</strong></div><div class="card-b">
-    <div class="col" style="gap:var(--s5)">
-      <div class="field" style="max-width:34rem">
-        <span class="label">推理数据集<span class="c-err">　*</span></span>
-        ${d?`<div class="pick">
-              <span class="prov-mk is-sm" aria-hidden="true">表</span>
-              <span class="col grow" style="gap:1px;min-width:0">
-                <strong class="t-md">${esc(d.name)}</strong>
-                <span class="t-xs mut2 num">${esc(d.id)}　${n} 行　${cols.length} 列</span></span>
-              <button class="btn" type="button" data-act="bpickd">重新选择</button></div>`
-          :`<button class="pick-add" type="button" data-act="bpickd">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"
-                stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg>选择数据集</button>`}
-        <span class="t-xs mut2">仅可选择已发布的数据集。<button class="lnk" type="button" data-go="dsets">去上传</button></span>
-      </div>
-      ${d?`<div class="field" style="max-width:34rem">
-        <label class="label" for="bcol">提示词列<span class="c-err">　*</span></label>
-        <select id="bcol" class="input" style="width:100%;height:2rem;min-height:2rem">
-          <option value=""${NEWB.col?'':' selected'}>选一列</option>
-          ${cols.map(k=>`<option value="${esc(k)}"${NEWB.col===k?' selected':''}>${esc(k)}</option>`).join('')}
-        </select>
-        <span class="t-xs mut2">该列每一行作为一条输入，共 ${n} 条</span>
-      </div>`:''}
-      ${NEWB.col?`<div class="col" style="gap:var(--s2);max-width:46rem">
-        <span class="lbl">第 1 行会发出去的内容</span>
-        <pre class="kbpre num" style="margin:0;font-size:0.6875rem;max-height:9rem;
-          background:var(--surface-2);border:1px solid var(--line-2);
-          border-radius:var(--r2);padding:var(--s3)">${esc(pv||'（这一行是空的）')}</pre>
-      </div>`:''}
+    <div class="field">
+      <label class="label" for="bdesc">任务描述</label>
+      <textarea id="bdesc" class="input" rows="2" maxlength="200" placeholder="选填">${esc(NEWB.desc)}</textarea>
     </div>
-  </div></div>
-
-  <div class="card"><div class="card-h"><strong>高级配置</strong></div><div class="card-b">
-    <div class="col" style="gap:var(--s5)">
-      <div class="field" style="max-width:46rem">
-        <label class="label" for="bsys">System Prompt</label>
-        <textarea id="bsys" class="input" rows="3" spellcheck="false"
-          placeholder="留空就不发 system 这一条">${esc(NEWB.sys)}</textarea>
-        <span class="t-xs mut2">随每条请求发送，用于约束输出格式</span>
+    <fieldset class="field" style="min-width:0;border:0;margin:0;padding:0">
+      <legend class="label">执行方式</legend>
+      <div class="row wrap" style="gap:var(--s3)">
+        ${Object.entries(B_MODES).map(([value,label])=>`<label class="pickr" style="flex:1 1 9rem">
+          <input type="radio" name="bmode" value="${value}"${NEWB.mode===value?' checked':''}>
+          <span>${label}</span></label>`).join('')}
       </div>
-      <div class="field" style="max-width:46rem">
-        <label class="label" for="bpar">生成参数</label>
-        <textarea id="bpar" class="input num" rows="4" spellcheck="false"
-          placeholder='{"temperature":0.2}'>${esc(NEWB.par)}</textarea>
-        <div class="row wrap" style="gap:var(--s3);margin-top:var(--s2)">
-          <button class="lnk" type="button" data-act="bparlive"
-            style="min-height:1.5rem;display:inline-flex;align-items:center">添加示例</button>
-        </div>
-        <span class="t-xs mut2">参数原样传给模型服务，平台不校验兼容性</span>
-      </div>
-      <div class="col" style="gap:var(--s2)">
-        <span class="lbl">执行参数</span>
-        <div class="kform" style="display:grid;gap:var(--s4);
-          grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));max-width:46rem">
-          <div class="field">
-            <label class="label" for="bconc">并发请求数</label>
-            <input id="bconc" class="input num" type="number" min="1" max="${B_CONC_MAX}"
-              value="${esc(String(NEWB.conc))}">
-            <span class="t-xs mut2">1–${B_CONC_MAX}，过高可能触发限流</span>
-          </div>
-          <div class="field">
-            <label class="label" for="btmo">单请求超时（秒）</label>
-            <input id="btmo" class="input num" type="number" min="${B_TMO[0]}" max="${B_TMO[1]}"
-              value="${esc(String(NEWB.tmo))}">
-            <span class="t-xs mut2">${B_TMO[0]}–${B_TMO[1]} 秒</span>
-          </div>
-          <div class="field">
-            <label class="label" for="bretry">失败自动重试</label>
-            <input id="bretry" class="input num" type="number" min="0" max="${B_RETRY_MAX}"
-              value="${esc(String(NEWB.retry))}">
-            <span class="t-xs mut2">0–${B_RETRY_MAX} 次</span>
-          </div>
+    </fieldset>
+    ${local?`<div class="field"><label for="benv" class="label">任务环境</label>
+      <input id="benv" class="input" value="${B_ENV}" readonly>
+      <span class="t-xs mut2">在当前浏览器执行。任务运行时请保持页面打开。</span></div>`:''}
+    <div class="field">
+      <label class="label" for="${local?'bmodelid':'bmdl'}">${local?'模型版本':'在线模型服务'} <span class="c-err">*</span></label>
+      <select id="${local?'bmodelid':'bmdl'}" class="input" style="width:100%">
+        <option value="">${local?'请选择打分模型':'请选择在线模型服务'}</option>
+        ${options.map(([id,label])=>`<option value="${esc(id)}"${selected===id?' selected':''}>${esc(label)}</option>`).join('')}
+      </select>
+      ${local?(!options.length?'<span class="t-xs mut2">还没有可执行的打分模型。</span>':'')
+        :'<span class="t-xs mut2"><button class="lnk" type="button" data-go="services">在线服务</button> · <button class="lnk" type="button" data-go="set">外部模型接入</button></span>'}
+    </div>
+    ${!local&&model?`<div class="field"><label for="bbound" class="label">绑定模型</label>
+      <input id="bbound" class="input" value="${esc(model.name+(service?' · '+service.model.id:''))}" readonly>
+      ${service?.auth==='token'?'<span class="t-xs mut2">提交后输入该服务的调用令牌。</span>':''}</div>`:''}
+    <div class="field">
+      <span class="label">输入数据集 <span class="c-err">*</span></span>
+      ${d?`<div class="pick"><span class="col grow" style="min-width:0"><strong>${esc(d.name)}</strong>
+        <span class="t-xs mut2 num">${esc(d.id)} · ${n} 行</span></span>
+        <button class="btn" type="button" data-act="bpickd">重新选择</button></div>`
+        :'<button class="pick-add" type="button" data-act="bpickd">选择数据集</button>'}
+      <span class="t-xs mut2">仅可选择已发布的数据集。<button class="lnk" type="button" data-go="dsets">去上传</button></span>
+      ${compatible?`<span class="t-xs ${missing.length?'c-err':'mut2'}">${esc(compatible)}</span>`:''}
+    </div>
+    ${d&&needColumn?`<div class="field">
+      <label class="label" for="bcol">${columnLabel} <span class="c-err">*</span></label>
+      <select id="bcol" class="input" style="width:100%"><option value="">请选择列</option>
+        ${cols.map(k=>`<option value="${esc(k)}"${NEWB.col===k?' selected':''}>${esc(k)}</option>`).join('')}
+      </select>
+      <span class="t-xs mut2">${local?'该列用于匹配模型所在项目的候选 ID。':'该列每一行作为一个请求。'}</span>
+    </div>`:''}
+    ${d&&needColumn&&NEWB.col?`<div class="col" style="gap:var(--s2)">
+      <span class="lbl">首条输入预览</span>
+      <pre class="kbpre num" style="margin:0;max-height:9rem;overflow:auto">${esc(pv||'（这一行是空的）')}</pre>
+    </div>`:''}
+    <div class="field">
+      <label class="label" for="bformat">输出格式</label>
+      <select id="bformat" class="input" style="width:100%">
+        ${[['csv','CSV'],['jsonl','JSONL']].map(([value,label])=>`<option value="${value}"${NEWB.format===value?' selected':''}>${label}</option>`).join('')}
+      </select>
+    </div>
+    ${local||service?'':`<details><summary class="lbl">高级配置</summary>
+      <div class="col" style="gap:var(--s3);margin-top:var(--s3)">
+        <div class="field"><label class="label" for="bsys">System Prompt</label>
+          <textarea id="bsys" class="input" rows="3" spellcheck="false">${esc(NEWB.sys)}</textarea></div>
+        <div class="field"><label class="label" for="bpar">生成参数</label>
+          <textarea id="bpar" class="input num" rows="3" placeholder='{"temperature":0.2}'>${esc(NEWB.par)}</textarea>
+          <button class="lnk" type="button" data-act="bparlive">添加示例</button></div>
+        <div class="kform">
+          ${[['bconc','并发请求数',NEWB.conc,1,B_CONC_MAX],['btmo','单请求超时（秒）',NEWB.tmo,...B_TMO],['bretry','失败自动重试',NEWB.retry,0,B_RETRY_MAX]]
+            .map(([id,label,value,min,max])=>`<div class="field"><label class="label" for="${id}">${label}</label>
+              <input id="${id}" class="input num" type="number" min="${min}" max="${max}" value="${esc(String(value))}"></div>`).join('')}
         </div>
       </div>
-    </div>
-  </div></div>
-
-  ${NEWB.err?`<p class="t-sm" style="margin:0;color:var(--err)">${esc(NEWB.err)}</p>`:''}
-  <div class="sec-f">
-    <button class="btn btn-pri" type="button" data-act="bsubmit">提交</button>
+    </details>`}
+  </div>`;
+}
+V.bnew=()=>V.mdl('batch')+drawer({
+  title:'新建批量推理任务',close:'bnewclose',body:bNewBody(),
+  footer:`<div class="row wrap" style="gap:var(--s2)">
+    <button class="lnk t-sm" type="button" data-act="boutsample">查看输出示例</button><span class="grow"></span>
+    <button class="btn btn-gh" type="button" data-act="bnewclose">取消</button>
     <button class="btn" type="button" data-act="bsaveonly">仅保存</button>
-    <button class="btn btn-gh" type="button" data-go="batch">取消</button>
-    <button class="lnk" type="button" data-act="boutsample"
-      style="min-height:1.5rem;display:inline-flex;align-items:center">查看输出示例</button>
-    <span class="grow"></span>
-    <span class="t-sm mut2">${n&&NEWB.col?('共 '+n+' 条请求'):''}</span>
-  </div>
-</div>`;
-};
-/* 建一条。校验不过返回 null 并把原因写在表单上——不弹 toast 就走，
-   toast 会飘走，而人要改的那个字段在哪儿它也不说。 */
+    <button class="btn btn-pri" type="button" data-act="bsubmit">提交任务</button>
+  </div>`
+});
 function bMake(){
-  const bad=bNameBad(NEWB.name);
-  if(bad){NEWB.err=bad;render();return null}
-  if(BJ().some(x=>x.name===NEWB.name.trim())){NEWB.err='已经有一条叫这个名字的任务了';render();return null}
-  if(!NEWB.mdl){NEWB.err='先选一个模型';render();return null}
-  if(NEWB.sid==='mine'){NEWB.err='「我的模型」里的是打分模型，不做文本生成。给候选批量打分，请在对话里用「批量打分」';render();return null}
-  if(!NEWB.ds){NEWB.err='先选一份已发布的数据集';render();return null}
-  if(!NEWB.col){NEWB.err='先选一列当提示词';render();return null}
-  if((NEWB.par||'').trim()){const v=infParse(NEWB.par.trim());
-    if(!v.ok){NEWB.err='生成参数：'+v.why;render();return null}}
-  const d=bNewDs();
-  const j=bHydrate({id:bNextId(),name:NEWB.name.trim(),desc:NEWB.desc.trim(),
-    sid:NEWB.sid,mdl:NEWB.mdl,ds:NEWB.ds,col:NEWB.col,sys:NEWB.sys,par:NEWB.par,
-    conc:Math.max(1,Math.min(B_CONC_MAX,+NEWB.conc||1)),
+  const local=NEWB.mode==='local', name=NEWB.name.trim(), d=bNewDs();
+  const model=local?bLocalModels().find(m=>m.id===NEWB.modelId)
+    :bOnlineOptions().find(x=>x.sid===NEWB.sid&&x.name===NEWB.mdl);
+  const reject=why=>{NEWB.err=why;render();document.querySelector('.dw-b')?.scrollTo(0,0);return null};
+  const bad=bNameBad(name);
+  if(bad)return reject(bad);
+  if(BJ().some(x=>x.name===name))return reject('已经有一条叫这个名字的任务了');
+  if(!model)return reject(local?'先选一个可执行的打分模型':'先选择一个在线模型服务');
+  if(!d)return reject('先选一份已发布的数据集');
+  const service=model.service;
+  const needsColumn=(!local&&!service)||model.kind==='proj';
+  if(needsColumn&&!(d.cols||[]).some(c=>c.k===NEWB.col)){
+    return reject(local?'先选择候选 ID 列':'先选择提示词列');
+  }
+  const missing=service?bMissingColumns(service.model.features,d):local?bBadFeatures(model,d):[];
+  if(missing.length)return reject('输入数据缺少特征：'+missing.join('、'));
+  if(!local&&!service&&NEWB.par.trim()){
+    const v=infParse(NEWB.par.trim());
+    if(!v.ok)return reject('生成参数：'+v.why);
+  }
+  const source=dsFind(d.id);
+  const j=bHydrate({
+    id:bNextId(),pid:source?.pid||null,name:name,desc:NEWB.desc.trim(),
+    sid:local?B_LOCAL:model.sid,mdl:model.name||model.id,modelId:local?model.id:service?.model.id,
+    serviceLabel:local?'':(service?.name||msFind(model.sid)?.label||model.sid),ds:d.id,col:needsColumn?NEWB.col:'',
+    sys:local||service?'':NEWB.sys,par:local||service?'':NEWB.par,format:NEWB.format,
+    conc:local?1:Math.max(1,Math.min(B_CONC_MAX,+NEWB.conc|0||1)),
     tmo:Math.max(B_TMO[0],Math.min(B_TMO[1],+NEWB.tmo||60)),
-    retry:Math.max(0,Math.min(B_RETRY_MAX,+NEWB.retry|0)),
-    st:'draft',at:nowStamp(),n:d?(d.rows||[]).length:0});
-  BJ().unshift(j);bSave();
+    retry:local?0:Math.max(0,Math.min(B_RETRY_MAX,+NEWB.retry|0)),
+    st:'draft',at:nowStamp(),n:d.rows.length
+  });
+  BJ().unshift(j);
+  if(!bSave()){BJ().shift();return reject('本机存储已满，任务未保存')}
   return j;
 }
 
@@ -16652,14 +16769,15 @@ function backPrev(){
 /* 进来的路由先归一：产品里还有二十多处 go('pw') / go('round') / go('task') 这样的旧名字，
    它们本来就该落到并过去的那一页。不归一的话 S.route 和地址栏都停在一个 V 里没有的名字上，
    hashchange 再一看「这个页面不存在」，于是点一个项目会被弹回对话页。 */
-/* 在线推理和批量推理并进了「模型制备」做页签。
+/* 在线推理和批量推理并进了「模型管理」做页签。
    这两个名字还得能当入口使：导航里没有它们，但对话里的跳转、书签、
    以及页面之间互相指过去的那些按钮都还写着 infer / batch。
    在 go 的入口翻成 mdl + 对应页签，一处改完，所有调用点都不用动。 */
-const MDL_TAB_ROUTE={infer:'infer',batch:'batch'};
+const MDL_TAB_ROUTE={infer:'infer',batch:'batch',services:'services'};
 function go(r,o){
-  if(MDL_TAB_ROUTE[r]){S.mtab=MDL_TAB_ROUTE[r];S.jobPick=null;r='mdl'}
+  if(MDL_TAB_ROUTE[r]){S.mtab=MDL_TAB_ROUTE[r];S.jobPick=null;S.checkpointPick=null;r='mdl'}
   const t=ROUTE_HOME(r);
+  if(t!=='mdl')S.checkpointPick=null;
   if(t!==S.route)backPush(S.route);S._anim=(t!==S.route);S.route=t;Object.assign(S,o||{});S.page=1;
   LS.set('route',t);LS.set('pid',S.pid);LS.set('round',S.round);location.hash=t;render();window.scrollTo(0,0)}
 /* 同一个人常开两个标签页：一个看结果、一个排板。闸门与选中集都进了 localStorage，
@@ -16682,9 +16800,9 @@ window.addEventListener('storage',e=>{
 window.addEventListener('hashchange',()=>{const h=location.hash.slice(1);
   if(!h)return;
   /* 并进页签的那两个名字（infer / batch）在 V 里已经没有对应的页了，
-     但它们仍是有效入口：交给 go()，它会翻成模型制备 + 那一格。 */
+     但它们仍是有效入口：交给 go()，它会翻成模型管理 + 那一格。 */
   if(MDL_TAB_ROUTE[h]){go(h);return}
-  if(V[h]){if(h!==S.route){backPush(S.route);S._anim=true;S.route=h;render()}return}
+  if(V[h]){if(h!==S.route){backPush(S.route);S._anim=true;S.route=h;if(h==='labnew')alRestoreComposer();render()}return}
   /* 搬过家的旧链接（#pw、#round、#task…）悄悄送到新位置：
      它不是「不存在的页面」，是同一件事换了地方，不该弹一句警告。 */
   const mv=ROUTE_MOVED[h];
@@ -16733,7 +16851,7 @@ function dressHead(root){
    判定「这页自己已经有返回」只看控件，不看文案：
    流程图里的「← 已有产物」是个 <i>，它不是出路，不该把返回键挡掉。 */
 function addBack(p,hd){
-  if(!hd||NAV_ROUTE[S.route])return;
+  if(!hd||NAV_ROUTE[S.route]||S.route==='bnew')return;
   const own=p.querySelector('[data-jlaunch],[data-jlist],[data-crumb],[data-act="goback"]')
     ||[...p.querySelectorAll('button,a,[role="button"]')].some(e=>/^\s*←/.test(e.textContent||''));
   if(own)return;
@@ -16777,6 +16895,12 @@ function restoreFocus(k,sel){
   el.focus({preventScroll:true});
   if(sel&&el.setSelectionRange){try{el.setSelectionRange(sel[0],sel[1])}catch(e){}}
 }
+/* Dialogs and menus handle Escape before the underlying drawer. */
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Escape'||document.querySelector('#dlg[open], #menu'))return;
+  const close=view.querySelector('[data-dwclose]');
+  if(close){e.preventDefault();act(close.dataset.dwclose,close)}
+},true);
 function render(){
   closeMenu(1);keepSoon();
   document.body.dataset.as=S.as?'1':'0';
@@ -16797,7 +16921,7 @@ function render(){
       b.setAttribute('aria-expanded',String(!S.collapsed));
     }
 })();
-  paintNav();paintBanner();
+  paintNav();paintBanner();paintResearchHistory();
   Object.keys(COPYSRC).forEach(k=>delete COPYSRC[k]);
   /* 滚动位置只在换页时归零。原先每次 render 都归零，
      于是改一个下拉、切一个页签都会把人弹回页首——表单越长越明显。 */
@@ -16820,19 +16944,29 @@ function render(){
   const _frag=document.createElement('div');
   _frag.innerHTML=(V[ROUTE_HOME(S.route)]||V.chat)();
   dressHead(_frag);
-  const _hadDw=!!view.querySelector('.dw');
+  const _oldDw=view.querySelector('.dw');
+  const _dwScroll=!_moved&&_oldDw?_oldDw.querySelector('.dw-b').scrollTop:0;
   view.replaceChildren.apply(view,[].slice.call(_frag.childNodes));
-  if(_hadDw)view.querySelectorAll('.dw,.dw-back').forEach(e=>{e.style.animation='none'});
+  if(_oldDw){
+    view.querySelectorAll('.dw,.dw-back').forEach(e=>{e.style.animation='none'});
+    const current=view.querySelector('.dw');
+    if(current?.getAttribute('aria-label')===_oldDw.getAttribute('aria-label')){
+      current.querySelector('.dw-b').scrollTop=_dwScroll;
+    }
+  }
   S._skey=_key;
   view.scrollTop=_keep;
   view.classList.toggle('scrolled',view.scrollTop>4);
   if(_foc)restoreFocus(_foc,_sel);
+  else if(_moved&&S.route==='bnew')view.querySelector('#bname')?.focus({preventScroll:true});
   if(S._anim!==false){const f=view.firstElementChild;if(f)f.classList.add('enter');S._anim=false}
   playCardIn(view);
   const q=(s,f)=>view.querySelectorAll(s).forEach(f);
   wbBind(view);
   labV2Bind(view);
   rsBind(view);
+  schedulesBind(view);
+  deployBind(view);
   q('[data-go]',b=>b.onclick=e=>{e.preventDefault();go(b.dataset.go)});
   q('[data-projdw]',b=>b.onclick=()=>{S.projDw=b.dataset.projdw;render()});
   q('[data-proj]',b=>b.onclick=()=>{const p=DB.projects.find(x=>x.id===b.dataset.proj);S.projDw=null;
@@ -16843,26 +16977,34 @@ function render(){
   q('[data-round]',b=>b.onclick=()=>go('round',{round:+b.dataset.round}));
   q('[data-dom]',b=>b.onclick=()=>{S.dom=b.dataset.dom;render()});
   q('[data-ptab]',b=>b.onclick=()=>{S.ptab=b.dataset.ptab;render()});
-  q('[data-mtab]',b=>b.onclick=()=>{S.mtab=b.dataset.mtab;S.jobPick=null;render()});
+  q('[data-mtab]',b=>b.onclick=()=>{S.mtab=b.dataset.mtab;S.jobPick=null;S.checkpointPick=null;render()});
   q('[data-pjtab]',b=>b.onclick=()=>{S.pjtab=b.dataset.pjtab;render()});
   q('[data-pjjob]',b=>b.onclick=()=>{S.pjBatch=null;S.jobPick=b.dataset.pjjob;render()});
   q('[data-pjbatch]',b=>b.onclick=()=>{S.jobPick=null;S.pjBatch=b.dataset.pjbatch;render()});
   q('[data-dwclose]',b=>b.onclick=()=>act(b.dataset.dwclose,b));
-  /* Esc 关抽屉。抽屉是非模态的（表格还能看），所以不抢焦点、不锁滚动，
-     但 Esc 必须能关——这是抽屉的通用约定，不该要求用户去找那颗 ✕。 */
-  (function(){const dw=view.querySelector('[data-dwclose]');if(!dw)return;
-    const h=e=>{if(e.key!=='Escape')return;
-      document.removeEventListener('keydown',h,true);
-      act(dw.dataset.dwclose,dw);};
-    document.addEventListener('keydown',h,true);})();
   q('[data-expdl]',b=>b.onclick=()=>{
     const x=BATCHES.find(y=>y.id===b.dataset.expdl);if(!x)return;
     dl('实验结论_'+x.id+'.md',expReport(x),'text/markdown');
     toast('已导出 '+x.id+' 的实验结论')});
-  q('[data-jobpick]',b=>b.onclick=()=>{S.jobPick=b.dataset.jobpick;render()});
-  q('[data-mdlsync]',b=>b.onclick=()=>{const id=b.dataset.mdlsync;
-    if(!syncLib(id)){toast('同步不了：找不到这一条');return}
-    S.mtab='cur';render();toast(id+' 已同步到「我的模型」，部署后可在对话中使用')});
+  q('[data-jobpick]',b=>b.onclick=()=>{S.checkpointPick=null;S.jobPick=b.dataset.jobpick;render()});
+  q('[data-model-publish]',b=>b.onclick=()=>rsPublishModelDialog(b.dataset.modelPublish));
+  q('[data-checkpoint-pick]',b=>b.onclick=()=>{
+    S.jobPick=null;S.projDw=null;S.checkpointPick=b.dataset.checkpointPick;render();
+  });
+  q('[data-checkpoint-eval]',b=>b.onclick=()=>{
+    const m=trainingCheckpoints(mdlFind(S.checkpointPick)).find(x=>x.id===b.dataset.checkpointEval);
+    if(m&&checkpointEvaluated(m))go('mdl',{mtab:'eval',jobPick:m.id,checkpointPick:null});
+  });
+  q('[data-checkpoint-infer]',b=>b.onclick=()=>{
+    const m=trainingCheckpoints(mdlFind(S.checkpointPick)).find(x=>x.id===b.dataset.checkpointInfer);
+    if(!m||!canScore(m))return;
+    bReset();NEWB.modelId=m.id;S.jobPick=null;S.bDrawer=null;go('bnew');
+  });
+  q('[data-checkpoint-sync]',b=>b.onclick=()=>{
+    const m=trainingCheckpoints(mdlFind(S.checkpointPick)).find(x=>x.id===b.dataset.checkpointSync);
+    if(!m||inLib(m)||!syncLib(m.id))return;
+    render();toast(m.id+' 已同步到模型库');
+  });
   q('[data-prosp]',b=>b.onclick=()=>act('prosp',b));
   /* 复制一条训练任务：开新建表单，把这一条的参数带过去——不绕回对话。 */
   q('[data-trcopy]',b=>b.onclick=()=>{const m=mdlFind(b.dataset.trcopy);if(!m)return;
@@ -16874,13 +17016,14 @@ function render(){
   q('[data-mdlen]',b=>b.onclick=()=>{const m=mdlFind(b.dataset.mdlen);if(!m)return;
     if(!mdlOn(m.id)&&!canScore(m)){toast(whyNoScore(m));return}
     const on=toggleMdl(m.id);
-    render();toast(on?'已部署':'已下线')});
+    render();toast(on?'已启用本机调用':'已停用本机调用')});
   q('#bq',el=>{el.oninput=()=>{S.bq=el.value;
     const k=focusKey(el);render();restoreFocus(k)}});
   /* 属性名别和「送检批次」那套撞（data-bopen / data-bdl 是那边的，b 指批次）。
      撞上的话后绑的会静默盖掉先绑的，表现是「点了没反应」，grep 还查不出来。 */
   q('[data-bjob]',b=>b.onclick=()=>{S.bDrawer=b.dataset.bjob;S.bTab='log';render()});
   q('[data-btab]',b=>b.onclick=()=>{S.bTab=b.dataset.btab;render()});
+  q('[data-bmodel]',b=>b.onclick=()=>go('mdl',{mtab:'cur',jobPick:b.dataset.bmodel,bDrawer:null}));
   q('[data-bjdl]',b=>b.onclick=()=>bDlModal(b.dataset.bjdl));
   q('[data-brun]',b=>b.onclick=()=>act('brun',b));
   q('[data-bstop]',b=>b.onclick=()=>act('bstop',b));
@@ -16894,9 +17037,11 @@ function render(){
   q('#bconc',el=>el.oninput=()=>{NEWB.conc=el.value});
   q('#btmo',el=>el.oninput=()=>{NEWB.tmo=el.value});
   q('#bretry',el=>el.oninput=()=>{NEWB.retry=el.value});
+  q('[name="bmode"]',el=>el.onchange=()=>{NEWB.mode=el.value;NEWB.col='';NEWB.err='';render()});
+  q('#bmodelid',el=>el.onchange=()=>{NEWB.modelId=el.value;NEWB.col='';NEWB.err='';render()});
   q('#bmdl',el=>el.onchange=()=>{const v=el.value.split('|');
     NEWB.sid=v[0]||'';NEWB.mdl=v.slice(1).join('|');NEWB.err='';render()});
-  q('#bds',el=>el.onchange=()=>{NEWB.ds=el.value;NEWB.col='';NEWB.err='';render()});
+  q('#bformat',el=>el.onchange=()=>{NEWB.format=el.value;NEWB.err='';render()});
   q('#bcol',el=>el.onchange=()=>{NEWB.col=el.value;NEWB.err='';render()});
   q('#infq',el=>{el.oninput=()=>{INF().q=el.value};
     /* Enter 发送、Shift+Enter 换行——这页就一个输入框，没有别的提交路径。 */
@@ -17017,7 +17162,7 @@ function render(){
       act('labnew',b);};
     b.onclick=run;
     b.onkeydown=e=>{if(e.key==='Enter'||e.key===' ')run(e)}});
-  q('[data-labgo]',b=>b.onclick=()=>{S.labPick=b.dataset.labgo;go('labdet')});
+  q('[data-labgo]',el=>el.onclick=()=>alVisitBatch(el.dataset.labgo));
   q('[data-protouse]',b=>b.onclick=()=>{const x=protoAll().find(y=>y.id===b.dataset.protouse);
     if(!x)return;
     Object.assign(NEWEXP,{name:'',desc:'',proto:x.n,vendor:'',n:'',file:null,fileText:null});
@@ -17837,6 +17982,8 @@ function render(){
     psv.addEventListener('mouseleave',()=>out.textContent='悬停查看残基对')}
 }
 function act(a,el){
+  if(deployAction(a,el))return;
+  if(a==='checkpointclose'){S.checkpointPick=null;render();return}
   if(!canAct(a)){const k=ACT_PERM[a];
     toast(`以「${meRole().r}」的身份没有${PERM_LABEL[k]}权限，这个动作被拦下了`);return}
   /* 只留真正会走到这里的动作。被上游 if 处理掉的动作如果还在这里留一条提示，
@@ -17966,7 +18113,7 @@ function act(a,el){
       rho:r.rho,rmse:r.rmse,sd:r.sd,nTrain:r.nTrain,nTest:r.nTest,lam:r.lam,n:r.n,
       ms:ms,ds:d?d.id:null,lamBy:r.lamBy,bl:r.base,trainIds:r.trainIds||null,
       lib:false,
-      kind:d?'ds':'proj',w:r.w,mu:r.mu,sg:r.sg,sites:r.sites,cols:r.cols},
+      kind:d?'ds':'proj',w:r.w,mu:r.mu,sg:r.sg,featK:r.featK,sites:r.sites,cols:r.cols},
       meta,verdictOf(r)));
     emit(S.pid,[{name:'模型_'+mdl.id+'_'+slug(mdl.target)+'_ridge.json',n:'模型权重',
       note:(mdl.name||mdl.id)+'　留出 ρ='+r.rho.toFixed(3),kind:'dat',
@@ -18068,7 +18215,6 @@ function act(a,el){
   if(a==='skipanim'){skipAll();return}
   if(a==='kopen'){const c=cardById(el.dataset.id);if(c){c.reopen=!c.reopen;render()}return}
   if(a==='cottoggle'){const c=cardById(el.dataset.id);if(c){c.open=!c.open;render()}return}
-  if(a==='dshelp'){S.dsHelp=S.dsHelp===0?1:0;render();return}
   if(a==='jobhelp'){S.jobHelp=!S.jobHelp;render();return}
   if(a==='dsclose'){S.dsPick=null;render();return}
   if(a==='acctna'){toast('暂未开放');return}
@@ -18279,30 +18425,7 @@ function act(a,el){
   /* ---- 批量推理 ---- */
   if(a==='bqclr'){S.bq='';render();return}
   if(a==='bdrawerx'){S.bDrawer=null;render();return}
-  /* 选择模型：照 bootcamp 3.8.1 第 3 步。列的是「模型接入」里现成的系列 × 模型。 */
-  if(a==='bpickm'){const ps=msPairs(), cur=NEWB.sid?NEWB.sid+'|'+NEWB.mdl:'';
-    modal('选择模型',`<div class="col" style="gap:var(--s3)">
-      <div class="picks" role="radiogroup" aria-label="可用模型">
-      ${ps.map((x,i)=>{const ser=msFind(x.sid)||msProxy();
-        const m=(ser.models||[]).find(y=>y.name===x.name);
-        return `<label class="pickr"><input type="radio" name="bpm" value="${esc(x.sid+'|'+x.name)}"${
-          (cur?cur===x.sid+'|'+x.name:i===0)?' checked':''}>
-          <span class="col grow" style="gap:1px;min-width:0"><strong class="t-md num">${esc(x.name)}</strong>
-            <span class="t-xs mut2">${esc(msSeries(ser))}</span></span>
-          ${msChip((m&&m.st)||(ser.builtin?'na':'untested'))}</label>`}).join('')}
-      ${ALL_MODELS().filter(m=>m.st!=='failed').map(m=>`<label class="pickr">
-          <input type="radio" name="bpm" value="${esc('mine|'+m.id)}"${cur==='mine|'+m.id?' checked':''}>
-          <span class="col grow" style="gap:1px;min-width:0"><strong class="t-md">${esc(m.name||m.id)}</strong>
-            <span class="t-xs mut2 num">我的模型　${esc(m.id)}</span></span>
-          <span class="chip c-mut">打分模型</span></label>`).join('')}
-      </div>
-      <span class="t-xs mut2">授权状态取自最近一次连接测试</span>
-    </div>`,'确定',()=>{
-      const d=document.getElementById('dlg');
-      const r=d&&d.querySelector('input[name="bpm"]:checked');
-      if(!r){toast('先选一个模型');return false}
-      const v=r.value.split('|');NEWB.sid=v[0];NEWB.mdl=v.slice(1).join('|');NEWB.err='';render()});
-    return}
+  if(a==='bnewclose'){bReset();go('batch');return}
   /* 选择数据集：搜索 + 只列已发布的（bootcamp 3.8.1 第 4 步）。
      这里只收一份：端砚的数据集是一张表，提示词列是按表指定的，
      一次选几份就得给每份各指一列——那是几条任务，不是一条。 */
@@ -18326,18 +18449,15 @@ function act(a,el){
      if(qi)qi.oninput=()=>{const v=qi.value.trim().toLowerCase();
        d.querySelectorAll('#bdl .pickr').forEach(r=>{r.hidden=!!v&&r.dataset.t.indexOf(v)<0})}}
     return}
-  /* 输出示例：结果文件每一行有哪些字段。只列字段，不放编出来的数。 */
   if(a==='boutsample'){
+    const csv=NEWB.format==='csv';
+    const sample=csv?'i,input,output,ms,usage,tries'
+      :'{"i": 0, "input": "输入", "output": "模型输出", "ms": 0}';
+    const bad=csv?'i,input,error,tries':'{"i": 0, "input": "输入", "error": "失败原因", "tries": 1}';
     modal('输出示例',`<div class="col" style="gap:var(--s4)">
-      <p class="t-sm mut" style="margin:0">结果是逐行 JSONL，一行对应数据集里的一行。成功和失败的行分两个文件下载。</p>
-      <div class="col" style="gap:var(--s2)"><span class="lbl">推理结果 _result.jsonl</span>
-      <pre class="kbpre num" style="margin:0;font-size:0.6875rem">{"i": &lt;行号，从 0 起&gt;, "input": "&lt;提示词列里这一行的原文&gt;",
- "output": "&lt;模型返回的文本&gt;", "ms": &lt;这一条用时，毫秒&gt;,
- "usage": {"prompt_tokens": &lt;入&gt;, "completion_tokens": &lt;出&gt;},
- "tries": &lt;重试过才有，第几次成的&gt;}</pre></div>
-      <div class="col" style="gap:var(--s2)"><span class="lbl">Badcase _badcase.jsonl</span>
-      <pre class="kbpre num" style="margin:0;font-size:0.6875rem">{"i": &lt;行号&gt;, "input": "&lt;原文&gt;", "error": "&lt;失败原因&gt;", "tries": &lt;试了几次&gt;}</pre></div>
-      <p class="t-xs mut2" style="margin:0">usage 仅在模型服务返回用量时出现。两个文件都保留行号。</p>
+      <p class="t-sm mut" style="margin:0">成功和失败的记录分别下载，每行对应一条输入。</p>
+      <span class="lbl">推理结果 · ${csv?'CSV 表头':'JSONL'}</span><pre class="kbpre num" style="margin:0">${esc(sample)}</pre>
+      <span class="lbl">失败记录 · ${csv?'CSV 表头':'JSONL'}</span><pre class="kbpre num" style="margin:0">${esc(bad)}</pre>
     </div>`,'知道了',()=>{});
     return}
   if(a==='bparlive'){const el=document.getElementById('bpar');
@@ -19500,6 +19620,7 @@ const WB_DATA = (function () {
     const row = read().tasks.find(t => t.key === taskKey);
     if (!row) { toast('找不到这条记录，它可能已经被删除'); return false; }
     const target = row.target;
+    if (target.route === 'labdet') { alVisitBatch(target.opts.labPick); return true; }
     if (target.action === 'infopen') {
       if (infCols().some(c => c.busy)) { toast('当前会话还在回答，请等回答结束再打开历史会话'); return false; }
       if (!infHist().some(h => h.id === target.value)) { toast('找不到这段历史会话'); return false; }
@@ -20119,7 +20240,7 @@ function labV2Bind(root){
  on('[data-lv-record]','click',el=>labRecordDialog(el.dataset.lvRecord));
  on('[data-lv-retry]','click',el=>{const b=BATCHES.find(b=>b.id===S.labPick),s=b?.workflow.steps.find(s=>s.id===el.dataset.lvRetry);if(!s)return;modal('重试实验环节',`<p>重试「${esc(s.title)}」会让依赖其样品或结果的下游环节等待重新执行，并撤回当前结论。原记录保留在历史中，使用独立分样且不依赖该结果的分支不受影响。</p>`,'确认重试',()=>{if(labRetry(b,s.id)){render();toast('已重置相关环节，原记录保留在历史中');}else {toast('未能重试该环节');return false;}});});
  on('[data-lv-publish]','click',el=>labPublishDialog(el.dataset.lvPublish));
- on('[data-lv-edit]','click',el=>{const b=BATCHES.find(b=>b.id===el.dataset.lvEdit),w=b?.workflow;if(!b||!w||w.phase!=='draft')return;LABUI.form={pid:b.pid,name:b.name,desc:b.desc||'',template:w.template,mode:w.mode,assays:w.assays.slice(),samples:w.sampleIds.join('\n'),sourceRef:w.sampleSource,aliquot:w.aliquot,steps:labCopy(w.steps),editing:b.id};LABUI.errors={};go('labnew');});
+ on('[data-lv-edit]','click',el=>alOpenDraft(BATCHES.find(b=>b.id===el.dataset.lvEdit)));
  on('[data-lv-export]','click',el=>{const b=BATCHES.find(b=>b.id===el.dataset.lvExport);if(!can('exp')){toast('当前身份没有导出权限');return;}if(b)dl(b.id+'-实验记录.json',JSON.stringify({exportedAt:nowStamp(),notice:'本机方案与人工／演示记录，不代表设备真实执行；证据位置为引用，非文件内容。',batch:b,equipmentReferences:LAB_DEVICES.filter(d=>b.workflow.steps.some(s=>s.deviceId===d.id)),stageContracts:LAB_STAGES},null,2),'application/json');});
 }
 
@@ -20196,9 +20317,9 @@ async function rsLoad(){
  try{RS.db=await new Promise((resolve,reject)=>{const r=indexedDB.open('duanyan-research-workspace',1);r.onupgradeneeded=()=>{r.result.createObjectStore('state',{keyPath:'id'});r.result.createObjectStore('files',{keyPath:'id'});};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});
  const saved=await new Promise((resolve,reject)=>{const r=RS.db.transaction('state').objectStore('state').get('workspace');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});
  if(saved){RS.revision=saved.revision||0;RS.data.iterationSeed=saved.iterationSeed||0;RS.data.projectFixtures=saved.projectFixtures||null;['projects','shared','imports','resources'].forEach(k=>{RS.data[k]=Array.isArray(saved[k])?saved[k]:[];});}
- rsHydrate();const currentResource=RS.data.resources.find(r=>r.id===RS.resourcePick);if(currentResource)NAV_PARENT.resdetail=currentResource.kind==='database'?'data':'shelf';RS.ready=true;await iterationSeedWorkspace();RS.seedReady=true;
+ rsHydrate();const currentResource=RS.data.resources.find(r=>r.id===RS.resourcePick);if(currentResource)NAV_PARENT.resdetail=currentResource.kind==='database'?'data':'tools';RS.ready=true;await iterationSeedWorkspace();RS.seedReady=true;
  }catch(e){RS.error='本机存储不可用，请检查浏览器设置后重试。';RS.ready=true;}
- if(['shared','sharednew','shareddetail','resnew','resdetail','shelf','data','project','projects','workbench','lab','mdl','dsets'].includes(S.route))render();
+ if(['shared','sharednew','shareddetail','tools','toolnew','databasenew','resnew','resdetail','shelf','data','project','projects','workbench','lab','mdl','dsets'].includes(S.route))render();
 }
 async function rsSave(next,files=[]){
  if(!RS.ready||!RS.db||RS.error)throw new Error(RS.error||'数据仍在加载');if(RS.busy)throw new Error('正在保存，请稍候');RS.busy=true;
@@ -20232,17 +20353,17 @@ function rsCandidates(pid){
 function rsAssetLabel(k){return {knowledge:'知识条目',tool:'工具',dataset:'数据集',model:'模型',evaluation:'评测报告',experiment:'实验记录',conclusion:'实验结论',sampleSheet:'样本清单',inference:'推理记录'}[k]||k;}
 async function rsCreateShared(input){
  if(!can('edit'))throw new Error('当前身份没有编辑权限');const name=input.name.trim();if(name.length<2||name.length>50)throw new Error('项目名称须为 2–50 个字符');
- if(RS.data.shared.some(p=>p.name===name))throw new Error('已有同名共享项目');const next=rsClone(RS.data);let p;
+ if(input.mode!=='existing'&&RS.data.shared.some(p=>p.name===name))throw new Error('已有同名共享项目');const next=rsClone(RS.data);let p;
  if(input.mode==='existing'){p=rsProject(input.pid);if(!p||(p.ownerId||'me')!=='me')throw new Error('请选择自己的项目');if(next.shared.some(s=>s.projectId===p.id))throw new Error('该项目已开启共享');}
  else {p=rsBlankProject(name,input.goal||'');next.projects.push(p);}
  const candidates=input.mode==='existing'?rsCandidates(p.id):[];
  const record={id:rsId('shared'),projectId:p.id,name,goal:input.goal||p.desc||'',owner:'me',members:[{id:'me',name:'ZHANG',email:'',role:'owner',status:'active',at:nowStamp()}],assets:candidates.filter(a=>input.assets.includes(a.id)),requests:[],events:[{at:nowStamp(),by:'me',text:input.mode==='existing'?'从已有项目开启共享，保留原项目 ID':'创建共享项目'}],at:nowStamp()};
  next.shared.unshift(record);await rsSave(next);RS.sharedPick=record.id;LS.set('rs_shared_pick',record.id);RS.actor='me';RS.tab='assets';go('shareddetail');return record;
 }
-async function rsInvite(sid,email,name,role){
+async function rsInvite(sid,email,name,role,institute=''){
  const s=RS.data.shared.find(s=>s.id===sid);if(!rsCan(s,'manage'))throw new Error('没有成员管理权限');if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))throw new Error('请填写有效邮箱');if(!['admin','editor','viewer'].includes(role)||role==='admin'&&!rsCan(s,'own'))throw new Error('没有分配该角色的权限');
  if(s.members.some(m=>m.email.toLowerCase()===email.toLowerCase()&&m.status!=='removed'))throw new Error('该邮箱已在成员或邀请列表中');const next=rsClone(RS.data),p=next.shared.find(x=>x.id===sid);
- const m={id:rsId('member'),name:name.trim()||email.split('@')[0],email,role,status:'invited',token:rsId('invite'),at:nowStamp()};p.members.push(m);p.events.push({at:nowStamp(),by:RS.actor,text:'邀请成员：'+email});await rsSave(next);return m;
+ const m={id:rsId('member'),name:name.trim()||email.split('@')[0],institute:String(institute).trim().slice(0,100),email,role,status:'invited',token:rsId('invite'),at:nowStamp()};p.members.push(m);p.events.push({at:nowStamp(),by:RS.actor,text:'邀请成员：'+email});await rsSave(next);return m;
 }
 async function rsAccept(sid,mid){const s=RS.data.shared.find(s=>s.id===sid);if(!rsCan(s,'manage'))throw new Error('没有邀请管理权限');const next=rsClone(RS.data),p=next.shared.find(s=>s.id===sid),m=p.members.find(m=>m.id===mid);if(!m||m.status!=='invited')throw new Error('邀请已失效');m.status='active';m.joined=nowStamp();p.events.push({at:nowStamp(),by:RS.actor,text:'确认加入：'+m.name});await rsSave(next);}
 async function rsChangeMember(sid,mid,role,remove=false){
@@ -20334,10 +20455,51 @@ function rsRequestDialog(id,draft={}){
   },0);
  };
 }
-function rsMembersDialog(){const s=rsShared();if(!s)return;modal('成员与邀请','<div class="rs-dialog-scroll">'+'<div class="rs-member-list">'+s.members.filter(m=>m.status!=='removed').map(m=>'<div class="rs-member"><span class="rs-avatar">'+esc(m.name.slice(0,1))+'</span><div><strong>'+esc(m.name)+'</strong><small>'+esc(m.email||'未设置邮箱')+' · '+(m.status==='active'?'已加入':'待接受')+'</small></div><span class="rs-tag">'+rsRoleNames[m.role]+'</span>'+(rsCan(s,'manage')&&m.role!=='owner'?'<div class="rs-actions">'+(m.status==='invited'?'<button class="rs-link" type="button" data-rs-accept="'+m.id+'">确认加入</button>':'<button class="rs-link" type="button" data-rs-member-role="'+m.id+'">调整角色</button>')+'<button class="rs-link is-danger" type="button" data-rs-remove="'+m.id+'">'+(m.status==='invited'?'撤销邀请':'移除')+'</button></div>':'')+'</div>').join('')+'</div>'+(rsCan(s,'manage')?'<button class="btn btn-pri" type="button" id="rs-invite-open">邀请成员</button>':'')+(rsCan(s,'own')&&s.members.filter(m=>m.status==='active').length>1?'<button class="btn" type="button" id="rs-transfer-open">转交所有权</button>':'')+'</div>','完成',()=>{});rsBindDialog();}
-function rsInviteDialog(){const s=rsShared();modal('邀请成员','<label class="rs-field"><span>邮箱</span><input type="email" class="input" id="rs-invite-email" placeholder="researcher@example.com"></label><label class="rs-field"><span>姓名</span><input class="input" id="rs-invite-name" maxlength="30"></label><label class="rs-field"><span>项目角色</span><select class="input" id="rs-invite-role">'+(rsCan(s,'own')?'<option value="admin">管理员</option>':'')+'<option value="editor" selected>协作者</option><option value="viewer">查看者</option></select></label>','邀请成员',()=>rsModalSave(async()=>{await rsInvite(s.id,document.getElementById('rs-invite-email').value.trim(),document.getElementById('rs-invite-name').value,document.getElementById('rs-invite-role').value);toast('邀请已创建');}));}
+function rsMembersDialog(){const s=rsShared();if(!s)return;modal('成员与邀请','<div class="rs-dialog-scroll">'+'<div class="rs-member-list">'+s.members.filter(m=>m.status!=='removed').map(m=>'<div class="rs-member"><span class="rs-avatar">'+esc(m.name.slice(0,1))+'</span><div><strong>'+esc(m.name)+'</strong><small>'+esc(m.institute||'研究院未填写')+' · '+esc(m.email||'未设置邮箱')+' · '+(m.status==='active'?'已加入':'待接受')+'</small></div><span class="rs-tag">'+rsRoleNames[m.role]+'</span>'+(rsCan(s,'manage')&&m.role!=='owner'?'<div class="rs-actions">'+(m.status==='invited'?'<button class="rs-link" type="button" data-rs-accept="'+m.id+'">确认加入</button>':'<button class="rs-link" type="button" data-rs-member-role="'+m.id+'">调整角色</button>')+'<button class="rs-link is-danger" type="button" data-rs-remove="'+m.id+'">'+(m.status==='invited'?'撤销邀请':'移除')+'</button></div>':'')+'</div>').join('')+'</div>'+(rsCan(s,'manage')?'<button class="btn btn-pri" type="button" id="rs-invite-open">增加协作者</button>':'')+(rsCan(s,'own')&&s.members.filter(m=>m.status==='active').length>1?'<button class="btn" type="button" id="rs-transfer-open">转交所有权</button>':'')+'</div>','完成',()=>{});rsBindDialog();}
+function rsInviteDialog(){const s=rsShared();modal('邀请成员','<label class="rs-field"><span>邮箱</span><input type="email" class="input" id="rs-invite-email" placeholder="researcher@example.com"></label><label class="rs-field"><span>姓名</span><input class="input" id="rs-invite-name" maxlength="30"></label><label class="rs-field"><span>研究院名称（选填）</span><input class="input" id="rs-invite-institute" maxlength="100" placeholder="填写所属研究院"></label><label class="rs-field"><span>项目角色</span><select class="input" id="rs-invite-role">'+(rsCan(s,'own')?'<option value="admin">管理员</option>':'')+'<option value="editor" selected>协作者</option><option value="viewer">查看者</option></select></label>','邀请成员',()=>rsModalSave(async()=>{await rsInvite(s.id,document.getElementById('rs-invite-email').value.trim(),document.getElementById('rs-invite-name').value,document.getElementById('rs-invite-role').value,document.getElementById('rs-invite-institute').value);toast('邀请已创建');}));}
 function rsRequestsDialog(){const s=rsShared(),rows=s.requests.filter(r=>rsCan(s,'approve')||r.actor===RS.actor),labels={pending:'待审批',approved:'待导入',rejected:'已拒绝',revoked:'已撤回',imported:'已导入'};modal('资产获取申请','<div class="rs-dialog-scroll">'+(rows.length?rows.map(r=>{const a=s.assets.find(a=>a.id===r.assetId);return '<div class="rs-request"><div class="rs-card-top"><strong>'+esc(a?.name||'来源资产已不存在')+'</strong><span class="rs-tag">'+labels[r.state]+'</span></div><p>'+esc(s.members.find(m=>m.id===r.actor)?.name||r.actor)+' → '+esc(rsProject(r.target)?.name||r.target)+'</p><small>'+esc(r.version)+' · '+esc(r.fingerprint)+'</small><p class="rs-help">'+esc((r.reason||'未填写理由')+(r.reviewReason?'；审核意见：'+r.reviewReason:'')+(r.revocationReason?'；撤回原因：'+r.revocationReason:''))+'</p><div class="rs-actions">'+(r.state==='pending'&&rsCan(s,'approve')?'<button class="btn btn-pri" data-rs-approve="'+r.id+'">批准</button><button class="btn" data-rs-reject="'+r.id+'">拒绝</button>':'')+(r.state==='pending'&&r.actor===RS.actor?'<button class="btn" data-rs-withdraw-request="'+r.id+'">撤回申请</button>':'')+(r.state==='approved'&&r.actor===RS.actor?'<button class="btn btn-pri" data-rs-import="'+r.id+'">确认导入</button>':'')+(r.state==='imported'?'<span class="rs-help">已复制到目标项目，来源与版本保持可追溯。</span>':'')+'</div></div>';}).join(''):'<div class="rs-soft-empty">暂无获取申请</div>')+'</div>','完成',()=>{});rsBindDialog();}
 function rsPublishDialog(){const s=rsShared(),items=rsCandidates(s.projectId).filter(a=>!s.assets.some(x=>x.id===a.id));modal('共享资产','<p class="rs-help">勾选新增或已变化的版本。已共享的旧版本会保留，不会覆盖已有申请。</p><div class="rs-dialog-scroll">'+(items.length?items.map(a=>'<label class="rs-select-asset"><input type="checkbox" data-rs-new-asset="'+esc(a.id)+'" checked><span><strong>'+esc(a.name)+'</strong><small>'+rsAssetLabel(a.kind)+' · '+esc(a.version)+'</small></span></label>').join(''):'<div class="rs-soft-empty">没有新版本可发布</div>')+'</div>','共享所选资产',()=>rsModalSave(async()=>{await rsPublishAssets(s.id,[...document.querySelectorAll('[data-rs-new-asset]:checked')].map(e=>e.dataset.rsNewAsset));}));}
+
+function rsPublishModelDialog(id){
+ const model=mdlFind(id);
+ if(!model||!inLib(model))return;
+ if(!RS.ready||RS.error){toast(RS.error||'正在读取本机工作空间');return}
+ const project=rsProject(model._pid);
+ const candidates=()=>rsCandidates(model._pid).filter(item=>item.kind==='model'&&item.sourceId===id);
+ const asset=candidates()[0];
+ if(!project||!asset){toast('当前模型没有可发布的版本');return}
+ const shared=rsProjectShared(project.id);
+ const info=`<dl class="rs-details">
+   <dt>模型</dt><dd>${esc(asset.name)} · ${esc(id)}</dd>
+   <dt>发布版本</dt><dd>${esc(asset.version)}</dd>
+   <dt>来源课题</dt><dd>${esc(project.name)}</dd>
+   <dt>发布范围</dt><dd>${shared?esc(shared.name)+'的成员':'关联课题的共享项目成员'}</dd>
+ </dl><p class="rs-help">发布后会保存一份模型版本快照。当前 Demo 将共享记录保存在本机。</p>`;
+ if(!shared){
+   if(!can('edit')||(project.ownerId||'me')!=='me'){toast('需要课题所有者先开启共享');return}
+   modal('发布模型',info+'<p class="rs-help">该课题尚未开启共享。继续后可确认项目名称与共享内容。</p>','设置课题共享',()=>{
+     RS.sharedForm={mode:'existing',pid:project.id,name:project.name,goal:project.desc||'',assets:[asset.id],initialized:true};
+     go('sharednew');
+   });
+   return;
+ }
+ if(shared.assets.some(item=>item.id===asset.id)&&rsCan(shared,'read')){
+   modal('发布模型',info+'<p class="rs-help">此版本已发布到关联课题的共享项目。</p>','查看共享项目',()=>{
+     RS.sharedPick=shared.id;LS.set('rs_shared_pick',shared.id);RS.tab='assets';
+     RS.assetTab='exp';RS.assetPick=asset.id;go('shareddetail');
+   });
+   return;
+ }
+ if(!can('edit')||!rsCan(shared,'publish')){toast('当前身份没有发布权限');return}
+ modal('发布模型',info,'确认发布',()=>rsModalSave(async()=>{
+   if(!can('edit'))throw new Error('当前身份没有发布权限');
+   if(!candidates().some(item=>item.id===asset.id))throw new Error('模型版本已变化，请重新打开发布窗口');
+   const current=RS.data.shared.find(item=>item.id===shared.id);
+   if(!rsCan(current,'publish'))throw new Error('当前身份没有发布权限');
+   if(!current.assets.some(item=>item.id===asset.id))await rsPublishAssets(shared.id,[asset.id]);
+   toast('模型已发布到共享项目');
+ }));
+}
 function rsBindDialog(){const d=document.getElementById('dlg'),s=rsShared();if(!s)return;
  const bind=(q,fn)=>d.querySelectorAll(q).forEach(e=>e.onclick=()=>fn(e));
  bind('#rs-invite-open',()=>{d.close();setTimeout(rsInviteDialog,0);});
@@ -20374,11 +20536,12 @@ const rsOriginalProject=V.project;V.project=()=>{const html=rsOriginalProject(),
 const RS_SUBJECTS=['生命科学','医学','化学','材料科学','计算机科学','地球科学'];
 const RS_TAGS=['蛋白设计','结构预测','序列分析','亲和力','稳定性','实验表征','数据处理','分子对接','酶工程','知识检索'];
 const rsResourceStates={draft:'草稿',private:'私有资源',pending:'待审核',published:'已发布',rejected:'审核未通过'};
-function rsNewResource(kind){return {kind,editId:null,slug:'',name:'',description:'',github:'',subjects:[],tags:[],cover:'auto',version:'v1.0.0',visibility:'private',sourceKind:'upload',sourceUrl:'',cap:'',format:'auto',license:'未确认',licenseUrl:'',files:[],manifest:[],preview:null,manual:{},errors:{},uploadError:'',uploading:false,generation:0};}
+function rsNewResource(kind){return {kind,editId:null,slug:'',name:'',description:'',github:'',subjects:kind==='tool'?['生命科学']:[],tags:[],cover:'auto',version:'v1.0.0',visibility:'private',wizardStep:1,toolMode:'code',language:'python',code:'',endpoint:'',method:'POST',auth:'none',credentialRef:'',requestExample:'{}',responseExample:'{}',sourceKind:'upload',sourceUrl:'',cap:'',format:'auto',license:'未确认',licenseUrl:'',files:[],manifest:[],preview:null,manual:{},errors:{},uploadError:'',uploading:false,generation:0};}
 function rsStartResource(kind,id){
  const old=RS.data.resources.find(r=>r.id===id);let f=rsNewResource(kind);
- if(old){if(old.state==='pending'){toast('请先撤回审核，再修改内容');return;}f=Object.assign(f,rsClone(old),{editId:old.id,files:[],manual:{slug:true,name:true,description:true},errors:{},uploadError:'',uploading:false,generation:0});
+ if(old){if(kind==='tool'&&!old.toolMode)f.toolMode='skill';if(old.state==='pending'){toast('请先撤回审核，再修改内容');return;}f=Object.assign(f,rsClone(old),{editId:old.id,files:[],manual:{slug:true,name:true,description:true},errors:{},uploadError:'',uploading:false,generation:0});
  if(!['draft','rejected'].includes(old.state)){const parts=old.version.replace(/^v/,'').split('.').map(Number);f.version='v'+parts[0]+'.'+parts[1]+'.'+(parts[2]+1);}}
+ if(kind==='tool'){f.subjects=['生命科学'];f.wizardStep=1;f.scrollTop=0;}
  RS.form=f;go(kind==='tool'?'toolnew':'databasenew');
 }
 function rsFrontmatter(text){const m=/^\uFEFF?---\s*\r?\n([\s\S]*?)\r?\n---/.exec(text);const out={};if(!m)return out;const lines=m[1].split(/\r?\n/);for(let i=0;i<lines.length;i++){const match=/^([a-zA-Z_-]+):\s*(.*)$/.exec(lines[i]);if(!match)continue;let value=match[2].trim();if(value==='|'||value==='>'){const chunk=[];while(i+1<lines.length&&/^\s+\S/.test(lines[i+1]))chunk.push(lines[++i].trim());value=chunk.join(' ');}out[match[1]]=value.replace(/^(['"])([\s\S]*)\1$/,'$2');}return out;}
@@ -20409,23 +20572,45 @@ async function rsUpload(files){
  }catch(e){if(RS.form===f&&f.generation===generation){f.uploadError=e.message;}}
  finally{if(RS.form===f&&f.generation===generation){f.uploading=false;render();}}
 }
+function rsToolMethodChoices(f){
+ const mode=f.toolMode||'code';
+ return '<h2>创建方式</h2><div class="tool-methods" role="group" aria-label="工具创建方式">'+[['code','自己写代码','编写 Python 或 JavaScript，定义工具逻辑。'],['api','接入 API','已有接口？填写地址和请求配置。'],['skill','上传 Skill','导入 SKILL.md 或完整 Skill 文件夹。']].map(([k,n,d])=>'<button type="button" data-tool-mode="'+k+'" aria-pressed="'+(mode===k)+'" class="tool-method '+(mode===k?'is-on':'')+'"><strong>'+n+'</strong><small>'+d+'</small></button>').join('')+'</div>';
+}
+function rsToolSetup(f,upload){
+ const mode=f.toolMode||'skill';
+ const field=(key,label,placeholder='',area=false)=>'<label class="rs-field"><span>'+label+'</span>'+(area?'<textarea rows="'+(key==='code'?'12':'4')+'" spellcheck="false"':'<input type="text"')+' class="input" id="rs-form-'+key+'" data-rs-resource-field="'+key+'" placeholder="'+esc(placeholder)+'" '+rsFieldInvalid(key)+(area?'>'+esc(f[key]||'')+'</textarea>':' value="'+esc(f[key]||'')+'">')+rsFieldError(key)+'</label>';
+ const select=(key,label,options)=>'<label class="rs-field"><span>'+label+'</span><select class="input" data-rs-resource-field="'+key+'">'+options.map(([v,n])=>'<option value="'+v+'" '+(f[key]===v?'selected':'')+'>'+n+'</option>').join('')+'</select></label>';
+ let html='<section class="tool-config">';
+ if(mode==='skill')html+='<h2>上传 Skill <b class="rs-required">*</b></h2>'+upload+rsPreview(f.preview);
+ if(mode==='code')html+='<h2>编写工具代码</h2><p class="rs-help">在 Web IDE 中编辑入口文件与 JSON 示例，以 main(params) 接收参数并返回结果。</p>'+rsCodeIDE(f);
+ if(mode==='api')html+='<h2>配置 API</h2><div class="rs-fields-grid">'+select('method','请求方式',[['POST','POST'],['GET','GET'],['PUT','PUT'],['DELETE','DELETE']])+field('endpoint','接口地址 *','https://api.example.com/v1/predict')+'</div><div class="rs-fields-grid">'+select('auth','认证方式',[['none','无需认证'],['bearer','Bearer Token'],['api-key','API Key']])+field('credentialRef','凭据引用名称','例如 SCIENCE_API_KEY')+'</div><p class="rs-help">填写部署环境中的凭据名称，无需在此粘贴密钥。</p><div class="rs-fields-grid">'+field('requestExample','输入示例 · JSON','{}',true)+field('responseExample','输出示例 · JSON','{}',true)+'</div><p class="rs-help">此处保存接口配置；实际调用需接入服务端执行环境。</p>';
+ return html+'</section>';
+}
 function rsResourceErrors(f,draft=false){const errors={};if(!/^[A-Za-z0-9_-]{2,30}$/.test(f.slug))errors.slug='标识须为 2–30 位英文、数字、- 或 _';if(f.name.trim().length<2||f.name.trim().length>30||/[\u0000-\u001F]/.test(f.name))errors.name='展示名称须为 2–30 个可见字符';if(f.description.length>1000)errors.description='描述最多 1000 字';
  if(!rsValidRepo(f.github.trim()))errors.github='请输入 https://github.com/用户名/仓库名';if(RS.data.resources.some(r=>r.kind===f.kind&&r.slug.toLowerCase()===f.slug.toLowerCase()&&r.id!==f.editId))errors.slug='此标识已存在，请使用其他标识';if(f.tags.length>5)errors.tags='最多选择 5 个标签';if(f.uploading)errors.upload='文件仍在校验';
- if(!draft){if(!f.subjects.length)errors.subjects='请选择所属学科';if(f.uploadError)errors.upload=f.uploadError;if(f.kind==='tool'||f.sourceKind==='upload'){if(!f.manifest.length||!f.preview)errors.upload=f.kind==='tool'?'请上传 SKILL.md 或包含它的文件夹':'请上传数据文件';}else if(!rsValidSource(f.sourceUrl.trim()))errors.sourceUrl='请输入有效的 HTTPS 数据来源地址';}
+ if(!draft){if(f.kind!=='tool'&&!f.subjects.length)errors.subjects='请选择所属学科';if(f.uploadError&&(f.kind!=='tool'||!f.toolMode||f.toolMode==='skill'))errors.upload=f.uploadError;if((f.kind==='tool'&&(!f.toolMode||f.toolMode==='skill'))||(f.kind!=='tool'&&f.sourceKind==='upload')){if(!f.manifest.length||!f.preview)errors.upload=f.kind==='tool'?'请上传 SKILL.md 或包含它的文件夹':'请上传数据文件';}else if(f.kind!=='tool'&&!rsValidSource(f.sourceUrl.trim()))errors.sourceUrl='请输入有效的 HTTPS 数据来源地址';}
+ if(f.kind==='tool'&&!draft){
+ if(f.toolMode==='code'){if(!f.code.trim())errors.code='请填写工具代码';for(const key of ['requestExample','responseExample'])try{JSON.parse(f[key]);}catch(e){errors[key]='请填写有效的 JSON';}}
+ if(f.toolMode==='api'){
+ if(!rsValidSource(f.endpoint.trim()))errors.endpoint='请输入有效的 HTTPS 接口地址';
+ if(f.auth!=='none'&&!f.credentialRef.trim())errors.credentialRef='请填写凭据引用名称';
+ for(const key of ['requestExample','responseExample'])try{JSON.parse(f[key]);}catch(e){errors[key]='请填写有效的 JSON';}
+ }
+ }
  return errors;
 }
 async function rsSaveResource(draft=false){
- if(!can('edit'))throw new Error('当前身份没有创建权限');const f=RS.form;if(!f)throw new Error('表单不存在');f.errors=rsResourceErrors(f,draft);if(Object.keys(f.errors).length){render();requestAnimationFrame(()=>view.querySelector('[aria-invalid="true"]')?.focus());return null;}
+ if(!can('edit'))throw new Error('当前身份没有创建权限');const f=RS.form;if(!f)throw new Error('表单不存在');f.errors=rsResourceErrors(f,draft);if(Object.keys(f.errors).length){if(f.kind==='tool')f.wizardStep=Object.keys(f.errors).some(k=>['slug','name','description','github','tags'].includes(k))?1:2;render();requestAnimationFrame(()=>view.querySelector('[aria-invalid="true"]')?.focus());return null;}
  const next=rsClone(RS.data),old=next.resources.find(r=>r.id===f.editId);if(old?.state==='pending')throw new Error('请先撤回审核，再修改资源');
  const id=old?.id||rsId('resource'),history=old?.history||[];if(old&&!['draft','rejected'].includes(old.state)){const snapshot=Object.assign({},old);delete snapshot.history;history.push(snapshot);}
- const r={id,kind:f.kind,owner:'me',slug:f.slug,name:f.name.trim(),description:f.description.trim(),github:f.github.trim(),subjects:f.subjects.slice(),tags:f.tags.slice(),cover:f.cover,version:f.version,visibility:f.visibility,sourceKind:f.kind==='tool'?'upload':f.sourceKind,sourceUrl:f.sourceUrl.trim(),cap:f.cap||'',format:f.format,license:f.license,licenseUrl:f.licenseUrl.trim(),manifest:rsClone(f.manifest),preview:rsClone(f.preview),state:draft?'draft':f.visibility==='public'?'pending':'private',history,at:nowStamp(),events:(old?.events||[]).concat([{at:nowStamp(),text:draft?'保存草稿':f.visibility==='public'?'提交本机审核演示':'创建私有资源'}])};
+ const r={id,kind:f.kind,owner:'me',isExample:!!f.isExample,slug:f.slug,name:f.name.trim(),description:f.description.trim(),github:f.github.trim(),subjects:f.kind==='tool'?['生命科学']:f.subjects.slice(),tags:f.tags.slice(),cover:f.cover,version:f.version,visibility:f.visibility,toolMode:f.kind==='tool'?(f.toolMode||'skill'):undefined,language:f.language,code:f.code,endpoint:f.endpoint,method:f.method,auth:f.auth,credentialRef:f.credentialRef,requestExample:f.requestExample,responseExample:f.responseExample,sourceKind:f.kind==='tool'?(f.toolMode||'upload'):f.sourceKind,sourceUrl:f.sourceUrl.trim(),cap:f.cap||'',format:f.format,license:f.license,licenseUrl:f.licenseUrl.trim(),manifest:rsClone(f.manifest),preview:rsClone(f.preview),state:draft?'draft':f.visibility==='public'?'pending':'private',history,at:nowStamp(),events:(old?.events||[]).concat([{at:nowStamp(),text:draft?'保存草稿':f.visibility==='public'?'提交本机审核演示':'创建私有资源'}])};
  if(old)next.resources[next.resources.indexOf(old)]=r;else next.resources.unshift(r);
- const files=f.files.map((blob,i)=>({id:f.manifest[i].id,blob,path:f.manifest[i].path}));await rsSave(next,files);RS.resourcePick=id;RS.resourceVersion=null;LS.set('rs_resource_pick',id);RS.form=null;RS.marketTab='mine';NAV_PARENT.resdetail=r.kind==='database'?'data':'shelf';go('resdetail');return r;
+ const files=f.files.map((blob,i)=>({id:f.manifest[i].id,blob,path:f.manifest[i].path}));await rsSave(next,files);RS.resourcePick=id;RS.resourceVersion=null;LS.set('rs_resource_pick',id);RS.form=null;RS.marketTab='mine';NAV_PARENT.resdetail=r.kind==='database'?'data':'tools';go('resdetail');return r;
 }
 async function rsReviewResource(id,approve,reason){if(S.as!==0||!can('edit'))throw new Error('当前身份没有审核权限');const next=rsClone(RS.data),r=next.resources.find(r=>r.id===id);if(!r||r.state!=='pending')throw new Error('当前资源不在待审核状态');if(!approve&&!reason.trim())throw new Error('请填写审核未通过的原因');r.state=approve?'published':'rejected';r.review={by:'ZHANG',at:nowStamp(),reason:reason.trim()};r.events.push({at:nowStamp(),text:'审核：'+(approve?'通过':'未通过')});await rsSave(next);}
 async function rsWithdrawResource(id){const next=rsClone(RS.data),r=next.resources.find(r=>r.id===id);if(!r||r.owner!=='me'||r.state!=='pending')throw new Error('该资源不可撤回');r.state='draft';r.events.push({at:nowStamp(),text:'撤回本机审核'});await rsSave(next);}
 function rsPublishedResource(r){if(r.visibility!=='public')return null;return r.state==='published'?r:(r.history||[]).slice().reverse().find(v=>v.state==='published'&&v.visibility==='public')||null;}
-function rsResourceCard(r){return '<article class="rs-resource-card"><div class="rs-resource-cover" data-cover="'+esc(r.cover==='auto'?['molecule','sequence','network'][parseInt(fp32(r.slug).slice(-2),16)%3]:r.cover)+'"><span>'+wbViewIcon(r.kind==='tool'?'model':'paper')+'</span><small>'+esc(r.subjects.join(' / '))+'</small></div><div class="rs-resource-body"><div class="rs-card-top"><strong>'+esc(r.name)+'</strong><span class="rs-tag">'+rsResourceStates[r.state]+'</span></div><span class="rs-help">'+esc(r.slug)+' · '+esc(r.version)+'</span><p>'+esc(r.description||'暂无描述')+'</p><div class="rs-tags">'+r.tags.map(t=>'<span class="rs-tag">'+esc(t)+'</span>').join('')+'</div><div class="rs-resource-footer"><span class="rs-help">'+(r.sourceKind==='external'?'外部来源 · 未接入':r.kind==='tool'?'文件已保存 · 未接入执行':'本机文件 · 未接入检索')+'</span><button class="rs-link" type="button" data-rs-resource="'+esc(r.id)+'" data-rs-version="'+esc(r.version)+'">查看详情 →</button></div></div></article>';}
+function rsResourceCard(r){return '<article class="rs-resource-card"><div class="rs-resource-cover" data-cover="'+esc(r.cover==='auto'?['molecule','sequence','network'][parseInt(fp32(r.slug).slice(-2),16)%3]:r.cover)+'"><span>'+wbViewIcon(r.kind==='tool'?'model':'paper')+'</span><small>'+esc(r.subjects.join(' / '))+'</small></div><div class="rs-resource-body"><div class="rs-card-top"><strong>'+esc(r.name)+'</strong><span class="rs-tag">'+rsResourceStates[r.state]+'</span></div><span class="rs-help">'+esc(r.slug)+' · '+esc(r.version)+'</span><p>'+esc(r.description||'暂无描述')+'</p><div class="rs-tags">'+r.tags.map(t=>'<span class="rs-tag">'+esc(t)+'</span>').join('')+'</div><div class="rs-resource-footer"><span class="rs-help">'+(r.sourceKind==='external'?'外部来源 · 未接入':r.kind==='tool'?(r.toolMode==='api'?'API 配置已保存 · 未接入执行':r.toolMode==='code'?'代码已保存 · 未接入执行':'文件已保存 · 未接入执行'):'本机文件 · 未接入检索')+'</span><button class="rs-link" type="button" data-rs-resource="'+esc(r.id)+'" data-rs-version="'+esc(r.version)+'">查看详情 →</button></div></div></article>';}
 
 function rsFieldError(key){return '<span class="rs-inline-error" id="rs-error-'+key+'">'+esc(RS.form?.errors[key]||'')+'</span>';}
 function rsFieldInvalid(key){return RS.form?.errors[key]?' aria-invalid="true" aria-describedby="rs-error-'+key+'"':'';}
@@ -20436,41 +20621,45 @@ function rsPreview(preview){if(!preview)return '';if(preview.type==='skill')retu
 function rsResourceForm(kind){const gate=rsGate();if(gate)return gate;if(!RS.form||RS.form.kind!==kind)RS.form=rsNewResource(kind);const f=RS.form,isTool=kind==='tool',noun=isTool?'工具':'数据库';
  const input=(key,label,placeholder,max=1000)=>'<label class="rs-field"><span>'+label+'</span><input class="input" id="rs-form-'+key+'" data-rs-resource-field="'+key+'" value="'+esc(f[key]||'')+'" placeholder="'+esc(placeholder)+'" maxlength="'+max+'" '+rsFieldInvalid(key)+'>'+rsFieldError(key)+'</label>';
  const upload='<section class="rs-upload" data-rs-drop tabindex="0" role="group" aria-label="上传'+noun+'文件"><span class="rs-icon">'+wbViewIcon('paper')+'</span><strong>'+(f.uploading?'正在读取与校验文件…':'将文件拖拽到这里')+'</strong><div class="rs-actions"><button class="rs-link" type="button" data-rs-upload-file>上传文件</button><span class="rs-help">或</span><button class="rs-link" type="button" data-rs-upload-folder>上传文件夹</button></div><p class="rs-help">'+(isTool?'支持单个 SKILL.md 或包含 SKILL.md 的文件夹':'支持 CSV / TSV / JSON / FASTA / PDB，可附带说明文件')+' · 总大小不超过 25 MB</p><input hidden type="file" id="rs-upload-input" '+(isTool?'accept=".md"':'accept=".csv,.tsv,.json,.fasta,.fa,.faa,.pdb"')+'><input hidden type="file" id="rs-folder-input" webkitdirectory multiple>'+(f.manifest.length?'<div class="rs-file-summary"><span>'+f.manifest.length+' 个文件 · '+(f.manifest.reduce((n,x)=>n+x.size,0)/1024).toFixed(1)+' KB · 校验完成</span><button class="rs-link" type="button" data-rs-clear-files>移除</button></div>':'')+'<div class="rs-inline-error" role="alert">'+esc(f.uploadError||f.errors.upload||'')+'</div></section>';
- return '<div class="page rs rs-framed-form">'+rsHeader((f.editId?'更新':'新建')+noun,isTool?'把可复用的科研方法，整理为一个有版本的 Skill。':'登记数据来源、文件和说明，让数据可以被理解与复用。','<button class="btn" type="button" data-rs-back-market>返回'+(isTool?'生命科学工具':'生命科学数据')+'</button>')+'<div class="rs-form-layout"><div class="rs-form-card"><div class="rs-form-scroll" data-rs-form-scroll="resource">'+(Object.keys(f.errors).length?'<div class="rs-error-summary" role="alert" tabindex="-1">请补全：'+Object.values(f.errors).map(esc).join('；')+'</div>':'')+
+ return '<div class="page rs rs-framed-form">'+rsHeader((f.editId?'更新':'新建')+noun,isTool?'编写代码、接入 API 或上传 Skill，创建可复用的科研工具。':'登记数据来源、文件和说明，让数据可以被理解与复用。','<button class="btn" type="button" data-rs-back-market>返回'+(isTool?'工具列表':'公共数据库')+'</button>')+'<div class="rs-form-layout"><div class="rs-form-card"><div class="rs-form-scroll" data-rs-form-scroll="resource">'+(Object.keys(f.errors).length?'<div class="rs-error-summary" role="alert" tabindex="-1">请补全：'+Object.values(f.errors).map(esc).join('；')+'</div>':'')+
+ (isTool?toolWizardNav(f):'')+
  (!isTool?'<h2>数据来源</h2><div class="rs-choice-row">'+[['upload','上传数据文件'],['external','登记外部数据库']].map(([k,n])=>'<label class="rs-choice"><input type="radio" name="rsource" data-rs-source-kind="'+k+'" '+(f.sourceKind===k?'checked':'')+'>'+n+'</label>').join('')+'</div>':'')+
- (isTool||f.sourceKind==='upload'?'<h2 style="margin-top:'+(isTool?'0':'24px')+'">上传'+(isTool?' Skill':'数据')+' <b class="rs-required">*</b></h2>'+upload+rsPreview(f.preview):input('sourceUrl','数据库地址 <b>*</b>','https://example.org/database',1000)+'<p class="rs-help">登记来源信息，不会自动连接数据库或发起数据抓取。</p>')+
- '<h2 style="margin-top:28px">基本信息</h2><div class="rs-fields-grid">'+input('slug',(isTool?'Skill':'数据库')+' 标识 <b>*</b>','2–30 位英文、数字、- 或 _',30)+input('name','展示名称 <b>*</b>','2–30 个可见字符',30)+'</div><label class="rs-field"><span>'+noun+'描述</span><textarea class="input" id="rs-form-description" data-rs-resource-field="description" rows="4" maxlength="1000" placeholder="说明主要内容、能力与适用场景" '+rsFieldInvalid('description')+'>'+esc(f.description)+'</textarea><span class="rs-field-hint"><span data-rs-count="description">'+f.description.length+'</span>/1000</span>'+rsFieldError('description')+'</label>'+'<label class="rs-field"><span>适用环节</span><select class="input" data-rs-resource-field="cap"><option value="">通用／未分类</option>'+CAPS.map(c=>'<option value="'+esc(c.id)+'" '+(f.cap===c.id?'selected':'')+'>'+esc(c.sn||c.n)+'</option>').join('')+'</select></label>'+input('github','GitHub 仓库','https://github.com/username/repository',300)+
+ (isTool?'<section data-tool-step-panel="2" '+(f.wizardStep!==2?'hidden':'')+'>'+rsToolSetup(f,upload)+'</section>':f.sourceKind==='upload'?'<h2 style="margin-top:'+(isTool?'0':'24px')+'">上传'+(isTool?' Skill':'数据')+' <b class="rs-required">*</b></h2>'+upload+rsPreview(f.preview):input('sourceUrl','数据库地址 <b>*</b>','https://example.org/database',1000)+'<p class="rs-help">登记来源信息，不会自动连接数据库或发起数据抓取。</p>')+
+ (isTool?'<section data-tool-step-panel="1" '+(f.wizardStep===2?'hidden':'')+'>'+rsToolMethodChoices(f):'')+
+ '<h2 style="margin-top:28px">基本信息</h2><div class="rs-fields-grid">'+input('slug',(isTool?'工具':'数据库')+' 标识 <b>*</b>','2–30 位英文、数字、- 或 _',30)+input('name','展示名称 <b>*</b>','2–30 个可见字符',30)+'</div><label class="rs-field"><span>'+noun+'描述</span><textarea class="input" id="rs-form-description" data-rs-resource-field="description" rows="4" maxlength="1000" placeholder="说明主要内容、能力与适用场景" '+rsFieldInvalid('description')+'>'+esc(f.description)+'</textarea><span class="rs-field-hint"><span data-rs-count="description">'+f.description.length+'</span>/1000</span>'+rsFieldError('description')+'</label>'+'<label class="rs-field"><span>适用环节</span><select class="input" data-rs-resource-field="cap"><option value="">通用／未分类</option>'+CAPS.map(c=>'<option value="'+esc(c.id)+'" '+(f.cap===c.id?'selected':'')+'>'+esc(c.sn||c.n)+'</option>').join('')+'</select></label>'+input('github','GitHub 仓库','https://github.com/username/repository',300)+
  (!isTool?'<div class="rs-fields-grid"><label class="rs-field"><span>数据格式</span><select class="input" data-rs-resource-field="format">'+['auto','CSV','TSV','JSON','FASTA','PDB'].map(k=>'<option value="'+k+'" '+(f.format===k?'selected':'')+'>'+(k==='auto'?'按文件自动识别':k)+'</option>').join('')+'</select></label><label class="rs-field"><span>许可说明</span><select class="input" data-rs-resource-field="license">'+['未确认','CC0','CC-BY-4.0','CC-BY-NC-4.0','自定义许可'].map(k=>'<option '+(f.license===k?'selected':'')+'>'+k+'</option>').join('')+'</select></label></div>'+input('licenseUrl','许可／使用条款链接','可选，填写发布方条款地址',1000):'')+
- '<section class="rs-field"><span>所属学科 <b>*</b></span><div class="rs-choice-row">'+RS_SUBJECTS.map(subject=>'<label class="rs-choice"><input type="checkbox" data-rs-subject="'+subject+'" '+(f.subjects.includes(subject)?'checked':'')+'>'+subject+'</label>').join('')+'</div>'+rsFieldError('subjects')+'</section><section class="rs-field"><span>所属标签 <small>最多 5 个</small></span><div class="rs-tag-options">'+RS_TAGS.map(tag=>'<label class="rs-tag-choice"><input type="checkbox" data-rs-tag="'+tag+'" '+(f.tags.includes(tag)?'checked':'')+'>'+tag+'</label>').join('')+'</div>'+rsFieldError('tags')+'</section><section class="rs-field"><span>封面 <small>可选</small></span>'+(f.subjects.length?'<div class="rs-cover-options">'+[['auto','自动选择'],['molecule','分子图谱'],['sequence','序列纹理'],['network','研究网络']].map(([k,n])=>'<button type="button" class="rs-cover-choice'+(f.cover===k?' is-on':'')+'" data-rs-cover="'+k+'" aria-pressed="'+(f.cover===k)+'"><span>'+wbViewIcon(k==='sequence'?'paper':'model')+'</span>'+n+'</button>').join('')+'</div>':'<p class="rs-help">先选择所属学科，再选择对应封面。</p>')+'</section><label class="rs-field"><span>版本号</span><input class="input" value="'+esc(f.version)+'" readonly aria-label="资源版本号"><span class="rs-help">'+(f.editId?'更新已创建资源会自动增加修订版本，保留旧版来源。':'首次上传固定为 v1.0.0。')+'</span></label><section class="rs-field"><span>可见性 <b>*</b></span><div class="rs-visibility">'+[['private','私有','仅在我的提交中展示'],['public','公开','通过审核后进入公共目录']].map(([k,n,desc])=>'<label class="rs-visibility-choice"><input type="radio" name="rvisibility" data-rs-visibility="'+k+'" '+(f.visibility===k?'checked':'')+'><span><strong>'+n+'</strong><small>'+desc+'</small></span></label>').join('')+'</div></section></div><div class="rs-form-footer"><span class="rs-form-storage-note">本机保存 · 审核流程演示</span><button class="btn" type="button" data-rs-back-market>取消</button><button class="btn" type="button" data-rs-save-resource="draft" '+(f.uploading?'disabled':'')+'>保存草稿</button><button class="btn btn-pri" type="button" data-rs-save-resource="create" '+(f.uploading?'disabled':'')+'>'+(f.visibility==='public'?'提交审核':'创建私有'+noun)+'</button></div></div><aside class="rs-side-card"><h2>创建之后</h2><ol><li>校验文件与基本信息。</li><li>私有资源保存在“我的提交”。</li><li>公开资源进入审核演示流程。</li><li>保留版本、文件校验值与历史记录。</li></ol><p class="rs-local-note">文件保存在本机浏览器，上传不会执行 Skill 内容，也不会自动接入工具或数据库。公开审核为本机演示，未对外发布。</p></aside></div></div>';
+ (!isTool?'<section class="rs-field"><span>所属学科 <b>*</b></span><div class="rs-choice-row">'+RS_SUBJECTS.map(subject=>'<label class="rs-choice"><input type="checkbox" data-rs-subject="'+subject+'" '+(f.subjects.includes(subject)?'checked':'')+'>'+subject+'</label>').join('')+'</div>'+rsFieldError('subjects')+'</section>':'')+'<section class="rs-field"><span>所属标签 <small>最多 5 个</small></span><div class="rs-tag-options">'+RS_TAGS.map(tag=>'<label class="rs-tag-choice"><input type="checkbox" data-rs-tag="'+tag+'" '+(f.tags.includes(tag)?'checked':'')+'>'+tag+'</label>').join('')+'</div>'+rsFieldError('tags')+'</section><section class="rs-field"><span>封面 <small>可选</small></span>'+(isTool||f.subjects.length?'<div class="rs-cover-options">'+[['auto','自动选择'],['molecule','分子图谱'],['sequence','序列纹理'],['network','研究网络']].map(([k,n])=>'<button type="button" class="rs-cover-choice'+(f.cover===k?' is-on':'')+'" data-rs-cover="'+k+'" aria-pressed="'+(f.cover===k)+'"><span>'+wbViewIcon(k==='sequence'?'paper':'model')+'</span>'+n+'</button>').join('')+'</div>':'<p class="rs-help">先选择所属学科，再选择对应封面。</p>')+'</section><label class="rs-field"><span>版本号</span><input class="input" value="'+esc(f.version)+'" readonly aria-label="资源版本号"><span class="rs-help">'+(f.editId?'更新已创建资源会自动增加修订版本，保留旧版来源。':'首次上传固定为 v1.0.0。')+'</span></label><section class="rs-field"><span>可见性 <b>*</b></span><div class="rs-visibility">'+[['private','私有',isTool?'仅在个人工具中保存':'仅在我的提交中展示'],['public',isTool?'发布到市场':'公开','通过审核后进入公共目录']].map(([k,n,desc])=>'<label class="rs-visibility-choice"><input type="radio" name="rvisibility" data-rs-visibility="'+k+'" '+(f.visibility===k?'checked':'')+'><span><strong>'+n+'</strong><small>'+desc+'</small></span></label>').join('')+'</div></section>'+(isTool?'</section>':'')+'</div><div class="rs-form-footer"><span class="rs-form-storage-note">本机保存 · 审核流程演示</span>'+(isTool&&f.wizardStep===2?'<button class="btn" type="button" data-tool-wizard-step="1">上一步</button>':'')+'<button class="btn" type="button" data-rs-back-market>取消</button><button class="btn" type="button" data-rs-save-resource="draft" '+(f.uploading?'disabled':'')+'>保存草稿</button>'+(isTool&&f.wizardStep!==2?'<button class="btn btn-pri" type="button" data-tool-wizard-step="2">下一步：'+toolWizardLabel(f)+'</button>':'<button class="btn btn-pri" type="button" data-rs-save-resource="create" '+(f.uploading?'disabled':'')+'>'+(f.visibility==='public'?'提交审核':f.editId?'保存修改':'创建私有'+noun)+'</button>')+'</div></div><aside class="rs-side-card"><h2>创建之后</h2><ol><li>校验文件与基本信息。</li><li>私有资源保存在“我的提交”。</li><li>公开资源进入审核演示流程。</li><li>保留版本、文件校验值与历史记录。</li></ol><p class="rs-local-note">文件保存在本机浏览器，上传不会执行 Skill 内容，也不会自动接入工具或数据库。公开审核为本机演示，未对外发布。</p></aside></div></div>';
 }
 V.toolnew=()=>rsResourceForm('tool');V.databasenew=()=>rsResourceForm('database');
 const rsBuiltinShelf=V.shelf,rsBuiltinData=V.data;
 function rsMarketTabs(kind){return '<div class="rs-market-tabs" role="group" aria-label="资源范围">'+[['catalog','公共精选'],['mine','我的提交']].map(([k,n])=>'<button type="button" data-rs-market-tab="'+k+'" data-rs-kind="'+kind+'" class="'+((RS.marketTab||'catalog')===k?'is-on':'')+'" aria-pressed="'+((RS.marketTab||'catalog')===k)+'">'+n+'</button>').join('')+'</div>';}
-function rsMarketPage(kind){const isTool=kind==='tool',noun=isTool?'工具':'数据库',title=isTool?'生命科学工具':'生命科学数据',create='<button class="btn btn-pri" type="button" data-rs-new-resource="'+kind+'">新建'+noun+'</button>';
- if(RS.marketTab==='mine'){const items=RS.data.resources.filter(r=>r.kind===kind&&r.owner==='me');return '<div class="page rs">'+rsHeader(title,'管理自己的文件、版本与发布状态。',create)+rsMarketTabs(kind)+'<p class="rs-local-note">私有资源仅在本机可见；公开审核和发布为本机流程演示，未上传到端砚或其他服务。</p>'+(items.length?'<div class="rs-project-grid">'+items.map(rsResourceCard).join('')+'</div>':'<div class="rs-empty"><h2>创建你的第一个'+noun+'</h2><p>上传文件、完善信息，建立可以复用的资源版本。</p>'+create+'</div>')+'</div>';}
+function rsMarketPage(kind,scope=RS.marketTab){const isTool=kind==='tool',personal=S.route==='tools',noun=isTool?'工具':'数据库',title=personal?'工具':isTool?'科研工具':'公共数据库',create='<button class="btn btn-pri" type="button" data-rs-new-resource="'+kind+'">新建'+noun+'</button>';
+ if(scope==='mine'){const items=RS.data.resources.filter(r=>r.kind===kind&&r.owner==='me');return '<div class="page rs">'+rsHeader(title,'管理自己的文件、版本与发布状态。',create)+(personal?'':rsMarketTabs(kind))+'<p class="rs-local-note">私有资源仅在本机可见；公开审核和发布为本机流程演示，未上传到端砚或其他服务。</p>'+(items.length?'<div class="rs-project-grid">'+items.map(rsResourceCard).join('')+'</div>':'<div class="rs-empty"><h2>创建你的第一个'+noun+'</h2><p>上传文件、完善信息，建立可以复用的资源版本。</p>'+create+'</div>')+'</div>';}
  let html=(isTool?rsBuiltinShelf:rsBuiltinData)();html=html.replace('<h1>'+title+'</h1>','<h1>'+title+'</h1>');
  html=html.replace(isTool?'<label class="fbar-q">':'<div class="field" style="width:auto">',create+(isTool?'<label class="fbar-q">':'<div class="field" style="width:auto">'));
  html=html.replace('<div class="fltrow">',rsMarketTabs(kind)+'<div class="fltrow">');
  const query=String(isTool?S.tq||'':S.dq||'').toLowerCase();const pick=isTool?S.shcap:S.dcap;const items=RS.data.resources.filter(r=>r.kind===kind).map(rsPublishedResource).filter(Boolean).filter(r=>!pick||pick==='全部'||r.cap===pick).filter(r=>!query||[r.name,r.slug,r.description,...r.tags].join(' ').toLowerCase().includes(query));
- if(items.length&&(!isTool||S.use==='SKILL'||S.use==='全部')){const cards='<section class="rs-card rs-created-catalog"><div class="rs-card-top"><h2>本机发布的'+noun+'</h2><span class="rs-tag">审核流程演示</span></div><div class="rs-project-grid">'+items.map(rsResourceCard).join('')+'</div></section>';const fragment=document.createElement('template');fragment.innerHTML=html;const anchor=fragment.content.querySelector(isTool?'.sgrid':'.dgrid')||fragment.content.querySelector('.empty');if(anchor){const section=document.createElement('div');section.innerHTML=cards;anchor.before(section.firstElementChild);if(anchor.classList.contains('empty'))anchor.remove();html=fragment.innerHTML;}}
+ if(items.length){const cards='<section class="rs-card rs-created-catalog"><div class="rs-card-top"><h2>'+ (isTool?'用户发布的工具':'本机发布的数据库')+'</h2><span class="rs-tag">审核流程演示</span></div><div class="rs-project-grid">'+items.map(rsResourceCard).join('')+'</div></section>';const fragment=document.createElement('template');fragment.innerHTML=html;const anchor=fragment.content.querySelector(isTool?'.sgrid':'.dgrid')||fragment.content.querySelector('.empty');if(anchor){const section=document.createElement('div');section.innerHTML=cards;anchor.before(section.firstElementChild);if(anchor.classList.contains('empty'))anchor.remove();html=fragment.innerHTML;}}
  return html;
 }
-V.shelf=()=>rsMarketPage('tool');V.data=()=>rsMarketPage('database');
+V.shelf=()=>rsMarketPage('tool');V.data=()=>rsMarketPage('database');V.tools=()=>rsMarketPage('tool','mine');
 V.resdetail=()=>{
- const gate=rsGate();if(gate)return gate;const record=RS.data.resources.find(r=>r.id===RS.resourcePick);if(!record)return '<div class="page rs"><header class="iteration-head"><div><h1>资源不存在</h1><p>该资源可能已移除，或不在当前浏览器保存的记录中。</p></div></header><section class="rs-card"><h2>重新选择资源</h2><p class="rs-help">可返回工具或数据列表，查看可用资源及我的提交。</p><div class="rs-actions"><button class="btn" type="button" data-go="shelf">生命科学工具</button><button class="btn" type="button" data-go="data">生命科学数据</button></div></section></div>';
+ const gate=rsGate();if(gate)return gate;const record=RS.data.resources.find(r=>r.id===RS.resourcePick);if(!record)return '<div class="page rs"><header class="iteration-head"><div><h1>资源不存在</h1><p>该资源可能已移除，或不在当前浏览器保存的记录中。</p></div></header><section class="rs-card"><h2>重新选择资源</h2><p class="rs-help">可返回工具或数据列表，查看可用资源及我的提交。</p><div class="rs-actions"><button class="btn" type="button" data-go="shelf">科研工具</button><button class="btn" type="button" data-go="data">公共数据库</button></div></section></div>';
  const r=RS.resourceVersion&&RS.resourceVersion!==record.version?(record.history||[]).find(v=>v.version===RS.resourceVersion)||record:record,noun=r.kind==='tool'?'工具':'数据库';
- const actions='<button class="btn" type="button" data-rs-back-resource-market="'+r.kind+'">返回我的提交</button>'+(r===record&&r.state!=='pending'?'<button class="btn btn-pri" type="button" data-rs-edit-resource="'+r.id+'">'+(['draft','rejected'].includes(r.state)?'继续编辑':'更新版本')+'</button>':'')+(r===record&&r.state==='pending'?'<button class="btn" type="button" data-rs-withdraw="'+r.id+'">撤回审核</button><button class="btn btn-pri" type="button" data-rs-review="'+r.id+'">预览审核流程</button>':'');
- return '<div class="page rs">'+rsHeader(r.name,r.slug+' · '+r.version+' · '+noun,actions)+'<div class="rs-context"><span class="rs-tag">'+rsResourceStates[r.state]+'</span><span class="rs-help">'+(r.visibility==='public'?'公开范围 · 本机演示':'私有范围 · 当前浏览器')+'</span>'+(r!==record?'<span class="rs-tag">历史公开版本</span>':'')+'</div><p class="rs-local-note">当前保存与审核发生在本机，不会自动执行 Skill、连接数据库或对外发布。文件内容仅作为资源数据处理。</p><section class="rs-card"><h2>资源说明</h2><p class="rs-description">'+esc(r.description||'暂无描述')+'</p><dl class="rs-details"><dt>所属学科</dt><dd>'+esc(r.subjects.join('、')||'未选择')+'</dd><dt>标签</dt><dd>'+esc(r.tags.join('、')||'未选择')+'</dd><dt>GitHub</dt><dd>'+(r.github?'<a href="'+esc(r.github)+'" target="_blank" rel="noopener noreferrer">'+esc(r.github)+'</a>':'未填写')+'</dd>'+(r.kind==='database'?'<dt>数据来源</dt><dd>'+(r.sourceKind==='external'?'<a href="'+esc(r.sourceUrl)+'" target="_blank" rel="noopener noreferrer">'+esc(r.sourceUrl)+'</a>':'上传文件')+'</dd><dt>许可</dt><dd>'+esc(r.license||'未确认')+'</dd>':'')+'</dl>'+(r.review?'<p class="rs-help">本机审核演示：'+esc(r.review.reason||'审核通过')+' · '+esc(r.review.at)+'</p>':'')+'</section>'+
+ const actions='<button class="btn" type="button" data-rs-back-resource-market="'+r.kind+'">'+(r.kind==='tool'?'返回工具列表':'返回我的提交')+'</button>'+(r===record&&r.state!=='pending'?'<button class="btn btn-pri" type="button" data-rs-edit-resource="'+r.id+'">'+(r.kind==='tool'?'编辑工具':['draft','rejected'].includes(r.state)?'继续编辑':'更新版本')+'</button>':'')+(r===record&&r.state==='pending'? (r.kind==='tool'&&r.owner==='me'?'<button class="btn btn-pri" type="button" data-tl-edit="'+r.id+'">撤回并编辑</button>':'')+'<button class="btn" type="button" data-rs-withdraw="'+r.id+'">撤回审核</button><button class="btn btn-pri" type="button" data-rs-review="'+r.id+'">预览审核流程</button>':'');
+ return '<div class="page rs">'+rsHeader(r.name,r.slug+' · '+r.version+' · '+noun,actions)+'<div class="rs-context">'+(r.isExample?'<span class="rs-tag">可编辑示例 · 未执行</span>':'')+'<span class="rs-tag">'+rsResourceStates[r.state]+'</span><span class="rs-help">'+(r.visibility==='public'?'公开范围 · 本机演示':'私有范围 · 当前浏览器')+'</span>'+(r!==record?'<span class="rs-tag">历史公开版本</span>':'')+'</div><p class="rs-local-note">当前保存与审核发生在本机，不会自动执行 Skill、连接数据库或对外发布。文件内容仅作为资源数据处理。</p><section class="rs-card"><h2>资源说明</h2><p class="rs-description">'+esc(r.description||'暂无描述')+'</p><dl class="rs-details"><dt>所属学科</dt><dd>'+esc(r.subjects.join('、')||'未选择')+'</dd><dt>标签</dt><dd>'+esc(r.tags.join('、')||'未选择')+'</dd><dt>GitHub</dt><dd>'+(r.github?'<a href="'+esc(r.github)+'" target="_blank" rel="noopener noreferrer">'+esc(r.github)+'</a>':'未填写')+'</dd>'+(r.kind==='database'?'<dt>数据来源</dt><dd>'+(r.sourceKind==='external'?'<a href="'+esc(r.sourceUrl)+'" target="_blank" rel="noopener noreferrer">'+esc(r.sourceUrl)+'</a>':'上传文件')+'</dd><dt>许可</dt><dd>'+esc(r.license||'未确认')+'</dd>':'')+'</dl>'+(r.review?'<p class="rs-help">本机审核演示：'+esc(r.review.reason||'审核通过')+' · '+esc(r.review.at)+'</p>':'')+'</section>'+
+ (r.kind==='tool'&&r.toolMode&&r.toolMode!=='skill'?'<section class="rs-card"><h2>'+ (r.toolMode==='code'?'工具代码 · '+esc(r.language):'API 配置')+'</h2>'+(r.toolMode==='code'?'<pre class="rs-code">'+esc(r.code||'')+'</pre>'+(r.requestExample?'<h3>输入示例</h3><pre class="rs-code">'+esc(r.requestExample)+'</pre><h3>输出示例</h3><pre class="rs-code">'+esc(r.responseExample)+'</pre>':''):'<p>'+esc(r.method)+' '+esc(r.endpoint)+'</p><p>认证：'+esc(r.auth)+' · 凭据引用：'+esc(r.credentialRef||'无')+'</p><pre class="rs-code">'+esc(r.requestExample)+'\n'+esc(r.responseExample)+'</pre>')+'<p class="rs-help">配置已保存，尚未接入执行环境。</p></section>':'')+
  (r.manifest.length?'<section class="rs-card"><h2>文件与校验记录</h2><div class="rs-file-list">'+r.manifest.map(f=>'<div><span><strong>'+esc(f.path)+'</strong><small>'+f.size+' bytes · '+esc(f.checksum)+'</small></span><button class="rs-link" type="button" data-rs-download="'+esc(f.id)+'">下载文件</button></div>').join('')+'</div>'+rsPreview(r.preview)+'</section>':'')+'<section class="rs-card"><h2>版本与操作记录</h2><div class="rs-version-list">'+[r,...(r.history||[])].map(v=>'<div><strong>'+esc(v.version)+'</strong><span>'+rsResourceStates[v.state]+' · '+esc(v.at)+'</span></div>').join('')+'</div><div class="rs-log">'+(r.events||[]).slice().reverse().map(e=>'<p>'+esc(e.at)+' · '+esc(e.text)+'</p>').join('')+'</div></section></div>';
 };
 async function rsReadDropped(data){const files=[];async function walk(entry,prefix=''){if(entry.isFile)await new Promise((resolve,reject)=>entry.file(file=>{Object.defineProperty(file,'rsPath',{value:prefix+file.name});files.push(file);if(files.length>300){reject(new Error('一次最多 300 个文件'));return;}resolve();},reject));else if(entry.isDirectory){const reader=entry.createReader();let entries;do{entries=await new Promise((resolve,reject)=>reader.readEntries(resolve,reject));for(const child of entries)await walk(child,prefix+entry.name+'/');}while(entries.length);}}
  const entries=[...data.items||[]].map(item=>item.webkitGetAsEntry?.()).filter(Boolean);if(entries.length){for(const entry of entries)await walk(entry);return files;}return [...data.files];}
 const rsBindShared=rsBind;rsBind=function(root){rsBindShared(root);root.querySelectorAll('[data-rs-form-scroll]').forEach(scroller=>{const form=scroller.dataset.rsFormScroll==='shared'?RS.sharedForm:RS.form;if(!form)return;scroller.scrollTop=form.scrollTop||0;scroller.addEventListener('scroll',()=>form.scrollTop=scroller.scrollTop,{passive:true});});const on=(q,event,fn)=>root.querySelectorAll(q).forEach(el=>el.addEventListener(event,e=>fn(el,e)));
+ on('[data-tool-mode]','click',el=>{RS.form.toolMode=el.dataset.toolMode;RS.form.errors={};RS.form.scrollTop=0;render();});
  on('[data-rs-new-resource]','click',el=>rsStartResource(el.dataset.rsNewResource));
  on('[data-rs-market-tab]','click',el=>{RS.marketTab=el.dataset.rsMarketTab;render();});
- on('[data-rs-back-market]','click',()=>{RS.form=null;go(S.route==='toolnew'?'shelf':'data');});
- on('[data-rs-back-resource-market]','click',el=>{RS.marketTab='mine';go(el.dataset.rsBackResourceMarket==='tool'?'shelf':'data');});
- on('[data-rs-resource]','click',el=>{RS.resourcePick=el.dataset.rsResource;RS.resourceVersion=el.dataset.rsVersion;LS.set('rs_resource_pick',RS.resourcePick);NAV_PARENT.resdetail=RS.data.resources.find(r=>r.id===RS.resourcePick)?.kind==='database'?'data':'shelf';go('resdetail');});
+ on('[data-rs-back-market]','click',()=>{RS.form=null;go(S.route==='toolnew'?'tools':'data');});
+ on('[data-rs-back-resource-market]','click',el=>{RS.marketTab='mine';go(el.dataset.rsBackResourceMarket==='tool'?'tools':'data');});
+ on('[data-rs-resource]','click',el=>{RS.resourcePick=el.dataset.rsResource;RS.resourceVersion=el.dataset.rsVersion;LS.set('rs_resource_pick',RS.resourcePick);NAV_PARENT.resdetail=RS.data.resources.find(r=>r.id===RS.resourcePick)?.kind==='database'?'data':'tools';go('resdetail');});
  on('[data-rs-edit-resource]','click',el=>{const r=RS.data.resources.find(r=>r.id===el.dataset.rsEditResource);if(r)rsStartResource(r.kind,r.id);});
  on('[data-rs-resource-field]','input',el=>{const f=RS.form,k=el.dataset.rsResourceField;f[k]=el.value;f.manual[k]=true;const count=root.querySelector('[data-rs-count="'+k+'"]');if(count)count.textContent=String(el.value.length);if(k==='github'){const error=root.querySelector('#rs-error-github');if(error)error.textContent=rsValidRepo(el.value.trim())?'':'GitHub 地址格式无效';}});
  on('[data-rs-resource-field]','change',el=>RS.form[el.dataset.rsResourceField]=el.value);
@@ -20492,8 +20681,20 @@ const rsBindShared=rsBind;rsBind=function(root){rsBindShared(root);root.querySel
 /* @include product-iteration.js */
 /* @include review-polish.js */
 /* @include project-fixtures.js */
+/* @include online-deployments.js */
 /* @include workbench-attention.js */
 /* @include workbench-dashboard.js */
+/* @include workbench-reference.js */
+/* @include resource-space.js */
+/* @include scheduled-tasks.js */
+/* @include scheduled-task-samples.js */
+/* @include navigation.js */
+/* @include chat-history.js */
+/* @include tool-list.js */
+/* @include tool-ide.js */
+/* @include tool-wizard.js */
+/* @include tool-publish.js */
+/* @include autonomous-lab.js */
 
 keepLoad();
 labInit();
@@ -20503,6 +20704,7 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
 const _h0=location.hash.slice(1);
 /* 开页时也归一：旧书签（#pw、#round、#task…）是搬过家，不是不存在。 */
 if(_h0){const _t=ROUTE_HOME(bootTab(_h0));S.route=_t;if(_t!==_h0)location.hash=_t;}
+if(S.route==='labnew')alRestoreComposer();
 bindScroll();
 /* 内置坐标先装上，结构视图从第一眼起就有东西可转可点。 */
 /* 必须走 loadStruct：直接赋值会跳过 molStats，VW.per 一直是空的，

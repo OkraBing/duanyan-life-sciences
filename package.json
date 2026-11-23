@@ -9,7 +9,7 @@
     "test:quick": "bash run_all.sh --quick",
     "test:workbench": "node build.mjs && node review/workbench.cjs ./index.html",
     "proxy": "node model-proxy.mjs ./index.html",
-    "test:lab": "node build.mjs && node review/lab-workflow.cjs ./index.html",
+    "test:lab": "node build.mjs && node review/autonomous-lab.cjs && node review/lab-workflow.cjs ./index.html",
     "test:workspace": "node build.mjs && node review/research-workspace.cjs ./index.html",
     "test:workbench-tricky": "node build.mjs && node review/workbench-tricky.cjs ./index.html",
     "test:iteration": "node build.mjs && node review/product-iteration.cjs ./index.html",
@@ -25,7 +25,8 @@
     "test:upgrade": "node build.mjs && node review/workbench-upgrade.cjs",
     "test:dashboard": "node build.mjs && node review/workbench-dashboard.cjs",
     "test:new-pages": "node build.mjs && node review/new-pages-walkthrough.cjs",
-    "test:edge-states": "node build.mjs && node review/tricky10-edge-states.cjs"
+    "test:edge-states": "node build.mjs && node review/tricky10-edge-states.cjs",
+    "test:navigation": "node build.mjs && node review/navigation.cjs"
   },
   "devDependencies": {
     "playwright": "1.49.1"

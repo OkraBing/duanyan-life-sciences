@@ -1,0 +1,41 @@
+/* 科研对话：历史记录独立于全站导航，列表与正文各自滚动。 */
+body[data-route="chat"] #main{flex-direction:row}
+.chat-history{flex:0 0 264px;min-width:0;display:flex;flex-direction:column;background:var(--surface);border-right:1px solid var(--line);padding:24px 16px 12px;gap:16px}
+.chat-history[hidden]{display:none}
+.chat-history-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.chat-history-head strong{font-size:1.125rem}
+.chat-history .history-new{width:100%;justify-content:center;background:var(--ink);color:var(--surface);border-radius:8px;min-height:40px}
+.history-list{flex:1;min-height:0;overflow:auto}
+.history-group{margin:16px 8px 6px;font-size:.6875rem;color:var(--ink-3)}
+.history-item{display:flex;align-items:center;border-radius:8px;margin-bottom:4px;min-width:0}
+.history-item:hover{background:var(--surface-2)}
+.history-item.is-current{background:var(--surface-3)}
+.history-open{flex:1;min-width:0;text-align:left;padding:10px 8px;border:0;background:transparent;color:var(--ink);cursor:pointer}
+.history-title,.history-meta{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.history-title{font-size:.8125rem;line-height:1.6}.history-meta{font-size:.6875rem;color:var(--ink-3);margin-top:3px}
+.history-more{flex:none;width:28px;min-height:32px;color:var(--ink-2);border:0;background:transparent;border-radius:6px;cursor:pointer}
+.history-empty{padding:24px 8px;font-size:.8rem;color:var(--ink-3);line-height:1.8}
+.history-foot{font-size:.6875rem;color:var(--ink-3);border-top:1px solid var(--line);padding:12px 8px 0}
+body[data-route="chat"] #view{min-width:0;padding-inline:clamp(16px,3vw,40px)}
+body[data-route="chat"] .research-top .outbar-hist,body[data-route="chat"] .outbar-hist,body[data-route="chat"] .outbar-new{display:none}
+body[data-route="chat"] .research-home::before{display:none}
+.history-conversation-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.9rem;font-weight:600;margin-right:auto}
+@media(max-width:760px){body[data-route="chat"] #main{flex-direction:column}.chat-history{flex:0 0 auto;border-right:0;border-bottom:1px solid var(--line);padding:12px 16px;gap:10px}.chat-history .history-list{max-height:210px;flex:auto}.chat-history .history-foot{display:none}.chat-history-head strong{font-size:.875rem}}
+
+
+.history-search-trigger,.history-search-close{display:grid;place-items:center;width:36px;height:36px;flex:none;border:0;border-radius:7px;background:transparent;color:var(--ink-2);cursor:pointer;font:inherit}
+.history-search-trigger:hover,.history-search-close:hover{background:var(--surface-3)}
+.history-search-trigger svg,.history-search-field svg{width:18px;height:18px;flex:none}
+.history-search-dialog{box-sizing:border-box;width:min(600px,calc(100vw - 32px));max-height:calc(100dvh - 48px);padding:24px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);box-shadow:0 24px 80px #10182033}
+.history-search-dialog::backdrop{background:rgba(16,24,32,.32)}
+.history-search-dialog-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.history-search-dialog-head h2{margin:0;font-size:18px}.history-search-close{font-size:24px}
+.history-search-field{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;color:var(--ink-3)}
+.history-search-field:focus-within{outline:2px solid var(--focus);outline-offset:2px}
+.history-search-field input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:var(--ink);font:inherit;font-size:14px}
+.history-search-count{font-size:12px;color:var(--ink-3);margin:18px 0 8px}
+.history-search-results{max-height:min(400px,calc(100dvh - 260px));overflow:auto;overscroll-behavior:contain}
+.history-search-result{display:block;width:100%;text-align:left;border:0;border-radius:8px;padding:12px;background:transparent;color:var(--ink);cursor:pointer;font:inherit}
+.history-search-result:hover{background:var(--surface-2)}
+.history-search-result:focus-visible,.history-search-trigger:focus-visible,.history-search-close:focus-visible{outline:2px solid var(--focus);outline-offset:-2px}
+@media(max-width:760px){.chat-history .history-list{max-height:150px}.history-search-dialog{padding:18px}}

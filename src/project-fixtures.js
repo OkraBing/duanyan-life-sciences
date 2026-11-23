@@ -104,23 +104,3 @@ jobDrawer=function(m){
  if(!m||!['queued','running'].includes(m.st))return fixtureOriginalJobDrawer(m);
  const st=TRAIN_ST[m.st];return drawer({title:m.name+'　'+m.id,close:'jobclose',chip:'<span class="chip '+st[1]+'">'+st[0]+'</span>',body:'<div class="col" style="gap:16px"><div class="t-sm">'+esc(m._pn||pnOf(m._pid||m.pid))+'</div><div class="krow"><span class="mut2">训练数据</span><span>'+dsLabel(m)+'</span></div><div class="krow"><span class="mut2">基础模型</span><span>'+esc(m.base)+'</span></div><div class="krow"><span class="mut2">训练方法</span><span>'+esc(m.method)+'</span></div><div class="krow"><span class="mut2">当前环节</span><strong>'+esc(m.stage||st[0])+'</strong></div><progress class="training-snapshot-progress" max="100" value="'+(m.pg||0)+'" aria-label="训练进度 '+(m.pg||0)+'%"></progress><span class="t-sm num">'+(m.pg||0)+'%</span><div class="lv-log">'+(m.trainingLog||[]).map(([name,state])=>'<p>'+esc(name)+' · '+esc(state)+'</p>').join('')+'</div><p class="t-sm mut2">训练完成后生成模型与留出集评测结果。</p></div>'});
 };
-/* Project scorer records use saved feature weights; replay stays with that model. */
-const fixtureOriginalBatchDrawer=bDrawer;
-bDrawer=function(id){
- const j=bFind(id);if(!j||j.sid!=='local-scoring')return fixtureOriginalBatchDrawer(id);
- const model=mdlFind(j.modelId),d=bDs(j),count=bCount(j),state=bSt(j);
- const preview=(j.out||[]).filter(x=>x?.ok).slice(0,6).map(x=>{try{return JSON.parse(x.t)}catch{return null}}).filter(Boolean);
- return drawer({title:j.name,close:'bdrawerx',chip:'<span class="chip '+state[1]+'">'+state[0]+'</span>',body:'<div class="col" style="gap:16px">'+iterationPairs([['任务编号',j.id],['课题',pnOf(j.pid)],['评分模型',(model?.name||j.mdl)+' · '+j.modelId],['数据版本',(d?.name||j.ds)+' · '+(d?.version||'v1')],['输入特征',model?.featK?.join('、')||'—'],['预测目标',model?.target||preview[0]?.target||'—'],['完成记录',count.done+' / '+count.n],['成功 / 失败',count.ok+' / '+count.bad]])+'<section class="asset-section"><h3>预测结果</h3><div class="tbl-wrap"><table><thead><tr><th>候选</th><th>预测值</th></tr></thead><tbody>'+preview.map(r=>'<tr><td>'+esc(r.variant)+'</td><td class="num">'+esc(r.prediction)+'</td></tr>').join('')+'</tbody></table></div></section><div class="row wrap" style="gap:8px"><button class="btn" type="button" data-bjdl="'+esc(id)+'">下载结果</button><button class="btn" type="button" data-brun="'+esc(id)+'">重新推理</button></div></div>'});
-};
-const fixtureOriginalBatchRun=bRun;
-bRun=async function(id){
- const j=bFind(id);if(!j||j.sid!=='local-scoring')return fixtureOriginalBatchRun(id);
- const model=mdlFind(j.modelId),d=bDs(j);
- if(!model||!d||!model.w?.length){toast('评分模型或输入数据已移除，请重新选择');return;}
- const missing=model.featK.find(k=>d.rows.some(r=>!Number.isFinite(+r[k])));
- if(missing){toast('输入数据缺少有效特征：'+missing);return;}
- const start=performance.now(),result=fixtureInference(rsProject(j.pid)||{id:j.pid,name:pnOf(j.pid)},0,d,model);
- j.resultVersion=(Number(j.resultVersion)||0)+1;
- j.out=result.out;j.n=d.rows.length;j.st='done';j.ms=Math.max(1,Math.round(performance.now()-start));j.err='';j.dropped=false;
- bSave();render();toast('已完成 '+j.n+' 条候选评分');
-};
