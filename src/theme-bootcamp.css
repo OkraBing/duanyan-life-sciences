@@ -107,3 +107,7 @@ h1.pjx-n{font-size:18px!important;font-weight:600!important;margin:0!important;l
 /* Tricky R4：超长名称两行截断，卡片不再被撑高；资料空间课题列表可滚动、有 fade 提示 */
 .rh-project header h3,.ms-spaces strong,.projects-page .pcard-t>strong{display:-webkit-box!important;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden!important;overflow-wrap:anywhere}
 .ms-project-nav{max-height:min(40vh,320px)!important;overflow:auto!important;overscroll-behavior:contain;scrollbar-width:thin;mask-image:linear-gradient(to bottom,#000 calc(100% - 24px),transparent)}
+/* R5/R6：跳到正文链接，只在键盘聚焦时出现 */
+.skip-link{position:fixed;top:8px;left:8px;z-index:3000;padding:8px 12px;background:var(--ink);color:var(--on-pri);border-radius:var(--r2);font-size:13px;transform:translateY(-150%);transition:transform .15s}
+.skip-link:focus-visible{transform:none;outline-offset:2px}
+#view:focus{outline:none}

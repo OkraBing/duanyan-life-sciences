@@ -9,11 +9,11 @@ async function test(id,name,fn,options={}){
  try{await page.goto('file://'+path.resolve('index.html')+'#workbench');await page.waitForFunction(()=>RS.seedReady);await fn(page);cases.push({id,name,status:'passed'});console.log('PASS '+id+' '+name);}catch(e){cases.push({id,name,status:'failed',error:e.stack});console.error('FAIL '+id+' '+name+'\n'+e.stack);await page.screenshot({path:path.join(out,id+'-failure.png')});}finally{await context.close();}
 }
 (async()=>{browser=await chromium.launch();
-await test('E01','没有个人项目时，获取申请可创建目标项目并保留资产与版本',async p=>{
+await test('E01','没有我的课题时，权限申请可创建目标项目并保留资产与版本',async p=>{
  // Ownership is fixture setup; creation and submission use visible controls.
  await p.evaluate(()=>{DB.projects.forEach(p=>p.ownerId='other');RS.sharedPick='example-shared-joined';go('shareddetail')});
  await p.locator('[data-iteration-acquire]').first().click();const before=await p.evaluate(()=>({count:RS.data.projects.length,requests:rsShared().requests.length}));
- assert(!/演示|本机原型/.test(await p.locator('#dlg').innerText()));assert.match(await p.locator('#dlg').innerText(),/还没有个人项目/);assert(await p.locator('#dlg [value=ok]').isDisabled());
+ assert(!/演示|本机原型/.test(await p.locator('#dlg').innerText()));assert.match(await p.locator('#dlg').innerText(),/还没有我的课题/);assert(await p.locator('#dlg [value=ok]').isDisabled());
  await p.locator('#rs-target-create').click();await p.locator('#dlg [value=ok]').click();assert.equal(await p.evaluate(()=>RS.data.projects.length),before.count);
  await p.locator('#rs-personal-name').fill('候选蛋白交叉验证');await p.locator('#dlg [value=ok]').click();await p.locator('#rs-target').waitFor();const target=await p.locator('#rs-target').inputValue();assert(target);
  await p.locator('#rs-request-reason').fill('用于独立复核');await p.locator('#dlg [value=ok]').click();await p.waitForFunction(n=>rsShared().requests.length===n+1,before.requests);

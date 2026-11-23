@@ -1,6 +1,6 @@
 /* Global navigation groups and settings routes. */
 Object.assign(NAV_PARENT,{shared:'materials',sharednew:'materials',shareddetail:'materials',me:'settings',set:'settings',files:'materials',chats:'chat',project:'projects',pw:'projects'});
-Object.assign(NAVNAME,{projects:'课题项目',shared:'共享项目',dsets:'数据集',mdl:'模型',tools:'工具',shelf:'科研工具',data:'公共数据库',settings:'设置'});
+Object.assign(NAVNAME,{projects:'课题项目',shared:'共享课题',dsets:'数据集',mdl:'模型',tools:'工具',shelf:'科研工具',data:'公共数据库',settings:'设置'});
 Object.assign(BACKNAME,{projects:'课题项目',settings:'设置'});
 NAV_ROUTE.shared=1;
 NAV_ROUTE.settings=NAV_ROUTE.me=NAV_ROUTE.set=1;
@@ -53,7 +53,7 @@ function navigationProjectsPage(mode){
  const heading=template.content.querySelector('h1');if(heading)heading.textContent=mode==='resources'?'资源共享':'课题项目';
  const create=template.content.querySelector('[data-act="newproj"]');
  if(create){create.textContent='＋ 新建课题';create.insertAdjacentHTML('beforebegin','<button class="btn" type="button" data-project-join>申请加入课题</button>');}
- const description=template.content.querySelector('.projects-header p');if(description)description.textContent='我的项目 · 包含我创建的和共享给我的项目';
+ const description=template.content.querySelector('.projects-header p');if(description)description.textContent='我的课题 · 包含我创建的和共享给我的课题';
  const projTab=mode==='resources'?'resources':'projects';
  let grid=template.content.querySelector('.pgrid');
  if(!grid){const section=template.content.querySelector('section');if(section){section.querySelector('.empty')?.remove();grid=document.createElement('div');grid.className='pgrid';section.appendChild(grid);}}
@@ -88,11 +88,11 @@ function navigationProjectsPage(mode){
  });
  template.content.querySelector('.sec-h')?.remove();
  if(projTab==='resources'){
-  // 资源共享：三个页签——待我审批 / 我的申请 / 共享项目，每个页签只放自己的内容
+  // 资源共享：三个页签——待我审批 / 我的申请 / 共享课题，每个页签只放自己的内容
   grid.querySelectorAll('.project-card-wrap:not(.is-shared-project), [data-proj]').forEach(el=>{
    const wrap=el.closest('.project-card-wrap');(wrap||el).remove();});
   const counts=iterationRequestInbox(RS.data.shared||[]);
-  const tabs=[['incoming','待我审批',counts.incoming.length],['mine','我的申请',counts.mine.length],['projects','共享项目',grid.children.length]];
+  const tabs=[['incoming','待我审批',counts.incoming.length],['mine','我的申请',counts.mine.length],['projects','共享课题',grid.children.length]];
   const cur=tabs.some(t=>t[0]===S.sharedTab)?S.sharedTab:(tabs.find(t=>t[2])||tabs[0])[0];
   template.content.querySelector('.projects-header')?.insertAdjacentHTML('afterend','<div class="proj-tabs" role="tablist" aria-label="资源共享内容">'
    +tabs.map(([k,n,c])=>'<button role="tab" type="button" data-shared-tab="'+k+'" aria-selected="'+(cur===k)+'" tabindex="'+(cur===k?'0':'-1')+'">'+n+(c?'<span>'+c+'</span>':'')+'</button>').join('')+'</div>');

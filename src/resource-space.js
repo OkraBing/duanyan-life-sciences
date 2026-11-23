@@ -19,12 +19,12 @@ function materialsIcon(name){const paths={folder:'M3 7V5h6l2 2h10v13H3z',file:'M
 
 function materialsNav(label,tab,count){return '<button type="button" class="ms-nav '+(MATERIALS.tab===tab&&!MATERIALS.space?'selected':'')+'" data-ms-tab="'+tab+'">'+materialsIcon(tab==='shared'?'users':tab==='stars'?'star':tab==='trash'?'trash':'file')+'<span>'+label+'</span><small>'+count+'</small></button>';}
 function materialsRow(x){const star=materialsPrefs().stars.includes(x.id),trash=MATERIALS.tab==='trash';return '<article class="ms-file" data-ms-row="'+esc(x.id)+'"><button class="ms-file-main" type="button" data-ms-open="'+esc(x.id)+'">'+fileIc(fileExt(x))+'<span><strong>'+esc(x.name)+'</strong><small>'+esc(x.kind==='link'?'链接':fileExt(x).toUpperCase())+' · '+(x.bytes==null?'资料引用':fmtBytes(x.bytes))+'</small></span></button><span class="ms-cell">'+esc(materialsSpace(x))+'</span><span class="ms-cell">'+esc(x.owner===materialsActor()?'我':'课题成员')+'</span><time class="ms-cell">'+esc(x.at||'—')+'</time><div class="ms-row-actions">'+(trash?'<button type="button" data-ms-restore="'+esc(x.id)+'">恢复</button>':'<button type="button" aria-label="'+(star?'取消收藏':'收藏')+' '+esc(x.name)+'" aria-pressed="'+star+'" data-ms-star="'+esc(x.id)+'">'+(star?'已收藏':'收藏')+'</button><button type="button" class="ms-more" aria-label="更多：'+esc(x.name)+'" aria-haspopup="menu" data-ms-more="'+esc(x.id)+'">···</button>')+'</div></article>';}
-/* 行尾「更多」：分享（放进我能发布的共享项目）；菜单点外面即关 */
+/* 行尾「更多」：分享（放进我能发布的共享课题）；菜单点外面即关 */
 function materialsMoreMenu(btn,id){
  document.querySelector('.ms-menu')?.remove();
  const x=materialsRows().find(f=>f.id===id);if(!x)return;
  const m=document.createElement('div');m.className='ms-menu';m.setAttribute('role','menu');
- m.innerHTML='<button type="button" role="menuitem" data-ms-menu-share>分享到共享项目</button><button type="button" role="menuitem" data-ms-menu-copy>复制文件名</button>';
+ m.innerHTML='<button type="button" role="menuitem" data-ms-menu-share>分享到共享课题</button><button type="button" role="menuitem" data-ms-menu-copy>复制文件名</button>';
  document.body.appendChild(m);const r=btn.getBoundingClientRect();m.style.top=(r.bottom+4)+'px';m.style.left=Math.max(8,Math.min(innerWidth-m.offsetWidth-8,r.right-m.offsetWidth))+'px';
  const close=()=>{m.remove();document.removeEventListener('pointerdown',away,true);document.removeEventListener('keydown',esc_,true);};
  const away=e=>{if(!m.contains(e.target))close();},esc_=e=>{if(e.key==='Escape'){close();btn.focus();}};
@@ -35,11 +35,11 @@ function materialsMoreMenu(btn,id){
 }
 function materialsShareDialog(x){
  const seen=new Set(),targets=(RS.data?.shared||[]).filter(s=>rsCan(s,'publish')&&!seen.has(s.projectId)&&seen.add(s.projectId));
- if(!targets.length){modal('分享文件','<p class="rs-help">还没有可以发布的共享项目。先在课题项目里把课题共享给组员，再把文件分享进去。</p>','去课题项目',()=>go('projects'));return;}
- modal('分享文件','<p class="rs-help">「'+esc(x.name)+'」会作为资料引用放进所选共享项目，组员申请通过后可获取。</p><label class="rs-field"><span>共享项目</span><select class="input" id="ms-share-target">'+targets.map(s=>'<option value="'+esc(s.id)+'">'+esc(s.name)+'</option>').join('')+'</select></label>','分享',()=>{
+ if(!targets.length){modal('分享文件','<p class="rs-help">还没有可以发布的共享课题。先在课题项目里把课题共享给组员，再把文件分享进去。</p>','去课题项目',()=>go('projects'));return;}
+ modal('分享文件','<p class="rs-help">「'+esc(x.name)+'」会作为资料引用放进所选共享课题，组员申请通过后可获取。</p><label class="rs-field"><span>共享课题</span><select class="input" id="ms-share-target">'+targets.map(s=>'<option value="'+esc(s.id)+'">'+esc(s.name)+'</option>').join('')+'</select></label>','分享',()=>{
   const sid=document.getElementById('ms-share-target').value,next=rsClone(RS.data),s=next.shared.find(s=>s.id===sid);
   const fingerprint=fp32(JSON.stringify([x.id,x.name,x.bytes||0])),aid='a-'+fp32(['file',x.id,sid].join('|'));
-  if(s.assets.some(a=>a.id===aid)){toast('这个文件已经在该共享项目里');return;}
+  if(s.assets.some(a=>a.id===aid)){toast('这个文件已经在该共享课题里');return;}
   s.assets.push({id:aid,kind:'knowledge',sourceId:x.id,name:x.name,description:'来自资料空间的文件',version:'v1',fingerprint,snapshot:{name:x.name,bytes:x.bytes??null,type:fileExt(x),metadataOnly:x.bytes==null},sourceProject:s.projectId,contributor:RS.actor,at:nowStamp()});
   s.events.push({at:nowStamp(),by:RS.actor,text:'分享文件：'+x.name});
   rsSave(next).then(()=>{toast('已分享到「'+s.name+'」');render();}).catch(e=>toast(e.message||'分享失败'));

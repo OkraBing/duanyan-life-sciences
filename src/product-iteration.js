@@ -316,7 +316,7 @@ function iterationRequestCounts(s){
 }
 /* 跨项目的申请总览。
    原先只有「进了某个项目之后」才看得到申请：申请了三个别人的项目，就得点三次。
-   这里把所有共享项目里和我有关的申请收到一处，分两组——
+   这里把所有共享课题里和我有关的申请收到一处，分两组——
    「待我审批」是别人要用我的东西，「我的申请」是我要用别人的东西。
    两组的名字、状态词、操作都沿用项目里那一套，数也从同一份 requests 算，
    不另起一套事实。 */
@@ -362,13 +362,13 @@ function iterationRequestInboxView(projects){
 V.shared=()=>{
  const gate=rsGate();if(gate)return gate;
  const projects=RS.data.shared.filter(iterationRole);
- return '<div class="page rs iteration-page"><header class="iteration-head"><div><h1>共享项目</h1></div><button class="btn btn-pri" type="button" data-rs-new-shared>新建共享项目</button></header>'+iterationRequestInboxView(projects)+'<strong class="t-sm">全部 '+projects.length+' 个</strong>'+
+ return '<div class="page rs iteration-page"><header class="iteration-head"><div><h1>共享课题</h1></div><button class="btn btn-pri" type="button" data-rs-new-shared>新建共享课题</button></header>'+iterationRequestInboxView(projects)+'<strong class="t-sm">全部 '+projects.length+' 个</strong>'+
  (projects.length?'<div class="shared-project-grid">'+projects.map(s=>{
   const member=iterationRole(s),owner=s.members.find(m=>m.id===s.owner),counts=iterationRequestCounts(s),source=rsProject(s.projectId),summary=s.projectSummary||{},state=source?.state||summary.state;
   const status=state?stateOf(state):null;
   const attention=rsCan(s,'approve')?(counts.incoming?counts.incoming+' 项待我审批':'暂无待审批申请'):[counts.pending?counts.pending+' 项申请中':'',counts.approved?counts.approved+' 项待导入':''].filter(Boolean).join(' · ')||'暂无进行中的申请';
-  return '<article class="rs-project-card shared-project-card pcard '+(status?.[1]||'')+(state==='sent'?' is-sent':'')+'" role="button" tabindex="0" data-rs-open="'+esc(s.id)+'" aria-label="查看共享项目：'+esc(s.name)+'"><div class="pcard-t"><strong>'+esc(s.name)+'</strong>'+(status?'<span class="pcard-st">'+esc(status[0])+'</span>':'')+'</div><div class="pcard-labels"><span class="tag">'+esc(source?domOf(source).n:summary.domain||'科研')+'</span>'+rsProjectSharedBadge()+'<span class="rs-tag">'+esc(rsRoleNames[member.role])+'</span></div><p class="pcard-g"><span>'+esc(s.goal||'')+'</span><span>创建者 '+esc(owner?.name||'项目成员')+'</span></p><div class="pcard-f"><span>'+s.members.filter(m=>m.status==='active').length+' 位成员 · '+s.assets.length+' 项资产</span><span class="'+(counts.incoming?'request-attention':'request-mine')+'">'+esc(attention)+'</span></div></article>';
- }).join('')+'</div>':'<div class="rs-empty"><h2>暂无共享项目</h2><button class="btn btn-pri" type="button" data-rs-new-shared>新建共享项目</button></div>')+'</div>';
+  return '<article class="rs-project-card shared-project-card pcard '+(status?.[1]||'')+(state==='sent'?' is-sent':'')+'" role="button" tabindex="0" data-rs-open="'+esc(s.id)+'" aria-label="查看共享课题：'+esc(s.name)+'"><div class="pcard-t"><strong>'+esc(s.name)+'</strong>'+(status?'<span class="pcard-st">'+esc(status[0])+'</span>':'')+'</div><div class="pcard-labels"><span class="tag">'+esc(source?domOf(source).n:summary.domain||'科研')+'</span>'+rsProjectSharedBadge()+'<span class="rs-tag">'+esc(rsRoleNames[member.role])+'</span></div><p class="pcard-g"><span>'+esc(s.goal||'')+'</span><span>创建者 '+esc(owner?.name||'项目成员')+'</span></p><div class="pcard-f"><span>'+s.members.filter(m=>m.status==='active').length+' 位成员 · '+s.assets.length+' 项资产</span><span class="'+(counts.incoming?'request-attention':'request-mine')+'">'+esc(attention)+'</span></div></article>';
+ }).join('')+'</div>':'<div class="rs-empty"><h2>暂无共享课题</h2><button class="btn btn-pri" type="button" data-rs-new-shared>新建共享课题</button></div>')+'</div>';
 };
 function iterationAssetGroups(s){
  return RS.assetTab==='tool'?[['工具',s.assets.filter(a=>a.kind==='tool')]]:
@@ -393,21 +393,21 @@ function iterationAcquire(s,a){
  if(r?.state==='imported')return '<span class="request-status imported">已导入</span>';
  return '<button class="btn btn-pri" type="button" data-iteration-acquire="'+esc(a.id)+'">'+(rsCan(s,'approve')?'获取到项目':'申请获取')+'</button>';
 }
-/* 分享给我的项目：每个文件右侧一个「+」，申请把它添加到我自己的项目；所有者不需要 */
+/* 分享给我的课题：每个文件右侧一个「+」，申请把它添加到我自己的项目；所有者不需要 */
 function iterationRowAcquire(s,a){
  if(rsCan(s,'approve'))return '';
  const r=iterationAssetRequest(s,a);
  if(r?.state==='pending')return '<button class="pjx-f-add is-pending" type="button" data-rs-requests aria-label="已申请，等待审批">…</button>';
- if(r?.state==='approved')return '<button class="pjx-f-add is-ready" type="button" data-iteration-import="'+esc(r.id)+'" aria-label="已批准，导入到我的项目">↓</button>';
- if(r?.state==='imported')return '<span class="pjx-f-add is-done" aria-label="已添加到我的项目">✓</span>';
- return '<button class="pjx-f-add" type="button" data-iteration-acquire="'+esc(a.id)+'" aria-label="申请添加「'+esc(a.name)+'」到我的项目">+</button>';
+ if(r?.state==='approved')return '<button class="pjx-f-add is-ready" type="button" data-iteration-import="'+esc(r.id)+'" aria-label="已批准，导入到我的课题">↓</button>';
+ if(r?.state==='imported')return '<span class="pjx-f-add is-done" aria-label="已添加到我的课题">✓</span>';
+ return '<button class="pjx-f-add" type="button" data-iteration-acquire="'+esc(a.id)+'" aria-label="申请添加「'+esc(a.name)+'」到我的课题">+</button>';
 }
 function iterationPairs(pairs){return '<dl class="asset-key-values">'+pairs.filter(x=>x[1]!=null&&x[1]!=='').map(([k,v])=>'<dt>'+esc(k)+'</dt><dd>'+esc(String(v))+'</dd>').join('')+'</dl>';}
 function iterationHumanText(value){return String(value||'').replace(/^演示[：:]\s*/,'').replace(/演示：/g,'').replace(/\s*[·・]\s*演示流程/g,'').replace(/\s*[·・]\s*异常示例/g,'');}
 function iterationAssetBody(s,a){
  const authorized=iterationAuthorized(s,a),snapshot=a.snapshot||{},who=s.members.find(m=>m.id===a.contributor)?.name||'项目成员';
  let html='';/* 右侧直接是文件本体；提供者、版本等元信息已经在左侧列表的次行里 */
- if(!authorized)return '<section class="asset-section"><p>'+esc(iterationHumanText(a.description))+'</p><p class="asset-access-state">申请通过后可查看完整内容。'+(iterationAssetRequest(s,a)?'':'用文件旁的「+」申请添加到我的项目。')+'</p></section>';
+ if(!authorized)return '<section class="asset-section"><p>'+esc(iterationHumanText(a.description))+'</p><p class="asset-access-state">申请通过后可查看完整内容。'+(iterationAssetRequest(s,a)?'':'用文件旁的「+」申请添加到我的课题。')+'</p></section>';
  const section=(title,body)=>'<section class="asset-section"><h3>'+title+'</h3>'+body+'</section>';
  if(a.kind==='knowledge')return html+section('资料引用','<p>'+esc(a.name)+'</p><p>此条目为资料引用，未附原始文件。</p>');
  if(a.kind==='dataset'){
@@ -436,10 +436,10 @@ function iterationAssetPreview(s,a){
 }
 function iterationSharedHeader(s,member){
  const counts=iterationRequestCounts(s);
- return '<div class="shared-breadcrumb"><button class="rs-link" type="button" data-go="shared">共享项目</button><span>/</span><span>项目详情</span></div><header class="iteration-head"><div><h1>'+esc(s.name)+' <span class="rs-tag">'+esc(rsRoleNames[member.role])+'</span></h1><p title="'+esc(s.goal||'')+'">'+esc(s.goal||'')+'</p></div><div class="rs-actions"><button class="btn" type="button" data-rs-members>成员 '+s.members.filter(m=>m.status==='active').length+'</button><button class="btn shared-req-btn" type="button" data-rs-requests aria-label="'+(rsCan(s,'approve')?'文件权限申请'+(counts.incoming?'，'+counts.incoming+' 条待处理':''):'我的申请')+'">'+(rsCan(s,'approve')?'权限申请'+(counts.incoming?'<span class="shared-req-badge">'+counts.incoming+'</span>':''):'我的申请'+(counts.pending+counts.approved?'<span class="shared-req-badge is-soft">'+(counts.pending+counts.approved)+'</span>':''))+'</button>'+(rsCan(s,'publish')?'<button class="btn btn-pri" type="button" data-rs-publish>共享资产</button>':'')+'</div></header>';
+ return '<div class="shared-breadcrumb"><button class="rs-link" type="button" data-go="shared">共享课题</button><span>/</span><span>课题详情</span></div><header class="iteration-head"><div><h1>'+esc(s.name)+' <span class="rs-tag">'+esc(rsRoleNames[member.role])+'</span></h1><p title="'+esc(s.goal||'')+'">'+esc(s.goal||'')+'</p></div><div class="rs-actions"><button class="btn" type="button" data-rs-members>成员 '+s.members.filter(m=>m.status==='active').length+'</button><button class="btn shared-req-btn" type="button" data-rs-requests aria-label="'+(rsCan(s,'approve')?'文件权限申请'+(counts.incoming?'，'+counts.incoming+' 条待处理':''):'我的申请')+'">'+(rsCan(s,'approve')?'权限申请'+(counts.incoming?'<span class="shared-req-badge">'+counts.incoming+'</span>':''):'我的申请'+(counts.pending+counts.approved?'<span class="shared-req-badge is-soft">'+(counts.pending+counts.approved)+'</span>':''))+'</button>'+(rsCan(s,'publish')?'<button class="btn btn-pri" type="button" data-rs-publish>共享资产</button>':'')+'</div></header>';
 }
 V.shareddetail=()=>{
- const gate=rsGate();if(gate)return gate;const s=rsShared(),member=rsMember(s);if(!s||!member)return '<div class="page rs"><h1>找不到可访问的共享项目</h1><button class="btn" data-go="shared">返回共享项目</button></div>';
+ const gate=rsGate();if(gate)return gate;const s=rsShared(),member=rsMember(s);if(!s||!member)return '<div class="page rs"><h1>找不到可访问的共享课题</h1><button class="btn" data-go="shared">返回共享课题</button></div>';
  const header=iterationSharedHeader(s,member);
  RS.tab='assets';/* 共享课题只共享文档与任务资产，项目工作流能力已删除 */
  const groups=iterationAssetGroups(s),all=groups.flatMap(g=>g[1]);if(!all.some(a=>a.id===RS.assetPick))RS.assetPick=all[0]?.id||'';
@@ -475,22 +475,22 @@ rsRequestsDialog=function(){
  const block=r=>{const a=s.assets.find(a=>a.id===r.assetId),person=s.members.find(m=>m.id===r.actor)?.name||'项目成员',reviewer=s.members.find(m=>m.id===r.reviewBy)?.name||s.members.find(m=>m.id===s.owner)?.name||'项目负责人';
   return '<section class="request-block"><div class="rs-card-top"><h3>'+esc(a?.name||'来源资产不可用')+'</h3><span class="request-status '+r.state+'">'+labels[r.state]+'</span></div><small>'+esc(rsAssetLabel(a?.kind))+' · '+esc(r.version)+'</small>'+iterationPairs([[owner?'申请人':r.state==='approved'?'批准人':'审批人',owner?person:reviewer],['目标项目',rsProject(r.target)?.name||r.target],['申请理由',r.reason],['审核意见',r.reviewReason],['撤回原因',r.revocationReason]])+'<div class="rs-actions">'+(owner&&r.state==='pending'?'<button class="btn btn-pri" type="button" data-request-approve="'+esc(r.id)+'">批准</button><button class="btn" type="button" data-request-reject="'+esc(r.id)+'">拒绝</button>':'')+(r.actor===RS.actor&&r.state==='pending'?'<button class="btn" type="button" data-request-withdraw="'+esc(r.id)+'">撤回申请</button>':'')+(r.actor===RS.actor&&r.state==='approved'?'<button class="btn btn-pri" type="button" data-iteration-import="'+esc(r.id)+'">确认导入</button>':'')+'</div></section>';
  };
- const panel=iterationMountDrawer(owner?'获取申请':'我的申请',(pending.length?'<h3 class="request-group-title">'+(owner?'待我审批':'申请中')+' '+pending.length+'</h3>'+pending.map(block).join(''):'')+(history.length?'<h3 class="asset-drawer-history">'+(owner?'已处理':'其他申请')+' '+history.length+'</h3>'+history.map(block).join(''):'')+(!rows.length?'<p class="rs-help">暂无获取申请</p>':''),'',{kind:'requests',sharedId:s.id,trigger:document.activeElement});
+ const panel=iterationMountDrawer(owner?'权限申请':'我的申请',(pending.length?'<h3 class="request-group-title">'+(owner?'待我审批':'申请中')+' '+pending.length+'</h3>'+pending.map(block).join(''):'')+(history.length?'<h3 class="asset-drawer-history">'+(owner?'已处理':'其他申请')+' '+history.length+'</h3>'+history.map(block).join(''):'')+(!rows.length?'<p class="rs-help">暂无权限申请</p>':''),'',{kind:'requests',sharedId:s.id,trigger:document.activeElement});
  panel.querySelectorAll('[data-request-approve]').forEach(e=>e.onclick=()=>iterationMutation(()=>rsDecide(s.id,e.dataset.requestApprove,true,'同意在目标项目复用'),'已批准，对方可导入'));
  panel.querySelectorAll('[data-request-withdraw]').forEach(e=>e.onclick=()=>iterationMutation(()=>rsWithdrawRequest(s.id,e.dataset.requestWithdraw),'已撤回申请'));
- panel.querySelectorAll('[data-request-reject]').forEach(e=>e.onclick=()=>modal('拒绝获取申请','<label class="rs-field"><span>拒绝原因</span><textarea class="input" id="request-reject-reason"></textarea></label>','拒绝申请',()=>rsModalSave(()=>rsDecide(s.id,e.dataset.requestReject,false,document.getElementById('request-reject-reason').value).then(()=>toast('已拒绝')))));
+ panel.querySelectorAll('[data-request-reject]').forEach(e=>e.onclick=()=>modal('拒绝权限申请','<label class="rs-field"><span>拒绝原因</span><textarea class="input" id="request-reject-reason"></textarea></label>','拒绝申请',()=>rsModalSave(()=>rsDecide(s.id,e.dataset.requestReject,false,document.getElementById('request-reject-reason').value).then(()=>toast('已拒绝')))));
 };
 function iterationMutation(fn,done){Promise.resolve().then(fn).then(()=>{render();if(done)toast(done);}).catch(e=>toast(e.message||'操作失败'));}
 function iterationBindAcquisitions(root){
  root.querySelectorAll('[data-iteration-acquire]').forEach(e=>e.onclick=()=>rsRequestDialog(e.dataset.iterationAcquire));
- root.querySelectorAll('[data-iteration-import]').forEach(e=>e.onclick=()=>iterationMutation(()=>rsImport(rsShared().id,e.dataset.iterationImport),'已导入到我的项目'));
+ root.querySelectorAll('[data-iteration-import]').forEach(e=>e.onclick=()=>iterationMutation(()=>rsImport(rsShared().id,e.dataset.iterationImport),'已导入到我的课题'));
  if(root!==view)root.querySelectorAll('[data-rs-requests]').forEach(e=>e.onclick=()=>rsRequestsDialog());
  root.querySelectorAll('[data-inbox-open]').forEach(e=>e.onclick=()=>{RS.sharedPick=e.dataset.inboxOpen;LS.set('rs_shared_pick',RS.sharedPick);RS.actor='me';RS.tab='assets';go('shareddetail');});
- root.querySelectorAll('[data-inbox-import]').forEach(e=>e.onclick=()=>iterationMutation(()=>rsImport(e.dataset.inboxSid,e.dataset.inboxImport),'已导入到我的项目'));
+ root.querySelectorAll('[data-inbox-import]').forEach(e=>e.onclick=()=>iterationMutation(()=>rsImport(e.dataset.inboxSid,e.dataset.inboxImport),'已导入到我的课题'));
  root.querySelectorAll('[data-inbox-withdraw]').forEach(e=>e.onclick=()=>iterationMutation(()=>rsWithdrawRequest(e.dataset.inboxSid,e.dataset.inboxWithdraw)));
  root.querySelectorAll('[data-inbox-approve]').forEach(e=>e.onclick=()=>iterationMutation(()=>rsDecide(e.dataset.inboxSid,e.dataset.inboxApprove,true,'同意在目标项目复用')));
  root.querySelectorAll('[data-inbox-reject]').forEach(e=>{const sid=e.dataset.inboxSid,rid=e.dataset.inboxReject;
-  e.onclick=()=>modal('拒绝获取申请','<label class="rs-field"><span>拒绝原因</span><textarea class="input" id="inbox-reject-reason"></textarea></label>','拒绝申请',()=>rsModalSave(()=>rsDecide(sid,rid,false,document.getElementById('inbox-reject-reason').value)));});
+  e.onclick=()=>modal('拒绝权限申请','<label class="rs-field"><span>拒绝原因</span><textarea class="input" id="inbox-reject-reason"></textarea></label>','拒绝申请',()=>rsModalSave(()=>rsDecide(sid,rid,false,document.getElementById('inbox-reject-reason').value)));});
 }
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&RS.drawer&&!document.querySelector('dialog[open]')){e.preventDefault();iterationCloseDrawer();}});
 const iterationBind=rsBind;
@@ -513,7 +513,7 @@ V.sharednew=()=>{
  const source=rsProject(f.pid);if(!f.initialized){f.name=f.mode==='existing'?source?.name||'':'';f.goal=f.mode==='existing'?source?.desc||'':'';f.initialized=true;}
  const candidates=f.mode==='existing'?rsCandidates(f.pid):[];if(f.assets===null)f.assets=candidates.filter(a=>a.kind==='knowledge').map(a=>a.id);
  const groups=[['知识库',['knowledge']],['工具与模型',['tool','model']],['数据与报告',['dataset','sampleSheet','evaluation','conclusion','inference']],['实验',['experiment']]];
- return '<div class="page rs rs-framed-form"><header class="iteration-head"><div><h1>新建共享项目</h1></div><button class="btn" type="button" data-go="shared">返回共享项目</button></header><div class="rs-form-layout rs-form-layout-single"><div class="rs-form-card"><div class="rs-form-scroll" data-rs-form-scroll="shared"><div class="rs-choice-row">'+[['existing','已有项目'],['blank','空白项目']].map(([v,n])=>'<label class="rs-choice"><input type="radio" name="sharedmode" data-rs-shared-mode="'+v+'" '+(f.mode===v?'checked':'')+'>'+n+'</label>').join('')+'</div><div class="rs-fields-grid">'+(f.mode==='existing'?'<label class="rs-field"><span>来源项目</span><select class="input" data-rs-shared-source aria-label="来源项目">'+rsPersonalProjects('me').map(p=>'<option value="'+esc(p.id)+'" '+(p.id===f.pid?'selected':'')+'>'+esc(p.name)+'</option>').join('')+'</select></label>':'')+'<label class="rs-field"><span>共享项目名称 <b>*</b></span><input class="input" id="rs-shared-name" data-rs-shared-field="name" value="'+esc(f.name)+'" maxlength="50"></label></div><label class="rs-field"><span>研究目标 <small>选填</small></span><textarea class="input" data-rs-shared-field="goal" rows="2" maxlength="500">'+esc(f.goal)+'</textarea></label><div class="rs-card-top"><h2>共享内容</h2><span class="rs-help" data-shared-selection-count>已选 '+f.assets.length+' 项</span><button class="rs-link" type="button" data-shared-all>全选</button></div><p class="rs-help">仅共享所选内容，科研对话不共享。</p>'+groups.map(([name,kinds],i)=>{const items=candidates.filter(a=>kinds.includes(a.kind));if(!items.length)return '';return '<details class="shared-select-group" '+(!i?'open':'')+'><summary><strong>'+name+'</strong><span>'+items.length+' 项</span></summary><div>'+items.map(a=>'<label class="rs-select-asset"><input type="checkbox" data-rs-publish-pick="'+esc(a.id)+'" '+(f.assets.includes(a.id)?'checked':'')+'>'+iterationAssetFile(a)+'<span><strong>'+esc(a.name)+'</strong><small>'+esc(a.kind==='knowledge'?'资料引用':rsAssetLabel(a.kind))+'</small></span></label>').join('')+'</div></details>';}).join('')+(!candidates.length?'<p class="rs-help">创建后可共享资产并邀请成员。</p>':'')+'</div><div class="rs-form-footer"><p class="rs-dialog-error" id="rs-create-error" role="alert"></p><button class="btn" type="button" data-go="shared">取消</button><button class="btn btn-pri" type="button" data-rs-create-shared>创建共享项目</button></div></div></div></div>';
+ return '<div class="page rs rs-framed-form"><header class="iteration-head"><div><h1>新建共享课题</h1></div><button class="btn" type="button" data-go="shared">返回共享课题</button></header><div class="rs-form-layout rs-form-layout-single"><div class="rs-form-card"><div class="rs-form-scroll" data-rs-form-scroll="shared"><div class="rs-choice-row">'+[['existing','已有项目'],['blank','空白项目']].map(([v,n])=>'<label class="rs-choice"><input type="radio" name="sharedmode" data-rs-shared-mode="'+v+'" '+(f.mode===v?'checked':'')+'>'+n+'</label>').join('')+'</div><div class="rs-fields-grid">'+(f.mode==='existing'?'<label class="rs-field"><span>来源项目</span><select class="input" data-rs-shared-source aria-label="来源项目">'+rsPersonalProjects('me').map(p=>'<option value="'+esc(p.id)+'" '+(p.id===f.pid?'selected':'')+'>'+esc(p.name)+'</option>').join('')+'</select></label>':'')+'<label class="rs-field"><span>共享课题名称 <b>*</b></span><input class="input" id="rs-shared-name" data-rs-shared-field="name" value="'+esc(f.name)+'" maxlength="50"></label></div><label class="rs-field"><span>研究目标 <small>选填</small></span><textarea class="input" data-rs-shared-field="goal" rows="2" maxlength="500">'+esc(f.goal)+'</textarea></label><div class="rs-card-top"><h2>共享内容</h2><span class="rs-help" data-shared-selection-count>已选 '+f.assets.length+' 项</span><button class="rs-link" type="button" data-shared-all>全选</button></div><p class="rs-help">仅共享所选内容，科研对话不共享。</p>'+groups.map(([name,kinds],i)=>{const items=candidates.filter(a=>kinds.includes(a.kind));if(!items.length)return '';return '<details class="shared-select-group" '+(!i?'open':'')+'><summary><strong>'+name+'</strong><span>'+items.length+' 项</span></summary><div>'+items.map(a=>'<label class="rs-select-asset"><input type="checkbox" data-rs-publish-pick="'+esc(a.id)+'" '+(f.assets.includes(a.id)?'checked':'')+'>'+iterationAssetFile(a)+'<span><strong>'+esc(a.name)+'</strong><small>'+esc(a.kind==='knowledge'?'资料引用':rsAssetLabel(a.kind))+'</small></span></label>').join('')+'</div></details>';}).join('')+(!candidates.length?'<p class="rs-help">创建后可共享资产并邀请成员。</p>':'')+'</div><div class="rs-form-footer"><p class="rs-dialog-error" id="rs-create-error" role="alert"></p><button class="btn" type="button" data-go="shared">取消</button><button class="btn btn-pri" type="button" data-rs-create-shared>创建共享课题</button></div></div></div></div>';
 };
 const iterationSharedFormBind=rsBind;
 rsBind=function(root){
