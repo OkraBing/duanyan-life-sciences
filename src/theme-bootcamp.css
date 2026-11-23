@@ -62,7 +62,7 @@ a{text-underline-offset:.15em}
 .pill.on:hover,.pill.is-on:hover{background:var(--dry-dim)!important;color:var(--dry-ink)!important}
 /* 8 侧栏：分组标签更淡更小 */
 #side .lbl{font-size:11px!important;color:var(--ink-3)!important;letter-spacing:.04em}
-#side .nav{font-size:13.5px!important}
+#side .nav{font-size:13px!important}
 /* 9 课题项目卡：灰底大块「待我处理」改成细边框、不填底；数字标题 15→14；按钮降为文字链接 */
 .projects-page .project-update,.project-update{background:var(--surface)!important;border:1px solid var(--line)!important;padding:12px 14px!important;height:auto!important}
 .project-update-head{margin-bottom:6px!important}.project-update-head>span{color:var(--ink-3)!important;font-weight:500!important}
@@ -111,3 +111,9 @@ h1.pjx-n{font-size:18px!important;font-weight:600!important;margin:0!important;l
 .skip-link{position:fixed;top:8px;left:8px;z-index:3000;padding:8px 12px;background:var(--ink);color:var(--on-pri);border-radius:var(--r2);font-size:13px;transform:translateY(-150%);transition:transform .15s}
 .skip-link:focus-visible{transform:none;outline-offset:2px}
 #view:focus{outline:none}
+/* Tricky R7：面板标题统一 18/600；小字号不低于 10；工具条按钮 32 */
+.ms-sidebar h2,.st-list-head h1,#view .st-list-head h1,.page .st-list-head h1,.chat-history-head strong,.st-intro h2{font-size:18px!important;font-weight:600!important}
+.st-detail-empty h2,.st-empty h2,.st-placeholder h2{font-size:18px!important;font-weight:600!important}
+.ms-head-actions>.btn{height:32px!important;line-height:30px!important}
+.fsq,.pjx-f .fsq,.file-badge{font-size:10px!important}
+.st-main>h2{font-size:18px!important;font-weight:600!important}

@@ -111,7 +111,7 @@ function navigationProjectsPage(mode){
    grid.insertAdjacentHTML('afterend','<div class="empty">还没有共享给你的课题。</div>');
  }else{
   inbox?.remove();
-  if(!grid.children.length)grid.insertAdjacentHTML('afterend','<div class="empty">没有匹配的项目，请换个关键词试试。</div>');
+  if(!grid.children.length)grid.insertAdjacentHTML('afterend',(S.pq||'').trim()?'<div class="empty">没有匹配的课题，请换个关键词试试。<button class="btn" type="button" data-project-clear-query>清除搜索</button></div>':'<div class="empty">还没有课题。新建第一个课题，或申请加入组里已有的课题。<button class="btn btn-pri" type="button" data-act="newproj">＋ 新建课题</button></div>');
  }
  return template.innerHTML;
 };
@@ -195,6 +195,7 @@ rsMembersDialog=function(){
 const navigationTeamBind=wbBind;
 wbBind=function(root){
  navigationTeamBind(root);
+ root.querySelectorAll('[data-project-clear-query]').forEach(b=>b.onclick=()=>{S.pq='';render();});
  root.querySelectorAll('[data-project-progress-pending]').forEach(button=>button.onclick=()=>{
  const pid=button.dataset.projectProgressPending;
  const tasks=(workbenchData({pid}).tasks||[]).filter(t=>t.pid===pid&&t.isTask!==false&&(t.needsAction||t.status==='failed'));
