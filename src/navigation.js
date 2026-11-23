@@ -216,3 +216,17 @@ V.materials=function(){let html=materialsViewBeforeInbox();
   if(inbox){const i=html.indexOf('</header>');if(i>0)html=html.slice(0,i+9)+'<div class="ms-inbox">'+inbox+'</div>'+html.slice(i+9);}}
  return html;};
 V.files=V.materials;
+
+/* 三栏页面（科研对话、定时任务）进入时默认折叠侧栏，离开时恢复进入前的状态；
+   用户在三栏页里手动展开过，就尊重那次选择，不再反复折。 */
+(function(){
+ const THREE_COL=new Set(['chat','schedules','schedulenew','scheduledetail']);
+ const original=go;let before=null,userOverrode=false;
+ go=function(r,o){
+  const wasThree=THREE_COL.has(S.route),isThree=THREE_COL.has(r);
+  if(isThree&&!wasThree){before=S.collapsed?1:0;userOverrode=false;if(!S.collapsed&&!matchMedia('(max-width:860px)').matches){S.collapsed=1;LS.set('collapsed',1);}}
+  else if(!isThree&&wasThree&&before!==null&&!userOverrode){S.collapsed=before;LS.set('collapsed',before);before=null;}
+  return original(r,o);
+ };
+ document.addEventListener('click',e=>{if(THREE_COL.has(S.route)&&e.target.closest('[data-a="side"],[data-act="side"]'))userOverrode=true;},true);
+})();
