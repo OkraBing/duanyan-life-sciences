@@ -214,7 +214,7 @@ wbBind=function(root){
 /* 资料空间「与你共享」：除了共享给我的文件，还放资产的申请与审批往来（原资源共享页的内容）。 */
 const materialsViewBeforeInbox=V.materials;
 V.materials=function(){let html=materialsViewBeforeInbox();
- if(!RS.seedReady){const i=html.indexOf('<main class="ms-main">');if(i>0)html=html.slice(0,i+22)+'<p class="ms-loading" role="status">正在读取课题资料，计数稍后更新…</p>'+html.slice(i+22);}/* 课题还没水合完，先说明一下，别让人把半份数当真 */
+ if(!RS.seedReady){const i=html.indexOf('<section class="ms-main">');if(i>0)html=html.slice(0,i+25)+'<p class="ms-loading" role="status">正在读取课题资料，计数稍后更新…</p>'+html.slice(i+25);}/* 课题还没水合完，先说明一下，别让人把半份数当真 */
  if(MATERIALS.tab==='shared'&&!MATERIALS.space){const inbox=iterationRequestInboxView(RS.data.shared||[]);
   if(inbox){const i=html.indexOf('</header>');if(i>0)html=html.slice(0,i+9)+'<div class="ms-inbox">'+inbox+'</div>'+html.slice(i+9);}}
  return html;};
