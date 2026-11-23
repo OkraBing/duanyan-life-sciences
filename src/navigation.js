@@ -224,11 +224,11 @@ V.files=V.materials;
  const original=go;let before=null,userOverrode=false;
  go=function(r,o){
   const wasThree=THREE_COL.has(S.route),isThree=THREE_COL.has(r);
-  if(isThree&&!wasThree){before=S.collapsed?1:0;userOverrode=false;if(!S.collapsed&&!matchMedia('(max-width:860px)').matches){S.collapsed=1;LS.set('collapsed',1);}}
-  else if(!isThree&&wasThree&&before!==null&&!userOverrode){S.collapsed=before;LS.set('collapsed',before);before=null;}
+  if(isThree&&!wasThree){before=S.collapsed?1:0;userOverrode=false;if(!S.collapsed&&!matchMedia('(max-width:860px)').matches){S.collapsed=1;}}
+  else if(!isThree&&wasThree&&before!==null&&!userOverrode){S.collapsed=before;before=null;}
   return original(r,o);
  };
  document.addEventListener('click',e=>{if(THREE_COL.has(S.route)&&e.target.closest('[data-a="side"],[data-act="side"]'))userOverrode=true;},true);
  /* 直接以 #chat / #schedules 打开页面时也一样折叠 */
- setTimeout(()=>{if(THREE_COL.has(S.route)&&!S.collapsed&&!matchMedia('(max-width:860px)').matches){before=0;S.collapsed=1;LS.set('collapsed',1);render();}},0);
+ setTimeout(()=>{if(THREE_COL.has(S.route)&&!S.collapsed&&!matchMedia('(max-width:860px)').matches){before=0;S.collapsed=1;render();}},0);
 })();
