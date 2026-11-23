@@ -198,7 +198,8 @@ wbBind=function(root){
  root.querySelectorAll('[data-project-progress-pending]').forEach(button=>button.onclick=()=>{
  const pid=button.dataset.projectProgressPending;
  const tasks=(workbenchData({pid}).tasks||[]).filter(t=>t.pid===pid&&t.isTask!==false&&(t.needsAction||t.status==='failed'));
- modal('待我处理','<div class="rs-dialog-scroll">'+tasks.map(t=>'<div class="rs-request"><strong>'+esc(t.name||t.id)+'</strong><p class="rs-help">'+esc(t.detail||t.label||'请查看并处理')+'</p><button class="btn" type="button" data-project-pending-task="'+esc(t.key)+'">查看并处理</button></div>').join('')+'</div>','完成',()=>{});
+ if(tasks.length===1){workbenchOpenTask(tasks[0].key);return;}/* 只有一项就直接进去，不用多点一层 */
+ modal('待处理 · '+tasks.length+' 项','<div class="rs-dialog-scroll">'+tasks.map(t=>'<div class="rs-request"><strong>'+esc(t.name||t.id)+'</strong><p class="rs-help">'+esc(t.detail||t.label||'请查看并处理')+'</p><button class="btn" type="button" data-project-pending-task="'+esc(t.key)+'">查看并处理</button></div>').join('')+'</div>','关闭',()=>{});
  document.querySelectorAll('#dlg [data-project-pending-task]').forEach(item=>item.onclick=()=>{document.getElementById('dlg').close();workbenchOpenTask(item.dataset.projectPendingTask);});
  });
  root.querySelectorAll('[data-project-progress-task]').forEach(button=>button.onclick=()=>workbenchOpenTask(button.dataset.projectProgressTask));

@@ -476,17 +476,17 @@ rsRequestsDialog=function(){
   return '<section class="request-block"><div class="rs-card-top"><h3>'+esc(a?.name||'来源资产不可用')+'</h3><span class="request-status '+r.state+'">'+labels[r.state]+'</span></div><small>'+esc(rsAssetLabel(a?.kind))+' · '+esc(r.version)+'</small>'+iterationPairs([[owner?'申请人':r.state==='approved'?'批准人':'审批人',owner?person:reviewer],['目标项目',rsProject(r.target)?.name||r.target],['申请理由',r.reason],['审核意见',r.reviewReason],['撤回原因',r.revocationReason]])+'<div class="rs-actions">'+(owner&&r.state==='pending'?'<button class="btn btn-pri" type="button" data-request-approve="'+esc(r.id)+'">批准</button><button class="btn" type="button" data-request-reject="'+esc(r.id)+'">拒绝</button>':'')+(r.actor===RS.actor&&r.state==='pending'?'<button class="btn" type="button" data-request-withdraw="'+esc(r.id)+'">撤回申请</button>':'')+(r.actor===RS.actor&&r.state==='approved'?'<button class="btn btn-pri" type="button" data-iteration-import="'+esc(r.id)+'">确认导入</button>':'')+'</div></section>';
  };
  const panel=iterationMountDrawer(owner?'获取申请':'我的申请',(pending.length?'<h3 class="request-group-title">'+(owner?'待我审批':'申请中')+' '+pending.length+'</h3>'+pending.map(block).join(''):'')+(history.length?'<h3 class="asset-drawer-history">'+(owner?'已处理':'其他申请')+' '+history.length+'</h3>'+history.map(block).join(''):'')+(!rows.length?'<p class="rs-help">暂无获取申请</p>':''),'',{kind:'requests',sharedId:s.id,trigger:document.activeElement});
- panel.querySelectorAll('[data-request-approve]').forEach(e=>e.onclick=()=>iterationMutation(()=>rsDecide(s.id,e.dataset.requestApprove,true,'同意在目标项目复用')));
- panel.querySelectorAll('[data-request-withdraw]').forEach(e=>e.onclick=()=>iterationMutation(()=>rsWithdrawRequest(s.id,e.dataset.requestWithdraw)));
- panel.querySelectorAll('[data-request-reject]').forEach(e=>e.onclick=()=>modal('拒绝获取申请','<label class="rs-field"><span>拒绝原因</span><textarea class="input" id="request-reject-reason"></textarea></label>','拒绝申请',()=>rsModalSave(()=>rsDecide(s.id,e.dataset.requestReject,false,document.getElementById('request-reject-reason').value))));
+ panel.querySelectorAll('[data-request-approve]').forEach(e=>e.onclick=()=>iterationMutation(()=>rsDecide(s.id,e.dataset.requestApprove,true,'同意在目标项目复用'),'已批准，对方可导入'));
+ panel.querySelectorAll('[data-request-withdraw]').forEach(e=>e.onclick=()=>iterationMutation(()=>rsWithdrawRequest(s.id,e.dataset.requestWithdraw),'已撤回申请'));
+ panel.querySelectorAll('[data-request-reject]').forEach(e=>e.onclick=()=>modal('拒绝获取申请','<label class="rs-field"><span>拒绝原因</span><textarea class="input" id="request-reject-reason"></textarea></label>','拒绝申请',()=>rsModalSave(()=>rsDecide(s.id,e.dataset.requestReject,false,document.getElementById('request-reject-reason').value).then(()=>toast('已拒绝')))));
 };
-function iterationMutation(fn){Promise.resolve().then(fn).then(()=>{render();}).catch(e=>toast(e.message||'操作失败'));}
+function iterationMutation(fn,done){Promise.resolve().then(fn).then(()=>{render();if(done)toast(done);}).catch(e=>toast(e.message||'操作失败'));}
 function iterationBindAcquisitions(root){
  root.querySelectorAll('[data-iteration-acquire]').forEach(e=>e.onclick=()=>rsRequestDialog(e.dataset.iterationAcquire));
- root.querySelectorAll('[data-iteration-import]').forEach(e=>e.onclick=()=>iterationMutation(()=>rsImport(rsShared().id,e.dataset.iterationImport)));
+ root.querySelectorAll('[data-iteration-import]').forEach(e=>e.onclick=()=>iterationMutation(()=>rsImport(rsShared().id,e.dataset.iterationImport),'已导入到我的项目'));
  if(root!==view)root.querySelectorAll('[data-rs-requests]').forEach(e=>e.onclick=()=>rsRequestsDialog());
  root.querySelectorAll('[data-inbox-open]').forEach(e=>e.onclick=()=>{RS.sharedPick=e.dataset.inboxOpen;LS.set('rs_shared_pick',RS.sharedPick);RS.actor='me';RS.tab='assets';go('shareddetail');});
- root.querySelectorAll('[data-inbox-import]').forEach(e=>e.onclick=()=>iterationMutation(()=>rsImport(e.dataset.inboxSid,e.dataset.inboxImport)));
+ root.querySelectorAll('[data-inbox-import]').forEach(e=>e.onclick=()=>iterationMutation(()=>rsImport(e.dataset.inboxSid,e.dataset.inboxImport),'已导入到我的项目'));
  root.querySelectorAll('[data-inbox-withdraw]').forEach(e=>e.onclick=()=>iterationMutation(()=>rsWithdrawRequest(e.dataset.inboxSid,e.dataset.inboxWithdraw)));
  root.querySelectorAll('[data-inbox-approve]').forEach(e=>e.onclick=()=>iterationMutation(()=>rsDecide(e.dataset.inboxSid,e.dataset.inboxApprove,true,'同意在目标项目复用')));
  root.querySelectorAll('[data-inbox-reject]').forEach(e=>{const sid=e.dataset.inboxSid,rid=e.dataset.inboxReject;
