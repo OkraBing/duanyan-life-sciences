@@ -56,7 +56,7 @@
 
 .projects-page .pcard-t{justify-content:flex-start;gap:10px;flex-wrap:wrap}
 .projects-page .pcard-t>.navigation-project-source{margin-left:0}
-.projects-page .project-card-wrap{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:12px;background:var(--surface);overflow:hidden}
+.projects-page .project-card-wrap{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:var(--project-card-radius);background:var(--surface);overflow:hidden}
 .projects-page .project-card-wrap>.pcard{border:0;border-radius:0;flex:1;width:100%;box-shadow:none}
 .project-team-row{display:flex;justify-content:space-between;align-items:center;gap:12px;border-top:1px solid var(--line-2);padding:16px 20px}
 .project-team-identity{display:flex;align-items:center;gap:10px;min-width:0}
@@ -113,3 +113,26 @@
 @media(max-width:600px){.projects-page .project-update{height:244px}.project-update>p{-webkit-line-clamp:3}.project-update>strong{-webkit-line-clamp:2}}
 .projects-page .project-update{align-items:stretch;justify-content:flex-start;text-align:left}
 .project-update>strong,.project-update>p,.project-task-progress{text-align:left;width:100%}
+
+/* 课题项目 / 资源共享 两个页签，视觉沿用工作台「课题相关发现」那一套下划线页签 */
+.projects-page .proj-tabs,.proj-tabs{display:flex;gap:24px;margin:0 0 18px;border-bottom:1px solid var(--line-2)}
+.proj-tabs button{display:flex;align-items:center;gap:6px;border:0;border-bottom:2px solid transparent;background:none;color:var(--ink-3);font:inherit;font-size:15px;font-weight:600;padding:0 2px 10px;margin-bottom:-1px;cursor:pointer}
+.proj-tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--ink)}
+.proj-tabs button:hover{color:var(--ink-2)}
+.proj-tabs button>span{background:var(--err-soft,var(--surface-2));color:var(--err);border-radius:12px;font-size:12px;font-weight:600;padding:1px 7px;line-height:18px}
+.proj-tabs button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+/* 空状态没有内容可填，不跟着那个 220px 的固定高走；卡片本来就是 align-self:start，不需要等高 */
+.projects-page .project-update.is-empty{height:auto}
+
+/* 矮屏下整条侧栏一起滚，会把「设置」和账号行推出可视区（820px 高时两者完全看不见）。
+   改成只让导航分组滚，底部那两块固定。
+   只在竖栏模式下这么做：≤860px 侧栏会变成横向顶部条，那时包裹层退化成 display:contents，
+   等于不存在，保持原来的排布（否则 360/430/768 下主操作会被 .pg-hd 压住）。 */
+#navScroll{display:contents}
+@media(min-width:880px){
+ #side{overflow:hidden}
+ #navScroll{display:flex;flex-direction:column;flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+ #side #navS{flex:none;margin-top:0}
+ #side #navAcct{flex:none}
+}

@@ -50,6 +50,15 @@ V.projects=()=>{
  const create=template.content.querySelector('[data-act="newproj"]');
  if(create){create.textContent='＋ 新建课题';create.insertAdjacentHTML('beforebegin','<button class="btn" type="button" data-project-join>申请加入课题</button>');}
  const description=template.content.querySelector('.projects-header p');if(description)description.textContent='我的项目 · 包含我创建的和共享给我的项目';
+ // 两个页签：课题项目 / 资源共享。申请往来挪到第二个页签，不再把课题卡挤下首屏。
+ const projTab=S.projTab==='resources'?'resources':'projects';
+ const pendingCount=iterationRequestInbox(RS.data.shared||[]).incoming.length;
+ const header=template.content.querySelector('.projects-header');
+ if(header)header.insertAdjacentHTML('afterend','<div class="proj-tabs" role="tablist" aria-label="课题项目内容">'
+  +[['projects','课题项目',0],['resources','资源共享',pendingCount]].map(([k,name,badge])=>
+    '<button role="tab" type="button" data-proj-tab="'+k+'" aria-selected="'+(projTab===k)+'" tabindex="'+(projTab===k?'0':'-1')+'">'
+    +name+(badge?'<span>'+badge+'</span>':'')+'</button>').join('')
+  +'</div>');
  let grid=template.content.querySelector('.pgrid');
  if(!grid){const section=template.content.querySelector('section');if(section){section.querySelector('.empty')?.remove();grid=document.createElement('div');grid.className='pgrid';section.appendChild(grid);}}
  if(!grid)return template.innerHTML;
@@ -74,16 +83,30 @@ V.projects=()=>{
   card.querySelectorAll('[data-project-shared]').forEach(b=>b.remove());
   navigationProjectSharedLabel(card,true);
   card.querySelector('.pcard-f')?.insertAdjacentHTML('beforebegin',navigationProjectProgress(rsProject(record.projectId),record));
-  const wrap=document.createElement('div');wrap.className='project-card-wrap';wrap.appendChild(card);wrap.insertAdjacentHTML('beforeend',navigationProjectTeam(rsProject(record.projectId),record));grid.appendChild(wrap);
+  const wrap=document.createElement('div');wrap.className='project-card-wrap is-shared-project';wrap.appendChild(card);wrap.insertAdjacentHTML('beforeend',navigationProjectTeam(rsProject(record.projectId),record));grid.appendChild(wrap);
  });
  grid.querySelectorAll('.project-card-wrap').forEach(wrap=>{
   const stats=wrap.querySelector('.pcard-f'),team=wrap.querySelector('.project-team-row');
   const update=wrap.querySelector('.project-update');if(update)wrap.querySelector('.pcard')?.after(update);
   if(stats&&team){const footer=document.createElement('div');footer.className='project-card-footer';stats.before(footer);wrap.appendChild(footer);footer.append(stats,team);}
  });
- const count=grid.children.length;
  template.content.querySelector('.sec-h')?.remove();
- if(!count)grid.insertAdjacentHTML('afterend','<div class="empty">没有匹配的项目，请换个关键词试试。</div>');
+ if(projTab==='resources'){
+  // 资源共享：申请往来 + 共享给我的课题（从这里进项目工作流）
+  grid.querySelectorAll('.project-card-wrap:not(.is-shared-project), [data-proj]').forEach(el=>{
+   const wrap=el.closest('.project-card-wrap');(wrap||el).remove();});
+  // 这一页签下搜课题没有意义，新建课题也不属于这里
+  template.content.querySelector('.projects-header .fbar-q')?.remove();
+  template.content.querySelector('.projects-header [data-act="newproj"]')?.remove();
+  if(description)description.textContent='资产的申请与审批往来，以及共享给我的课题';
+  if(!inbox&&!grid.children.length)
+   grid.insertAdjacentHTML('afterend','<div class="empty">目前没有待审批的申请，也没有共享给你的课题。</div>');
+  else if(!grid.children.length)
+   grid.insertAdjacentHTML('afterend','<div class="empty">还没有共享给你的课题。</div>');
+ }else{
+  inbox?.remove();
+  if(!grid.children.length)grid.insertAdjacentHTML('afterend','<div class="empty">没有匹配的项目，请换个关键词试试。</div>');
+ }
  return template.innerHTML;
 };
 // Keep old shared links usable while showing the unified project list.
@@ -177,5 +200,6 @@ wbBind=function(root){
  root.querySelectorAll('[data-project-progress-pid]').forEach(button=>button.onclick=()=>{S.pid=button.dataset.projectProgressPid;go('project');});
  root.querySelectorAll('[data-project-progress-shared]').forEach(button=>button.onclick=()=>{RS.sharedPick=button.dataset.projectProgressShared;RS.actor='me';go('shareddetail');});
  root.querySelectorAll('[data-project-join]').forEach(button=>button.onclick=()=>navigationJoinDialog());
+ root.querySelectorAll('[data-proj-tab]').forEach(button=>button.onclick=()=>{S.projTab=button.dataset.projTab;render();});
  root.querySelectorAll('[data-project-members]').forEach(button=>button.onclick=e=>{e.stopPropagation();const s=RS.data.shared.find(x=>x.id===button.dataset.projectMembers);if(s){try{navigationTeamOpen(s,false);}catch(error){toast(error.message);}}else {const pid=button.dataset.projectMembersPid;modal('团队成员','<div class="rs-member"><span class="rs-avatar">我</span><div><strong>我</strong><small>研究院未填写</small></div><span class="rs-tag">创建者</span></div>'+(can('edit')?'<button class="btn btn-pri" type="button" id="project-team-start">增加协作者</button>':''),'完成',()=>{});const start=document.getElementById('project-team-start');if(start)start.onclick=async()=>{start.disabled=true;try{const shared=await rsShareProject(pid);document.getElementById('dlg').close();go('projects');navigationTeamOpen(shared,true);}catch(error){toast(error.message);start.disabled=false;}};}});
 };
