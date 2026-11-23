@@ -1,5 +1,5 @@
 /* Global navigation groups and settings routes. */
-Object.assign(NAV_PARENT,{shared:'projects',sharednew:'projects',shareddetail:'projects',me:'settings',set:'settings',files:'materials',chats:'chat',project:'projects',pw:'projects'});
+Object.assign(NAV_PARENT,{sharednew:'shared',shareddetail:'shared',me:'settings',set:'settings',files:'materials',chats:'chat',project:'projects',pw:'projects'});
 Object.assign(NAVNAME,{projects:'课题项目',shared:'共享项目',dsets:'数据集',mdl:'模型',tools:'工具',shelf:'科研工具',data:'公共数据库',settings:'设置'});
 Object.assign(BACKNAME,{projects:'课题项目',settings:'设置'});
 NAV_ROUTE.shared=1;
@@ -44,21 +44,16 @@ function navigationProjectProgress(p,shared){
  const attrs=kind==='confirm'?'data-project-progress-pending="'+esc(p.id)+'"':task?'data-project-progress-task="'+esc(task.key)+'"':p?'data-project-progress-pid="'+esc(p.id)+'"':'data-project-progress-shared="'+esc(shared.id)+'"';
  return '<div class="navigation-progress project-update is-'+kind+'"><div class="project-update-head"><span>'+label+'</span>'+(at?'<time>'+esc(at)+'</time>':'')+'</div><strong>'+esc(title)+'</strong><p>'+esc(detail)+'</p>'+(percent!==null?'<div class="project-task-progress"><span>当前任务进度 '+percent+'%</span><progress value="'+percent+'" max="100" aria-label="当前任务进度 '+percent+'%"></progress></div>':'')+'<button class="project-update-action" type="button" '+attrs+'>'+action+' →</button></div>';
 }
-V.projects=()=>{
+/* 课题项目只放项目卡；资源共享是侧栏里自己的一项，不做成这一页的页签。 */
+V.projects=()=>navigationProjectsPage('projects');
+V.shared=()=>navigationProjectsPage('resources');
+function navigationProjectsPage(mode){
  const template=document.createElement('template');template.innerHTML=navigationProjectViews.projects();
- const heading=template.content.querySelector('h1');if(heading)heading.textContent='课题项目';
+ const heading=template.content.querySelector('h1');if(heading)heading.textContent=mode==='resources'?'资源共享':'课题项目';
  const create=template.content.querySelector('[data-act="newproj"]');
  if(create){create.textContent='＋ 新建课题';create.insertAdjacentHTML('beforebegin','<button class="btn" type="button" data-project-join>申请加入课题</button>');}
  const description=template.content.querySelector('.projects-header p');if(description)description.textContent='我的项目 · 包含我创建的和共享给我的项目';
- // 两个页签：课题项目 / 资源共享。申请往来挪到第二个页签，不再把课题卡挤下首屏。
- const projTab=S.projTab==='resources'?'resources':'projects';
- const pendingCount=iterationRequestInbox(RS.data.shared||[]).incoming.length;
- const header=template.content.querySelector('.projects-header');
- if(header)header.insertAdjacentHTML('afterend','<div class="proj-tabs" role="tablist" aria-label="课题项目内容">'
-  +[['projects','课题项目',0],['resources','资源共享',pendingCount]].map(([k,name,badge])=>
-    '<button role="tab" type="button" data-proj-tab="'+k+'" aria-selected="'+(projTab===k)+'" tabindex="'+(projTab===k?'0':'-1')+'">'
-    +name+(badge?'<span>'+badge+'</span>':'')+'</button>').join('')
-  +'</div>');
+ const projTab=mode==='resources'?'resources':'projects';
  let grid=template.content.querySelector('.pgrid');
  if(!grid){const section=template.content.querySelector('section');if(section){section.querySelector('.empty')?.remove();grid=document.createElement('div');grid.className='pgrid';section.appendChild(grid);}}
  if(!grid)return template.innerHTML;
@@ -109,8 +104,7 @@ V.projects=()=>{
  }
  return template.innerHTML;
 };
-// Keep old shared links usable while showing the unified project list.
-V.shared=()=>V.projects();
+
 function settingsLayout(current,content){
  const items=[['settings','常规设置'],['set','模型接入']];
  return `<div class="settings-layout">
@@ -200,6 +194,5 @@ wbBind=function(root){
  root.querySelectorAll('[data-project-progress-pid]').forEach(button=>button.onclick=()=>{S.pid=button.dataset.projectProgressPid;go('project');});
  root.querySelectorAll('[data-project-progress-shared]').forEach(button=>button.onclick=()=>{RS.sharedPick=button.dataset.projectProgressShared;RS.actor='me';go('shareddetail');});
  root.querySelectorAll('[data-project-join]').forEach(button=>button.onclick=()=>navigationJoinDialog());
- root.querySelectorAll('[data-proj-tab]').forEach(button=>button.onclick=()=>{S.projTab=button.dataset.projTab;render();});
  root.querySelectorAll('[data-project-members]').forEach(button=>button.onclick=e=>{e.stopPropagation();const s=RS.data.shared.find(x=>x.id===button.dataset.projectMembers);if(s){try{navigationTeamOpen(s,false);}catch(error){toast(error.message);}}else {const pid=button.dataset.projectMembersPid;modal('团队成员','<div class="rs-member"><span class="rs-avatar">我</span><div><strong>我</strong><small>研究院未填写</small></div><span class="rs-tag">创建者</span></div>'+(can('edit')?'<button class="btn btn-pri" type="button" id="project-team-start">增加协作者</button>':''),'完成',()=>{});const start=document.getElementById('project-team-start');if(start)start.onclick=async()=>{start.disabled=true;try{const shared=await rsShareProject(pid);document.getElementById('dlg').close();go('projects');navigationTeamOpen(shared,true);}catch(error){toast(error.message);start.disabled=false;}};}});
 };
