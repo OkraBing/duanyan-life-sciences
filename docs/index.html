@@ -3882,40 +3882,15 @@ body[data-route="chat"] .research-top .outbar-hist,body[data-route="chat"] .outb
 .al-origin{border:0;padding:0;margin:0;min-inline-size:0}
 .al-origin>legend{padding:0}
 
-/* ====== 皮肤：端砚「实验记录本」 ======
+/* ====== 皮肤层：结构与分量的微调；颜色沿用最初的墨砚 token ======
    依据：impeccable（Operate 模式：壳有颜色、一套字族、紧凑刻度、带偏移的软阴影、浏览器默认面也要上色、不许单侧色条）
          + ui-ux-pro-max（研究/数据类产品：Minimal Swiss，冷静蓝 + 中性灰，清晰优先）。
    世界：实验记录本——暖纸地、墨蓝封面（侧栏）、钴蓝做动作与选中、铜色只给「湿」数据。
    只改 token 与分量，不改结构。!important 是覆盖层：压过散落各处的旧规则。 */
 @font-face{font-family:Geist;src:url('assets/fonts/geist-latin.woff2') format('woff2');font-weight:100 900;font-display:swap}
 @font-face{font-family:GeistMono;src:url('assets/fonts/geist-mono-latin.woff2') format('woff2');font-weight:100 900;font-display:swap}
-:root,:root[data-theme="light"]{
- --paper:#f6f5f1;--surface:#ffffff;--surface-2:#f1f0ea;--surface-3:#e7e5dd;
- --ink:#1b2130;--ink-2:#3f4757;--ink-3:#687185;--ink-4:#8e96a8;
- --line:#e2dfd6;--line-2:#ece9e1;--pop:#ffffff;
- --dry:#2c56d6;--dry-ink:#1f44b4;--dry-soft:#eaf0ff;--dry-dim:#c3d2fb;--focus:#2c56d6;--seal:#2c56d6;
- --wet:#c4612e;--wet-ink:#a04a1f;--wet-soft:#fbefe7;--wet-dim:#efc9b2;
- --ok:#1f8a5b;--ok-soft:#e8f5ee;--ok-ink:#17704a;--err:#c9352b;--err-soft:#fbeceb;--warn:#b7791f;--warn-soft:#fbf3e3;
- --r1:5px;--r2:6px;--r3:8px;--r4:10px;
- --sh-1:0 1px 2px rgb(27 33 48 / .05),0 1px 1px rgb(27 33 48 / .03);
- --sh-2:0 2px 6px -2px rgb(27 33 48 / .08),0 12px 32px -16px rgb(27 33 48 / .18);
- --on-dry:#fff;--on-pri:#fff;--seal-on:#fff;
- --sans:Geist,Inter,'PingFang SC','Noto Sans SC','Hiragino Sans GB',sans-serif;--mono:GeistMono,'IBM Plex Mono',ui-monospace,monospace;
-}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
- --paper:#0f131c;--surface:#161b27;--surface-2:#1c2331;--surface-3:#262f41;
- --ink:#f3f5f9;--ink-2:#c6ccd9;--ink-3:#97a0b3;--ink-4:#737c90;--line:#283145;--line-2:#20283a;--pop:#161b27;
- --dry:#6f93f0;--dry-ink:#9db5f5;--dry-soft:#1a2a55;--dry-dim:#25397a;--focus:#6f93f0;--seal:#6f93f0;
- --wet:#e0855a;--wet-ink:#ea9f7c;--wet-soft:#3a2317;--wet-dim:#5a3522;
- --ok:#4cc38a;--ok-soft:#10301f;--ok-ink:#4cc38a;--err:#f0675d;--err-soft:#43150f;--warn:#e0a84a;--warn-soft:#3a2b10;
- --sh-1:0 1px 2px rgb(0 0 0 / .45);--sh-2:0 2px 6px -2px rgb(0 0 0 / .5),0 12px 32px -16px rgb(0 0 0 / .6);--on-pri:#0f131c;--on-dry:#0f131c;--seal-on:#0f131c;}}
-:root[data-theme="dark"]{
- --paper:#0f131c;--surface:#161b27;--surface-2:#1c2331;--surface-3:#262f41;
- --ink:#f3f5f9;--ink-2:#c6ccd9;--ink-3:#97a0b3;--ink-4:#737c90;--line:#283145;--line-2:#20283a;--pop:#161b27;
- --dry:#6f93f0;--dry-ink:#9db5f5;--dry-soft:#1a2a55;--dry-dim:#25397a;--focus:#6f93f0;--seal:#6f93f0;
- --wet:#e0855a;--wet-ink:#ea9f7c;--wet-soft:#3a2317;--wet-dim:#5a3522;
- --ok:#4cc38a;--ok-soft:#10301f;--ok-ink:#4cc38a;--err:#f0675d;--err-soft:#43150f;--warn:#e0a84a;--warn-soft:#3a2b10;
- --sh-1:0 1px 2px rgb(0 0 0 / .45);--sh-2:0 2px 6px -2px rgb(0 0 0 / .5),0 12px 32px -16px rgb(0 0 0 / .6);--on-pri:#0f131c;--on-dry:#0f131c;--seal-on:#0f131c;}
+/* 颜色 token 不再覆盖：用回 src/index.html :root 里最初那套墨砚色（用户定的） */
+:root{--sans:Geist,Inter,'PingFang SC','Noto Sans SC','Hiragino Sans GB',sans-serif;--mono:GeistMono,'IBM Plex Mono',ui-monospace,monospace;--r4:10px;--sh-1:0 1px 2px rgb(23 26 31 / .05),0 1px 1px rgb(23 26 31 / .03);--sh-2:0 2px 6px -2px rgb(23 26 31 / .08),0 12px 32px -16px rgb(23 26 31 / .18)}
 html,body,button,input,select,textarea{font-family:var(--sans)}
 body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 /* 浏览器自带的面也归这套色：选区、光标、焦点环、滚动条、数字对齐 */
@@ -3925,15 +3900,6 @@ html{caret-color:var(--dry);accent-color:var(--dry);scrollbar-color:var(--line) 
 :focus-visible{outline:2px solid var(--dry)!important;outline-offset:2px!important}
 time,.mono,.num,.t-num,td,.ms-cell,.history-meta-at,.rh-activity-copy small{font-variant-numeric:tabular-nums}
 a{text-underline-offset:.15em}
-/* 壳：侧栏是比纸面深一档的暖灰，内容区是纸；当前项是白色小卡（用户要浅色侧栏） */
-#side{background:#eeece5!important;color:var(--ink-2)}
-#side .nav{color:var(--ink-2)!important}
-#side .nav:hover{background:rgb(27 33 48/.05)!important;color:var(--ink)!important}
-#side .nav[aria-current="page"]{background:var(--surface)!important;color:var(--ink)!important;font-weight:600!important;box-shadow:0 1px 2px rgb(27 33 48/.08),0 0 0 1px rgb(27 33 48/.05)!important}
-#side .lbl{color:var(--ink-4)!important}
-#side hr,#side .sep{border-color:rgb(27 33 48/.08)!important}
-#main{border-left:0!important;border-radius:14px 0 0 14px!important;box-shadow:none!important;background:var(--paper)!important}
-@media(max-width:860px){#main{border-radius:0!important}}
 .page .pcard,.rh-project,.rh-activities,.rh-discoveries,.lv-exp,.dcard,.tl-card,.al-card,.project-card-wrap{box-shadow:var(--sh-1)}
 /* ====== 微调层：在 B 的 token 之上，改的是层级与分量，不是颜色 ====== */
 /* 1 标题降重：29/700 → 22/600；区块标题 17 → 15；卡片标题 15 → 14 */
@@ -3943,8 +3909,8 @@ a{text-underline-offset:.15em}
 .rh-project header h3{font-size:14px!important;font-weight:600!important}
 .rh-header p{color:var(--ink-3)!important}
 /* 2 主按钮：黑实心 → 墨蓝实心，32 高；次按钮淡边框；「进入课题」降为文字按钮 */
-.btn-pri,.rh-new,.rh-enter.primary{background:var(--dry)!important;border-color:var(--dry)!important;color:#fff!important;box-shadow:inset 0 1px 0 rgb(255 255 255/.12)!important;font-weight:500!important}
-.btn-pri:hover,.rh-new:hover{background:var(--dry-ink)!important;border-color:var(--dry-ink)!important}
+.btn-pri,.rh-new,.rh-enter.primary{background:var(--ink)!important;border-color:var(--ink)!important;color:var(--on-pri)!important;font-weight:500!important}
+.btn-pri:hover,.rh-new:hover{background:var(--ink-2)!important;border-color:var(--ink-2)!important}
 .btn,.rh-enter{border-color:var(--line)!important;font-weight:500!important;box-shadow:0 1px 1px rgb(19 24 38/.04)!important}
 .rh-enter{height:32px!important;min-height:32px!important;font-size:13px!important;color:var(--dry-ink)!important;background:transparent!important;border:1px solid transparent!important;justify-content:flex-start!important;padding:0!important}
 .rh-enter:hover{text-decoration:underline!important;background:transparent!important}
@@ -4014,9 +3980,6 @@ a{text-underline-offset:.15em}
 .ms-main{padding-top:var(--s6)!important}
 .ms-breadcrumb{margin-bottom:12px!important}
 .ms-toolbar{margin:20px 0!important}
-/* 对话列表的主按钮跟全站一致：钴蓝，不再黑实心 */
-.chat-history .history-new,.chat-history.is-collapsed .history-new-mini{background:var(--dry)!important;color:#fff!important;border-color:var(--dry)!important}
-.chat-history .history-new:hover,.chat-history.is-collapsed .history-new-mini:hover{background:var(--dry-ink)!important}
 
 
 /* 项目卡标题被挤成两行、断在「结合界 / 面」：标题被写死 max-width:calc(100% - 55px)，
