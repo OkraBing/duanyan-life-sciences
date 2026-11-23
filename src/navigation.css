@@ -163,3 +163,30 @@
    行永远能靠把标题压到 0 来“装下”兄弟（按钮 + 搜索框），于是从不换行——360 宽下「科研工具」变成 2px 宽、4 行，
    430 宽下「公共数据库」3 行。给标题列一个最小宽度，装不下就让行换行，而不是压标题。 */
 .row.wrap>.col.grow:has(>h1){min-width:min(100%,14rem)}
+
+/* 课题页「N 段 ▾」对话菜单的底部「科研对话」项：.menu-i.is-go 没有继承网格列定义，
+   两列解析成 274px + 14px——空的勾选位占满整行，文字被挤到 14px 里只露一个字。 */
+.menu-i.is-go{grid-template-columns:14px minmax(0,1fr)}
+
+/* 资料空间中栏：原先跟着文件表一起撑到 6240px，回收站被推到页面最底下看不见。
+   改成吸顶、与视口等高、自身可滚，回收站用 margin-top:auto 贴在栏底。 */
+.ms-sidebar{position:sticky;top:0;align-self:start;height:100vh;max-height:100vh;overflow-y:auto;box-sizing:border-box}
+
+/* 实验卡环节进度条：原先深灰实心 + 异常段空心描红 + 浅灰，三种质感打架。
+   统一成实心：完成用墨蓝（干流程），异常用胭脂实心，未到用分割线色；4px 圆角细条。 */
+.page .lv-bar{gap:4px}
+.page .lv-bar i{height:4px;border-radius:2px;background:var(--line)}
+.page .lv-bar i.done{background:var(--dry)}
+.page .lv-bar i.exception{background:var(--err);box-shadow:none}
+.page .lv-bar i.pending{background:var(--line)}
+
+/* 实验卡的异常红条原先是 ::before 画的 3px 绝对定位条，自带 10px 圆角，卡片圆角 12.5px，
+   两者不吻合，红条在卡片圆角处探出边框。改用内阴影画，内阴影严格贴着卡片自己的圆角。 */
+.page .lv-exp.is-exception::before{display:none}
+.page .lv-exp.is-exception{box-shadow:inset 3px 0 0 var(--err)}
+
+/* 筛选 pill 的选中态类名是 .on（不是 .is-on），hover 规则只排除了 .is-on，
+   于是选中的 pill 一 hover 就是黑底黑字、什么都看不见。 */
+.pill.on:hover:not(:disabled){color:var(--on-pri);border-color:var(--ink)}
+/* 进度条异常段：提高一级特异性，压过 index.html 尾部那条空心描红的旧规则 */
+.page .lv-exp .lv-bar i.exception{background:var(--err);box-shadow:none}

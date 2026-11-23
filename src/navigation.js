@@ -1,5 +1,5 @@
 /* Global navigation groups and settings routes. */
-Object.assign(NAV_PARENT,{sharednew:'shared',shareddetail:'shared',me:'settings',set:'settings',files:'materials',chats:'chat',project:'projects',pw:'projects'});
+Object.assign(NAV_PARENT,{shared:'materials',sharednew:'materials',shareddetail:'materials',me:'settings',set:'settings',files:'materials',chats:'chat',project:'projects',pw:'projects'});
 Object.assign(NAVNAME,{projects:'课题项目',shared:'共享项目',dsets:'数据集',mdl:'模型',tools:'工具',shelf:'科研工具',data:'公共数据库',settings:'设置'});
 Object.assign(BACKNAME,{projects:'课题项目',settings:'设置'});
 NAV_ROUTE.shared=1;
@@ -46,7 +46,8 @@ function navigationProjectProgress(p,shared){
 }
 /* 课题项目只放项目卡；资源共享是侧栏里自己的一项，不做成这一页的页签。 */
 V.projects=()=>navigationProjectsPage('projects');
-V.shared=()=>navigationProjectsPage('resources');
+/* 资源共享不再是独立页面：共享的往来并入资料空间「与你共享」。旧链接 #shared 直接落到那里。 */
+V.shared=()=>{Object.assign(MATERIALS,{tab:'shared',space:'',query:'',type:'all'});return V.materials();};
 function navigationProjectsPage(mode){
  const template=document.createElement('template');template.innerHTML=navigationProjectViews.projects();
  const heading=template.content.querySelector('h1');if(heading)heading.textContent=mode==='resources'?'资源共享':'课题项目';
@@ -87,16 +88,26 @@ function navigationProjectsPage(mode){
  });
  template.content.querySelector('.sec-h')?.remove();
  if(projTab==='resources'){
-  // 资源共享：申请往来 + 共享给我的课题（从这里进项目工作流）
+  // 资源共享：三个页签——待我审批 / 我的申请 / 共享项目，每个页签只放自己的内容
   grid.querySelectorAll('.project-card-wrap:not(.is-shared-project), [data-proj]').forEach(el=>{
    const wrap=el.closest('.project-card-wrap');(wrap||el).remove();});
+  const counts=iterationRequestInbox(RS.data.shared||[]);
+  const tabs=[['incoming','待我审批',counts.incoming.length],['mine','我的申请',counts.mine.length],['projects','共享项目',grid.children.length]];
+  const cur=tabs.some(t=>t[0]===S.sharedTab)?S.sharedTab:(tabs.find(t=>t[2])||tabs[0])[0];
+  template.content.querySelector('.projects-header')?.insertAdjacentHTML('afterend','<div class="proj-tabs" role="tablist" aria-label="资源共享内容">'
+   +tabs.map(([k,n,c])=>'<button role="tab" type="button" data-shared-tab="'+k+'" aria-selected="'+(cur===k)+'" tabindex="'+(cur===k?'0':'-1')+'">'+n+(c?'<span>'+c+'</span>':'')+'</button>').join('')+'</div>');
+  const groups=inbox?[...inbox.querySelectorAll('.inbox-group')]:[];
+  const groupOf=name=>groups.find(g=>(g.querySelector('h2')?.textContent||'').startsWith(name));
+  if(cur!=='incoming')groupOf('待我审批')?.remove();
+  if(cur!=='mine')groupOf('我的申请')?.remove();
+  if(cur!=='projects')grid.remove();
+  if(cur!=='projects'&&inbox&&!inbox.querySelector('.inbox-group'))inbox.insertAdjacentHTML('beforeend','<div class="empty">'+(cur==='incoming'?'目前没有待你审批的申请。':'你还没有发出申请。')+'</div>');
+  if(cur!=='projects'&&!inbox)template.content.querySelector('.proj-tabs').insertAdjacentHTML('afterend','<div class="empty">'+(cur==='incoming'?'目前没有待你审批的申请。':'你还没有发出申请。')+'</div>');
   // 这一页签下搜课题没有意义，新建课题也不属于这里
   template.content.querySelector('.projects-header .fbar-q')?.remove();
   template.content.querySelector('.projects-header [data-act="newproj"]')?.remove();
   if(description)description.textContent='资产的申请与审批往来，以及共享给我的课题';
-  if(!inbox&&!grid.children.length)
-   grid.insertAdjacentHTML('afterend','<div class="empty">目前没有待审批的申请，也没有共享给你的课题。</div>');
-  else if(!grid.children.length)
+  if(cur==='projects'&&!grid.children.length)
    grid.insertAdjacentHTML('afterend','<div class="empty">还没有共享给你的课题。</div>');
  }else{
   inbox?.remove();
@@ -136,7 +147,7 @@ const navigationOriginalPaint=paintNav;
 paintNav=function(force){
  navigationHideTip();navigationOriginalPaint(force);
  document.querySelectorAll('#side .nav[data-navid]').forEach(b=>{
-  const label=b.querySelector('.nav-tx')?.textContent||b.textContent.trim();b.setAttribute('aria-label',label);b.title=S.collapsed?'':label;
+  const label=b.querySelector('.nav-tx')?.textContent||b.textContent.trim();b.setAttribute('aria-label',label);b.removeAttribute('title');/* 展开时标签可见，原生 title 会盖在字上；收起时由自定义 tip 负责 */
   if(b.dataset.navigationBound)return;b.dataset.navigationBound='1';
   b.addEventListener('mouseenter',()=>navigationShowTip(b));b.addEventListener('mouseleave',navigationHideTip);
   b.addEventListener('focus',()=>navigationShowTip(b));b.addEventListener('blur',navigationHideTip);b.addEventListener('click',navigationHideTip);
@@ -194,5 +205,14 @@ wbBind=function(root){
  root.querySelectorAll('[data-project-progress-pid]').forEach(button=>button.onclick=()=>{S.pid=button.dataset.projectProgressPid;go('project');});
  root.querySelectorAll('[data-project-progress-shared]').forEach(button=>button.onclick=()=>{RS.sharedPick=button.dataset.projectProgressShared;RS.actor='me';go('shareddetail');});
  root.querySelectorAll('[data-project-join]').forEach(button=>button.onclick=()=>navigationJoinDialog());
+ root.querySelectorAll('[data-shared-tab]').forEach(button=>button.onclick=()=>{S.sharedTab=button.dataset.sharedTab;render();});
  root.querySelectorAll('[data-project-members]').forEach(button=>button.onclick=e=>{e.stopPropagation();const s=RS.data.shared.find(x=>x.id===button.dataset.projectMembers);if(s){try{navigationTeamOpen(s,false);}catch(error){toast(error.message);}}else {const pid=button.dataset.projectMembersPid;modal('团队成员','<div class="rs-member"><span class="rs-avatar">我</span><div><strong>我</strong><small>研究院未填写</small></div><span class="rs-tag">创建者</span></div>'+(can('edit')?'<button class="btn btn-pri" type="button" id="project-team-start">增加协作者</button>':''),'完成',()=>{});const start=document.getElementById('project-team-start');if(start)start.onclick=async()=>{start.disabled=true;try{const shared=await rsShareProject(pid);document.getElementById('dlg').close();go('projects');navigationTeamOpen(shared,true);}catch(error){toast(error.message);start.disabled=false;}};}});
 };
+
+/* 资料空间「与你共享」：除了共享给我的文件，还放资产的申请与审批往来（原资源共享页的内容）。 */
+const materialsViewBeforeInbox=V.materials;
+V.materials=function(){let html=materialsViewBeforeInbox();
+ if(MATERIALS.tab==='shared'&&!MATERIALS.space){const inbox=iterationRequestInboxView(RS.data.shared||[]);
+  if(inbox){const i=html.indexOf('</header>');if(i>0)html=html.slice(0,i+9)+'<div class="ms-inbox">'+inbox+'</div>'+html.slice(i+9);}}
+ return html;};
+V.files=V.materials;
