@@ -2499,7 +2499,7 @@ dialog{max-height:calc(100dvh - 32px);overflow-y:auto}
 
 /* 科研对话起始页：样式仅作用于此页，保留全站菜单与对话流。 */
 .research-home{--rh-blue:#245BE8;position:relative;isolation:isolate}
-.research-home::before{content:"";position:absolute;z-index:-1;pointer-events:none;top:0;left:-2rem;right:-2rem;height:22rem;background:url('./assets/research-chat-bg.png') right top/cover no-repeat;mask-image:linear-gradient(#000 35%,transparent 100%);opacity:.72}
+.research-home::before{content:"";position:absolute;z-index:-1;pointer-events:none;top:0;left:-2rem;right:-2rem;height:22rem;background:url('./assets/research-chat-bg.jpg') right top/cover no-repeat;mask-image:linear-gradient(#000 35%,transparent 100%);opacity:.72}
 .page.chat.is-land.research-home{display:flex;align-items:stretch;gap:0;padding:1.25rem 0 2rem;min-height:100%}
 .research-top{display:flex;align-items:center;justify-content:space-between;gap:1rem}
 .research-top strong{font-size:1.1rem;font-weight:650}
@@ -3028,6 +3028,15 @@ dialog.rs-copy-dialog{width:min(600px,calc(100vw - 32px));max-width:600px;overfl
 /* @include tool-ide.css */
 /* @include tool-wizard.css */
 /* @include autonomous-lab.css */
+
+/* 项目卡标题被挤成两行、断在「结合界 / 面」：标题被写死 max-width:calc(100% - 55px)，
+   而右边那枚「共享」角标其实只有 40px 宽，行上还开了 flex-wrap。
+   结果标题用不满剩余宽度，提前换行，断点又正好落在词中间。
+   把宽度限制去掉，让标题吃满剩余空间；角标不参与收缩，也不再把行撑开换行。 */
+.projects-page .pcard-t{flex-wrap:nowrap;align-items:center;gap:8px}
+.projects-page .pcard-t>strong{flex:1 1 auto;min-width:0;max-width:none}
+.projects-page .pcard-t>.navigation-project-source,
+.projects-page .pcard-t>.pcard-st{flex:0 0 auto;margin-left:auto}
 </style>
 
 <div id="app">

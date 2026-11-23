@@ -10,7 +10,7 @@ function researchHistoryList(){
     const rows=sessions.filter(x=>group(x)===g).sort((a,b)=>String(b.at||'').localeCompare(String(a.at||'')));
     return rows.length?`<h3 class="history-group">${g}</h3>`+rows.map(x=>{
       const project=DB.projects.find(p=>p.id===x.pid);
-      return `<div class="history-item${S.sid===x.id?' is-current':''}"><button type="button" class="history-open" data-history-open="${esc(x.id)}" ${S.sid===x.id?'aria-current="page"':''} title="${esc(x.title||'未命名对话')}"><span class="history-title">${esc(x.title||'未命名对话')}</span><span class="history-meta">${esc(project?project.name:'未关联课题')} · ${esc(x.at||'')}</span></button><button type="button" class="history-more" data-history-more="${esc(x.id)}" aria-label="更多：${esc(x.title||'未命名对话')}">···</button></div>`;
+      return `<div class="history-item${S.sid===x.id?' is-current':''}"><button type="button" class="history-open" data-history-open="${esc(x.id)}" ${S.sid===x.id?'aria-current="page"':''} title="${esc(x.title||'未命名对话')}"><span class="history-title">${esc(x.title||'未命名对话')}</span><span class="history-meta"><span class="history-meta-name">${esc(project?project.name:'未关联课题')}</span><span class="history-meta-at">${esc(x.at||'')}</span></span></button><button type="button" class="history-more" data-history-more="${esc(x.id)}" aria-label="更多：${esc(x.title||'未命名对话')}">···</button></div>`;
     }).join(''):'';
   }).join('')||`<p class="history-empty">暂无历史对话，发送问题后会自动保存在这里。</p>`;
   host.scrollTop=scroll;

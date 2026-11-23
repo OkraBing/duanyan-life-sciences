@@ -41,7 +41,7 @@
 .dcard-cov{background:var(--surface-2)!important;border-bottom:1px solid var(--line-2)}
 .dcard-cov .dcov-g{filter:var(--catalog-art-filter);opacity:.55}
 .dcard-cov .dcard-ab{background:none;color:var(--ink-3)}
-.research-home::before{opacity:.2;filter:grayscale(1)}
+.research-home::before{opacity:.3;filter:grayscale(1)}
 .research-home .ask{border-color:var(--line);box-shadow:none}
 .research-home .ask:focus-within{border-color:var(--dry);box-shadow:0 0 0 3px var(--dry-soft)}
 
