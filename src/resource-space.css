@@ -15,3 +15,4 @@ body[data-route="materials"] #view,body[data-route="files"] #view{padding:0;back
 .ms-menu{position:fixed;z-index:1200;min-width:160px;padding:6px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r3);box-shadow:0 8px 24px rgba(16,24,40,.12);display:flex;flex-direction:column}
 .ms-menu button{text-align:left;border:0;background:transparent;color:var(--ink);font:inherit;font-size:13px;padding:8px 10px;border-radius:var(--r2);cursor:pointer}
 .ms-menu button:hover,.ms-menu button:focus-visible{background:var(--surface-2);outline:0}
+.ms-loading{margin:0 0 12px;padding:8px 12px;border-radius:var(--r2);background:var(--surface-2);color:var(--ink-3);font-size:12px}

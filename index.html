@@ -3081,6 +3081,7 @@ body[data-route="materials"] #view,body[data-route="files"] #view{padding:0;back
 .ms-menu{position:fixed;z-index:1200;min-width:160px;padding:6px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r3);box-shadow:0 8px 24px rgba(16,24,40,.12);display:flex;flex-direction:column}
 .ms-menu button{text-align:left;border:0;background:transparent;color:var(--ink);font:inherit;font-size:13px;padding:8px 10px;border-radius:var(--r2);cursor:pointer}
 .ms-menu button:hover,.ms-menu button:focus-visible{background:var(--surface-2);outline:0}
+.ms-loading{margin:0 0 12px;padding:8px 12px;border-radius:var(--r2);background:var(--surface-2);color:var(--ink-3);font-size:12px}
 
 body[data-route=schedules] #view,body[data-route=schedulenew] #view,body[data-route=scheduledetail] #view{padding:0}
 /* Preserve the primary button's contrasting label over the page button reset. */
@@ -10677,9 +10678,11 @@ function PLIST(){
 function grid(){
   return `<div class="pgrid">`+
   PLIST().map(p=>{const[st,cc]=stateOf(p.state);
-    const res=[[(p.kb||[]).length,'资料'],[(p.tools||[]).length,'工具'],
+    /* 口径跟课题详情页一致：资料 = 知识库条目 + 这个课题在资料空间里的文件；任务 = 工作台/实验页那份任务表，
+       不再用静态 TASKS（它少了实验和批量任务，卡片上的数和点进去看到的对不上）。 */
+    const res=[[(typeof materialsRows==='function'?materialsRows().filter(x=>x.pid===p.id).length:FILES().filter(x=>x.pid===p.id).length),'资料'],[(p.tools||[]).length,'工具'],
                [(p.arch||[]).length,'归档']].filter(x=>x[0]);
-    const nt=TASKS.filter(t=>t.pid===p.id).length;
+    const nt=(workbenchData({pid:p.id}).tasks||[]).filter(t=>t.pid===p.id&&t.isTask!==false&&t.status!=='canceled').length;
     return `<div class="project-card-wrap"><button class="pcard ${cc}" type="button" data-proj="${p.id}">
       <span class="pcard-t">
         <strong>${esc(p.name)}</strong>
@@ -10843,7 +10846,7 @@ function pjExpTab(p){
 V.project=()=>{
   const p=PRJ(), tab=S.pjtab||'kb';
   const L=convOf(pjSid(p.id));
-  const F=FILES(p.id), up=(p.kb||[]), DC=DOCS(p.id);
+  const F=FILES(p.id).filter(e=>e.kind!=='kb'), up=(p.kb||[]), DC=DOCS(p.id);/* 知识库条目已在 up 里列了，FILES 里那份不再重复列一遍 */
   const docCur=DC.find(x=>x.key===S.docPick)||null;
   return `<div class="pjx">
   <div class="pjx-top">
@@ -21345,7 +21348,7 @@ async function rsLoad(){
  if(saved){RS.revision=saved.revision||0;RS.data.iterationSeed=saved.iterationSeed||0;RS.data.projectFixtures=saved.projectFixtures||null;['projects','shared','imports','resources'].forEach(k=>{RS.data[k]=Array.isArray(saved[k])?saved[k]:[];});}
  rsHydrate();const currentResource=RS.data.resources.find(r=>r.id===RS.resourcePick);if(currentResource)NAV_PARENT.resdetail=currentResource.kind==='database'?'data':'tools';RS.ready=true;await iterationSeedWorkspace();RS.seedReady=true;
  }catch(e){RS.error='本机存储不可用，请检查浏览器设置后重试。';RS.ready=true;}
- if(['shared','sharednew','shareddetail','tools','toolnew','databasenew','resnew','resdetail','shelf','data','project','projects','workbench','lab','mdl','dsets'].includes(S.route))render();
+ if(['shared','sharednew','shareddetail','tools','toolnew','databasenew','resnew','resdetail','shelf','data','project','projects','workbench','lab','mdl','dsets','materials','files','chat'].includes(S.route))render();/* 资料空间首屏在课题水合前画的，水合完要重画，否则计数停在旧值 */
 }
 async function rsSave(next,files=[]){
  if(!RS.ready||!RS.db||RS.error)throw new Error(RS.error||'数据仍在加载');if(RS.busy)throw new Error('正在保存，请稍候');RS.busy=true;
@@ -23328,6 +23331,7 @@ wbBind=function(root){
 /* 资料空间「与你共享」：除了共享给我的文件，还放资产的申请与审批往来（原资源共享页的内容）。 */
 const materialsViewBeforeInbox=V.materials;
 V.materials=function(){let html=materialsViewBeforeInbox();
+ if(!RS.seedReady){const i=html.indexOf('<main class="ms-main">');if(i>0)html=html.slice(0,i+22)+'<p class="ms-loading" role="status">正在读取课题资料，计数稍后更新…</p>'+html.slice(i+22);}/* 课题还没水合完，先说明一下，别让人把半份数当真 */
  if(MATERIALS.tab==='shared'&&!MATERIALS.space){const inbox=iterationRequestInboxView(RS.data.shared||[]);
   if(inbox){const i=html.indexOf('</header>');if(i>0)html=html.slice(0,i+9)+'<div class="ms-inbox">'+inbox+'</div>'+html.slice(i+9);}}
  return html;};
