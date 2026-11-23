@@ -125,3 +125,7 @@ h1.pjx-n{font-size:18px!important;font-weight:600!important;margin:0!important;l
 .ms-file-main:hover strong{text-decoration:underline;text-underline-offset:.15em}
 .ms-nav:hover{background:var(--surface-2)!important}
 .rh-enter:hover{text-decoration:underline!important}
+/* 宽屏自适应：内容宽度随视口走（78vw，封顶 100rem），不再固定 1180 留两大片空白；根字号本来就是 clamp(16,…,20) */
+.page,.page.wb.wb-workstation,.al-page,.page.rs,.settings-layout,.st-layout{max-width:min(100%,clamp(73.75rem,78vw,100rem))!important}
+.projects-page .pgrid,.pgrid{grid-template-columns:repeat(auto-fill,minmax(min(100%,22rem),1fr))}
+@media(min-width:1800px){.rh-project-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.rh-card-section p{-webkit-line-clamp:3}}

@@ -439,7 +439,9 @@ function iterationSharedHeader(s,member){
  return '<div class="shared-breadcrumb"><button class="rs-link" type="button" data-go="shared">共享课题</button><span>/</span><span>课题详情</span></div><header class="iteration-head"><div><h1>'+esc(s.name)+' <span class="rs-tag">'+esc(rsRoleNames[member.role])+'</span></h1><p title="'+esc(s.goal||'')+'">'+esc(s.goal||'')+'</p></div><div class="rs-actions"><button class="btn" type="button" data-rs-members>成员 '+s.members.filter(m=>m.status==='active').length+'</button><button class="btn shared-req-btn" type="button" data-rs-requests aria-label="'+(rsCan(s,'approve')?'文件权限申请'+(counts.incoming?'，'+counts.incoming+' 条待处理':''):'我的申请')+'">'+(rsCan(s,'approve')?'权限申请'+(counts.incoming?'<span class="shared-req-badge">'+counts.incoming+'</span>':''):'我的申请'+(counts.pending+counts.approved?'<span class="shared-req-badge is-soft">'+(counts.pending+counts.approved)+'</span>':''))+'</button>'+(rsCan(s,'publish')?'<button class="btn btn-pri" type="button" data-rs-publish>共享资产</button>':'')+'</div></header>';
 }
 V.shareddetail=()=>{
- const gate=rsGate();if(gate)return gate;const s=rsShared(),member=rsMember(s);if(!s||!member)return '<div class="page rs"><h1>找不到可访问的共享课题</h1><button class="btn" data-go="shared">返回共享课题</button></div>';
+ const gate=rsGate();if(gate)return gate;
+ if(!RS.sharedPick||!RS.data.shared.some(x=>x.id===RS.sharedPick)){RS.sharedPick=LS.get('rs_shared_pick','')||'';if(!RS.data.shared.some(x=>x.id===RS.sharedPick&&rsCan(x,'read')))RS.sharedPick=RS.data.shared.find(x=>rsCan(x,'read'))?.id||'';}/* 直接刷新这个页时还没选中哪一条：用上次打开的，再不行就第一条能看的，不给一个死胡同 */
+ const s=rsShared(),member=rsMember(s);if(!s||!member)return '<div class="page rs"><h1>找不到可访问的共享课题</h1><button class="btn" data-go="shared">返回共享课题</button></div>';
  const header=iterationSharedHeader(s,member);
  RS.tab='assets';/* 共享课题只共享文档与任务资产，项目工作流能力已删除 */
  const groups=iterationAssetGroups(s),all=groups.flatMap(g=>g[1]);if(!all.some(a=>a.id===RS.assetPick))RS.assetPick=all[0]?.id||'';
