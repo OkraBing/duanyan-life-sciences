@@ -5675,7 +5675,7 @@ V.lab=()=>{
 V.labdet=()=>{
   const b=BATCHES.find(x=>x.id===S.labPick);
   if(!b)return `<div class="page"><div class="empty is-miss" style="margin-top:var(--s7)">
-    <div class="col" style="gap:4px"><strong class="t-md" style="color:var(--ink)">找不到这个实验</strong>
+    <div class="col" style="gap:4px"><h1 class="t-md" style="color:var(--ink);font-size:18px;margin:0">找不到这个实验</h1>
     <span class="t-sm">它可能已经被删掉了</span></div>
     <button class="btn" type="button" data-nav="lab">回实验管理</button></div></div>`;
   const st=statusOf(b.status), nx=nextStep(b), pg=batchPg(b);
@@ -9869,7 +9869,7 @@ V.project=()=>{
         stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"
         ><path d="M14.5 5.5 8 12l6.5 6.5"/></svg></button>
     <div class="col pjx-title" style="gap:4px;min-width:0">
-      <div class="pjx-title-row"><strong class="pjx-n">${esc(p.name)}</strong>${rsProjectShared(p.id)?'<button class="project-shared-badge" type="button" data-project-members="'+esc(rsProjectShared(p.id).id)+'" aria-label="查看协作者" aria-haspopup="dialog">'+rsSharingIcon()+'共享项目</button>':''}</div>
+      <div class="pjx-title-row"><h1 class="pjx-n">${esc(p.name)}</h1>${rsProjectShared(p.id)?'<button class="project-shared-badge" type="button" data-project-members="'+esc(rsProjectShared(p.id).id)+'" aria-label="查看协作者" aria-haspopup="dialog">'+rsSharingIcon()+'共享项目</button>':''}</div>
       <span class="t-xs mut2" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
         >${esc(goalText(p))}</span>
     </div>

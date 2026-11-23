@@ -96,3 +96,11 @@ a{text-underline-offset:.15em}
 .ms-main{padding-top:var(--s6)!important}
 .ms-breadcrumb{margin-bottom:12px!important}
 .ms-toolbar{margin:20px 0!important}
+/* Tricky review R1：点击目标不小于 32，视觉大小不变；课题页标题是 h1 */
+.alnk,.lnk,.me-l,.project-team-avatars,.project-shared-badge{min-height:32px!important;display:inline-flex!important;align-items:center}
+.sw::before,.pjx-f-x::before,.st-icon-button::before{content:'';position:absolute;inset:-6px}
+.sw,.pjx-f-x,.st-icon-button{position:relative}
+.st-icon-button{width:32px!important;height:32px!important}
+.rh-next-action{min-height:28px!important;padding:4px 0!important}
+.ms-row-actions .ms-more{min-height:32px!important;min-width:32px!important}
+h1.pjx-n{font-size:18px!important;font-weight:600!important;margin:0!important;line-height:1.4!important;min-width:0;overflow-wrap:anywhere}
