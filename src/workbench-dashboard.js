@@ -40,50 +40,7 @@ function dashboardTaskProgress(t){
  if(typeof t.progress==='number')return t.progress+'%';
  return t.status==='done'?'100%':'';
 }
-function dashboardSummary(data){
- const failed=data.experiments.filter(t=>t.status==='failed'),active=data.experiments.filter(t=>t.status==='active'),ready=wbAttentionTasks(data.experiments).filter(t=>t.status==='done');
- if(failed.length){const groups=new Set(failed.map(t=>t.pid));return failed.length+' 项实验异常，分布在 '+groups.size+' 个课题';}
- if(active.length)return active.length+' 项实验进行中';
- if(ready.length)return ready.length+' 项实验已有结论';
- return '没有需要关注的实验';
-}
-function dashboardRefreshIdea(){
- const data=iterationPrepareWorkbench(),pool=WB.ideas.filter(x=>data.projects.some(p=>p.id===x.pid)),previous=WB.dailyIdea;
- const index=pool.findIndex(x=>x.pid===previous?.pid&&x.question===previous?.question);
- const alternatives=pool.filter(x=>x.question!==previous?.question);if(!alternatives.length){wbPrepare();return;}
- let next=pool[(index+1+pool.length)%pool.length];if(next.question===previous?.question)next=alternatives[0];
- WB.dailyDate=wbToday();WB.dailyIdea={...next};LS.set('wb_daily_idea_v1',{date:WB.dailyDate,idea:WB.dailyIdea});render();view.querySelector('[data-wb-refresh-idea]')?.focus({preventScroll:true});
-}
 function dashboardPapers(projects){
  const valid=new Set(projects.map(p=>p.id));
  return WB.papers.filter(p=>wbViewHref(p.url)&&(p.pids||[p.pid]).some(id=>valid.has(id)));
 }
-function dashboardNewsControls(page,pages){
- return '<div class="wb-news-controls" role="group" aria-label="切换学术资讯"><button class="btn wb-project-step" type="button" data-wb-news-page="-1" aria-label="上一页论文" '+(!page?'disabled':'')+'>'+wbViewIcon('left')+'</button><span class="wb-project-range">'+(pages?page+1:0)+' / '+pages+'</span><button class="btn wb-project-step" type="button" data-wb-news-page="1" aria-label="下一页论文" '+(!pages||page>=pages-1?'disabled':'')+'>'+wbViewIcon('right')+'</button></div>';
-}
-function dashboardPaper(p,projects){
- const href=wbViewHref(p.url),title=p.title||p.shortTitle||'未命名论文',description=p.description||WB_PAPERS.find(x=>x.id===p.id)?.summary||p.relevance||'打开论文查看研究内容。',pids=p.pids||[p.pid];
- return '<li class="wb-paper-card" data-paper-id="'+esc(p.id||p.url)+'"><div class="wb-paper-copy"><h3 class="wb-paper-title" title="'+esc(title)+'">'+esc(title)+'</h3><p class="wb-paper-description">'+esc(description)+'</p></div><div class="wb-paper-foot"><div class="wb-paper-topics">'+projects.filter(x=>pids.includes(x.id)).map(x=>'<span class="wb-paper-topic" title="相关课题：'+esc(x.name)+'">'+esc(x.name)+'</span>').join('')+'</div><a class="wb-paper-open" href="'+esc(href)+'" target="_blank" rel="noopener noreferrer" aria-label="打开论文：'+esc(title)+'" title="打开论文">'+wbViewIcon('external')+'</a></div></li>';
-}
-V.workbench=()=>{
- const d=wbPrepare(),ps=d.projects||[];if(!ps.some(p=>p.id===WB.progressProject))WB.progressProject=ps[0]?.id||'';
- const window=iterationProjectWindow(ps),idea=WB.ideas[0],papers=dashboardPapers(ps),pageSize=4,pages=Math.ceil(papers.length/pageSize);WB.newsPage=Math.max(0,Math.min(Math.max(0,pages-1),WB.newsPage||0));
- const date=new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'long',timeZone:'Asia/Shanghai'});
- /* 层级对调只动视觉，不动文案：寒暄那句原样留着，但字号字重降下来；
-    真正要紧的那一行（面板里已有的那句摘要）升上去。
-    这里只取一个「有没有异常」的标记给样式用，不生成任何新文字。 */
- const wex=(d.summary&&d.summary.experiment)||{};
- const refresh='<button class="wb-icon-button wb-refresh-idea" type="button" data-wb-refresh-idea aria-label="刷新今日灵感" '+(!idea?'disabled':'')+'>'+wbViewIcon('refresh')+'<span>换一句</span></button>';
- return '<div class="page wb wb-dashboard"><header class="wb-header"><div class="wb-header-copy"><span class="wb-kicker">工作台</span><h1>'+wbViewGreeting()+'，ZHANG</h1></div><span class="wb-date">'+esc(date)+'</span></header><div class="wb-layout">'+
- '<section class="wb-panel wb-inspiration" aria-labelledby="wb-ideas-title"><div class="wb-idea-banner-head"><h2 id="wb-ideas-title" class="wb-inspiration-label">'+wbViewIcon('spark')+'今日灵感</h2></div>'+(idea?'<div class="wb-idea-banner-body"><p class="wb-question" aria-live="polite">'+esc(idea.question)+'</p><div class="wb-idea-actions">'+refresh+'<button type="button" class="btn btn-pri wb-idea-explore" data-wb-prompt="'+esc(idea.question)+'" data-wb-pid="'+esc(idea.pid)+'" aria-label="去探索，关联课题：'+esc(ps.find(p=>p.id===idea.pid)?.name||idea.project||'')+'">去探索</button></div></div>':'<div class="wb-empty-idea">为课题补充研究目标，开始探索新问题。</div>')+'</section>'+
- '<section class="wb-panel wb-tasks" aria-labelledby="wb-tasks-title" aria-roledescription="轮播"><div class="wb-panel-heading"><div class="wb-progress-heading"><h2 id="wb-tasks-title">课题进展</h2>'+iterationProjectControls(window,ps.length)+'</div><div class="wb-agent-summary'+(wex.failed?' is-alert':'')+'" aria-live="polite">'+wbViewIcon('spark')+'<p>'+esc(dashboardSummary(d))+'</p></div></div>'+(window.items.length?'<div class="wb-project-grid" style="--wb-project-slots:'+window.slots+'">'+window.items.map(p=>{const scope=workbenchData({pid:p.id});return '<article class="wb-project-card" data-wb-project-id="'+esc(p.id)+'" aria-label="课题：'+esc(p.name)+'"><header class="wb-project-card-head">'+wbProjectMark(p)+'<h3><button class="wb-project-title" type="button" data-wb-project="'+esc(p.id)+'" title="'+esc(p.name)+'" aria-label="进入课题：'+esc(p.name)+'"><span>'+esc(p.name)+'</span>'+wbViewIcon('right')+'</button></h3></header>'+iterationTaskSection('experiment',scope.experiments||[],p.id)+iterationTaskSection('model',scope.modelTasks||[],p.id)+'</article>'}).join('')+'</div>':'<div class="wb-empty"><strong>还没有课题</strong><button class="btn btn-pri" type="button" data-wb-create-project>新建项目</button></div>')+'</section>'+
- '<section class="wb-panel wb-news" aria-labelledby="wb-news-title"><div class="wb-panel-heading"><div class="wb-progress-heading"><div class="wb-panel-label">'+wbViewIcon('paper')+'<h2 id="wb-news-title">学术资讯</h2></div>'+dashboardNewsControls(WB.newsPage,pages)+'</div>'+(papers.length&&WB.papersError?'<p class="wb-news-state" role="status">暂未获取新结果，保留现有论文。</p>':'')+'</div><ul class="wb-paper-stack">'+papers.slice(WB.newsPage*pageSize,(WB.newsPage+1)*pageSize).map(p=>dashboardPaper(p,ps)).join('')+'</ul>'+(!papers.length?'<div class="wb-empty-news"><p>'+(WB.papersBusy?'正在查找可能相关的最新论文':WB.papersError?'暂时无法获取论文，请稍后重试。':'暂无匹配论文，为课题补充关键词。')+'</p></div>':'')+'</section></div></div>';
-};
-const dashboardOriginalBind=wbBind;
-wbBind=function(root){
- dashboardOriginalBind(root);if(S.route!=='workbench')return;wbLayoutObserver?.disconnect();
- root.querySelector('[data-wb-refresh-idea]')?.addEventListener('click',dashboardRefreshIdea);
- root.querySelectorAll('[data-wb-news-page]').forEach(b=>b.addEventListener('click',()=>{WB.newsPage+=Number(b.dataset.wbNewsPage);render();(view.querySelector('[data-wb-news-page="'+b.dataset.wbNewsPage+'"]:not(:disabled)')||view.querySelector('[data-wb-news-page]:not(:disabled)'))?.focus({preventScroll:true});}));
- let scheduled=false;const fit=()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;if(S.route!=='workbench')return;const slots=dashboardProjectSlots();if(slots!==WB.projectSlots){render();return;}WB.projectViewport=view.clientWidth+':'+innerHeight;});};
- wbLayoutObserver=new ResizeObserver(fit);root.querySelectorAll('.wb-project-grid').forEach(e=>wbLayoutObserver.observe(e));fit();
-};

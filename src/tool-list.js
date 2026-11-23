@@ -39,7 +39,7 @@ async function seedPersonalToolExamples(){
  requestExample:JSON.stringify({sequence:'ACDEAC'},null,2),responseExample:JSON.stringify({length:6,counts:{A:2,C:2,D:1,E:1}},null,2)
  },{
  id:'example-personal-api',slug:'example-prediction-api',name:'自定义预测接口',toolMode:'api',cap:'func',tags:['功能预测'],method:'POST',auth:'bearer',credentialRef:'PREDICTION_API_TOKEN',endpoint:'https://api.example.com/v1/predict',
- description:'API 配置示例：将序列提交给你已有的预测服务。接口地址为占位示例，请替换为自己的地址，并配置对应凭据引用；当前不会发起请求。',
+ description:'API 配置示例：将序列提交给你已有的预测服务。接口地址是示例，请替换成你自己的地址，并配置对应凭据引用；当前不会发起请求。',
  requestExample:JSON.stringify({sequence:'ACDEAC'},null,2),responseExample:JSON.stringify({prediction:0.82,model_version:'v1'},null,2)
  }];
  const next=rsClone(RS.data);let changed=false;

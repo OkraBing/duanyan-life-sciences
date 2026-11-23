@@ -23,7 +23,7 @@
     "test:tricky10": "node build.mjs && node review/tricky10.cjs",
     "test:tricky15": "node build.mjs && node review/tricky15.cjs",
     "test:upgrade": "node build.mjs && node review/workbench-upgrade.cjs",
-    "test:dashboard": "node build.mjs && node review/workbench-dashboard.cjs",
+    "test:dashboard": "node build.mjs && node review/workbench-reference.cjs",
     "test:new-pages": "node build.mjs && node review/new-pages-walkthrough.cjs",
     "test:edge-states": "node build.mjs && node review/tricky10-edge-states.cjs",
     "test:navigation": "node build.mjs && node review/navigation.cjs"

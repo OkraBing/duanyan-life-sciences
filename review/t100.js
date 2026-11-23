@@ -53,7 +53,18 @@ function H(pg){
     submit:async(cid,ms)=>{const b=await pg.$('[data-kgo="'+cid+'"]');
       if(!b)return false; await b.click();await pg.waitForTimeout(ms||1400);return true},
     view:()=>pg.evaluate(()=>document.querySelector('#view').textContent.replace(/\s+/g,' ')),
-    nav:async(id)=>{await pg.click('.nav[data-navid="'+id+'"]');await pg.waitForTimeout(400)},
+    nav:async(id)=>{
+      // 按「去这一页」的意思走：顶层没有这一项，就从它所在的分组点进去
+      const top=pg.locator('.nav[data-navid="'+id+'"]');
+      if(await top.count()){await top.first().click();}
+      else{
+        for(const g of await pg.locator('.nav[data-navid]').all()){
+          await g.click();await pg.waitForTimeout(250);
+          const sub=pg.locator('[data-go="'+id+'"]');
+          if(await sub.count()){await sub.first().click();break;}
+        }
+      }
+      await pg.waitForTimeout(400)},
     proj:async(p)=>{await pg.click('[data-proj="'+p+'"]');await pg.waitForTimeout(500)},
     toast:()=>pg.evaluate(()=>{const t=document.querySelector('.toast-host');
       return t?t.textContent.trim():''}),
