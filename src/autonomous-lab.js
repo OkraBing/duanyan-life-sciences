@@ -76,7 +76,7 @@ function alProtocol(f,readonly=false){
  ];
 }
 function alOriginField(f){
- return '<div class="al-origin-field"><span>起始材料 *</span>'+'<div class="al-origin" role="radiogroup" aria-label="起始材料">'+[['purified','已有纯化蛋白','直接质控与表征'],['construct','表达构建体','胞内可溶蛋白制备流程']].map(([v,n,d])=>'<label class="'+(f.origin===v?'is-on':'')+'"><input type="radio" name="al-origin" data-al-origin="'+v+'" '+(f.origin===v?'checked':'')+'><span><strong>'+n+'</strong><small>'+d+'</small></span></label>').join('')+'</div>'+'</div>';
+ return '<div class="al-origin-field"><span>起始材料 *</span>'+'<fieldset class="al-origin"><legend class="sr">起始材料</legend>'+[['purified','已有纯化蛋白','直接质控与表征'],['construct','表达构建体','胞内可溶蛋白制备流程']].map(([v,n,d])=>'<label class="'+(f.origin===v?'is-on':'')+'"><input type="radio" name="al-origin" data-al-origin="'+v+'" '+(f.origin===v?'checked':'')+'><span><strong>'+n+'</strong><small>'+d+'</small></span></label>').join('')+'</fieldset>'+'</div>';
 }
 function alQcTransfer(f){
  return alEdges(f).find(edge=>edge.to==='qc');
