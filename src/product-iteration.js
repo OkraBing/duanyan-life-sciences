@@ -393,12 +393,21 @@ function iterationAcquire(s,a){
  if(r?.state==='imported')return '<span class="request-status imported">已导入</span>';
  return '<button class="btn btn-pri" type="button" data-iteration-acquire="'+esc(a.id)+'">'+(rsCan(s,'approve')?'获取到项目':'申请获取')+'</button>';
 }
+/* 分享给我的项目：每个文件右侧一个「+」，申请把它添加到我自己的项目；所有者不需要 */
+function iterationRowAcquire(s,a){
+ if(rsCan(s,'approve'))return '';
+ const r=iterationAssetRequest(s,a);
+ if(r?.state==='pending')return '<button class="pjx-f-add is-pending" type="button" data-rs-requests aria-label="已申请，等待审批">…</button>';
+ if(r?.state==='approved')return '<button class="pjx-f-add is-ready" type="button" data-iteration-import="'+esc(r.id)+'" aria-label="已批准，导入到我的项目">↓</button>';
+ if(r?.state==='imported')return '<span class="pjx-f-add is-done" aria-label="已添加到我的项目">✓</span>';
+ return '<button class="pjx-f-add" type="button" data-iteration-acquire="'+esc(a.id)+'" aria-label="申请添加「'+esc(a.name)+'」到我的项目">+</button>';
+}
 function iterationPairs(pairs){return '<dl class="asset-key-values">'+pairs.filter(x=>x[1]!=null&&x[1]!=='').map(([k,v])=>'<dt>'+esc(k)+'</dt><dd>'+esc(String(v))+'</dd>').join('')+'</dl>';}
 function iterationHumanText(value){return String(value||'').replace(/^演示[：:]\s*/,'').replace(/演示：/g,'').replace(/\s*[·・]\s*演示流程/g,'').replace(/\s*[·・]\s*异常示例/g,'');}
 function iterationAssetBody(s,a){
  const authorized=iterationAuthorized(s,a),snapshot=a.snapshot||{},who=s.members.find(m=>m.id===a.contributor)?.name||'项目成员';
- let html=iterationPairs([['提供者',who],['来源课题',s.name],['共享版本',a.version],['共享时间',a.at]]);
- if(!authorized)return html+'<section class="asset-section"><h3>资产摘要</h3><p>'+esc(iterationHumanText(a.description))+'</p><p class="asset-access-state">申请通过后可查看完整内容。</p></section>';
+ let html='';/* 右侧直接是文件本体；提供者、版本等元信息已经在左侧列表的次行里 */
+ if(!authorized)return '<section class="asset-section"><p>'+esc(iterationHumanText(a.description))+'</p><p class="asset-access-state">申请通过后可查看完整内容。'+(iterationAssetRequest(s,a)?'':'用文件旁的「+」申请添加到我的项目。')+'</p></section>';
  const section=(title,body)=>'<section class="asset-section"><h3>'+title+'</h3>'+body+'</section>';
  if(a.kind==='knowledge')return html+section('资料引用','<p>'+esc(a.name)+'</p><p>此条目为资料引用，未附原始文件。</p>');
  if(a.kind==='dataset'){
@@ -408,7 +417,7 @@ function iterationAssetBody(s,a){
  }
  if(a.kind==='experiment'){
   const w=snapshot.workflow,summary=labSummary(snapshot),steps=w?.steps||[];
-  html=iterationPairs([['提供者',who],['共享版本',a.version],['实验方式',w?.mode==='parallel'?'并行表征':'依次表征']]);
+  html=iterationPairs([['实验方式',w?.mode==='parallel'?'并行表征':'依次表征']]);
   html+=section('环节进展','<p>'+summary.done+'/'+summary.total+' 已完成</p><ol class="asset-timeline">'+steps.map(st=>'<li class="is-'+esc(st.state)+'"><div class="timeline-title"><span>'+esc(st.title)+(w.mode==='parallel'&&w.assays.includes(st.stage)?' <span class="asset-parallel-label">并行</span>':'')+'</span><span class="lv-state is-'+esc(st.state==='exception'?'exception':st.state==='done'?'conclusion':st.state)+'">'+esc(labStepLabels[st.state]||st.state)+'</span></div><small>'+esc(st.stage==='review'?'人工复核':st.deviceSnapshot?.model||labDevice(st.deviceId)?.model||'未登记设备')+'</small>'+(st.state==='exception'?'<p>'+esc(iterationHumanText(st.result||'异常原因待登记'))+'</p>':'')+'</li>').join('')+'</ol>');
   const active=steps.filter(st=>st.state==='running'||st.state==='exception');
   const contracts=(active.length?active:steps.filter(st=>st.stage!=='review').slice(0,1)).map(st=>st.contract||labStage(st.stage));
@@ -423,11 +432,11 @@ function iterationAssetBody(s,a){
 }
 function iterationAssetPreview(s,a){
  if(!a)return '<div class="asset-preview-empty">选择左侧资产查看详情</div>';
- return '<div class="asset-preview-head">'+iterationAssetFile(a)+'<div><h2>'+esc(a.name)+'</h2><small>'+esc(rsAssetLabel(a.kind))+' · '+esc(a.version)+'</small></div><div class="rs-actions">'+iterationAcquire(s,a)+'</div></div>'+iterationAssetBody(s,a);
+ return '<div class="asset-preview-head">'+iterationAssetFile(a)+'<div><h2>'+esc(a.name)+'</h2><small>'+esc(rsAssetLabel(a.kind))+' · '+esc(a.version)+'</small></div>'+(iterationAssetRequest(s,a)?'<div class="rs-actions">'+iterationAcquire(s,a)+'</div>':'')+'</div>'+iterationAssetBody(s,a);
 }
 function iterationSharedHeader(s,member){
  const counts=iterationRequestCounts(s);
- return '<div class="shared-breadcrumb"><button class="rs-link" type="button" data-go="shared">共享项目</button><span>/</span><span>项目详情</span></div><header class="iteration-head"><div><h1>'+esc(s.name)+' <span class="rs-tag">'+esc(rsRoleNames[member.role])+'</span></h1><p title="'+esc(s.goal||'')+'">'+esc(s.goal||'')+'</p></div><div class="rs-actions"><button class="btn" type="button" data-rs-members>成员 '+s.members.filter(m=>m.status==='active').length+'</button><button class="btn" type="button" data-rs-requests>'+(rsCan(s,'approve')?'获取申请'+(counts.incoming?' '+counts.incoming:''):'我的申请'+(counts.pending+counts.approved?' '+(counts.pending+counts.approved):''))+'</button>'+(rsCan(s,'publish')?'<button class="btn btn-pri" type="button" data-rs-publish>共享资产</button>':'')+'</div></header><div class="rs-tabs" role="group" aria-label="共享项目内容">'+[['assets','项目资产']].map(([k,n])=>'<button type="button" data-rs-tab="'+k+'" class="'+(RS.tab===k?'is-on':'')+'" aria-pressed="'+(RS.tab===k)+'">'+n+'</button>').join('')+'</div>';
+ return '<div class="shared-breadcrumb"><button class="rs-link" type="button" data-go="shared">共享项目</button><span>/</span><span>项目详情</span></div><header class="iteration-head"><div><h1>'+esc(s.name)+' <span class="rs-tag">'+esc(rsRoleNames[member.role])+'</span></h1><p title="'+esc(s.goal||'')+'">'+esc(s.goal||'')+'</p></div><div class="rs-actions"><button class="btn" type="button" data-rs-members>成员 '+s.members.filter(m=>m.status==='active').length+'</button><button class="btn shared-req-btn" type="button" data-rs-requests aria-label="'+(rsCan(s,'approve')?'文件权限申请'+(counts.incoming?'，'+counts.incoming+' 条待处理':''):'我的申请')+'">'+(rsCan(s,'approve')?'权限申请'+(counts.incoming?'<span class="shared-req-badge">'+counts.incoming+'</span>':''):'我的申请'+(counts.pending+counts.approved?'<span class="shared-req-badge is-soft">'+(counts.pending+counts.approved)+'</span>':''))+'</button>'+(rsCan(s,'publish')?'<button class="btn btn-pri" type="button" data-rs-publish>共享资产</button>':'')+'</div></header>';
 }
 V.shareddetail=()=>{
  const gate=rsGate();if(gate)return gate;const s=rsShared(),member=rsMember(s);if(!s||!member)return '<div class="page rs"><h1>找不到可访问的共享项目</h1><button class="btn" data-go="shared">返回共享项目</button></div>';
@@ -435,7 +444,7 @@ V.shareddetail=()=>{
  RS.tab='assets';/* 共享课题只共享文档与任务资产，项目工作流能力已删除 */
  const groups=iterationAssetGroups(s),all=groups.flatMap(g=>g[1]);if(!all.some(a=>a.id===RS.assetPick))RS.assetPick=all[0]?.id||'';
  const selected=all.find(a=>a.id===RS.assetPick);
- return '<div class="page rs shared-detail">'+header+'<div class="shared-asset-workspace"><aside class="shared-asset-list" aria-label="项目资产"><div class="pjx-tabs">'+[['kb','知识库'],['tool','工具'],['exp','实验']].map(([k,n])=>'<button class="pjx-tab'+(RS.assetTab===k?' is-on':'')+'" type="button" data-shared-asset-tab="'+k+'" aria-current="'+(RS.assetTab===k?'page':'false')+'">'+n+'</button>').join('')+'</div><div class="pjx-side-h"><span class="lbl">'+(RS.assetTab==='kb'?'全部文件':RS.assetTab==='tool'?'已共享工具':'已共享任务')+'</span><span class="grow"></span><span class="t-xs mut2">'+all.length+'</span></div><div class="pjx-side-b">'+groups.map(([title,items])=>(groups.length>1?'<div class="pjx-sec"><span class="lbl">'+title+'</span><small>'+items.length+'</small></div>':'')+items.map(a=>'<button class="pjx-f'+(RS.assetPick===a.id?' is-on':'')+'" type="button" data-shared-asset-select="'+esc(a.id)+'" aria-pressed="'+(RS.assetPick===a.id)+'">'+iterationAssetFile(a)+'<span class="col grow" style="min-width:0;gap:3px"><span class="pjx-f-n">'+esc(a.name)+'</span><span class="t-xs mut2">'+esc(iterationAssetSource(s,a))+'</span></span></button>').join('')).join('')+(!all.length?'<p class="rs-help">暂无已共享内容</p>':'')+'</div></aside><section class="shared-asset-preview" aria-label="选中资产详情">'+iterationAssetPreview(s,selected)+'</section></div></div>';
+ return '<div class="page rs shared-detail">'+header+'<div class="shared-asset-workspace"><aside class="shared-asset-list" aria-label="项目资产"><div class="pjx-tabs">'+[['kb','知识库'],['tool','工具'],['exp','实验']].map(([k,n])=>'<button class="pjx-tab'+(RS.assetTab===k?' is-on':'')+'" type="button" data-shared-asset-tab="'+k+'" aria-current="'+(RS.assetTab===k?'page':'false')+'">'+n+'</button>').join('')+'</div><div class="pjx-side-h"><span class="lbl">'+(RS.assetTab==='kb'?'全部文件':RS.assetTab==='tool'?'已共享工具':'已共享任务')+'</span><span class="grow"></span><span class="t-xs mut2">'+all.length+'</span></div><div class="pjx-side-b">'+groups.map(([title,items])=>(groups.length>1?'<div class="pjx-sec"><span class="lbl">'+title+'</span><small>'+items.length+'</small></div>':'')+items.map(a=>'<div class="pjx-f-row"><button class="pjx-f'+(RS.assetPick===a.id?' is-on':'')+'" type="button" data-shared-asset-select="'+esc(a.id)+'" aria-pressed="'+(RS.assetPick===a.id)+'">'+iterationAssetFile(a)+'<span class="col grow" style="min-width:0;gap:3px"><span class="pjx-f-n">'+esc(a.name)+'</span><span class="t-xs mut2">'+esc(iterationAssetSource(s,a))+'</span></span></button>'+iterationRowAcquire(s,a)+'</div>').join('')).join('')+(!all.length?'<p class="rs-help">暂无已共享内容</p>':'')+'</div></aside><section class="shared-asset-preview" aria-label="选中资产详情">'+iterationAssetPreview(s,selected)+'</section></div></div>';
 };
 function iterationCloseDrawer(returnFocus=true){
  const state=RS.drawer;document.querySelector('.asset-drawer')?.remove();RS.drawer=null;

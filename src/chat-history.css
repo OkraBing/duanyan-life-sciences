@@ -43,3 +43,15 @@ body[data-route="chat"] .research-top .outbar-hist,body[data-route="chat"] .outb
 .history-search-result:hover{background:var(--surface-2)}
 .history-search-result:focus-visible,.history-search-trigger:focus-visible,.history-search-close:focus-visible{outline:2px solid var(--focus);outline-offset:-2px}
 @media(max-width:760px){.chat-history .history-list{max-height:150px}.history-search-dialog{padding:18px}}
+
+/* 对话列表的收起/展开 */
+.chat-history-head-tools{display:flex;align-items:center;gap:2px}
+.history-collapse{display:grid;place-items:center;width:36px;height:36px;flex:none;border:0;border-radius:7px;background:transparent;color:var(--ink-2);cursor:pointer}
+.history-collapse:hover,.history-search-trigger:hover{background:var(--surface-2)}
+.history-collapse svg{transition:transform .18s}
+.chat-history .history-new-mini{display:none}
+.chat-history.is-collapsed{flex-basis:56px;padding:20px 8px 12px;align-items:center}
+.chat-history.is-collapsed .chat-history-head strong,.chat-history.is-collapsed .history-search-trigger,.chat-history.is-collapsed .history-new,.chat-history.is-collapsed .history-list,.chat-history.is-collapsed .history-foot{display:none}
+.chat-history.is-collapsed .history-collapse svg{transform:rotate(180deg)}
+.chat-history.is-collapsed .history-new-mini{display:grid;place-items:center;width:36px;height:36px;min-height:36px;padding:0;border-radius:8px;background:var(--ink);color:var(--surface)}
+@media(max-width:760px){.history-collapse{display:none}.chat-history.is-collapsed{flex-basis:auto;padding:12px 16px;align-items:stretch}.chat-history.is-collapsed .chat-history-head strong,.chat-history.is-collapsed .history-search-trigger,.chat-history.is-collapsed .history-new,.chat-history.is-collapsed .history-list{display:revert}.chat-history.is-collapsed .history-new-mini{display:none}}

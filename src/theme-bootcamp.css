@@ -98,3 +98,13 @@ html,body,button,input,select,textarea{font-family:var(--sans)}
 .page .st-list-head h1,#view .st-list-head h1,.st-list .st-list-head h1{font-size:16px!important;font-weight:600!important}
 .st-list h2{font-size:12px!important;color:var(--ink-3)!important}
 .st-subtitle{font-size:13px!important;color:var(--ink-3)!important}
+/* 工具条控件统一高度 32：搜索框、按钮、筛选胶囊；各页一致 */
+.ms-search{min-height:32px!important;padding:4px 12px!important;border-radius:var(--r2)!important}
+.ms-head-actions>.btn{min-height:32px!important;padding-block:0!important}
+.ms-types .pill,.pill,.seg-i{min-height:32px!important;padding-block:0!important}
+.rh-search{min-height:32px!important;padding:4px 10px!important}
+.rh-new{min-height:32px!important;padding:0 14px!important}
+.btn,.btn-pri{min-height:32px!important}
+.ms-main{padding-top:var(--s6)!important}
+.ms-breadcrumb{margin-bottom:12px!important}
+.ms-toolbar{margin:20px 0!important}

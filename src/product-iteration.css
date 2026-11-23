@@ -84,3 +84,12 @@
 .lv-exp .lv-exp-progress{margin-bottom:0}
 .lv-exp>.row:first-child{min-height:24px}
 .lv-exp>.row>.lv-small,.lv-exp-progress>.lv-small{margin:0}
+/* 共享项目详情：文件行右侧的申请入口；页头的权限申请角标 */
+.pjx-f-row{display:flex;align-items:center;gap:4px;min-width:0}.pjx-f-row>.pjx-f{flex:1 1 auto;min-width:0}
+.pjx-f-add{flex:none;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:var(--r2);background:var(--surface);color:var(--ink-3);font:inherit;font-size:16px;line-height:1;cursor:pointer}
+.pjx-f-add:hover{border-color:var(--dry);color:var(--dry-ink);background:var(--dry-soft)}
+.pjx-f-add.is-pending{color:var(--ink-3);letter-spacing:-1px}.pjx-f-add.is-ready{border-color:var(--dry);color:var(--dry-ink)}.pjx-f-add.is-done{border-color:transparent;color:var(--ok);cursor:default;font-size:14px}
+.shared-req-btn{position:relative;display:inline-flex;align-items:center;gap:6px}
+.shared-req-badge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--err);color:#fff;font-size:11px;line-height:18px;font-weight:600}
+.shared-req-badge.is-soft{background:var(--surface-3);color:var(--ink-2)}
+.shared-detail .shared-asset-workspace{margin-top:var(--s4)}

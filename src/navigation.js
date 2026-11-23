@@ -10,10 +10,9 @@ function navigationProjectSharedLabel(card,shared){
  if(shared)card.querySelector('.pcard-t')?.insertAdjacentHTML('beforeend','<span class="navigation-project-source">共享</span>');
 }
 function navigationProjectProgress(p,shared){
- let kind='',label='',title='',detail='',action='',task=null,at='',percent=null;
+ let kind='',label='',title='',detail='',action='',task=null,at='',percent=null,pendingCount=0;
  if(!p){
-  if(!shared)return '';
-  kind='empty';label='项目进展';title='暂无进展记录';detail='可进入项目查看团队已共享的研究资产。';action='查看项目';
+  return '';/* 没有进展就不放这张卡；卡片等高由网格撑开 */
  }else
  {
   const tasks=(workbenchData({pid:p.id}).tasks||[]).filter(t=>t.pid===p.id&&t.isTask!==false&&!['canceled'].includes(t.status));
@@ -23,7 +22,7 @@ function navigationProjectProgress(p,shared){
   const active=tasks.filter(t=>['active','queued'].includes(t.status));
   const completed=tasks.filter(t=>t.status==='done').sort((a,b)=>String(b.at||'').localeCompare(String(a.at||'')));
   if(pending.length){
-   task=pending[0];kind='confirm';label='待我处理';title=pending.length+' 项任务待处理';
+   task=pending[0];kind='confirm';label='待我处理';title=pending.length+' 项任务待处理';pendingCount=pending.length;
    detail=(task.name||task.id)+' · '+(task.detail||task.label||'请查看并处理');action='查看并处理';
   }else if(active.length){
    task=active[0];kind='running';label='正在执行';title=task.name||task.id;
@@ -41,6 +40,7 @@ function navigationProjectProgress(p,shared){
   }else return '';
   if(task)at=task.at||'';
  }
+ if(kind==='confirm')return '<div class="navigation-progress project-update is-confirm is-mini"><span class="project-update-mini-label">待处理<b class="project-update-count">'+pendingCount+'</b></span><button class="project-update-action" type="button" data-project-progress-pending="'+esc(p.id)+'">处理</button></div>';
  const attrs=kind==='confirm'?'data-project-progress-pending="'+esc(p.id)+'"':task?'data-project-progress-task="'+esc(task.key)+'"':p?'data-project-progress-pid="'+esc(p.id)+'"':'data-project-progress-shared="'+esc(shared.id)+'"';
  return '<div class="navigation-progress project-update is-'+kind+'"><div class="project-update-head"><span>'+label+'</span>'+(at?'<time>'+esc(at)+'</time>':'')+'</div><strong>'+esc(title)+'</strong><p>'+esc(detail)+'</p>'+(percent!==null?'<div class="project-task-progress"><span>当前任务进度 '+percent+'%</span><progress value="'+percent+'" max="100" aria-label="当前任务进度 '+percent+'%"></progress></div>':'')+'<button class="project-update-action" type="button" '+attrs+'>'+action+' →</button></div>';
 }

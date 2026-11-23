@@ -3175,8 +3175,8 @@ const DB={
   cands:[],
   acts:[
     {k:'wet',t:'回流 93 条测定数据',r:4,p:'Barnase–Barstar 结合界面',at:'今天 14:02',by:'我'},
-    {k:'dry',t:'模型重训完成 v2 → v3，验证集 Spearman 0.61 → 0.68',r:4,p:'Barnase–Barstar 结合界面',at:'今天 14:19',by:'系统'},
-    {k:'dry',t:'生成 Round 5 候选 88 条',r:5,p:'Barnase–Barstar 结合界面',at:'今天 14:21',by:'系统'},
+    {k:'dry',t:'模型重训完成 v2 → v3，验证集 Spearman 0.61 → 0.68',r:4,p:'Barnase–Barstar 结合界面',at:'今天 14:19',by:'李研究员'},
+    {k:'dry',t:'生成 Round 5 候选 88 条',r:5,p:'Barnase–Barstar 结合界面',at:'今天 14:21',by:'王研究员'},
     {k:'err',t:'3 条标记为表达失败',r:4,p:'Barnase–Barstar 结合界面',at:'今天 11:40',by:'李'}
   ],
   tools:[
@@ -4043,7 +4043,7 @@ function paintNav(force){
         host.appendChild(l)}
       items.forEach(([id,label,d,why])=>{
         const b=document.createElement('button');b.type='button';b.className='nav';
-        b.dataset.navid=id;b.title=why||label;
+        b.dataset.navid=id;b.setAttribute('aria-label',why||label);
         b.innerHTML=`<svg width="16" height="16" style="width:1.0625rem;height:1.0625rem" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="${d}" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span class="nav-tx">${label}</span>`;
         b.onclick=()=>{
           /* 「新建对话」要真的开一段新的。原先它只是 go('chat')，
@@ -4094,7 +4094,7 @@ function paintNav(force){
     rows.forEach(([label,on,cur,sid,pin])=>{
       const w=document.createElement('div');w.className='nav-w';
       const b=document.createElement('button');b.type='button';b.className='nav';
-      b.setAttribute('aria-current',cur?'page':'false');b.title=label;
+      b.setAttribute('aria-current',cur?'page':'false');b.setAttribute('aria-label',label);b.removeAttribute('title');
       b.innerHTML=`<svg width="16" height="16" style="width:1.0625rem;height:1.0625rem" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="${pin?'M9 3.5h6l-1 6 3.5 3v1.5h-11V12.5l3.5-3z M12 14v6.5':icon}" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/></svg><span class="nav-tx">${esc(label)}</span>`;
       b.onclick=on;w.appendChild(b);
       if(sid){

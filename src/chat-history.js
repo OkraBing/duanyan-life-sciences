@@ -29,10 +29,16 @@ function paintResearchHistory(){
   }
   if(!panel){
     panel=document.createElement('aside');panel.id='chatHistory';panel.className='chat-history';panel.setAttribute('aria-label','历史对话');
-    panel.innerHTML=`<div class="chat-history-head"><strong>科研对话</strong><button type="button" class="history-search-trigger" aria-label="搜索对话" title="搜索对话" aria-haspopup="dialog">${SEARCH_IC}</button></div><button type="button" class="btn history-new">＋ 新建对话</button><div class="history-list" id="historyBody"></div><div class="history-foot">对话保存在当前浏览器</div>`;
+    panel.innerHTML=`<div class="chat-history-head"><strong>科研对话</strong><span class="chat-history-head-tools"><button type="button" class="history-search-trigger" aria-label="搜索对话" aria-haspopup="dialog">${SEARCH_IC}</button><button type="button" class="history-collapse" aria-label="收起对话列表" aria-expanded="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button></span></div><button type="button" class="btn history-new">＋ 新建对话</button><button type="button" class="btn history-new-mini" aria-label="新建对话">＋</button><div class="history-list" id="historyBody"></div><div class="history-foot">对话保存在当前浏览器</div>`;
     document.getElementById('main').prepend(panel);
     panel.querySelector('.history-new').onclick=()=>newChat();
+    panel.querySelector('.history-new-mini').onclick=()=>newChat();
     panel.querySelector('.history-search-trigger').onclick=()=>openHistorySearch();
+    /* 收起/展开：收起后只留一条窄栏（展开、新建），状态记在本机 */
+    const collapseBtn=panel.querySelector('.history-collapse');
+    const applyCollapsed=()=>{const c=!!LS.get('chat_hist_collapsed');panel.classList.toggle('is-collapsed',c);collapseBtn.setAttribute('aria-expanded',String(!c));collapseBtn.setAttribute('aria-label',c?'展开对话列表':'收起对话列表');};
+    collapseBtn.onclick=()=>{LS.set('chat_hist_collapsed',LS.get('chat_hist_collapsed')?0:1);applyCollapsed();};
+    applyCollapsed();
   }
   panel.hidden=false;
   researchHistoryList();

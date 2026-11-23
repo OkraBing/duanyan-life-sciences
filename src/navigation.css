@@ -190,3 +190,12 @@
 .pill.on:hover:not(:disabled){color:var(--on-pri);border-color:var(--ink)}
 /* 进度条异常段：提高一级特异性，压过 index.html 尾部那条空心描红的旧规则 */
 .page .lv-exp .lv-bar i.exception{background:var(--err);box-shadow:none}
+
+/* 待处理：一张超小卡片，标签 + 数字 + 处理 */
+.projects-page .project-update.is-mini{display:flex!important;flex-direction:row!important;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px!important;margin:0 20px 18px}
+.project-update.is-mini .project-update-mini-label{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-2);font-weight:500}
+.project-update.is-mini .project-update-count{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--err);color:#fff;font-size:11px;font-weight:600;font-style:normal}
+.project-update.is-mini .project-update-action{margin:0!important;padding:4px 12px!important;border:1px solid var(--line)!important;border-radius:var(--r2)!important;color:var(--ink)!important;background:var(--surface);font-size:12px!important;min-height:28px}
+.project-update.is-mini .project-update-action:hover{border-color:var(--ink)!important}
+@media(max-width:600px){.projects-page .project-update.is-mini{margin:0 14px 14px}}
+.projects-page .project-card-wrap{display:flex;flex-direction:column}.projects-page .project-card-wrap>.pcard{flex:1 1 auto}.projects-page .project-card-wrap>.project-update,.projects-page .project-card-wrap>.project-start{flex:none}

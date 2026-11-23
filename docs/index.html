@@ -2803,6 +2803,15 @@ dialog.rs-copy-dialog{width:min(600px,calc(100vw - 32px));max-width:600px;overfl
 .lv-exp .lv-exp-progress{margin-bottom:0}
 .lv-exp>.row:first-child{min-height:24px}
 .lv-exp>.row>.lv-small,.lv-exp-progress>.lv-small{margin:0}
+/* 共享项目详情：文件行右侧的申请入口；页头的权限申请角标 */
+.pjx-f-row{display:flex;align-items:center;gap:4px;min-width:0}.pjx-f-row>.pjx-f{flex:1 1 auto;min-width:0}
+.pjx-f-add{flex:none;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:var(--r2);background:var(--surface);color:var(--ink-3);font:inherit;font-size:16px;line-height:1;cursor:pointer}
+.pjx-f-add:hover{border-color:var(--dry);color:var(--dry-ink);background:var(--dry-soft)}
+.pjx-f-add.is-pending{color:var(--ink-3);letter-spacing:-1px}.pjx-f-add.is-ready{border-color:var(--dry);color:var(--dry-ink)}.pjx-f-add.is-done{border-color:transparent;color:var(--ok);cursor:default;font-size:14px}
+.shared-req-btn{position:relative;display:inline-flex;align-items:center;gap:6px}
+.shared-req-badge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--err);color:#fff;font-size:11px;line-height:18px;font-weight:600}
+.shared-req-badge.is-soft{background:var(--surface-3);color:var(--ink-2)}
+.shared-detail .shared-asset-workspace{margin-top:var(--s4)}
 
 /* Unified product typography, surfaces and interaction feedback — 20-round review. */
 :root{--page-title-size:1.75rem;--meta-size:12px;--attention-ink:var(--ink-3);--attention-soft:var(--surface-2)}
@@ -3014,7 +3023,7 @@ body[data-route=workbench] #view{background:var(--paper)}
  .rh-discoveries{min-height:0;margin:0;padding:0 18px 8px;display:flex;flex-direction:column;overflow:hidden}.rh-discover-heading{min-height:50px;height:50px;flex:none;gap:22px}.rh-tabs{gap:18px}.rh-tabs button{font-size:14px;border-bottom-width:2px;font-weight:500}.rh-discoveries #rh-feed{flex:1;min-height:0;display:flex;flex-direction:column}.rh-discovery-row{min-height:0;flex:none;padding:10px;gap:12px}.rh-discovery-icon{width:34px;height:34px}.rh-discovery-icon .rh-icon,.rh-discovery-icon .wb-icon{width:20px;height:20px}.rh-discovery-copy{gap:3px}.rh-discovery-copy strong{font-size:13px;line-height:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rh-discovery-copy small{font-size:11px;line-height:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rh-pagination{margin-top:4px;gap:9px;font-size:11px}.rh-pagination button{padding:3px 7px}.rh-empty{margin:0;padding:16px;font-size:13px}
 }
 @media(min-width:1101px) and (min-height:650px) and (max-height:850px){
- .page.wb.wb-workstation{grid-template-rows:34px auto auto auto;gap:12px;padding:14px 0}.rh-header h1{font-size:23px}.rh-activities{padding:10px 16px}.rh-activity-grid{margin-top:10px}.rh-project-toolbar{height:42px;padding-bottom:8px}.rh-project{padding:12px;gap:5px;grid-template-rows:44px auto auto 34px 32px}.rh-project header h3{font-size:14px;line-height:20px}.rh-enter{height:32px;min-height:32px;font-size:13px}.rh-discover-heading{min-height:44px;height:44px}.rh-discovery-row{padding-block:5px}.rh-discoveries{padding-bottom:5px}.rh-discovery-copy small{line-height:15px}
+ .page.wb.wb-workstation{grid-template-rows:34px auto auto auto;gap:12px;padding:var(--s6) 0 14px}.rh-header h1{font-size:23px}.rh-activities{padding:10px 16px}.rh-activity-grid{margin-top:10px}.rh-project-toolbar{height:42px;padding-bottom:8px}.rh-project{padding:12px;gap:5px;grid-template-rows:44px auto auto 34px 32px}.rh-project header h3{font-size:14px;line-height:20px}.rh-enter{height:32px;min-height:32px;font-size:13px}.rh-discover-heading{min-height:44px;height:44px}.rh-discovery-row{padding-block:5px}.rh-discoveries{padding-bottom:5px}.rh-discovery-copy small{line-height:15px}
 }
 /* Reuse the original research-chat illustration as a non-interactive backdrop. */
 .page.wb.wb-workstation{position:relative;isolation:isolate}
@@ -3035,6 +3044,26 @@ body[data-route=workbench] #view{background:var(--paper)}
 .rh-project{grid-template-rows:48px auto auto auto 36px}
 @media(min-width:1101px) and (min-height:650px) and (max-height:850px){.rh-project{grid-template-rows:44px auto auto auto 32px}}
 
+/* 三个区块的标题都放在卡片外，同一种样式；页面留白与其它页一致 */
+body[data-route=workbench] #view{padding-block:0 var(--s8);padding-inline:max(var(--s5),env(safe-area-inset-left,0px)) max(var(--s5),env(safe-area-inset-right,0px))}
+@media(min-width:1000px){body[data-route=workbench] #view{padding-inline:max(var(--s7),env(safe-area-inset-left,0px)) max(var(--s7),env(safe-area-inset-right,0px))}}
+.page.wb.wb-workstation{padding:var(--s6) 0 28px}
+@media(max-width:650px){.page.wb.wb-workstation{padding:var(--s6) 0 20px}}
+.rh-activities-wrap,.rh-discoveries-wrap,.rh-projects{display:flex;flex-direction:column;min-height:0}
+.rh-activities-wrap .rh-project-toolbar,.rh-discoveries-wrap .rh-project-toolbar{height:auto;min-height:40px;padding:0 0 12px}
+.rh-project-toolbar h2{margin:0}
+.rh-project-toolbar .rh-shuffle{flex:none}
+.rh-project-toolbar .rh-search{margin-left:auto}
+.rh-project-toolbar>.rh-link:last-child{margin-left:auto}
+.rh-project-toolbar>h2+.rh-link:last-child,.rh-project-toolbar>.rh-search+.rh-link{margin-left:auto}
+.rh-project-toolbar .rh-search+.rh-link{margin-left:0}
+.rh-activities .rh-activity-grid{margin-top:0}
+.rh-discoveries{margin-top:0}
+.rh-discoveries-wrap{margin-top:24px}
+.rh-activities,.rh-discoveries{flex:none}
+@media(min-width:1101px) and (min-height:650px){.rh-discoveries-wrap{margin-top:0}.rh-discoveries{overflow:visible}}
+.rh-discover-heading{gap:0}
+
 body[data-route="materials"] #view,body[data-route="files"] #view{padding:0;background:var(--surface)}
 .ms-shell{display:grid;grid-template-columns:240px minmax(0,1fr);min-height:calc(100vh - 48px);color:var(--ink)}
 .ms-shell button,.ms-shell input,.ms-shell select{font:inherit}.ms-shell button{cursor:pointer}.ms-shell button:disabled{cursor:not-allowed;opacity:.5}.ms-shell svg{width:20px;height:20px;flex-shrink:0}
@@ -3046,6 +3075,12 @@ body[data-route="materials"] #view,body[data-route="files"] #view{padding:0;back
 @media(max-width:850px){.ms-shell{grid-template-columns:190px minmax(0,1fr)}.ms-sidebar{padding:24px 10px}.ms-spaces>div{grid-template-columns:1fr}.ms-spaces button{padding:14px}.ms-spaces svg{float:left;margin-right:12px}.ms-spaces p{margin:5px 0}.ms-spaces small{display:block}.ms-spaces{margin-bottom:24px}.ms-table-head,.ms-file{grid-template-columns:minmax(0,1fr) 56px}.ms-cell,.ms-table-head>span:not(:first-child):not(:last-child){display:none}.ms-toolbar{flex-wrap:wrap}.ms-files.is-grid{grid-template-columns:1fr}}
 @media(max-width:600px){.ms-shell{display:block}.ms-sidebar{border-right:0;border-bottom:1px solid var(--line);display:flex;flex-direction:row;flex-wrap:wrap;gap:4px;padding:16px}.ms-sidebar h2{width:100%;margin:0 0 10px;font-size:18px}.ms-sidebar>.ms-nav{width:auto;font-size:12px;gap:6px;min-height:40px;padding:7px 10px}.ms-sidebar>.ms-nav svg{display:none}.ms-sidebar h3,.ms-project-nav,.ms-sidebar>.ms-nav[data-ms-space],.ms-sidebar>[data-ms-open]{display:none}.ms-trash{margin:0;padding:0}.ms-trash .ms-nav{font-size:12px;padding:7px 10px}.ms-trash svg{display:none}.ms-main{padding:22px 16px}.ms-header h1{font-size:24px}.ms-breadcrumb{margin-bottom:16px!important}.ms-head-actions{gap:8px}.ms-search{flex-basis:100%;min-height:44px}.ms-head-actions>.btn{min-height:44px}.ms-toolbar{margin:24px 0;gap:12px}.ms-types .pill{min-height:44px;padding-inline:14px}.ms-views button{min-height:44px;min-width:44px;align-items:center;justify-content:center}.ms-file{padding:14px 4px;gap:8px}.ms-row-actions button{min-height:44px}.ms-file-main{min-height:44px}.ms-footer{line-height:1.8}.ms-spaces strong{font-size:13px}.ms-list-heading select{min-height:44px}}
 .ms-mobile-space{display:none}@media(max-width:600px){.ms-mobile-space{display:flex;align-items:center;gap:12px;width:100%;padding:8px 10px 0;font-size:12px;color:var(--ink-3)}.ms-mobile-space select{flex:1;min-width:0;min-height:44px;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}}
+/* 行尾「更多」菜单 */
+.ms-row-actions .ms-more{font-size:14px;letter-spacing:1px;padding:4px 6px;border-radius:var(--r1)}
+.ms-row-actions .ms-more:hover{background:var(--surface-2);text-decoration:none}
+.ms-menu{position:fixed;z-index:1200;min-width:160px;padding:6px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r3);box-shadow:0 8px 24px rgba(16,24,40,.12);display:flex;flex-direction:column}
+.ms-menu button{text-align:left;border:0;background:transparent;color:var(--ink);font:inherit;font-size:13px;padding:8px 10px;border-radius:var(--r2);cursor:pointer}
+.ms-menu button:hover,.ms-menu button:focus-visible{background:var(--surface-2);outline:0}
 
 body[data-route=schedules] #view,body[data-route=schedulenew] #view,body[data-route=scheduledetail] #view{padding:0}
 /* Preserve the primary button's contrasting label over the page button reset. */
@@ -3279,6 +3314,15 @@ html[data-theme=dark] .st-icon,html[data-theme=dark] .st-intro>img{filter:invert
 .pill.on:hover:not(:disabled){color:var(--on-pri);border-color:var(--ink)}
 /* 进度条异常段：提高一级特异性，压过 index.html 尾部那条空心描红的旧规则 */
 .page .lv-exp .lv-bar i.exception{background:var(--err);box-shadow:none}
+
+/* 待处理：一张超小卡片，标签 + 数字 + 处理 */
+.projects-page .project-update.is-mini{display:flex!important;flex-direction:row!important;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px!important;margin:0 20px 18px}
+.project-update.is-mini .project-update-mini-label{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-2);font-weight:500}
+.project-update.is-mini .project-update-count{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--err);color:#fff;font-size:11px;font-weight:600;font-style:normal}
+.project-update.is-mini .project-update-action{margin:0!important;padding:4px 12px!important;border:1px solid var(--line)!important;border-radius:var(--r2)!important;color:var(--ink)!important;background:var(--surface);font-size:12px!important;min-height:28px}
+.project-update.is-mini .project-update-action:hover{border-color:var(--ink)!important}
+@media(max-width:600px){.projects-page .project-update.is-mini{margin:0 14px 14px}}
+.projects-page .project-card-wrap{display:flex;flex-direction:column}.projects-page .project-card-wrap>.pcard{flex:1 1 auto}.projects-page .project-card-wrap>.project-update,.projects-page .project-card-wrap>.project-start{flex:none}
 
 /* ===== 视觉走查：只动样式、层级与配色，文案一个字不改（2026-11-21） ===== */
 
@@ -3622,6 +3666,18 @@ body[data-route="chat"] .research-top .outbar-hist,body[data-route="chat"] .outb
 .history-search-result:focus-visible,.history-search-trigger:focus-visible,.history-search-close:focus-visible{outline:2px solid var(--focus);outline-offset:-2px}
 @media(max-width:760px){.chat-history .history-list{max-height:150px}.history-search-dialog{padding:18px}}
 
+/* 对话列表的收起/展开 */
+.chat-history-head-tools{display:flex;align-items:center;gap:2px}
+.history-collapse{display:grid;place-items:center;width:36px;height:36px;flex:none;border:0;border-radius:7px;background:transparent;color:var(--ink-2);cursor:pointer}
+.history-collapse:hover,.history-search-trigger:hover{background:var(--surface-2)}
+.history-collapse svg{transition:transform .18s}
+.chat-history .history-new-mini{display:none}
+.chat-history.is-collapsed{flex-basis:56px;padding:20px 8px 12px;align-items:center}
+.chat-history.is-collapsed .chat-history-head strong,.chat-history.is-collapsed .history-search-trigger,.chat-history.is-collapsed .history-new,.chat-history.is-collapsed .history-list,.chat-history.is-collapsed .history-foot{display:none}
+.chat-history.is-collapsed .history-collapse svg{transform:rotate(180deg)}
+.chat-history.is-collapsed .history-new-mini{display:grid;place-items:center;width:36px;height:36px;min-height:36px;padding:0;border-radius:8px;background:var(--ink);color:var(--surface)}
+@media(max-width:760px){.history-collapse{display:none}.chat-history.is-collapsed{flex-basis:auto;padding:12px 16px;align-items:stretch}.chat-history.is-collapsed .chat-history-head strong,.chat-history.is-collapsed .history-search-trigger,.chat-history.is-collapsed .history-new,.chat-history.is-collapsed .history-list{display:revert}.chat-history.is-collapsed .history-new-mini{display:none}}
+
 .tool-methods{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:16px 0 24px}.tool-method{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:18px;text-align:left;color:var(--ink);cursor:pointer}.tool-method strong,.tool-method small{display:block}.tool-method small{margin-top:8px;line-height:1.6;color:var(--ink-3)}.tool-method.is-on{border-color:var(--dry);background:var(--surface-2);box-shadow:inset 0 0 0 1px var(--dry)}.tool-config{border-top:1px solid var(--line);padding-top:22px}.tool-config textarea{font-family:monospace;tab-size:4;line-height:1.7;resize:vertical}.tool-config .rs-fields-grid>*{min-width:0}@media(max-width:650px){.tool-methods{grid-template-columns:1fr}.tool-method{padding:12px}.tool-method small{margin-top:4px}}
 .tl-toolbar{display:flex;justify-content:space-between;gap:20px;align-items:center;flex-wrap:wrap;margin:8px 0 16px}.tl-filters{display:flex;gap:8px;flex-wrap:wrap}.tl-filters small{margin-left:5px;opacity:.65}.tl-search{width:280px!important;max-width:100%}.tl-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:20px}.tl-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--project-card-radius);padding:22px;display:flex;flex-direction:column;min-width:0}.tl-card-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.tl-icon{width:40px;height:40px;display:grid;place-items:center;background:var(--surface-2);border-radius:9px;color:var(--dry)}.tl-icon svg{width:21px;height:21px}.tl-card h2{font-size:17px;margin:18px 0 6px;overflow-wrap:anywhere}.tl-meta{font-size:12px;color:var(--ink-3)}.tl-description{font-size:13px;line-height:1.8;min-height:46px;margin:14px 0;color:var(--ink-2)}.tl-io{display:grid;grid-template-columns:32px 1fr;gap:8px;font-size:12px;margin:18px 0 22px;line-height:1.6}.tl-io dt{color:var(--ink-4)}.tl-io dd{margin:0;overflow-wrap:anywhere}.tl-card footer{border-top:1px solid var(--line);padding-top:16px;margin-top:auto;display:flex;justify-content:space-between;align-items:center;gap:8px}.tl-card .rs-tags{min-height:24px;flex-wrap:wrap}@media(max-width:1100px){.tl-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:650px){.tl-grid{grid-template-columns:1fr}.tl-search{width:100%!important}.tl-toolbar{gap:14px}.tl-card{padding:18px}}
 
@@ -3926,6 +3982,16 @@ html,body,button,input,select,textarea{font-family:var(--sans)}
 .page .st-list-head h1,#view .st-list-head h1,.st-list .st-list-head h1{font-size:16px!important;font-weight:600!important}
 .st-list h2{font-size:12px!important;color:var(--ink-3)!important}
 .st-subtitle{font-size:13px!important;color:var(--ink-3)!important}
+/* 工具条控件统一高度 32：搜索框、按钮、筛选胶囊；各页一致 */
+.ms-search{min-height:32px!important;padding:4px 12px!important;border-radius:var(--r2)!important}
+.ms-head-actions>.btn{min-height:32px!important;padding-block:0!important}
+.ms-types .pill,.pill,.seg-i{min-height:32px!important;padding-block:0!important}
+.rh-search{min-height:32px!important;padding:4px 10px!important}
+.rh-new{min-height:32px!important;padding:0 14px!important}
+.btn,.btn-pri{min-height:32px!important}
+.ms-main{padding-top:var(--s6)!important}
+.ms-breadcrumb{margin-bottom:12px!important}
+.ms-toolbar{margin:20px 0!important}
 
 
 /* 项目卡标题被挤成两行、断在「结合界 / 面」：标题被写死 max-width:calc(100% - 55px)，
@@ -4074,8 +4140,8 @@ const DB={
   cands:[],
   acts:[
     {k:'wet',t:'回流 93 条测定数据',r:4,p:'Barnase–Barstar 结合界面',at:'今天 14:02',by:'我'},
-    {k:'dry',t:'模型重训完成 v2 → v3，验证集 Spearman 0.61 → 0.68',r:4,p:'Barnase–Barstar 结合界面',at:'今天 14:19',by:'系统'},
-    {k:'dry',t:'生成 Round 5 候选 88 条',r:5,p:'Barnase–Barstar 结合界面',at:'今天 14:21',by:'系统'},
+    {k:'dry',t:'模型重训完成 v2 → v3，验证集 Spearman 0.61 → 0.68',r:4,p:'Barnase–Barstar 结合界面',at:'今天 14:19',by:'李研究员'},
+    {k:'dry',t:'生成 Round 5 候选 88 条',r:5,p:'Barnase–Barstar 结合界面',at:'今天 14:21',by:'王研究员'},
     {k:'err',t:'3 条标记为表达失败',r:4,p:'Barnase–Barstar 结合界面',at:'今天 11:40',by:'李'}
   ],
   tools:[
@@ -4942,7 +5008,7 @@ function paintNav(force){
         host.appendChild(l)}
       items.forEach(([id,label,d,why])=>{
         const b=document.createElement('button');b.type='button';b.className='nav';
-        b.dataset.navid=id;b.title=why||label;
+        b.dataset.navid=id;b.setAttribute('aria-label',why||label);
         b.innerHTML=`<svg width="16" height="16" style="width:1.0625rem;height:1.0625rem" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="${d}" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span class="nav-tx">${label}</span>`;
         b.onclick=()=>{
           /* 「新建对话」要真的开一段新的。原先它只是 go('chat')，
@@ -4993,7 +5059,7 @@ function paintNav(force){
     rows.forEach(([label,on,cur,sid,pin])=>{
       const w=document.createElement('div');w.className='nav-w';
       const b=document.createElement('button');b.type='button';b.className='nav';
-      b.setAttribute('aria-current',cur?'page':'false');b.title=label;
+      b.setAttribute('aria-current',cur?'page':'false');b.setAttribute('aria-label',label);b.removeAttribute('title');
       b.innerHTML=`<svg width="16" height="16" style="width:1.0625rem;height:1.0625rem" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="${pin?'M9 3.5h6l-1 6 3.5 3v1.5h-11V12.5l3.5-3z M12 14v6.5':icon}" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/></svg><span class="nav-tx">${esc(label)}</span>`;
       b.onclick=on;w.appendChild(b);
       if(sid){
@@ -22058,12 +22124,21 @@ function iterationAcquire(s,a){
  if(r?.state==='imported')return '<span class="request-status imported">已导入</span>';
  return '<button class="btn btn-pri" type="button" data-iteration-acquire="'+esc(a.id)+'">'+(rsCan(s,'approve')?'获取到项目':'申请获取')+'</button>';
 }
+/* 分享给我的项目：每个文件右侧一个「+」，申请把它添加到我自己的项目；所有者不需要 */
+function iterationRowAcquire(s,a){
+ if(rsCan(s,'approve'))return '';
+ const r=iterationAssetRequest(s,a);
+ if(r?.state==='pending')return '<button class="pjx-f-add is-pending" type="button" data-rs-requests aria-label="已申请，等待审批">…</button>';
+ if(r?.state==='approved')return '<button class="pjx-f-add is-ready" type="button" data-iteration-import="'+esc(r.id)+'" aria-label="已批准，导入到我的项目">↓</button>';
+ if(r?.state==='imported')return '<span class="pjx-f-add is-done" aria-label="已添加到我的项目">✓</span>';
+ return '<button class="pjx-f-add" type="button" data-iteration-acquire="'+esc(a.id)+'" aria-label="申请添加「'+esc(a.name)+'」到我的项目">+</button>';
+}
 function iterationPairs(pairs){return '<dl class="asset-key-values">'+pairs.filter(x=>x[1]!=null&&x[1]!=='').map(([k,v])=>'<dt>'+esc(k)+'</dt><dd>'+esc(String(v))+'</dd>').join('')+'</dl>';}
 function iterationHumanText(value){return String(value||'').replace(/^演示[：:]\s*/,'').replace(/演示：/g,'').replace(/\s*[·・]\s*演示流程/g,'').replace(/\s*[·・]\s*异常示例/g,'');}
 function iterationAssetBody(s,a){
  const authorized=iterationAuthorized(s,a),snapshot=a.snapshot||{},who=s.members.find(m=>m.id===a.contributor)?.name||'项目成员';
- let html=iterationPairs([['提供者',who],['来源课题',s.name],['共享版本',a.version],['共享时间',a.at]]);
- if(!authorized)return html+'<section class="asset-section"><h3>资产摘要</h3><p>'+esc(iterationHumanText(a.description))+'</p><p class="asset-access-state">申请通过后可查看完整内容。</p></section>';
+ let html='';/* 右侧直接是文件本体；提供者、版本等元信息已经在左侧列表的次行里 */
+ if(!authorized)return '<section class="asset-section"><p>'+esc(iterationHumanText(a.description))+'</p><p class="asset-access-state">申请通过后可查看完整内容。'+(iterationAssetRequest(s,a)?'':'用文件旁的「+」申请添加到我的项目。')+'</p></section>';
  const section=(title,body)=>'<section class="asset-section"><h3>'+title+'</h3>'+body+'</section>';
  if(a.kind==='knowledge')return html+section('资料引用','<p>'+esc(a.name)+'</p><p>此条目为资料引用，未附原始文件。</p>');
  if(a.kind==='dataset'){
@@ -22073,7 +22148,7 @@ function iterationAssetBody(s,a){
  }
  if(a.kind==='experiment'){
   const w=snapshot.workflow,summary=labSummary(snapshot),steps=w?.steps||[];
-  html=iterationPairs([['提供者',who],['共享版本',a.version],['实验方式',w?.mode==='parallel'?'并行表征':'依次表征']]);
+  html=iterationPairs([['实验方式',w?.mode==='parallel'?'并行表征':'依次表征']]);
   html+=section('环节进展','<p>'+summary.done+'/'+summary.total+' 已完成</p><ol class="asset-timeline">'+steps.map(st=>'<li class="is-'+esc(st.state)+'"><div class="timeline-title"><span>'+esc(st.title)+(w.mode==='parallel'&&w.assays.includes(st.stage)?' <span class="asset-parallel-label">并行</span>':'')+'</span><span class="lv-state is-'+esc(st.state==='exception'?'exception':st.state==='done'?'conclusion':st.state)+'">'+esc(labStepLabels[st.state]||st.state)+'</span></div><small>'+esc(st.stage==='review'?'人工复核':st.deviceSnapshot?.model||labDevice(st.deviceId)?.model||'未登记设备')+'</small>'+(st.state==='exception'?'<p>'+esc(iterationHumanText(st.result||'异常原因待登记'))+'</p>':'')+'</li>').join('')+'</ol>');
   const active=steps.filter(st=>st.state==='running'||st.state==='exception');
   const contracts=(active.length?active:steps.filter(st=>st.stage!=='review').slice(0,1)).map(st=>st.contract||labStage(st.stage));
@@ -22088,11 +22163,11 @@ function iterationAssetBody(s,a){
 }
 function iterationAssetPreview(s,a){
  if(!a)return '<div class="asset-preview-empty">选择左侧资产查看详情</div>';
- return '<div class="asset-preview-head">'+iterationAssetFile(a)+'<div><h2>'+esc(a.name)+'</h2><small>'+esc(rsAssetLabel(a.kind))+' · '+esc(a.version)+'</small></div><div class="rs-actions">'+iterationAcquire(s,a)+'</div></div>'+iterationAssetBody(s,a);
+ return '<div class="asset-preview-head">'+iterationAssetFile(a)+'<div><h2>'+esc(a.name)+'</h2><small>'+esc(rsAssetLabel(a.kind))+' · '+esc(a.version)+'</small></div>'+(iterationAssetRequest(s,a)?'<div class="rs-actions">'+iterationAcquire(s,a)+'</div>':'')+'</div>'+iterationAssetBody(s,a);
 }
 function iterationSharedHeader(s,member){
  const counts=iterationRequestCounts(s);
- return '<div class="shared-breadcrumb"><button class="rs-link" type="button" data-go="shared">共享项目</button><span>/</span><span>项目详情</span></div><header class="iteration-head"><div><h1>'+esc(s.name)+' <span class="rs-tag">'+esc(rsRoleNames[member.role])+'</span></h1><p title="'+esc(s.goal||'')+'">'+esc(s.goal||'')+'</p></div><div class="rs-actions"><button class="btn" type="button" data-rs-members>成员 '+s.members.filter(m=>m.status==='active').length+'</button><button class="btn" type="button" data-rs-requests>'+(rsCan(s,'approve')?'获取申请'+(counts.incoming?' '+counts.incoming:''):'我的申请'+(counts.pending+counts.approved?' '+(counts.pending+counts.approved):''))+'</button>'+(rsCan(s,'publish')?'<button class="btn btn-pri" type="button" data-rs-publish>共享资产</button>':'')+'</div></header><div class="rs-tabs" role="group" aria-label="共享项目内容">'+[['assets','项目资产']].map(([k,n])=>'<button type="button" data-rs-tab="'+k+'" class="'+(RS.tab===k?'is-on':'')+'" aria-pressed="'+(RS.tab===k)+'">'+n+'</button>').join('')+'</div>';
+ return '<div class="shared-breadcrumb"><button class="rs-link" type="button" data-go="shared">共享项目</button><span>/</span><span>项目详情</span></div><header class="iteration-head"><div><h1>'+esc(s.name)+' <span class="rs-tag">'+esc(rsRoleNames[member.role])+'</span></h1><p title="'+esc(s.goal||'')+'">'+esc(s.goal||'')+'</p></div><div class="rs-actions"><button class="btn" type="button" data-rs-members>成员 '+s.members.filter(m=>m.status==='active').length+'</button><button class="btn shared-req-btn" type="button" data-rs-requests aria-label="'+(rsCan(s,'approve')?'文件权限申请'+(counts.incoming?'，'+counts.incoming+' 条待处理':''):'我的申请')+'">'+(rsCan(s,'approve')?'权限申请'+(counts.incoming?'<span class="shared-req-badge">'+counts.incoming+'</span>':''):'我的申请'+(counts.pending+counts.approved?'<span class="shared-req-badge is-soft">'+(counts.pending+counts.approved)+'</span>':''))+'</button>'+(rsCan(s,'publish')?'<button class="btn btn-pri" type="button" data-rs-publish>共享资产</button>':'')+'</div></header>';
 }
 V.shareddetail=()=>{
  const gate=rsGate();if(gate)return gate;const s=rsShared(),member=rsMember(s);if(!s||!member)return '<div class="page rs"><h1>找不到可访问的共享项目</h1><button class="btn" data-go="shared">返回共享项目</button></div>';
@@ -22100,7 +22175,7 @@ V.shareddetail=()=>{
  RS.tab='assets';/* 共享课题只共享文档与任务资产，项目工作流能力已删除 */
  const groups=iterationAssetGroups(s),all=groups.flatMap(g=>g[1]);if(!all.some(a=>a.id===RS.assetPick))RS.assetPick=all[0]?.id||'';
  const selected=all.find(a=>a.id===RS.assetPick);
- return '<div class="page rs shared-detail">'+header+'<div class="shared-asset-workspace"><aside class="shared-asset-list" aria-label="项目资产"><div class="pjx-tabs">'+[['kb','知识库'],['tool','工具'],['exp','实验']].map(([k,n])=>'<button class="pjx-tab'+(RS.assetTab===k?' is-on':'')+'" type="button" data-shared-asset-tab="'+k+'" aria-current="'+(RS.assetTab===k?'page':'false')+'">'+n+'</button>').join('')+'</div><div class="pjx-side-h"><span class="lbl">'+(RS.assetTab==='kb'?'全部文件':RS.assetTab==='tool'?'已共享工具':'已共享任务')+'</span><span class="grow"></span><span class="t-xs mut2">'+all.length+'</span></div><div class="pjx-side-b">'+groups.map(([title,items])=>(groups.length>1?'<div class="pjx-sec"><span class="lbl">'+title+'</span><small>'+items.length+'</small></div>':'')+items.map(a=>'<button class="pjx-f'+(RS.assetPick===a.id?' is-on':'')+'" type="button" data-shared-asset-select="'+esc(a.id)+'" aria-pressed="'+(RS.assetPick===a.id)+'">'+iterationAssetFile(a)+'<span class="col grow" style="min-width:0;gap:3px"><span class="pjx-f-n">'+esc(a.name)+'</span><span class="t-xs mut2">'+esc(iterationAssetSource(s,a))+'</span></span></button>').join('')).join('')+(!all.length?'<p class="rs-help">暂无已共享内容</p>':'')+'</div></aside><section class="shared-asset-preview" aria-label="选中资产详情">'+iterationAssetPreview(s,selected)+'</section></div></div>';
+ return '<div class="page rs shared-detail">'+header+'<div class="shared-asset-workspace"><aside class="shared-asset-list" aria-label="项目资产"><div class="pjx-tabs">'+[['kb','知识库'],['tool','工具'],['exp','实验']].map(([k,n])=>'<button class="pjx-tab'+(RS.assetTab===k?' is-on':'')+'" type="button" data-shared-asset-tab="'+k+'" aria-current="'+(RS.assetTab===k?'page':'false')+'">'+n+'</button>').join('')+'</div><div class="pjx-side-h"><span class="lbl">'+(RS.assetTab==='kb'?'全部文件':RS.assetTab==='tool'?'已共享工具':'已共享任务')+'</span><span class="grow"></span><span class="t-xs mut2">'+all.length+'</span></div><div class="pjx-side-b">'+groups.map(([title,items])=>(groups.length>1?'<div class="pjx-sec"><span class="lbl">'+title+'</span><small>'+items.length+'</small></div>':'')+items.map(a=>'<div class="pjx-f-row"><button class="pjx-f'+(RS.assetPick===a.id?' is-on':'')+'" type="button" data-shared-asset-select="'+esc(a.id)+'" aria-pressed="'+(RS.assetPick===a.id)+'">'+iterationAssetFile(a)+'<span class="col grow" style="min-width:0;gap:3px"><span class="pjx-f-n">'+esc(a.name)+'</span><span class="t-xs mut2">'+esc(iterationAssetSource(s,a))+'</span></span></button>'+iterationRowAcquire(s,a)+'</div>').join('')).join('')+(!all.length?'<p class="rs-help">暂无已共享内容</p>':'')+'</div></aside><section class="shared-asset-preview" aria-label="选中资产详情">'+iterationAssetPreview(s,selected)+'</section></div></div>';
 };
 function iterationCloseDrawer(returnFocus=true){
  const state=RS.drawer;document.querySelector('.asset-drawer')?.remove();RS.drawer=null;
@@ -22814,7 +22889,7 @@ V.workbench=()=>{
  const start=Math.min(RESEARCH_HOME.start,Math.max(0,Math.ceil(ps.length/3)-1)*3);RESEARCH_HOME.start=start;
  const items=ps.slice(start,start+3),activities=researchActivities(),rows=researchDiscoveries(all);
  const date=new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'short',timeZone:'Asia/Shanghai'}),resources=researchResources(all);
- return '<div class="page wb wb-workstation"><header class="rh-header"><div><h1>工作台</h1><p>聚焦课题进展，推进下一步研究</p></div><div class="rh-header-actions"><time>'+esc(date)+'</time><button class="rh-notifications" data-rh-notifications type="button" aria-label="查看研究动态">'+rhIcon('bell')+'</button><button class="rh-new" data-wb-create-project type="button">＋ 发起研究</button></div></header><section class="rh-activities" aria-labelledby="rh-activity-title"><div class="rh-section-heading"><h2 id="rh-activity-title">'+rhIcon('calendar')+'近期研究动态</h2><button class="rh-link" data-rh-activities type="button">查看全部 '+rhIcon('right')+'</button></div><div class="rh-activity-grid">'+activities.slice(0,3).map(researchActivityHTML).join('')+(!activities.length?'<p class="rh-empty">暂无研究动态，进入课题开始记录研究。</p>':'')+'</div></section><section class="rh-projects" aria-labelledby="rh-projects-title"><div class="rh-project-toolbar"><h2 id="rh-projects-title">'+rhIcon('layers')+'我的课题 <span>('+all.length+')</span></h2>'+(ps.length>3?'<button class="rh-link rh-shuffle" type="button" data-rh-project-shuffle aria-label="换一批课题">换一批</button>':'')+'<label class="rh-search">'+rhIcon('search')+'<input type="search" aria-label="搜索课题名称或关键词" placeholder="搜索课题名称或关键词" value="'+esc(RESEARCH_HOME.query)+'" data-rh-search></label><button class="rh-link" data-rh-projects type="button">查看全部 '+rhIcon('right')+'</button></div><div class="rh-project-grid">'+items.map(researchCard).join('')+(!items.length?'<div class="rh-empty"><p>'+(all.length?'没有匹配课题，请调整搜索词。':'还没有课题，创建第一个研究课题。')+'</p><button class="rh-new" data-wb-create-project type="button">新建课题</button></div>':'')+'</div>'+'</section><section class="rh-discoveries" aria-labelledby="rh-discover-title"><div class="rh-discover-heading"><h2 id="rh-discover-title">'+rhIcon('book')+'课题相关发现</h2><div class="rh-tabs" role="tablist" aria-label="相关发现类型">'+[['papers','文献'],['news','学术资讯'],['resources','平台资源更新']].map(([k,n])=>'<button id="rh-tab-'+k+'" role="tab" aria-selected="'+(RESEARCH_HOME.tab===k)+'" aria-controls="rh-feed" tabindex="'+(RESEARCH_HOME.tab===k?'0':'-1')+'" data-rh-tab="'+k+'" type="button">'+n+(k==='resources'?'<span>'+resources.length+'</span>':'')+'</button>').join('')+'</div><button class="rh-link" data-rh-more type="button">查看更多 '+rhIcon('right')+'</button></div><div id="rh-feed" role="tabpanel" aria-labelledby="rh-tab-'+RESEARCH_HOME.tab+'">'+rows.slice(0,2).join('')+(!rows.length?'<p class="rh-empty">'+(RESEARCH_HOME.tab==='news'?'暂无学术资讯，相关研究论文可在“文献”中查看。':RESEARCH_HOME.tab==='resources'?'暂无与课题匹配的已发布平台资源更新。':'暂无匹配文献。')+'</p>':'')+'</div>'+'</section></div>';
+ return '<div class="page wb wb-workstation"><header class="rh-header"><div><h1>工作台</h1><p>聚焦课题进展，推进下一步研究</p></div><div class="rh-header-actions"><time>'+esc(date)+'</time><button class="rh-notifications" data-rh-notifications type="button" aria-label="查看研究动态">'+rhIcon('bell')+'</button><button class="rh-new" data-wb-create-project type="button">＋ 发起研究</button></div></header><section class="rh-activities-wrap" aria-labelledby="rh-activity-title"><div class="rh-project-toolbar"><h2 id="rh-activity-title">'+rhIcon('calendar')+'近期研究动态</h2><button class="rh-link" data-rh-activities type="button">查看全部 '+rhIcon('right')+'</button></div><div class="rh-activities"><div class="rh-activity-grid">'+activities.slice(0,3).map(researchActivityHTML).join('')+(!activities.length?'<p class="rh-empty">暂无研究动态，进入课题开始记录研究。</p>':'')+'</div></div></section><section class="rh-projects" aria-labelledby="rh-projects-title"><div class="rh-project-toolbar"><h2 id="rh-projects-title">'+rhIcon('layers')+'我的课题 <span>('+all.length+')</span></h2>'+(ps.length>3?'<button class="rh-link rh-shuffle" type="button" data-rh-project-shuffle aria-label="换一批课题">换一批</button>':'')+'<label class="rh-search">'+rhIcon('search')+'<input type="search" aria-label="搜索课题名称或关键词" placeholder="搜索课题名称或关键词" value="'+esc(RESEARCH_HOME.query)+'" data-rh-search></label><button class="rh-link" data-rh-projects type="button">查看全部 '+rhIcon('right')+'</button></div><div class="rh-project-grid">'+items.map(researchCard).join('')+(!items.length?'<div class="rh-empty"><p>'+(all.length?'没有匹配课题，请调整搜索词。':'还没有课题，创建第一个研究课题。')+'</p><button class="rh-new" data-wb-create-project type="button">新建课题</button></div>':'')+'</div>'+'</section><section class="rh-discoveries-wrap" aria-labelledby="rh-discover-title"><div class="rh-project-toolbar"><h2 id="rh-discover-title">'+rhIcon('book')+'课题相关发现</h2></div><div class="rh-discoveries"><div class="rh-discover-heading"><div class="rh-tabs" role="tablist" aria-label="相关发现类型">'+[['papers','文献'],['news','学术资讯'],['resources','平台资源更新']].map(([k,n])=>'<button id="rh-tab-'+k+'" role="tab" aria-selected="'+(RESEARCH_HOME.tab===k)+'" aria-controls="rh-feed" tabindex="'+(RESEARCH_HOME.tab===k?'0':'-1')+'" data-rh-tab="'+k+'" type="button">'+n+(k==='resources'?'<span>'+resources.length+'</span>':'')+'</button>').join('')+'</div></div><div id="rh-feed" role="tabpanel" aria-labelledby="rh-tab-'+RESEARCH_HOME.tab+'">'+rows.slice(0,2).join('')+(!rows.length?'<p class="rh-empty">'+(RESEARCH_HOME.tab==='news'?'暂无学术资讯，相关研究论文可在“文献”中查看。':RESEARCH_HOME.tab==='resources'?'暂无与课题匹配的已发布平台资源更新。':'暂无匹配文献。')+'</p>':'')+'</div></div>'+'</section></div>';
 };
 const researchOriginalBind=wbBind;
 wbBind=function(root){
@@ -22826,7 +22901,6 @@ wbBind=function(root){
  root.querySelectorAll('[data-rh-tab]').forEach(b=>{b.onclick=()=>{RESEARCH_HOME.tab=b.dataset.rhTab;RESEARCH_HOME.feedPage=0;render();view.querySelector('[data-rh-tab="'+RESEARCH_HOME.tab+'"]')?.focus();};b.onkeydown=e=>{const keys=['papers','news','resources'];let i=keys.indexOf(RESEARCH_HOME.tab);if(e.key==='ArrowRight')i=(i+1)%3;else if(e.key==='ArrowLeft')i=(i+2)%3;else if(e.key==='Home')i=0;else if(e.key==='End')i=2;else return;e.preventDefault();RESEARCH_HOME.tab=keys[i];RESEARCH_HOME.feedPage=0;render();view.querySelector('[data-rh-tab="'+keys[i]+'"]')?.focus();};});
  root.querySelector('[data-rh-project-shuffle]')?.addEventListener('click',()=>{const total=workbenchData().projects.length;RESEARCH_HOME.start=(RESEARCH_HOME.start+3>=total)?0:RESEARCH_HOME.start+3;render();});
  root.querySelectorAll('[data-rh-resource]').forEach(b=>b.onclick=()=>{if(b.dataset.rhRoute==='resdetail'){RS.resourcePick=b.dataset.rhResource;RS.resourceVersion=null;go('resdetail');}else if(b.dataset.rhRoute==='mdl')go('mdl',{pid:b.dataset.rhPid,mdlProj:b.dataset.rhPid,mtab:'cur'});else go('dsets',{pid:b.dataset.rhPid,dsProj:b.dataset.rhPid});});
- root.querySelector('[data-rh-more]')?.addEventListener('click',()=>{const rows=researchDiscoveries(workbenchData().projects);modal(RESEARCH_HOME.tab==='resources'?'课题资源':RESEARCH_HOME.tab==='news'?'学术资讯':'相关文献',rows.join('')||'暂无相关内容。','关闭',()=>true);document.querySelectorAll('dialog [data-rh-resource]').forEach(b=>b.onclick=()=>{document.querySelector('dialog')?.close();RS.resourcePick=b.dataset.rhResource;RS.resourceVersion=null;go('resdetail');});});
 };
 
 /* 课题名称、成员与归档状态从现有课题派生；文件字节保存在本机 IndexedDB。 */
@@ -22849,7 +22923,33 @@ function materialsFiltered(rows=materialsRows()){const m=MATERIALS,p=materialsPr
 function materialsIcon(name){const paths={folder:'M3 7V5h6l2 2h10v13H3z',file:'M6 3h8l4 4v14H6zM14 3v5h4M9 12h6M9 16h6',users:'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 3a4 4 0 1 1 0 8 4 4 0 0 1 0-8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75',star:'m12 3 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z',trash:'M3 6h18M9 6V3h6v3M6 6l1 15h10l1-15M10 10v7M14 10v7',grid:'M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z',list:'M8 5h13M8 12h13M8 19h13M3 5h1M3 12h1M3 19h1',search:'M21 21l-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0'};return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+(paths[name]||paths.file)+'"/></svg>';}
 
 function materialsNav(label,tab,count){return '<button type="button" class="ms-nav '+(MATERIALS.tab===tab&&!MATERIALS.space?'selected':'')+'" data-ms-tab="'+tab+'">'+materialsIcon(tab==='shared'?'users':tab==='stars'?'star':tab==='trash'?'trash':'file')+'<span>'+label+'</span><small>'+count+'</small></button>';}
-function materialsRow(x){const star=materialsPrefs().stars.includes(x.id),trash=MATERIALS.tab==='trash';return '<article class="ms-file" data-ms-row="'+esc(x.id)+'"><button class="ms-file-main" type="button" data-ms-open="'+esc(x.id)+'">'+fileIc(fileExt(x))+'<span><strong>'+esc(x.name)+'</strong><small>'+esc(x.kind==='link'?'链接':fileExt(x).toUpperCase())+' · '+(x.bytes==null?'资料引用':fmtBytes(x.bytes))+'</small></span></button><span class="ms-cell">'+esc(materialsSpace(x))+'</span><span class="ms-cell">'+esc(x.owner===materialsActor()?'我':'课题成员')+'</span><time class="ms-cell">'+esc(x.at||'—')+'</time><div class="ms-row-actions">'+(trash?'<button type="button" data-ms-restore="'+esc(x.id)+'">恢复</button>':'<button type="button" aria-label="'+(star?'取消收藏':'收藏')+' '+esc(x.name)+'" aria-pressed="'+star+'" data-ms-star="'+esc(x.id)+'">'+(star?'已收藏':'收藏')+'</button>')+'</div></article>';}
+function materialsRow(x){const star=materialsPrefs().stars.includes(x.id),trash=MATERIALS.tab==='trash';return '<article class="ms-file" data-ms-row="'+esc(x.id)+'"><button class="ms-file-main" type="button" data-ms-open="'+esc(x.id)+'">'+fileIc(fileExt(x))+'<span><strong>'+esc(x.name)+'</strong><small>'+esc(x.kind==='link'?'链接':fileExt(x).toUpperCase())+' · '+(x.bytes==null?'资料引用':fmtBytes(x.bytes))+'</small></span></button><span class="ms-cell">'+esc(materialsSpace(x))+'</span><span class="ms-cell">'+esc(x.owner===materialsActor()?'我':'课题成员')+'</span><time class="ms-cell">'+esc(x.at||'—')+'</time><div class="ms-row-actions">'+(trash?'<button type="button" data-ms-restore="'+esc(x.id)+'">恢复</button>':'<button type="button" aria-label="'+(star?'取消收藏':'收藏')+' '+esc(x.name)+'" aria-pressed="'+star+'" data-ms-star="'+esc(x.id)+'">'+(star?'已收藏':'收藏')+'</button><button type="button" class="ms-more" aria-label="更多：'+esc(x.name)+'" aria-haspopup="menu" data-ms-more="'+esc(x.id)+'">···</button>')+'</div></article>';}
+/* 行尾「更多」：分享（放进我能发布的共享项目）；菜单点外面即关 */
+function materialsMoreMenu(btn,id){
+ document.querySelector('.ms-menu')?.remove();
+ const x=materialsRows().find(f=>f.id===id);if(!x)return;
+ const m=document.createElement('div');m.className='ms-menu';m.setAttribute('role','menu');
+ m.innerHTML='<button type="button" role="menuitem" data-ms-menu-share>分享到共享项目</button><button type="button" role="menuitem" data-ms-menu-copy>复制文件名</button>';
+ document.body.appendChild(m);const r=btn.getBoundingClientRect();m.style.top=(r.bottom+4)+'px';m.style.left=Math.max(8,Math.min(innerWidth-m.offsetWidth-8,r.right-m.offsetWidth))+'px';
+ const close=()=>{m.remove();document.removeEventListener('pointerdown',away,true);document.removeEventListener('keydown',esc_,true);};
+ const away=e=>{if(!m.contains(e.target))close();},esc_=e=>{if(e.key==='Escape'){close();btn.focus();}};
+ document.addEventListener('pointerdown',away,true);document.addEventListener('keydown',esc_,true);
+ m.querySelector('[data-ms-menu-share]').onclick=()=>{close();materialsShareDialog(x);};
+ m.querySelector('[data-ms-menu-copy]').onclick=()=>{close();navigator.clipboard?.writeText(x.name).then(()=>toast('已复制文件名'),()=>toast('复制失败'));};
+ m.querySelector('button').focus();
+}
+function materialsShareDialog(x){
+ const seen=new Set(),targets=(RS.data?.shared||[]).filter(s=>rsCan(s,'publish')&&!seen.has(s.projectId)&&seen.add(s.projectId));
+ if(!targets.length){modal('分享文件','<p class="rs-help">还没有可以发布的共享项目。先在课题项目里把课题共享给组员，再把文件分享进去。</p>','去课题项目',()=>go('projects'));return;}
+ modal('分享文件','<p class="rs-help">「'+esc(x.name)+'」会作为资料引用放进所选共享项目，组员申请通过后可获取。</p><label class="rs-field"><span>共享项目</span><select class="input" id="ms-share-target">'+targets.map(s=>'<option value="'+esc(s.id)+'">'+esc(s.name)+'</option>').join('')+'</select></label>','分享',()=>{
+  const sid=document.getElementById('ms-share-target').value,next=rsClone(RS.data),s=next.shared.find(s=>s.id===sid);
+  const fingerprint=fp32(JSON.stringify([x.id,x.name,x.bytes||0])),aid='a-'+fp32(['file',x.id,sid].join('|'));
+  if(s.assets.some(a=>a.id===aid)){toast('这个文件已经在该共享项目里');return;}
+  s.assets.push({id:aid,kind:'knowledge',sourceId:x.id,name:x.name,description:'来自资料空间的文件',version:'v1',fingerprint,snapshot:{name:x.name,bytes:x.bytes??null,type:fileExt(x),metadataOnly:x.bytes==null},sourceProject:s.projectId,contributor:RS.actor,at:nowStamp()});
+  s.events.push({at:nowStamp(),by:RS.actor,text:'分享文件：'+x.name});
+  rsSave(next).then(()=>{toast('已分享到「'+s.name+'」');render();}).catch(e=>toast(e.message||'分享失败'));
+ });
+}
 V.materials=()=>{const m=MATERIALS,all=materialsRows(),prefs=materialsPrefs(),live=all.filter(x=>!prefs.trash.includes(x.id)),rows=materialsFiltered(all),projects=DB.projects.filter(materialsVisible),title=m.space?(m.space==='public'?'公共资料':materialsProject(m.space)?.name||'课题资料'):({all:'全部资料',mine:'我的资料',shared:'与你共享',stars:'已收藏',trash:'回收站'})[m.tab];const count=tab=>{const previous={...m};Object.assign(m,{tab,space:'',query:'',type:'all'});const value=materialsFiltered(all).length;Object.assign(m,previous);return value;};
 return '<div class="ms-shell"><aside class="ms-sidebar" aria-label="资料空间导航"><h2>资料空间</h2>'+[['全部资料','all'],['我的资料','mine'],['与你共享','shared'],['已收藏','stars']].map(([n,t])=>materialsNav(n,t,count(t))).join('')+'<label class="ms-mobile-space">资料归属<select id="ms-mobile-space" aria-label="选择课题资料空间"><option value="">全部课题资料</option>'+projects.map(p=>'<option value="'+esc(p.id)+'" '+(m.space===p.id?'selected':'')+'>'+esc(p.name)+'</option>').join('')+'<option value="public" '+(m.space==='public'?'selected':'')+'>公共资料</option></select></label><h3>课题资料</h3><div class="ms-project-nav">'+projects.map(p=>'<button type="button" class="ms-nav '+(m.space===p.id?'selected':'')+'" data-ms-space="'+esc(p.id)+'">'+materialsIcon('folder')+'<span>'+esc(p.name)+'</span></button>').join('')+'</div><button type="button" class="ms-nav '+(m.space==='public'?'selected':'')+'" data-ms-space="public">'+materialsIcon('folder')+'<span>公共资料</span></button><h3>最近访问</h3>'+prefs.recent.map(id=>live.find(x=>x.id===id)).filter(Boolean).slice(0,3).map(x=>'<button type="button" class="ms-nav" data-ms-open="'+esc(x.id)+'">'+materialsIcon('file')+'<span>'+esc(x.name)+'</span></button>').join('')+'<div class="ms-trash">'+materialsNav('回收站','trash',count('trash'))+'</div></aside><section class="ms-main"><header class="ms-header"><div><p class="ms-breadcrumb">资料空间 / '+esc(title)+'</p><h1>'+esc(title)+'</h1><p>课题资料随课题归档，公共资料跨课题复用。</p></div><div class="ms-head-actions"><label class="ms-search">'+materialsIcon('search')+'<input id="ms-search" type="search" aria-label="搜索资料" placeholder="搜索资料名称、内容或课题" value="'+esc(m.query)+'"></label><button type="button" class="btn btn-pri" data-ms-create '+(!m.ready||m.error||!materialsEditable(m.space==='public'?'':m.space)?'disabled':'')+'>＋ 新建 / 上传</button></div></header><div class="ms-toolbar"><div class="ms-types" aria-label="资料类型">'+[['all','全部'],['doc','文档'],['slides','演示文稿'],['sheet','表格'],['image','图像'],['link','链接'],['other','其他']].map(([k,n])=>'<button type="button" class="pill '+(m.type===k?'on':'')+'" aria-pressed="'+(m.type===k)+'" data-ms-type="'+k+'">'+n+'</button>').join('')+'</div><div class="ms-views"><button type="button" aria-label="网格视图" aria-pressed="'+m.grid+'" data-ms-view="grid">'+materialsIcon('grid')+'</button><button type="button" aria-label="列表视图" aria-pressed="'+!m.grid+'" data-ms-view="list">'+materialsIcon('list')+'</button></div></div>'+(m.error?'<div role="alert" class="ms-empty">'+esc(m.error)+'<button class="btn" data-ms-retry>重试</button></div>':!m.ready?'<div class="ms-empty" role="status">正在读取资料…</div>':((m.tab==='all'&&!m.space&&!m.query)?'<section class="ms-spaces"><h2>常用课题与公共资料</h2><div>'+[...projects.slice(0,2).map(p=>({id:p.id,name:p.name,desc:p.archived||p.state==='archived'?'已归档 · 只读':'名称与成员权限跟随课题'})),{id:'public',name:'公共资料',desc:'操作规范、仪器手册与通用文献'}].map(p=>'<button type="button" data-ms-space="'+esc(p.id)+'">'+materialsIcon('folder')+'<strong>'+esc(p.name)+'</strong><p>'+p.desc+'</p><small>'+live.filter(x=>p.id==='public'?!x.pid:x.pid===p.id).length+' 项资料</small></button>').join('')+'</div></section>':'')+'<div class="ms-list-heading"><h2>'+ (m.tab==='trash'?'已移入回收站':'全部文件')+' <small>'+rows.length+' 项</small></h2><label>排序 <select id="ms-sort" aria-label="资料排序"><option value="new" '+(m.sort==='new'?'selected':'')+'>最近更新</option><option value="name" '+(m.sort==='name'?'selected':'')+'>名称</option></select></label></div>'+(rows.length?'<div class="ms-files '+(m.grid?'is-grid':'')+'">'+(!m.grid?'<div class="ms-table-head"><span>名称</span><span>归属课题 / 空间</span><span>更新者</span><span>更新时间</span><span>操作</span></div>':'')+rows.map(materialsRow).join('')+'</div>':'<div class="ms-empty">'+materialsIcon(m.tab==='shared'?'users':'folder')+'<h2>'+(m.query||m.type!=='all'?'没有匹配的资料':m.tab==='shared'?'还没有与你共享的资料':m.tab==='trash'?'回收站为空':'这里还没有资料')+'</h2><p>'+(m.tab==='shared'?'你加入的共享课题资料会显示在这里。':m.query||m.type!=='all'?'尝试其他关键词或资料类型。':'新建文档、添加链接或上传文件，开始积累科研资料。')+'</p>'+((m.query||m.type!=='all')?'<button class="btn" data-ms-reset>清除筛选</button>':'')+'</div>'))+'<footer class="ms-footer">'+(m.space&&m.space!=='public'?'<button class="ms-link" type="button" data-ms-project="'+esc(m.space)+'">进入对应课题 →</button>':'<span>资料归属与课题保持一致</span>')+'<span>新增内容保存在当前浏览器 · 尚未同步到服务器</span></footer></section></div>';};
 V.files=V.materials;
@@ -22857,7 +22957,7 @@ const materialsNavGroup=NAV.find(g=>g[0]==='A');materialsNavGroup[2].push(['mate
 function materialsCreate(){const m=MATERIALS;modal('新建资料 / 上传文件','<div class="ms-form"><label>资料归属<select class="input" id="ms-target">'+(materialsEditable('')?'<option value="">公共资料</option>':'')+DB.projects.filter(p=>materialsVisible(p)&&materialsEditable(p.id)).map(p=>'<option value="'+esc(p.id)+'" '+(m.space===p.id?'selected':'')+'>'+esc(p.name)+'</option>').join('')+'</select></label><label>创建方式<select class="input" id="ms-kind"><option value="doc">文档</option><option value="link">链接</option><option value="upload">上传文件</option></select></label><label id="ms-name-wrap">名称<input class="input" id="ms-name" maxlength="120" required></label><label id="ms-content-wrap">内容<textarea class="input" id="ms-content" rows="7"></textarea></label><label hidden id="ms-url-wrap">链接地址<input class="input" id="ms-url" type="url" placeholder="https://"></label><label hidden id="ms-file-wrap">选择文件<input id="ms-upload" type="file" multiple><small>单次最多 20 个文件，总大小不超过 25 MB。</small></label><p id="ms-form-error" role="alert"></p></div>','保存',()=>{materialsSaveForm();return false;});const kind=document.getElementById('ms-kind');kind.onchange=()=>{for(const [id,show]of [['ms-name-wrap',kind.value!=='upload'],['ms-content-wrap',kind.value==='doc'],['ms-url-wrap',kind.value==='link'],['ms-file-wrap',kind.value==='upload']])document.getElementById(id).hidden=!show;};}
 async function materialsSaveForm(){if(MATERIALS.busy)return;const error=document.getElementById('ms-form-error'),pid=document.getElementById('ms-target').value,kind=document.getElementById('ms-kind').value,name=document.getElementById('ms-name').value.trim(),content=document.getElementById('ms-content').value,url=document.getElementById('ms-url').value.trim(),files=[...document.getElementById('ms-upload').files];try{if(!materialsEditable(pid))throw new Error('该课题只读或你没有编辑权限。');if(kind!=='upload'&&!name)throw new Error('请填写资料名称。');if(kind==='link'&&!/^https?:\/\//i.test(url))throw new Error('请输入以 https:// 或 http:// 开头的有效链接。');if(kind==='link')new URL(url);if(kind==='doc'&&!content.trim())throw new Error('请填写文档内容。');if(kind==='upload'&&(!files.length||files.length>20||files.reduce((n,f)=>n+f.size,0)>25*1024*1024))throw new Error('请选择 1–20 个文件，总大小不超过 25 MB。');MATERIALS.busy=true;const save=document.querySelector('#dlg button[value="ok"]');save.disabled=true;const inputs=kind==='upload'?files.map(blob=>({name:blob.name,blob,bytes:blob.size,kind:'upload'})):[{name:kind==='doc'&&!/\.md$/i.test(name)?name+'.md':name,kind,content,url,blob:kind==='doc'?new Blob([content],{type:'text/markdown;charset=utf-8'}):null,bytes:kind==='doc'?new Blob([content]).size:null}];for(const input of inputs){const record={...input,id:crypto.randomUUID(),pid:pid||null,owner:materialsActor(),at:nowStamp()};await materialsStore(record);MATERIALS.records.push(record);}MATERIALS.space=pid||'public';MATERIALS.tab='all';MATERIALS.query='';MATERIALS.type='all';document.getElementById('dlg').close();render();toast('已保存资料');}catch(e){error.textContent=e.message||'保存失败，请检查浏览器存储空间。';}finally{MATERIALS.busy=false;const save=document.querySelector('#dlg button[value="ok"]');if(save)save.disabled=false;}}
 function materialsOpen(id){const x=materialsRows().find(x=>x.id===id);if(!x)return;const prefs=materialsPrefs();prefs.recent=[id,...prefs.recent.filter(k=>k!==id)].slice(0,10);LS.set('materials_prefs',prefs);const make=fileMake(x),blob=x.blob||KBFILE[x.pid+'|'+x.name],trash=materialsPrefs().trash.includes(id);modal(x.name,'<div class="ms-preview"><p>'+esc(materialsSpace(x))+' · '+esc(x.from||'本机资料')+'</p>'+(x.kind==='link'?'<a href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">'+esc(x.url)+'</a>':x.content?'<pre>'+esc(x.content)+'</pre>':'<p>'+(blob||make?'原始内容可下载后查看。':'仅有文件引用，当前浏览器没有原始文件，无法预览或下载。')+'</p>')+'<div class="ms-preview-actions">'+((blob||make)&&can('exp')?'<button class="btn" type="button" id="ms-download">下载原件</button>':'')+(!trash&&materialsEditable(x.pid)?'<button class="btn" type="button" id="ms-remove">移入回收站</button>':'')+'</div></div>','关闭',()=>true);document.getElementById('ms-download')?.addEventListener('click',async()=>{try{if(!can('exp'))throw new Error('当前身份没有导出权限');const data=blob||await make();const u=URL.createObjectURL(data instanceof Blob?data:new Blob([data]));const a=document.createElement('a');a.href=u;a.download=x.name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);}catch(e){toast('下载失败：'+e.message);}});document.getElementById('ms-remove')?.addEventListener('click',()=>{materialsPref('trash',id);document.getElementById('dlg').close();toast('已移入本机回收站，可随时恢复');});}
-const materialsOriginalBind=wbBind;wbBind=function(root){materialsOriginalBind(root);if(!['materials','files'].includes(S.route))return;const on=(selector,event,fn)=>root.querySelectorAll(selector).forEach(el=>el.addEventListener(event,()=>fn(el)));on('[data-ms-tab]','click',el=>{Object.assign(MATERIALS,{tab:el.dataset.msTab,space:'',query:'',type:'all'});render();});on('[data-ms-space]','click',el=>{Object.assign(MATERIALS,{space:el.dataset.msSpace,tab:'all',query:'',type:'all'});render();});on('#ms-mobile-space','change',el=>{Object.assign(MATERIALS,{space:el.value,tab:'all',query:'',type:'all'});render();});on('[data-ms-type]','click',el=>{MATERIALS.type=el.dataset.msType;render();});on('#ms-search','input',el=>{MATERIALS.query=el.value;render();});on('#ms-sort','change',el=>{MATERIALS.sort=el.value;render();});on('[data-ms-view]','click',el=>{MATERIALS.grid=el.dataset.msView==='grid';LS.set('materials_grid',MATERIALS.grid);render();});on('[data-ms-open]','click',el=>materialsOpen(el.dataset.msOpen));on('[data-ms-star]','click',el=>materialsPref('stars',el.dataset.msStar));on('[data-ms-restore]','click',el=>materialsPref('trash',el.dataset.msRestore));on('[data-ms-create]','click',materialsCreate);on('[data-ms-reset]','click',()=>{MATERIALS.query='';MATERIALS.type='all';render();});on('[data-ms-retry]','click',materialsLoad);on('[data-ms-project]','click',el=>{S.pid=el.dataset.msProject;go('project');});};
+const materialsOriginalBind=wbBind;wbBind=function(root){materialsOriginalBind(root);if(!['materials','files'].includes(S.route))return;const on=(selector,event,fn)=>root.querySelectorAll(selector).forEach(el=>el.addEventListener(event,()=>fn(el)));root.querySelectorAll('[data-ms-more]').forEach(b=>b.onclick=e=>{e.stopPropagation();materialsMoreMenu(b,b.dataset.msMore);});on('[data-ms-tab]','click',el=>{Object.assign(MATERIALS,{tab:el.dataset.msTab,space:'',query:'',type:'all'});render();});on('[data-ms-space]','click',el=>{Object.assign(MATERIALS,{space:el.dataset.msSpace,tab:'all',query:'',type:'all'});render();});on('#ms-mobile-space','change',el=>{Object.assign(MATERIALS,{space:el.value,tab:'all',query:'',type:'all'});render();});on('[data-ms-type]','click',el=>{MATERIALS.type=el.dataset.msType;render();});on('#ms-search','input',el=>{MATERIALS.query=el.value;render();});on('#ms-sort','change',el=>{MATERIALS.sort=el.value;render();});on('[data-ms-view]','click',el=>{MATERIALS.grid=el.dataset.msView==='grid';LS.set('materials_grid',MATERIALS.grid);render();});on('[data-ms-open]','click',el=>materialsOpen(el.dataset.msOpen));on('[data-ms-star]','click',el=>materialsPref('stars',el.dataset.msStar));on('[data-ms-restore]','click',el=>materialsPref('trash',el.dataset.msRestore));on('[data-ms-create]','click',materialsCreate);on('[data-ms-reset]','click',()=>{MATERIALS.query='';MATERIALS.type='all';render();});on('[data-ms-retry]','click',materialsLoad);on('[data-ms-project]','click',el=>{S.pid=el.dataset.msProject;go('project');});};
 materialsLoad();
 
 /* Scheduled plans are local configuration; no fabricated runs or browser timer execution. */
@@ -23006,10 +23106,9 @@ function navigationProjectSharedLabel(card,shared){
  if(shared)card.querySelector('.pcard-t')?.insertAdjacentHTML('beforeend','<span class="navigation-project-source">共享</span>');
 }
 function navigationProjectProgress(p,shared){
- let kind='',label='',title='',detail='',action='',task=null,at='',percent=null;
+ let kind='',label='',title='',detail='',action='',task=null,at='',percent=null,pendingCount=0;
  if(!p){
-  if(!shared)return '';
-  kind='empty';label='项目进展';title='暂无进展记录';detail='可进入项目查看团队已共享的研究资产。';action='查看项目';
+  return '';/* 没有进展就不放这张卡；卡片等高由网格撑开 */
  }else
  {
   const tasks=(workbenchData({pid:p.id}).tasks||[]).filter(t=>t.pid===p.id&&t.isTask!==false&&!['canceled'].includes(t.status));
@@ -23019,7 +23118,7 @@ function navigationProjectProgress(p,shared){
   const active=tasks.filter(t=>['active','queued'].includes(t.status));
   const completed=tasks.filter(t=>t.status==='done').sort((a,b)=>String(b.at||'').localeCompare(String(a.at||'')));
   if(pending.length){
-   task=pending[0];kind='confirm';label='待我处理';title=pending.length+' 项任务待处理';
+   task=pending[0];kind='confirm';label='待我处理';title=pending.length+' 项任务待处理';pendingCount=pending.length;
    detail=(task.name||task.id)+' · '+(task.detail||task.label||'请查看并处理');action='查看并处理';
   }else if(active.length){
    task=active[0];kind='running';label='正在执行';title=task.name||task.id;
@@ -23037,6 +23136,7 @@ function navigationProjectProgress(p,shared){
   }else return '';
   if(task)at=task.at||'';
  }
+ if(kind==='confirm')return '<div class="navigation-progress project-update is-confirm is-mini"><span class="project-update-mini-label">待处理<b class="project-update-count">'+pendingCount+'</b></span><button class="project-update-action" type="button" data-project-progress-pending="'+esc(p.id)+'">处理</button></div>';
  const attrs=kind==='confirm'?'data-project-progress-pending="'+esc(p.id)+'"':task?'data-project-progress-task="'+esc(task.key)+'"':p?'data-project-progress-pid="'+esc(p.id)+'"':'data-project-progress-shared="'+esc(shared.id)+'"';
  return '<div class="navigation-progress project-update is-'+kind+'"><div class="project-update-head"><span>'+label+'</span>'+(at?'<time>'+esc(at)+'</time>':'')+'</div><strong>'+esc(title)+'</strong><p>'+esc(detail)+'</p>'+(percent!==null?'<div class="project-task-progress"><span>当前任务进度 '+percent+'%</span><progress value="'+percent+'" max="100" aria-label="当前任务进度 '+percent+'%"></progress></div>':'')+'<button class="project-update-action" type="button" '+attrs+'>'+action+' →</button></div>';
 }
@@ -23244,10 +23344,16 @@ function paintResearchHistory(){
   }
   if(!panel){
     panel=document.createElement('aside');panel.id='chatHistory';panel.className='chat-history';panel.setAttribute('aria-label','历史对话');
-    panel.innerHTML=`<div class="chat-history-head"><strong>科研对话</strong><button type="button" class="history-search-trigger" aria-label="搜索对话" title="搜索对话" aria-haspopup="dialog">${SEARCH_IC}</button></div><button type="button" class="btn history-new">＋ 新建对话</button><div class="history-list" id="historyBody"></div><div class="history-foot">对话保存在当前浏览器</div>`;
+    panel.innerHTML=`<div class="chat-history-head"><strong>科研对话</strong><span class="chat-history-head-tools"><button type="button" class="history-search-trigger" aria-label="搜索对话" aria-haspopup="dialog">${SEARCH_IC}</button><button type="button" class="history-collapse" aria-label="收起对话列表" aria-expanded="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button></span></div><button type="button" class="btn history-new">＋ 新建对话</button><button type="button" class="btn history-new-mini" aria-label="新建对话">＋</button><div class="history-list" id="historyBody"></div><div class="history-foot">对话保存在当前浏览器</div>`;
     document.getElementById('main').prepend(panel);
     panel.querySelector('.history-new').onclick=()=>newChat();
+    panel.querySelector('.history-new-mini').onclick=()=>newChat();
     panel.querySelector('.history-search-trigger').onclick=()=>openHistorySearch();
+    /* 收起/展开：收起后只留一条窄栏（展开、新建），状态记在本机 */
+    const collapseBtn=panel.querySelector('.history-collapse');
+    const applyCollapsed=()=>{const c=!!LS.get('chat_hist_collapsed');panel.classList.toggle('is-collapsed',c);collapseBtn.setAttribute('aria-expanded',String(!c));collapseBtn.setAttribute('aria-label',c?'展开对话列表':'收起对话列表');};
+    collapseBtn.onclick=()=>{LS.set('chat_hist_collapsed',LS.get('chat_hist_collapsed')?0:1);applyCollapsed();};
+    applyCollapsed();
   }
   panel.hidden=false;
   researchHistoryList();
