@@ -308,7 +308,7 @@ const iterationOriginalWorkbenchData=workbenchData;
 workbenchData=function(options){const d=iterationOriginalWorkbenchData(options);d.projects=d.projects.filter(p=>(rsProject(p.id)?.ownerId||'me')==='me');for(const key of ['experiments','modelTasks'])d[key]=(d[key]||[]).map(t=>({...t,name:iterationHumanText(t.name),detail:iterationHumanText(t.detail)}));return d;};
 const iterationOriginalSubscriptions=wbSubscriptions;
 wbSubscriptions=()=>iterationOriginalSubscriptions().filter(p=>(rsProject(p.pid)?.ownerId||'me')==='me');
-RS.assetTab='kb';RS.assetPick='';RS.flowSelected='';RS.flowPositions={};RS.drawer=null;
+RS.assetTab='kb';RS.assetPick='';RS.drawer=null;
 const iterationRole=s=>s.members.find(m=>m.id==='me'&&m.status==='active');
 function iterationRequestCounts(s){
  const mine=s.requests.filter(r=>r.actor===RS.actor);
@@ -429,40 +429,10 @@ function iterationSharedHeader(s,member){
  const counts=iterationRequestCounts(s);
  return '<div class="shared-breadcrumb"><button class="rs-link" type="button" data-go="shared">共享项目</button><span>/</span><span>项目详情</span></div><header class="iteration-head"><div><h1>'+esc(s.name)+' <span class="rs-tag">'+esc(rsRoleNames[member.role])+'</span></h1><p title="'+esc(s.goal||'')+'">'+esc(s.goal||'')+'</p></div><div class="rs-actions"><button class="btn" type="button" data-rs-members>成员 '+s.members.filter(m=>m.status==='active').length+'</button><button class="btn" type="button" data-rs-requests>'+(rsCan(s,'approve')?'获取申请'+(counts.incoming?' '+counts.incoming:''):'我的申请'+(counts.pending+counts.approved?' '+(counts.pending+counts.approved):''))+'</button>'+(rsCan(s,'publish')?'<button class="btn btn-pri" type="button" data-rs-publish>共享资产</button>':'')+'</div></header><div class="rs-tabs" role="group" aria-label="共享项目内容">'+[['assets','项目资产']].map(([k,n])=>'<button type="button" data-rs-tab="'+k+'" class="'+(RS.tab===k?'is-on':'')+'" aria-pressed="'+(RS.tab===k)+'">'+n+'</button>').join('')+'</div>';
 }
-const iterationPipelines=rsPipelines;
-rsPipelines=function(s){
- const flows=iterationPipelines(s);
- if(RS.flow==='experiment')flows.forEach(f=>{const input=s.assets.find(a=>a.id===s.inputLinks?.[f.id]);if(input)f.nodes[0]=rsPipelineNode('实验数据集',input.name,input.description,input);});
- return flows;
-};
-function iterationWorkflowGraph(s){
- const flows=rsPipelines(s),nodes=[],edges=[],byId=new Map(),width=RS.flow==='model'?1300:1010;
- const cols=RS.flow==='model'?4:3,nodeWidth=230,rowGap=190;
- flows.sort((a,b)=>String(a.nodes[0].assetId||a.id).localeCompare(String(b.nodes[0].assetId||b.id)));
- flows.forEach((flow,row)=>flow.nodes.forEach((n,col)=>{
-  const id=n.assetId||flow.id+'-missing-'+col;
-  let node=byId.get(id);
-  if(!node){node={id,assetId:n.assetId,kind:n.kind,title:n.title,description:n.description,status:n.status,col,x:45+col*315,y:45+row*rowGap,ys:[],outgoing:0};byId.set(id,node);nodes.push(node);}
-  node.ys.push(45+row*rowGap);
-  if(col){const previous=flow.nodes[col-1],from=previous.assetId||flow.id+'-missing-'+(col-1);if(!edges.some(e=>e.from===from&&e.to===id))edges.push({from,to:id});}
- }));
- nodes.forEach(n=>{n.y=n.ys.reduce((a,b)=>a+b,0)/n.ys.length;n.outgoing=edges.filter(e=>e.from===n.id).length;});
- return {nodes,edges,width:Math.max(width,cols*315+45),height:Math.max(420,flows.length*rowGap+55),nodeWidth};
-}
-function iterationWorkflowHTML(s){
- const g=iterationWorkflowGraph(s),selected=RS.flowSelected;
- const linked=new Set([selected]);g.edges.forEach(e=>{if(e.from===selected||e.to===selected){linked.add(e.from);linked.add(e.to);}});
- const svg='<svg class="shared-flow-lines" width="'+g.width+'" height="'+g.height+'" aria-hidden="true"><defs><marker id="flow-arrow-gray" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M1 1l5 2.5L1 6" style="stroke:var(--ink-4)"/></marker><marker id="flow-arrow-blue" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M1 1l5 2.5L1 6" style="stroke:var(--dry)"/></marker></defs>'+g.edges.map(e=>{const a=g.nodes.find(n=>n.id===e.from),b=g.nodes.find(n=>n.id===e.to),x=a.x+230,y=a.y+67,xx=b.x,yy=b.y+67,m=(x+xx)/2;const hi=selected&&(e.from===selected||e.to===selected);return '<path data-flow-from="'+esc(e.from)+'" data-flow-to="'+esc(e.to)+'" class="'+(hi?'is-highlighted':'')+'" d="M'+x+' '+y+'H'+m+'V'+yy+'H'+xx+'" marker-end="url(#flow-arrow-'+(hi?'blue':'gray')+')"/>';}).join('')+'</svg>';
- const body=g.nodes.map(n=>{
-  const a=s.assets.find(a=>a.id===n.assetId),st=a?.kind==='experiment'?labSummary(a.snapshot):null;
-  return '<button class="shared-flow-node rs-node'+(selected===n.id?' is-selected':'')+'" type="button" style="left:'+n.x+'px;top:'+n.y+'px" data-node-id="'+esc(n.id)+'" '+(a?'data-rs-asset="'+esc(a.id)+'"':'disabled')+' aria-label="'+esc(n.kind+'：'+n.title)+'">'+iterationIcon(a?.kind==='experiment'?'flask':a?.kind==='dataset'||a?.kind==='sampleSheet'?'model':'paper')+'<span><small>'+esc(n.kind)+'</small><strong>'+esc(n.title)+'</strong>'+(st?'<span class="lv-state is-'+esc(st.status)+'">'+esc(st.label)+'</span>':a?.kind==='conclusion'?'<span class="lv-state is-conclusion">已发布</span>':'')+'<span class="shared-flow-description">'+esc(iterationHumanText(n.description||a?.description||''))+'</span>'+(n.outgoing>1?'<span class="flow-reuse">'+esc(a?.version||'')+' · '+n.outgoing+' 项任务复用</span>':'')+'</span></button>';
- }).join('');
- return '<div class="shared-flow-surface" style="width:'+g.width+'px;height:'+g.height+'px;zoom:'+(RS.zoom||1)+'">'+svg+body+'</div>';
-}
 V.shareddetail=()=>{
  const gate=rsGate();if(gate)return gate;const s=rsShared(),member=rsMember(s);if(!s||!member)return '<div class="page rs"><h1>找不到可访问的共享项目</h1><button class="btn" data-go="shared">返回共享项目</button></div>';
  const header=iterationSharedHeader(s,member);
- RS.tab='assets';/* 项目工作流不再显性化：共享课题只共享文档与任务资产 */if(false)return '<div class="page rs shared-detail">'+header+'<section class="shared-workflow"><div class="shared-flow-toolbar"><div class="rs-actions" role="group" aria-label="工作流类型">'+[['model','模型训练'],['experiment','实验验证']].map(([k,n])=>'<button class="pill'+(RS.flow===k?' is-on':'')+'" type="button" data-rs-flow="'+k+'" aria-pressed="'+(RS.flow===k)+'">'+n+'</button>').join('')+'</div><div class="rs-actions"><button class="btn" type="button" data-iteration-zoom="-1" aria-label="缩小画布">−</button><span class="rs-help">'+Math.round((RS.zoom||1)*100)+'%</span><button class="btn" type="button" data-iteration-zoom="1" aria-label="放大画布">+</button><button class="btn" type="button" data-iteration-fit>适应画布</button></div></div><div class="shared-flow-viewport rs-canvas" tabindex="0" aria-label="项目工作流画布，可拖动平移">'+(rsPipelines(s).length?iterationWorkflowHTML(s):'<p class="rs-empty">暂无已共享的这类任务</p>')+'</div></section></div>';
+ RS.tab='assets';/* 共享课题只共享文档与任务资产，项目工作流能力已删除 */
  const groups=iterationAssetGroups(s),all=groups.flatMap(g=>g[1]);if(!all.some(a=>a.id===RS.assetPick))RS.assetPick=all[0]?.id||'';
  const selected=all.find(a=>a.id===RS.assetPick);
  return '<div class="page rs shared-detail">'+header+'<div class="shared-asset-workspace"><aside class="shared-asset-list" aria-label="项目资产"><div class="pjx-tabs">'+[['kb','知识库'],['tool','工具'],['exp','实验']].map(([k,n])=>'<button class="pjx-tab'+(RS.assetTab===k?' is-on':'')+'" type="button" data-shared-asset-tab="'+k+'" aria-current="'+(RS.assetTab===k?'page':'false')+'">'+n+'</button>').join('')+'</div><div class="pjx-side-h"><span class="lbl">'+(RS.assetTab==='kb'?'全部文件':RS.assetTab==='tool'?'已共享工具':'已共享任务')+'</span><span class="grow"></span><span class="t-xs mut2">'+all.length+'</span></div><div class="pjx-side-b">'+groups.map(([title,items])=>(groups.length>1?'<div class="pjx-sec"><span class="lbl">'+title+'</span><small>'+items.length+'</small></div>':'')+items.map(a=>'<button class="pjx-f'+(RS.assetPick===a.id?' is-on':'')+'" type="button" data-shared-asset-select="'+esc(a.id)+'" aria-pressed="'+(RS.assetPick===a.id)+'">'+iterationAssetFile(a)+'<span class="col grow" style="min-width:0;gap:3px"><span class="pjx-f-n">'+esc(a.name)+'</span><span class="t-xs mut2">'+esc(iterationAssetSource(s,a))+'</span></span></button>').join('')).join('')+(!all.length?'<p class="rs-help">暂无已共享内容</p>':'')+'</div></aside><section class="shared-asset-preview" aria-label="选中资产详情">'+iterationAssetPreview(s,selected)+'</section></div></div>';
@@ -483,7 +453,7 @@ function iterationMountDrawer(title,body,footer,state={}){
 }
 rsAssetDialog=function(id){
  const s=rsShared(),a=s?.assets.find(a=>a.id===id);if(!a||!rsCan(s,'read'))return;
- const trigger=document.activeElement;RS.flowSelected=a.id;
+ const trigger=document.activeElement;
  view.querySelectorAll('[data-node-id]').forEach(e=>e.classList.toggle('is-selected',e.dataset.nodeId===a.id));
  view.querySelectorAll('[data-flow-from]').forEach(e=>{const selected=e.dataset.flowFrom===a.id||e.dataset.flowTo===a.id;e.classList.toggle('is-highlighted',selected);e.setAttribute('marker-end','url(#flow-arrow-'+(selected?'blue':'gray')+')');});
  const summary=a.kind==='experiment'?labSummary(a.snapshot):null;
@@ -506,7 +476,7 @@ function iterationBindAcquisitions(root){
  root.querySelectorAll('[data-iteration-acquire]').forEach(e=>e.onclick=()=>rsRequestDialog(e.dataset.iterationAcquire));
  root.querySelectorAll('[data-iteration-import]').forEach(e=>e.onclick=()=>iterationMutation(()=>rsImport(rsShared().id,e.dataset.iterationImport)));
  if(root!==view)root.querySelectorAll('[data-rs-requests]').forEach(e=>e.onclick=()=>rsRequestsDialog());
- root.querySelectorAll('[data-inbox-open]').forEach(e=>e.onclick=()=>{RS.sharedPick=e.dataset.inboxOpen;LS.set('rs_shared_pick',RS.sharedPick);RS.actor='me';RS.tab='assets';RS.zoom=1;go('shareddetail');});
+ root.querySelectorAll('[data-inbox-open]').forEach(e=>e.onclick=()=>{RS.sharedPick=e.dataset.inboxOpen;LS.set('rs_shared_pick',RS.sharedPick);RS.actor='me';RS.tab='assets';go('shareddetail');});
  root.querySelectorAll('[data-inbox-import]').forEach(e=>e.onclick=()=>iterationMutation(()=>rsImport(e.dataset.inboxSid,e.dataset.inboxImport)));
  root.querySelectorAll('[data-inbox-withdraw]').forEach(e=>e.onclick=()=>iterationMutation(()=>rsWithdrawRequest(e.dataset.inboxSid,e.dataset.inboxWithdraw)));
  root.querySelectorAll('[data-inbox-approve]').forEach(e=>e.onclick=()=>iterationMutation(()=>rsDecide(e.dataset.inboxSid,e.dataset.inboxApprove,true,'同意在目标项目复用')));
@@ -524,20 +494,9 @@ rsBind=function(root){
   RS.assetPick=e.dataset.sharedAssetSelect;root.querySelectorAll('[data-shared-asset-select]').forEach(b=>{b.classList.toggle('is-on',b===e);b.setAttribute('aria-pressed',String(b===e));});
   const preview=root.querySelector('.shared-asset-preview');preview.innerHTML=iterationAssetPreview(s,s.assets.find(a=>a.id===RS.assetPick));preview.scrollTop=0;iterationBindAcquisitions(preview);
  });
- root.querySelectorAll('[data-rs-tab],[data-rs-flow]').forEach(e=>e.addEventListener('click',()=>iterationCloseDrawer(false),true));
- root.querySelectorAll('[data-iteration-zoom]').forEach(e=>e.onclick=()=>{iterationSaveFlowPosition();RS.zoom=Math.max(.35,Math.min(1.6,(RS.zoom||1)+Number(e.dataset.iterationZoom)*.1));render();});
- root.querySelectorAll('[data-iteration-fit]').forEach(e=>e.onclick=()=>{const c=root.querySelector('.shared-flow-viewport'),g=iterationWorkflowGraph(s);RS.zoom=Math.max(.35,Math.min(1,(c.clientWidth-30)/g.width,(c.clientHeight-20)/g.height));RS.flowPositions[s.id+'|'+RS.flow]={x:0,y:0};render();});
- const canvas=root.querySelector('.shared-flow-viewport');
- if(canvas){
-  const position=RS.flowPositions[s.id+'|'+RS.flow];if(position){canvas.scrollLeft=position.x;canvas.scrollTop=position.y;}
-  canvas.addEventListener('scroll',iterationSaveFlowPosition,{passive:true});
-  let drag=null,moved=false;canvas.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;drag={x:e.clientX,y:e.clientY,left:canvas.scrollLeft,top:canvas.scrollTop};moved=false;canvas.setPointerCapture(e.pointerId);});
-  canvas.addEventListener('pointermove',e=>{if(!drag)return;moved=moved||Math.abs(e.clientX-drag.x)>3||Math.abs(e.clientY-drag.y)>3;canvas.scrollLeft=drag.left-(e.clientX-drag.x);canvas.scrollTop=drag.top-(e.clientY-drag.y);});
-  canvas.addEventListener('pointerup',()=>{drag=null;iterationSaveFlowPosition();});canvas.addEventListener('pointercancel',()=>{drag=null;});
- }
+ root.querySelectorAll('[data-rs-tab]').forEach(e=>e.addEventListener('click',()=>iterationCloseDrawer(false),true));
  if(RS.drawer?.sharedId===s.id){if(RS.drawer.kind==='requests')rsRequestsDialog();else if(RS.drawer.kind==='asset')rsAssetDialog(RS.drawer.assetId);}else if(RS.drawer)iterationCloseDrawer(false);
 };
-function iterationSaveFlowPosition(){const c=view.querySelector('.shared-flow-viewport');if(c&&rsShared())RS.flowPositions[rsShared().id+'|'+RS.flow]={x:c.scrollLeft,y:c.scrollTop};}
 /* Compact creation form follows the confirmed shared-content selection design. */
 V.sharednew=()=>{
  const gate=rsGate();if(gate)return gate;

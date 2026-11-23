@@ -8,7 +8,7 @@
 .btn-pri,.wb .wb-button-primary{box-shadow:none}
 .page h1,.iteration-head h1,.rs .rs-head h1{color:var(--ink)}
 .btn-pri:hover:not([disabled]),.ctl-go:hover,.wb .wb-button-primary:hover:not(:disabled){background:var(--primary-hover);border-color:var(--primary-hover);color:var(--on-pri)}
-.card,.ask,.pcard,.shared-project-card,.scard,.dcard,.shared-flow-node{box-shadow:none}
+.card,.ask,.pcard,.shared-project-card,.scard,.dcard{box-shadow:none}
 .ask:focus-within{border-color:var(--dry);box-shadow:0 0 0 3px var(--dry-soft)}
 .pcard:hover,.shared-project-card:hover,.scard:hover,.dcard:hover,.pjx-card:hover{box-shadow:none;border-color:var(--ink-4)}
 .pcard::before,.shared-project-card::before{content:none;display:none}
@@ -33,7 +33,7 @@
 .wb .wb-status.is-active,.wb .wb-status.is-done{color:var(--ink-3)}
 .wb progress::-webkit-progress-value{background:var(--ink-3)}
 .wb progress::-moz-progress-bar{background:var(--ink-3)}
-.shared-flow-node .device-state.pending,.shared-flow-node .device-state.connected{color:var(--ink-3)}
+
 .composer-branches{border-color:var(--line)}
 .composer-branches:before{background:var(--line)}
 

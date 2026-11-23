@@ -32,7 +32,8 @@ function contrast(a,b){const lum=c=>c.slice(0,3).map(v=>(v/=255)<=.04045?v/12.92
   // 这一条守着一个真实回归：卡片曾经被页面网格拉满，两段正文各吸收上百像素空白。
   const m=await p.evaluate(()=>{const c=document.querySelector('.rh-project'),cr=c.getBoundingClientRect();
    const leaves=[...c.querySelectorAll('*')].filter(e=>!e.children.length&&(e.textContent||'').trim())
-     .map(e=>{const r=e.getBoundingClientRect();return[r.top,r.bottom]}).sort((a,b)=>a[0]-b[0]);
+     .map(e=>{const r=e.getBoundingClientRect();return[r.top,r.bottom,r.height]}).filter(x=>x[2]>0)   // 隐藏元素矩形为 0，不算墨迹
+     .map(x=>[x[0],x[1]]).sort((a,b)=>a[0]-b[0]);
    const merged=[];leaves.forEach(iv=>{const last=merged[merged.length-1];
     if(last&&iv[0]<=last[1]+1)last[1]=Math.max(last[1],iv[1]);else merged.push([...iv])});
    const ink=merged.reduce((s,iv)=>s+(iv[1]-iv[0]),0);

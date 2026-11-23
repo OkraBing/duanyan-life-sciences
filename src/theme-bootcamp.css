@@ -1,0 +1,100 @@
+/* ====== 皮肤：Bootcamp DS 2.0 的灰阶 / 圆角 / 阴影 / 字体，主色保留端砚墨蓝 ======
+   只改 token 与分量，不改结构；去掉这个文件就回到墨砚原貌。
+   用了 !important 的是覆盖层：它们要压过散落在各处、特异性参差的旧规则。 */
+@font-face{font-family:Geist;src:url('assets/fonts/geist-latin.woff2') format('woff2');font-weight:100 900;font-display:swap}
+@font-face{font-family:GeistMono;src:url('assets/fonts/geist-mono-latin.woff2') format('woff2');font-weight:100 900;font-display:swap}
+:root,:root[data-theme="light"]{
+ --paper:#f8f9fb;--surface:#ffffff;--surface-2:#f1f3f6;--surface-3:#e6e9ee;
+ --ink:#131826;--ink-2:#394052;--ink-3:#5f6675;--ink-4:#868d9c;
+ --line:#dadee5;--line-2:#e6e9ee;--pop:#ffffff;
+ --dry:#3B5F9B;--dry-ink:#355487;--dry-soft:#eff3fc;--dry-dim:#bdcdf1;--focus:#3763c8;--seal:#3B5F9B;
+ --ok:#217a52;--ok-soft:#eef7f2;--ok-ink:#217a52;--err:#b5372e;--err-soft:#fcefed;
+ --r1:4px;--r2:6px;--r3:8px;--r4:12px;
+ --sh-1:0 1px 2px rgb(19 24 38 / .06);--sh-2:0 1px 2px rgb(19 24 38 / .06),0 4px 12px rgb(19 24 38 / .06);
+ --on-dry:#fff;--on-pri:#fff;--seal-on:#fff;
+ --sans:Geist,Inter,'PingFang SC','Noto Sans SC',sans-serif;--mono:GeistMono,'IBM Plex Mono',ui-monospace,monospace;
+}
+/* 深色：对应 Bootcamp 的 dark 语义层 */
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+ --paper:#0b0e17;--surface:#131826;--surface-2:#1a2030;--surface-3:#242c40;
+ --ink:#f8f9fb;--ink-2:#c9ced8;--ink-3:#9ba2b0;--ink-4:#868d9c;--line:#242c40;--line-2:#1a2030;--pop:#131826;
+ --dry:#5f83d8;--dry-ink:#91abe6;--dry-soft:#10265c;--dry-dim:#183888;--focus:#5f83d8;--seal:#5f83d8;
+ --ok:#4cc38a;--ok-soft:#0f3324;--ok-ink:#4cc38a;--err:#f0675d;--err-soft:#45130f;
+ --sh-1:0 1px 2px rgb(0 0 0 / .4);--sh-2:0 1px 2px rgb(0 0 0 / .4),0 4px 12px rgb(0 0 0 / .4);--on-pri:#0b0e17;--on-dry:#0b0e17;--seal-on:#0b0e17;}}
+:root[data-theme="dark"]{
+ --paper:#0b0e17;--surface:#131826;--surface-2:#1a2030;--surface-3:#242c40;
+ --ink:#f8f9fb;--ink-2:#c9ced8;--ink-3:#9ba2b0;--ink-4:#868d9c;--line:#242c40;--line-2:#1a2030;--pop:#131826;
+ --dry:#5f83d8;--dry-ink:#91abe6;--dry-soft:#10265c;--dry-dim:#183888;--focus:#5f83d8;--seal:#5f83d8;
+ --ok:#4cc38a;--ok-soft:#0f3324;--ok-ink:#4cc38a;--err:#f0675d;--err-soft:#45130f;
+ --sh-1:0 1px 2px rgb(0 0 0 / .4);--sh-2:0 1px 2px rgb(0 0 0 / .4),0 4px 12px rgb(0 0 0 / .4);--on-pri:#0b0e17;--on-dry:#0b0e17;--seal-on:#0b0e17;}
+html,body,button,input,select,textarea{font-family:var(--sans)}
+.page .pcard,.rh-project,.rh-activities,.rh-discoveries,.lv-exp,.dcard,.tl-card,.al-card,.project-card-wrap{box-shadow:var(--sh-1)}
+/* ====== 微调层：在 B 的 token 之上，改的是层级与分量，不是颜色 ====== */
+/* 1 标题降重：29/700 → 22/600；区块标题 17 → 15；卡片标题 15 → 14 */
+#view h1{font-size:22px!important;font-weight:600!important;letter-spacing:-.01em!important}
+.rh-section-heading h2,.rh-discover-heading h2,.rh-project-toolbar h2{font-size:15px!important;font-weight:600!important}
+.rh-project-toolbar h2>.rh-icon,.rh-section-heading h2>.rh-icon,.rh-discover-heading h2>.rh-icon{width:18px!important;height:18px!important;color:var(--ink-3)!important}
+.rh-project header h3{font-size:14px!important;font-weight:600!important}
+.rh-header p{color:var(--ink-3)!important}
+/* 2 主按钮：黑实心 → 墨蓝实心，32 高；次按钮淡边框；「进入课题」降为文字按钮 */
+.btn-pri,.rh-new,.rh-enter.primary{background:var(--dry)!important;border-color:var(--dry)!important;color:#fff!important;box-shadow:inset 0 1px 0 rgb(255 255 255/.12)!important;font-weight:500!important}
+.btn-pri:hover,.rh-new:hover{background:var(--dry-ink)!important;border-color:var(--dry-ink)!important}
+.btn,.rh-enter{border-color:var(--line)!important;font-weight:500!important;box-shadow:0 1px 1px rgb(19 24 38/.04)!important}
+.rh-enter{height:32px!important;min-height:32px!important;font-size:13px!important;color:var(--dry-ink)!important;background:transparent!important;border:1px solid transparent!important;justify-content:flex-start!important;padding:0!important}
+.rh-enter:hover{text-decoration:underline!important;background:transparent!important}
+.rh-new{padding:0 14px!important;height:32px!important;font-size:13px!important}
+/* 3 状态：实心红徽章 → 带圆点的描边胶囊；一张卡只让「异常」用红 */
+.rh-badge{background:var(--surface)!important;border:1px solid var(--line)!important;color:var(--ink-3)!important;font-weight:500!important;padding:2px 8px 2px 7px!important;line-height:16px!important;font-size:11px!important}
+.rh-badge::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--ink-4);margin-right:5px;vertical-align:1px}
+.rh-badge.alert{color:var(--err)!important;border-color:color-mix(in srgb,var(--err) 35%,var(--line))!important}.rh-badge.alert::before{background:var(--err)}
+.rh-badge.ready{color:var(--dry-ink)!important}.rh-badge.ready::before{background:var(--dry)}
+.rh-badge.confirm{color:var(--ok-ink)!important}.rh-badge.confirm::before{background:var(--ok)}
+.rh-next .rh-badge{display:none!important}   /* 下一步那行不再重复一遍状态，卡头已经有了 */
+/* 4 卡片：去掉卡内三个图标；小节标题改成 12px 次级灰；下一步不再套灰框，改为上边线 */
+.rh-card-section>.rh-icon,.rh-next>.rh-icon{display:none!important}
+.rh-card-section h4{font-size:12px!important;font-weight:500!important;color:var(--ink-3)!important;margin-bottom:3px!important;letter-spacing:.02em}
+.rh-card-section p{font-size:13px!important;line-height:20px!important;min-height:40px!important;color:var(--ink-2)!important}
+.rh-project .rh-next{background:transparent!important;border-radius:0!important;border-top:1px solid var(--line-2)!important;padding:10px 0 0!important;font-size:13px!important}
+.rh-project{padding:18px!important;gap:10px!important;grid-template-rows:auto auto auto auto 32px!important;box-shadow:0 1px 2px rgb(19 24 38/.05)!important}
+.rh-project-symbol{width:30px!important;height:30px!important;background:var(--dry-soft)!important;color:var(--dry-ink)!important}
+.rh-project-symbol .rh-icon{width:16px!important;height:16px!important}
+/* 5 动态与发现面板：更轻 */
+.rh-activities,.rh-discoveries{box-shadow:0 1px 2px rgb(19 24 38/.05)!important}
+.rh-avatar{width:30px!important;height:30px!important;font-size:13px!important;background:var(--surface-2)!important;color:var(--ink-3)!important}
+.rh-activity-copy strong{font-weight:500!important}
+.rh-tabs button{font-size:14px!important;font-weight:500!important}
+/* 6 实验卡：进度条从十段等宽改成一条 3px 细条（done 段连起来），异常只用一个红点标 */
+.page .lv-bar{gap:1px!important}
+.page .lv-bar i{height:3px!important;border-radius:0!important}
+.page .lv-bar i:first-child{border-radius:2px 0 0 2px!important}.page .lv-bar i:last-child{border-radius:0 2px 2px 0!important}
+.page .lv-exp{box-shadow:0 1px 2px rgb(19 24 38/.05)!important}
+.page .lv-exp h3,.page .lv-exp .lv-t{font-size:15px!important;font-weight:600!important}
+/* 7 筛选 pill：选中态黑实心 → 墨蓝淡底 + 墨蓝字 */
+.pill.on,.pill.is-on{background:var(--dry-soft)!important;color:var(--dry-ink)!important;border-color:transparent!important}
+.pill.on:hover,.pill.is-on:hover{background:var(--dry-dim)!important;color:var(--dry-ink)!important}
+/* 8 侧栏：分组标签更淡更小 */
+#side .lbl{font-size:11px!important;color:var(--ink-3)!important;letter-spacing:.04em}
+#side .nav{font-size:13.5px!important}
+/* 9 课题项目卡：灰底大块「待我处理」改成细边框、不填底；数字标题 15→14；按钮降为文字链接 */
+.projects-page .project-update,.project-update{background:var(--surface)!important;border:1px solid var(--line)!important;padding:12px 14px!important;height:auto!important}
+.project-update-head{margin-bottom:6px!important}.project-update-head>span{color:var(--ink-3)!important;font-weight:500!important}
+.project-update>strong{font-size:14px!important;font-weight:600!important}
+.project-update>p{color:var(--ink-3)!important;line-height:1.7!important}
+.project-update-action{margin-top:8px!important;border:0!important;padding:0!important;color:var(--dry-ink)!important;font-size:12px!important}
+.pcard-t>strong,.pcard h3{font-size:15px!important;font-weight:600!important}
+.pcard-g,.pcard p{color:var(--ink-2)!important;font-size:13px!important}
+
+/* 10 定时任务页自带一套更大的字号（标题 28、卡标题 21、正文 17、按钮 16），并回系统刻度：
+   页面标题 22/600，面板标题 16/600，卡标题 15/600，正文 13–14，按钮 14 */
+.st-intro h2{font-size:22px!important;font-weight:600!important}
+.st-intro p{font-size:14px!important;color:var(--ink-3)!important}
+.st-card strong{font-size:15px!important;font-weight:600!important}
+.st-card p{font-size:13px!important;line-height:1.7!important;color:var(--ink-3)!important}
+.st-card .rh-icon,.st-card svg{width:18px!important;height:18px!important}
+.st-content-head h2{font-size:18px!important;font-weight:600!important}
+.st-detail h3{font-size:15px!important;font-weight:600!important}
+.st-instruction,.st-field,.st-actions .btn,.st-check,.st-note{font-size:14px!important}
+.st-field>.ctl-dd,.st-field>.ctl-sel{font-size:14px!important}
+.page .st-list-head h1,#view .st-list-head h1,.st-list .st-list-head h1{font-size:16px!important;font-weight:600!important}
+.st-list h2{font-size:12px!important;color:var(--ink-3)!important}
+.st-subtitle{font-size:13px!important;color:var(--ink-3)!important}

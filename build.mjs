@@ -11,4 +11,5 @@ await mkdir(path.join(root, 'docs/assets'), { recursive: true });
 await copyFile(path.join(root, 'assets/research-chat-bg.jpg'), path.join(root, 'docs/assets/research-chat-bg.jpg'));
 await cp(path.join(root, 'assets/device-photos'), path.join(root, 'docs/assets/device-photos'), { recursive: true });
 await cp(path.join(root, 'assets/tasks'), path.join(root, 'docs/assets/tasks'), { recursive: true });
+await cp(path.join(root, 'assets/fonts'), path.join(root, 'docs/assets/fonts'), { recursive: true });
 console.log('GitHub Pages 发布文件已同步到 docs/');

@@ -16,9 +16,6 @@ const url='file://'+path.resolve(process.argv[2]||'index.html'),out=path.resolve
   const s=await page.evaluate(()=>rsShared());assert.equal(s.projectId,'p1');assert(s.assets.length>0);assert(!s.assets.some(a=>a.kind==='model'&&/^\d+$/.test(a.name)));
   assert(!s.assets.some(a=>a.kind==='dataset'&&a.snapshot.st!=='pub'));assert(s.assets.filter(a=>a.kind==='evaluation').every(e=>s.assets.some(a=>a.id===e.snapshot.modelAssetId&&a.kind==='model')));assert(s.assets.filter(a=>a.kind==='conclusion').every(c=>s.assets.some(a=>a.id===c.snapshot.experimentAssetId&&a.kind==='experiment')));assetId=s.assets.find(a=>a.kind==='model').id;
   assert.match(await page.evaluate(async()=>{try{await rsCreateShared({mode:'existing',pid:'p1',name:'Duplicate shared',goal:'',assets:[]});return '';}catch(e){return e.message}}),/已开启共享/);
-  await page.locator('[data-rs-tab="workflow"]').click();assert(await page.locator('.rs-node').count()>=4);assert(await page.locator('.rs-node:disabled').count()>0);
-  await page.screenshot({path:path.join(out,'shared-model-pipelines.png')});
-  await page.locator('[data-rs-flow="experiment"]').click();assert.match(await page.locator('.rs-canvas').innerText(),/实验结论/);
  });
  await check('multiple shared projects, blank creation and retained selection on reload',async()=>{
   await go('shared');await page.locator('[data-rs-new-shared]').first().click();await page.locator('[data-rs-shared-mode="blank"]').check();
