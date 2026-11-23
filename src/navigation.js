@@ -229,4 +229,6 @@ V.files=V.materials;
   return original(r,o);
  };
  document.addEventListener('click',e=>{if(THREE_COL.has(S.route)&&e.target.closest('[data-a="side"],[data-act="side"]'))userOverrode=true;},true);
+ /* 直接以 #chat / #schedules 打开页面时也一样折叠 */
+ setTimeout(()=>{if(THREE_COL.has(S.route)&&!S.collapsed&&!matchMedia('(max-width:860px)').matches){before=0;S.collapsed=1;LS.set('collapsed',1);render();}},0);
 })();

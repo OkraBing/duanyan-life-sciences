@@ -41,18 +41,13 @@ html{caret-color:var(--dry);accent-color:var(--dry);scrollbar-color:var(--line) 
 :focus-visible{outline:2px solid var(--dry)!important;outline-offset:2px!important}
 time,.mono,.num,.t-num,td,.ms-cell,.history-meta-at,.rh-activity-copy small{font-variant-numeric:tabular-nums}
 a{text-underline-offset:.15em}
-/* 壳：侧栏是深墨封面，内容区是暖纸 */
-#side{--paper:#171f33;--surface:#1d2740;--surface-2:#171f33;--surface-3:#28334f;--ink:#f3f5fa;--ink-2:#cbd2e2;--ink-3:#8f9ab5;--ink-4:#6f7b99;--line:#2b3654;--line-2:#242e49;--dry-soft:rgb(255 255 255/.09);--dry-ink:#ffffff;--dry:#9db5f5;--err:#ff7a70;
- background:#171f33!important;color:var(--ink-2)}
+/* 壳：侧栏是比纸面深一档的暖灰，内容区是纸；当前项是白色小卡（用户要浅色侧栏） */
+#side{background:#eeece5!important;color:var(--ink-2)}
 #side .nav{color:var(--ink-2)!important}
-#side .nav:hover{background:rgb(255 255 255/.06)!important;color:var(--ink)!important}
-#side .nav[aria-current="page"]{background:rgb(255 255 255/.1)!important;color:#fff!important;font-weight:600!important}
+#side .nav:hover{background:rgb(27 33 48/.05)!important;color:var(--ink)!important}
+#side .nav[aria-current="page"]{background:var(--surface)!important;color:var(--ink)!important;font-weight:600!important;box-shadow:0 1px 2px rgb(27 33 48/.08),0 0 0 1px rgb(27 33 48/.05)!important}
 #side .lbl{color:var(--ink-4)!important}
-#side .brand,#side .brand *{color:var(--ink)!important}
-#side .brand-home:hover{background:rgb(255 255 255/.06)!important}
-#side button:not(.nav),#side .icb{color:var(--ink-3)!important;border-color:var(--line)!important}
-#side hr,#side .sep{border-color:var(--line)!important;background:var(--line)!important}
-#side .avatar,#side .av{background:var(--surface-3)!important;color:var(--ink)!important}
+#side hr,#side .sep{border-color:rgb(27 33 48/.08)!important}
 #main{border-left:0!important;border-radius:14px 0 0 14px!important;box-shadow:none!important;background:var(--paper)!important}
 @media(max-width:860px){#main{border-radius:0!important}}
 .page .pcard,.rh-project,.rh-activities,.rh-discoveries,.lv-exp,.dcard,.tl-card,.al-card,.project-card-wrap{box-shadow:var(--sh-1)}
