@@ -10968,7 +10968,7 @@ function pjExpTab(p){
         <span class="chip ${st[1]}">${st[0]}</span></span>
       <span class="pjx-card-row2">
         <span class="pjx-card-m"><span class="num">${esc(m.id)}</span> · 留出 ρ <b class="num">${failed||rho==null?'—':rho.toFixed(3)}</b></span>
-        <time class="pjx-card-at num" title="${esc(m.at||'')}">${esc(/^\d{4}-/.test(String(m.at||''))?String(m.at).slice(5,16):(m.at||'—'))}</time>
+        <time class="pjx-card-at num" title="${esc(m.at||'')}">${esc(/^\d{4}-/.test(String(m.at||''))?String(m.at).slice(5,10):(m.at||'—'))}</time>
       </span>
       ${failed&&m.why?`<span class="t-xs" style="color:var(--err)">${esc(m.why)}</span>`
         :(rho!=null&&rho<=0?'<span class="t-xs" style="color:var(--err)">排序方向相反，暂不建议用于筛选</span>':'')}
