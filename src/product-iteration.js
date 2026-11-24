@@ -409,7 +409,7 @@ function iterationAssetBody(s,a){
  let html='';/* 右侧直接是文件本体；提供者、版本等元信息已经在左侧列表的次行里 */
  if(!authorized)return '<section class="asset-section"><p>'+esc(iterationHumanText(a.description))+'</p><p class="asset-access-state">申请通过后可查看完整内容。'+(iterationAssetRequest(s,a)?'':'用文件旁的「+」申请添加到我的课题。')+'</p></section>';
  const section=(title,body)=>'<section class="asset-section"><h3>'+title+'</h3>'+body+'</section>';
- if(a.kind==='knowledge')return html+section('资料引用','<p>'+esc(a.name)+'</p><p>此条目为资料引用，未附原始文件。</p>');
+ if(a.kind==='knowledge'){if(snapshot.content)return html+section('文件内容','<pre class="asset-pre">'+esc(String(snapshot.content).slice(0,6000))+(String(snapshot.content).length>6000?'\n…':'')+'</pre>');if(snapshot.url)return html+section('链接','<p><a href="'+esc(snapshot.url)+'" target="_blank" rel="noopener noreferrer">'+esc(snapshot.url)+'</a></p>');return html+section('资料引用','<p>'+esc(a.name)+'</p><p>此条目为资料引用，未附原始文件。</p>');}
  if(a.kind==='dataset'){
   const rows=Array.isArray(snapshot.rows)?snapshot.rows:[],cols=Object.keys(rows[0]||{});
   const labels={variant:'变体编号',muts:'突变位点',round:'轮次',batch:'实验批次',disposition:'变体状态',iptm:'ipTM',rmsd:'RMSD','dTm_℃':'ΔTm（℃）',kd_pM:'KD（pM）'};

@@ -197,6 +197,8 @@ rsMembersDialog=function(){
 const navigationTeamBind=wbBind;
 wbBind=function(root){
  navigationTeamBind(root);
+ /* 课题卡整张可点：点到底栏或迷你卡的空白处也进课题，点到里面的按钮/链接则各归各 */
+ root.querySelectorAll('.project-card-wrap:not(.is-shared-project)').forEach(w=>{if(w.dataset.wrapBound)return;w.dataset.wrapBound='1';w.addEventListener('click',e=>{if(e.target.closest('button,a,[data-act],select,input,label'))return;w.querySelector('.pcard')?.click();});});
  root.querySelectorAll('[data-project-clear-query]').forEach(b=>b.onclick=()=>{S.pq='';render();});
  root.querySelectorAll('[data-project-progress-pending]').forEach(button=>button.onclick=()=>{
  const pid=button.dataset.projectProgressPending;

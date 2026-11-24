@@ -20354,7 +20354,11 @@ function rsBlankProject(name,desc,owner='me'){const T=PTYPES[0],D=DOMAINS[0];ret
 function rsCandidates(pid){
  const p=rsProject(pid);if(!p)return [];const out=[];
  const add=(kind,id,name,snapshot,description,version='v1')=>{const fingerprint=fp32(JSON.stringify(snapshot));out.push({id:'a-'+fp32([pid,kind,id,version,fingerprint].join('|')),kind,sourceId:id,name,description,version,fingerprint,snapshot:rsClone(snapshot),sourceProject:pid,contributor:'me',at:nowStamp()});return out[out.length-1];};
- (p.kb||[]).forEach((n,i)=>add('knowledge','kb-'+i,typeof n==='string'?n:n.name||'知识条目',{name:typeof n==='string'?n:n.name,metadataOnly:true},'知识库目录条目，未附原始文件'));
+ /* 知识库候选 = 资料空间里这个课题名下的全部文件（上传件、任务产物、知识库条目），能带正文的带正文，
+    带不了的（PDF 引用、还没生成的产物）只带引用。之前只拿 p.kb 的名字，组员导入后拿到的是一个空壳。 */
+ const kbRows=typeof materialsRows==='function'?materialsRows().filter(x=>x.pid===pid&&!x.sharedId&&x.kind!=='import'):[];
+ if(kbRows.length)kbRows.forEach(x=>{let content=x.content||(typeof KBTEXT!=='undefined'?KBTEXT[pid+'|'+x.name]:null)||null;const url=x.url||null;if(!content){const mk=typeof fileMake==='function'?fileMake(x):null;if(mk){try{const d=mk();if(typeof d==='string')content=d.slice(0,200000);}catch(e){}}}add('knowledge',x.id,x.name,{name:x.name,type:typeof fileExt==='function'?fileExt(x):'',bytes:x.bytes??null,content,url,metadataOnly:!content&&!url},content?'资料空间文件':url?'资料空间链接':'资料引用，未附原始文件');});
+ else (p.kb||[]).forEach((n,i)=>add('knowledge','kb-'+i,typeof n==='string'?n:n.name||'知识条目',{name:typeof n==='string'?n:n.name,metadataOnly:true},'知识库目录条目，未附原始文件'));
  (p.tools||[]).forEach(n=>add('tool',n,n,{name:n},'项目使用的工具引用'));
  (p.dsets||[]).filter(d=>d.st==='pub').forEach(d=>add('dataset',d.id,d.n||d.name||d.id,d,'已发布的数据集快照',d.version||'v1'));
  const modelRecords=workbenchData({pid}).modelTasks.filter(t=>t.kind==='train');
@@ -20394,7 +20398,10 @@ async function rsChangeMember(sid,mid,role,remove=false){
  p.events.push({at:nowStamp(),by:RS.actor,text:(remove?'移除成员：':'调整角色：')+m.name});await rsSave(next);
 }
 async function rsTransfer(sid,mid){const s=RS.data.shared.find(s=>s.id===sid),member=s?.members.find(m=>m.id===mid&&m.status==='active');if(!rsCan(s,'own')||!member||mid===s.owner)throw new Error('请选择其他已加入成员');const next=rsClone(RS.data),p=next.shared.find(s=>s.id===sid);p.members.find(m=>m.id===p.owner).role='admin';p.members.find(m=>m.id===mid).role='owner';p.owner=mid;p.events.push({at:nowStamp(),by:RS.actor,text:'转交所有权给 '+member.name});await rsSave(next);}
-async function rsPublishAssets(sid,ids){const s=RS.data.shared.find(s=>s.id===sid);if(!rsCan(s,'publish'))throw new Error('没有发布权限');const next=rsClone(RS.data),p=next.shared.find(s=>s.id===sid),available=rsCandidates(s.projectId);ids.forEach(id=>{const a=available.find(a=>a.id===id);if(a&&!p.assets.some(x=>x.id===a.id))p.assets.push(a);});p.events.push({at:nowStamp(),by:RS.actor,text:'发布资产版本快照'});await rsSave(next);}
+async function rsPublishAssets(sid,ids){const s=RS.data.shared.find(s=>s.id===sid);if(!rsCan(s,'publish'))throw new Error('没有发布权限');const next=rsClone(RS.data),p=next.shared.find(s=>s.id===sid),available=rsCandidates(s.projectId);const picked=ids.map(id=>available.find(a=>a.id===id)).filter(a=>a&&!p.assets.some(x=>x.id===a.id));
+ /* 任务产物在资料空间里是「按需生成」的（make 函数），共享时把正文算出来一起带走，组员导入后才打得开 */
+ for(const a of picked){if(a.kind==='knowledge'&&a.snapshot&&a.snapshot.metadataOnly&&typeof materialsRows==='function'){const row=materialsRows().find(r=>r.id===a.sourceId),mk=row&&typeof fileMake==='function'?fileMake(row):null;if(mk){try{const d=await mk();const text=typeof d==='string'?d:(d&&typeof d.text==='function'&&/^(text\/|application\/(json|csv))/.test(d.type||'text/plain')?await d.text():null);if(text!=null){a.snapshot.content=String(text).slice(0,200000);a.snapshot.metadataOnly=false;a.description='任务产物';}}catch(e){}}}}
+ picked.forEach(a=>p.assets.push(a));p.events.push({at:nowStamp(),by:RS.actor,text:'发布资产版本快照'});await rsSave(next);}
 async function rsRequest(sid,aid,target,reason){
  const s=RS.data.shared.find(s=>s.id===sid),asset=s?.assets.find(a=>a.id===aid);if(!rsCan(s,'request')||!asset)throw new Error('没有获取权限');if(!rsPersonalProjects().some(p=>p.id===target))throw new Error('请选择自己的课题');
  if(s.requests.some(r=>r.actor===RS.actor&&r.assetId===aid&&r.target===target&&['pending','approved','imported'].includes(r.state)))throw new Error('已申请或已获取此版本');

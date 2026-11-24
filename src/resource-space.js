@@ -13,7 +13,7 @@ function materialsEditable(pid){if(!can('edit'))return false;if(!pid)return mate
 function materialsType(x){if(x.kind==='link')return 'link';const e=fileExt(x);return /^(ppt|pptx|key)$/.test(e)?'slides':/^(csv|tsv|xls|xlsx)$/.test(e)?'sheet':/^(png|jpg|jpeg|gif|webp|svg)$/.test(e)?'image':/^(md|txt|pdf|doc|docx)$/.test(e)?'doc':'other';}
 function materialsTime(value){const s=String(value||'');if(!s||s==='—')return 0;const now=new Date(),day=new Date(now.getFullYear(),now.getMonth(),now.getDate());if(s.startsWith('昨天'))day.setDate(day.getDate()-1);const time=s.match(/(\d{1,2}):(\d{2})/);if(/^(今天|昨天|\d{1,2}:)/.test(s)&&time){day.setHours(+time[1],+time[2]);return day.getTime();}const n=Date.parse(s.replace(' ','T'));return Number.isFinite(n)?n:0;}
 function materialsRows(){const local=MATERIALS.records.filter(x=>x.pid?materialsProject(x.pid)&&materialsVisible(materialsProject(x.pid)):x.owner===materialsActor());const uploaded=new Set(local.map(x=>x.pid+'|'+x.name));const base=FILES().filter(x=>x.pid&&materialsProject(x.pid)&&materialsVisible(materialsProject(x.pid))&&!uploaded.has(x.pid+'|'+x.name)).map(x=>({...x,id:'source:'+fileKey(x),owner:materialsProject(x.pid).ownerId||'me'}));/* 从共享课题导入到我课题里的件：导入即出现在目标课题的文件夹里 */
-const imported=((RS.data&&RS.data.imports)||[]).filter(x=>x.target&&materialsProject(x.target)&&materialsVisible(materialsProject(x.target))).map(x=>({id:'import:'+x.id,name:x.name,pid:x.target,kind:'import',bytes:null,at:x.at,owner:materialsProject(x.target).ownerId||'me',from:'从共享课题导入',importId:x.id}));
+const imported=((RS.data&&RS.data.imports)||[]).filter(x=>x.target&&materialsProject(x.target)&&materialsVisible(materialsProject(x.target))).map(x=>({id:'import:'+x.id,name:x.name,pid:x.target,kind:x.copy&&x.copy.url?'link':'import',url:x.copy&&x.copy.url||null,content:x.copy&&x.copy.content||null,bytes:x.copy&&x.copy.bytes||null,at:x.at,owner:materialsProject(x.target).ownerId||'me',from:'从共享课题导入',importId:x.id}));
 /* 别人共享给我的课题里的资产：挂在「与你共享」下，点开去共享课题详情 */
 const sharedRows=((RS.data&&RS.data.shared)||[]).filter(s=>s.owner!==materialsActor()&&rsCan(s,'read')).flatMap(s=>s.assets.map(a=>({id:'shared:'+s.id+'|'+a.id,name:a.name,pid:null,sharedId:s.id,assetId:a.id,spaceName:s.name,kind:'shared',bytes:null,at:a.at,owner:s.owner})));
 return [...local,...base,...imported,...sharedRows];}
@@ -43,9 +43,10 @@ function materialsShareDialog(x){
  if(!targets.length){modal('分享文件','<p class="rs-help">还没有可以发布的共享课题。先在课题项目里把课题共享给组员，再把文件分享进去。</p>','去课题项目',()=>go('projects'));return;}
  modal('分享文件','<p class="rs-help">「'+esc(x.name)+'」会作为资料引用放进所选共享课题，组员申请通过后可获取。</p><label class="rs-field"><span>共享课题</span><select class="input" id="ms-share-target">'+targets.map(s=>'<option value="'+esc(s.id)+'">'+esc(s.name)+'</option>').join('')+'</select></label>','分享',()=>{
   const sid=document.getElementById('ms-share-target').value,next=rsClone(RS.data),s=next.shared.find(s=>s.id===sid);
+  let text=x.content||(typeof KBTEXT!=='undefined'?KBTEXT[x.pid+'|'+x.name]:null)||null;if(!text){const mk=typeof fileMake==='function'?fileMake(x):null;if(mk){try{const d=mk();if(typeof d==='string')text=d.slice(0,200000);}catch(e){}}}
   const fingerprint=fp32(JSON.stringify([x.id,x.name,x.bytes||0])),aid='a-'+fp32(['file',x.id,sid].join('|'));
   if(s.assets.some(a=>a.id===aid)){toast('这个文件已经在该共享课题里');return;}
-  s.assets.push({id:aid,kind:'knowledge',sourceId:x.id,name:x.name,description:'来自资料空间的文件',version:'v1',fingerprint,snapshot:{name:x.name,bytes:x.bytes??null,type:fileExt(x),metadataOnly:x.bytes==null},sourceProject:s.projectId,contributor:RS.actor,at:nowStamp()});
+  s.assets.push({id:aid,kind:'knowledge',sourceId:x.id,name:x.name,description:'来自资料空间的文件',version:'v1',fingerprint,snapshot:{name:x.name,bytes:x.bytes??null,type:fileExt(x),content:text,url:x.url||null,metadataOnly:!text&&!x.url},sourceProject:s.projectId,contributor:RS.actor,at:nowStamp()});
   s.events.push({at:nowStamp(),by:RS.actor,text:'分享文件：'+x.name});
   rsSave(next).then(()=>{toast('已分享到「'+s.name+'」');render();}).catch(e=>toast(e.message||'分享失败'));
  });

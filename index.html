@@ -3943,8 +3943,8 @@ a{text-underline-offset:.15em}
 .page .lv-exp{box-shadow:0 1px 2px rgb(19 24 38/.05)!important}
 .page .lv-exp h3,.page .lv-exp .lv-t{font-size:15px!important;font-weight:600!important}
 /* 7 筛选 pill：选中态黑实心 → 墨蓝淡底 + 墨蓝字 */
-.pill.on,.pill.is-on{background:var(--dry-soft)!important;color:var(--dry-ink)!important;border-color:transparent!important}
-.pill.on:hover,.pill.is-on:hover{background:var(--dry-dim)!important;color:var(--dry-ink)!important}
+.pill.on,.pill.is-on{background:var(--ink)!important;color:var(--on-pri)!important;border-color:var(--ink)!important}
+.pill.on:hover,.pill.is-on:hover{background:var(--primary-hover)!important;color:var(--on-pri)!important;border-color:var(--primary-hover)!important}
 /* 8 侧栏：分组标签更淡更小 */
 #side .lbl{font-size:11px!important;color:var(--ink-3)!important;letter-spacing:.04em}
 #side .nav{font-size:13px!important}
@@ -4029,6 +4029,30 @@ h1.pjx-n{font-size:18px!important;font-weight:600!important;margin:0!important;l
 .ms-views button{min-height:32px;min-width:32px;padding:6px;align-items:center;justify-content:center}
 .project-team-add{font-size:14px}
 .rs small:not([class]),.ms-main small:not([class]),.tl-card small:not([class]){font-size:11px}
+
+/* 走查：课题卡整张可点、hover 一体；输入框只留外层一圈焦点环；文字版发送按钮不压扁 */
+.project-card-wrap:not(.is-shared-project){cursor:pointer}
+.project-card-wrap:hover{border-color:var(--ink-4)!important;box-shadow:var(--sh-2)!important}
+.pcard,.pcard:hover,.project-card-wrap:has(> .pcard:hover){border-color:transparent!important;box-shadow:none!important}
+.project-card-wrap:hover{border-color:var(--ink-4)!important;box-shadow:var(--sh-2)!important}
+.project-update.is-mini{margin:0 20px 16px!important}
+.project-card-footer{padding:14px 20px!important}
+.ask .ask-t:focus-visible,.ask textarea:focus-visible,.research-composer textarea:focus-visible,.pjx-ask textarea:focus-visible{outline:none!important;box-shadow:none!important}
+.ctl-go:not(:has(svg)){width:auto!important;min-width:4rem!important;padding:0 14px!important;white-space:nowrap}
+
+/* 全站扫描：搜索框只留外层容器一圈焦点环；卡片内边距统一 20 */
+:is(.fbar-q,.rh-search,.ms-search,.ask,.research-composer,.pjx-ask,.search) :is(input,textarea):focus-visible{outline:none!important;box-shadow:none!important}
+.lv-exp,.tl-card,.rh-project{padding:20px!important}
+
+/* 审批/申请两组列表共用同一套列宽，操作列定宽靠右，两组才能上下对齐 */
+.inbox-row{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) minmax(0,.7fr) 64px 11.5rem!important}
+.inbox-actions{justify-content:flex-end}
+.asset-pre{font:12px/1.7 var(--mono);white-space:pre-wrap;word-break:break-word;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:14px;max-height:60vh;overflow:auto;margin:0}
+body[data-route="set"] .tbl-wrap td:nth-child(4),body[data-route="set"] .tbl-wrap th:nth-child(4){max-width:13rem}
+@media(max-width:900px){.inbox-row{grid-template-columns:minmax(0,1fr) auto!important}}
+/* 对话列表的「新建对话」：整块黑实心压过了页面主按钮，改成描边次按钮 */
+.history-new,.history-new-mini{background:var(--surface)!important;color:var(--ink)!important;border:1px solid var(--line)!important;min-height:36px;font-weight:500}
+.history-new:hover,.history-new-mini:hover{background:var(--surface-2)!important;border-color:var(--ink-4)!important}
 
 
 /* 项目卡标题被挤成两行、断在「结合界 / 面」：标题被写死 max-width:calc(100% - 55px)，
@@ -21387,7 +21411,11 @@ function rsBlankProject(name,desc,owner='me'){const T=PTYPES[0],D=DOMAINS[0];ret
 function rsCandidates(pid){
  const p=rsProject(pid);if(!p)return [];const out=[];
  const add=(kind,id,name,snapshot,description,version='v1')=>{const fingerprint=fp32(JSON.stringify(snapshot));out.push({id:'a-'+fp32([pid,kind,id,version,fingerprint].join('|')),kind,sourceId:id,name,description,version,fingerprint,snapshot:rsClone(snapshot),sourceProject:pid,contributor:'me',at:nowStamp()});return out[out.length-1];};
- (p.kb||[]).forEach((n,i)=>add('knowledge','kb-'+i,typeof n==='string'?n:n.name||'知识条目',{name:typeof n==='string'?n:n.name,metadataOnly:true},'知识库目录条目，未附原始文件'));
+ /* 知识库候选 = 资料空间里这个课题名下的全部文件（上传件、任务产物、知识库条目），能带正文的带正文，
+    带不了的（PDF 引用、还没生成的产物）只带引用。之前只拿 p.kb 的名字，组员导入后拿到的是一个空壳。 */
+ const kbRows=typeof materialsRows==='function'?materialsRows().filter(x=>x.pid===pid&&!x.sharedId&&x.kind!=='import'):[];
+ if(kbRows.length)kbRows.forEach(x=>{let content=x.content||(typeof KBTEXT!=='undefined'?KBTEXT[pid+'|'+x.name]:null)||null;const url=x.url||null;if(!content){const mk=typeof fileMake==='function'?fileMake(x):null;if(mk){try{const d=mk();if(typeof d==='string')content=d.slice(0,200000);}catch(e){}}}add('knowledge',x.id,x.name,{name:x.name,type:typeof fileExt==='function'?fileExt(x):'',bytes:x.bytes??null,content,url,metadataOnly:!content&&!url},content?'资料空间文件':url?'资料空间链接':'资料引用，未附原始文件');});
+ else (p.kb||[]).forEach((n,i)=>add('knowledge','kb-'+i,typeof n==='string'?n:n.name||'知识条目',{name:typeof n==='string'?n:n.name,metadataOnly:true},'知识库目录条目，未附原始文件'));
  (p.tools||[]).forEach(n=>add('tool',n,n,{name:n},'项目使用的工具引用'));
  (p.dsets||[]).filter(d=>d.st==='pub').forEach(d=>add('dataset',d.id,d.n||d.name||d.id,d,'已发布的数据集快照',d.version||'v1'));
  const modelRecords=workbenchData({pid}).modelTasks.filter(t=>t.kind==='train');
@@ -21427,7 +21455,10 @@ async function rsChangeMember(sid,mid,role,remove=false){
  p.events.push({at:nowStamp(),by:RS.actor,text:(remove?'移除成员：':'调整角色：')+m.name});await rsSave(next);
 }
 async function rsTransfer(sid,mid){const s=RS.data.shared.find(s=>s.id===sid),member=s?.members.find(m=>m.id===mid&&m.status==='active');if(!rsCan(s,'own')||!member||mid===s.owner)throw new Error('请选择其他已加入成员');const next=rsClone(RS.data),p=next.shared.find(s=>s.id===sid);p.members.find(m=>m.id===p.owner).role='admin';p.members.find(m=>m.id===mid).role='owner';p.owner=mid;p.events.push({at:nowStamp(),by:RS.actor,text:'转交所有权给 '+member.name});await rsSave(next);}
-async function rsPublishAssets(sid,ids){const s=RS.data.shared.find(s=>s.id===sid);if(!rsCan(s,'publish'))throw new Error('没有发布权限');const next=rsClone(RS.data),p=next.shared.find(s=>s.id===sid),available=rsCandidates(s.projectId);ids.forEach(id=>{const a=available.find(a=>a.id===id);if(a&&!p.assets.some(x=>x.id===a.id))p.assets.push(a);});p.events.push({at:nowStamp(),by:RS.actor,text:'发布资产版本快照'});await rsSave(next);}
+async function rsPublishAssets(sid,ids){const s=RS.data.shared.find(s=>s.id===sid);if(!rsCan(s,'publish'))throw new Error('没有发布权限');const next=rsClone(RS.data),p=next.shared.find(s=>s.id===sid),available=rsCandidates(s.projectId);const picked=ids.map(id=>available.find(a=>a.id===id)).filter(a=>a&&!p.assets.some(x=>x.id===a.id));
+ /* 任务产物在资料空间里是「按需生成」的（make 函数），共享时把正文算出来一起带走，组员导入后才打得开 */
+ for(const a of picked){if(a.kind==='knowledge'&&a.snapshot&&a.snapshot.metadataOnly&&typeof materialsRows==='function'){const row=materialsRows().find(r=>r.id===a.sourceId),mk=row&&typeof fileMake==='function'?fileMake(row):null;if(mk){try{const d=await mk();const text=typeof d==='string'?d:(d&&typeof d.text==='function'&&/^(text\/|application\/(json|csv))/.test(d.type||'text/plain')?await d.text():null);if(text!=null){a.snapshot.content=String(text).slice(0,200000);a.snapshot.metadataOnly=false;a.description='任务产物';}}catch(e){}}}}
+ picked.forEach(a=>p.assets.push(a));p.events.push({at:nowStamp(),by:RS.actor,text:'发布资产版本快照'});await rsSave(next);}
 async function rsRequest(sid,aid,target,reason){
  const s=RS.data.shared.find(s=>s.id===sid),asset=s?.assets.find(a=>a.id===aid);if(!rsCan(s,'request')||!asset)throw new Error('没有获取权限');if(!rsPersonalProjects().some(p=>p.id===target))throw new Error('请选择自己的课题');
  if(s.requests.some(r=>r.actor===RS.actor&&r.assetId===aid&&r.target===target&&['pending','approved','imported'].includes(r.state)))throw new Error('已申请或已获取此版本');
@@ -22184,7 +22215,7 @@ function iterationAssetBody(s,a){
  let html='';/* 右侧直接是文件本体；提供者、版本等元信息已经在左侧列表的次行里 */
  if(!authorized)return '<section class="asset-section"><p>'+esc(iterationHumanText(a.description))+'</p><p class="asset-access-state">申请通过后可查看完整内容。'+(iterationAssetRequest(s,a)?'':'用文件旁的「+」申请添加到我的课题。')+'</p></section>';
  const section=(title,body)=>'<section class="asset-section"><h3>'+title+'</h3>'+body+'</section>';
- if(a.kind==='knowledge')return html+section('资料引用','<p>'+esc(a.name)+'</p><p>此条目为资料引用，未附原始文件。</p>');
+ if(a.kind==='knowledge'){if(snapshot.content)return html+section('文件内容','<pre class="asset-pre">'+esc(String(snapshot.content).slice(0,6000))+(String(snapshot.content).length>6000?'\n…':'')+'</pre>');if(snapshot.url)return html+section('链接','<p><a href="'+esc(snapshot.url)+'" target="_blank" rel="noopener noreferrer">'+esc(snapshot.url)+'</a></p>');return html+section('资料引用','<p>'+esc(a.name)+'</p><p>此条目为资料引用，未附原始文件。</p>');}
  if(a.kind==='dataset'){
   const rows=Array.isArray(snapshot.rows)?snapshot.rows:[],cols=Object.keys(rows[0]||{});
   const labels={variant:'变体编号',muts:'突变位点',round:'轮次',batch:'实验批次',disposition:'变体状态',iptm:'ipTM',rmsd:'RMSD','dTm_℃':'ΔTm（℃）',kd_pM:'KD（pM）'};
@@ -22964,7 +22995,7 @@ function materialsEditable(pid){if(!can('edit'))return false;if(!pid)return mate
 function materialsType(x){if(x.kind==='link')return 'link';const e=fileExt(x);return /^(ppt|pptx|key)$/.test(e)?'slides':/^(csv|tsv|xls|xlsx)$/.test(e)?'sheet':/^(png|jpg|jpeg|gif|webp|svg)$/.test(e)?'image':/^(md|txt|pdf|doc|docx)$/.test(e)?'doc':'other';}
 function materialsTime(value){const s=String(value||'');if(!s||s==='—')return 0;const now=new Date(),day=new Date(now.getFullYear(),now.getMonth(),now.getDate());if(s.startsWith('昨天'))day.setDate(day.getDate()-1);const time=s.match(/(\d{1,2}):(\d{2})/);if(/^(今天|昨天|\d{1,2}:)/.test(s)&&time){day.setHours(+time[1],+time[2]);return day.getTime();}const n=Date.parse(s.replace(' ','T'));return Number.isFinite(n)?n:0;}
 function materialsRows(){const local=MATERIALS.records.filter(x=>x.pid?materialsProject(x.pid)&&materialsVisible(materialsProject(x.pid)):x.owner===materialsActor());const uploaded=new Set(local.map(x=>x.pid+'|'+x.name));const base=FILES().filter(x=>x.pid&&materialsProject(x.pid)&&materialsVisible(materialsProject(x.pid))&&!uploaded.has(x.pid+'|'+x.name)).map(x=>({...x,id:'source:'+fileKey(x),owner:materialsProject(x.pid).ownerId||'me'}));/* 从共享课题导入到我课题里的件：导入即出现在目标课题的文件夹里 */
-const imported=((RS.data&&RS.data.imports)||[]).filter(x=>x.target&&materialsProject(x.target)&&materialsVisible(materialsProject(x.target))).map(x=>({id:'import:'+x.id,name:x.name,pid:x.target,kind:'import',bytes:null,at:x.at,owner:materialsProject(x.target).ownerId||'me',from:'从共享课题导入',importId:x.id}));
+const imported=((RS.data&&RS.data.imports)||[]).filter(x=>x.target&&materialsProject(x.target)&&materialsVisible(materialsProject(x.target))).map(x=>({id:'import:'+x.id,name:x.name,pid:x.target,kind:x.copy&&x.copy.url?'link':'import',url:x.copy&&x.copy.url||null,content:x.copy&&x.copy.content||null,bytes:x.copy&&x.copy.bytes||null,at:x.at,owner:materialsProject(x.target).ownerId||'me',from:'从共享课题导入',importId:x.id}));
 /* 别人共享给我的课题里的资产：挂在「与你共享」下，点开去共享课题详情 */
 const sharedRows=((RS.data&&RS.data.shared)||[]).filter(s=>s.owner!==materialsActor()&&rsCan(s,'read')).flatMap(s=>s.assets.map(a=>({id:'shared:'+s.id+'|'+a.id,name:a.name,pid:null,sharedId:s.id,assetId:a.id,spaceName:s.name,kind:'shared',bytes:null,at:a.at,owner:s.owner})));
 return [...local,...base,...imported,...sharedRows];}
@@ -22994,9 +23025,10 @@ function materialsShareDialog(x){
  if(!targets.length){modal('分享文件','<p class="rs-help">还没有可以发布的共享课题。先在课题项目里把课题共享给组员，再把文件分享进去。</p>','去课题项目',()=>go('projects'));return;}
  modal('分享文件','<p class="rs-help">「'+esc(x.name)+'」会作为资料引用放进所选共享课题，组员申请通过后可获取。</p><label class="rs-field"><span>共享课题</span><select class="input" id="ms-share-target">'+targets.map(s=>'<option value="'+esc(s.id)+'">'+esc(s.name)+'</option>').join('')+'</select></label>','分享',()=>{
   const sid=document.getElementById('ms-share-target').value,next=rsClone(RS.data),s=next.shared.find(s=>s.id===sid);
+  let text=x.content||(typeof KBTEXT!=='undefined'?KBTEXT[x.pid+'|'+x.name]:null)||null;if(!text){const mk=typeof fileMake==='function'?fileMake(x):null;if(mk){try{const d=mk();if(typeof d==='string')text=d.slice(0,200000);}catch(e){}}}
   const fingerprint=fp32(JSON.stringify([x.id,x.name,x.bytes||0])),aid='a-'+fp32(['file',x.id,sid].join('|'));
   if(s.assets.some(a=>a.id===aid)){toast('这个文件已经在该共享课题里');return;}
-  s.assets.push({id:aid,kind:'knowledge',sourceId:x.id,name:x.name,description:'来自资料空间的文件',version:'v1',fingerprint,snapshot:{name:x.name,bytes:x.bytes??null,type:fileExt(x),metadataOnly:x.bytes==null},sourceProject:s.projectId,contributor:RS.actor,at:nowStamp()});
+  s.assets.push({id:aid,kind:'knowledge',sourceId:x.id,name:x.name,description:'来自资料空间的文件',version:'v1',fingerprint,snapshot:{name:x.name,bytes:x.bytes??null,type:fileExt(x),content:text,url:x.url||null,metadataOnly:!text&&!x.url},sourceProject:s.projectId,contributor:RS.actor,at:nowStamp()});
   s.events.push({at:nowStamp(),by:RS.actor,text:'分享文件：'+x.name});
   rsSave(next).then(()=>{toast('已分享到「'+s.name+'」');render();}).catch(e=>toast(e.message||'分享失败'));
  });
@@ -23345,6 +23377,8 @@ rsMembersDialog=function(){
 const navigationTeamBind=wbBind;
 wbBind=function(root){
  navigationTeamBind(root);
+ /* 课题卡整张可点：点到底栏或迷你卡的空白处也进课题，点到里面的按钮/链接则各归各 */
+ root.querySelectorAll('.project-card-wrap:not(.is-shared-project)').forEach(w=>{if(w.dataset.wrapBound)return;w.dataset.wrapBound='1';w.addEventListener('click',e=>{if(e.target.closest('button,a,[data-act],select,input,label'))return;w.querySelector('.pcard')?.click();});});
  root.querySelectorAll('[data-project-clear-query]').forEach(b=>b.onclick=()=>{S.pq='';render();});
  root.querySelectorAll('[data-project-progress-pending]').forEach(button=>button.onclick=()=>{
  const pid=button.dataset.projectProgressPending;

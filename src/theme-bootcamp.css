@@ -58,8 +58,8 @@ a{text-underline-offset:.15em}
 .page .lv-exp{box-shadow:0 1px 2px rgb(19 24 38/.05)!important}
 .page .lv-exp h3,.page .lv-exp .lv-t{font-size:15px!important;font-weight:600!important}
 /* 7 筛选 pill：选中态黑实心 → 墨蓝淡底 + 墨蓝字 */
-.pill.on,.pill.is-on{background:var(--dry-soft)!important;color:var(--dry-ink)!important;border-color:transparent!important}
-.pill.on:hover,.pill.is-on:hover{background:var(--dry-dim)!important;color:var(--dry-ink)!important}
+.pill.on,.pill.is-on{background:var(--ink)!important;color:var(--on-pri)!important;border-color:var(--ink)!important}
+.pill.on:hover,.pill.is-on:hover{background:var(--primary-hover)!important;color:var(--on-pri)!important;border-color:var(--primary-hover)!important}
 /* 8 侧栏：分组标签更淡更小 */
 #side .lbl{font-size:11px!important;color:var(--ink-3)!important;letter-spacing:.04em}
 #side .nav{font-size:13px!important}
@@ -144,3 +144,27 @@ h1.pjx-n{font-size:18px!important;font-weight:600!important;margin:0!important;l
 .ms-views button{min-height:32px;min-width:32px;padding:6px;align-items:center;justify-content:center}
 .project-team-add{font-size:14px}
 .rs small:not([class]),.ms-main small:not([class]),.tl-card small:not([class]){font-size:11px}
+
+/* 走查：课题卡整张可点、hover 一体；输入框只留外层一圈焦点环；文字版发送按钮不压扁 */
+.project-card-wrap:not(.is-shared-project){cursor:pointer}
+.project-card-wrap:hover{border-color:var(--ink-4)!important;box-shadow:var(--sh-2)!important}
+.pcard,.pcard:hover,.project-card-wrap:has(> .pcard:hover){border-color:transparent!important;box-shadow:none!important}
+.project-card-wrap:hover{border-color:var(--ink-4)!important;box-shadow:var(--sh-2)!important}
+.project-update.is-mini{margin:0 20px 16px!important}
+.project-card-footer{padding:14px 20px!important}
+.ask .ask-t:focus-visible,.ask textarea:focus-visible,.research-composer textarea:focus-visible,.pjx-ask textarea:focus-visible{outline:none!important;box-shadow:none!important}
+.ctl-go:not(:has(svg)){width:auto!important;min-width:4rem!important;padding:0 14px!important;white-space:nowrap}
+
+/* 全站扫描：搜索框只留外层容器一圈焦点环；卡片内边距统一 20 */
+:is(.fbar-q,.rh-search,.ms-search,.ask,.research-composer,.pjx-ask,.search) :is(input,textarea):focus-visible{outline:none!important;box-shadow:none!important}
+.lv-exp,.tl-card,.rh-project{padding:20px!important}
+
+/* 审批/申请两组列表共用同一套列宽，操作列定宽靠右，两组才能上下对齐 */
+.inbox-row{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) minmax(0,.7fr) 64px 11.5rem!important}
+.inbox-actions{justify-content:flex-end}
+.asset-pre{font:12px/1.7 var(--mono);white-space:pre-wrap;word-break:break-word;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:14px;max-height:60vh;overflow:auto;margin:0}
+body[data-route="set"] .tbl-wrap td:nth-child(4),body[data-route="set"] .tbl-wrap th:nth-child(4){max-width:13rem}
+@media(max-width:900px){.inbox-row{grid-template-columns:minmax(0,1fr) auto!important}}
+/* 对话列表的「新建对话」：整块黑实心压过了页面主按钮，改成描边次按钮 */
+.history-new,.history-new-mini{background:var(--surface)!important;color:var(--ink)!important;border:1px solid var(--line)!important;min-height:36px;font-weight:500}
+.history-new:hover,.history-new-mini:hover{background:var(--surface-2)!important;border-color:var(--ink-4)!important}
