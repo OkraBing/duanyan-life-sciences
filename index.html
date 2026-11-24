@@ -72,7 +72,7 @@ html,body{height:100%}
      2816px 以上封顶 20px，再大就该是看两列而不是把字撑大
    下限 16px：小屏不缩，缩了反而更难读。 */
 html{font-size:clamp(16px, 11.5px + 0.3125vw, 20px)}
-body{margin:0;background:var(--paper);color:var(--ink);font-size:0.84375rem;line-height:1.6;
+body{margin:0;background:var(--paper);color:var(--ink);font-size:.875rem;line-height:1.6;
   font-family:Inter,"PingFang SC","Noto Sans SC","Source Han Sans SC",system-ui,sans-serif;
   font-feature-settings:"cv05","ss01";-webkit-font-smoothing:antialiased;letter-spacing:-.003em}
 h1,h2,h3,h4{margin:0;font-weight:600;letter-spacing:-.022em}
@@ -96,12 +96,12 @@ button,input,select,textarea{font:inherit;color:inherit}
 /* 数值一律等宽 —— 这是「仪器」和「后台」的分界线 */
 .num,td.num,th.num,.v,code,pre{font-family:var(--mono);font-variant-numeric:tabular-nums;
   letter-spacing:-.01em;font-feature-settings:"zero"}
-.t-xs{font-size:0.65625rem}.t-sm{font-size:0.71875rem}.t-md{font-size:0.78125rem}
+.t-xs{font-size:.6875rem}.t-sm{font-size:.75rem}.t-md{font-size:.8125rem}
 .mut{color:var(--ink-2)}.mut2{color:var(--ink-3)}
 /* 小标签：10px，字距拉开，这是整套设计的声音 */
 /* 不强制大写。这个领域里大小写带语义：ipTM、pLDDT、pI、kcat、α
    被转成全大写就是把内容改坏了；加宽字距的全大写小标签也是通用模板的标记。 */
-.lbl{font-size:0.65625rem;font-weight:600;letter-spacing:.03em;color:var(--ink-3)}
+.lbl{font-size:.6875rem;font-weight:600;letter-spacing:.03em;color:var(--ink-3)}
 .row{display:flex;align-items:center;gap:var(--s3)}
 .col{display:flex;flex-direction:column}
 .wrap{flex-wrap:wrap}
@@ -214,7 +214,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 #side[data-collapsed="1"] .nav-group.is-sep{margin:0 var(--s2);padding:var(--s2) 0}
 .nav{display:flex;align-items:center;gap:var(--s3);width:100%;min-height:1.9375rem;padding:0 var(--s3);
   border:0;background:transparent;border-radius:var(--r2);color:var(--ink-2);cursor:pointer;
-  text-align:left;font-size:0.78125rem;font-weight:450;position:relative}
+  text-align:left;font-size:.8125rem;font-weight:450;position:relative}
 .nav:hover{background:var(--surface-3);color:var(--ink)}
 .nav[aria-current="page"]{color:var(--dry);font-weight:600;background:transparent}
 .nav[aria-current="page"]::before{content:"";position:absolute;left:-12px;top:7px;bottom:7px;
@@ -256,14 +256,14 @@ button,input,select,textarea{font:inherit;color:inherit}
 #side[data-collapsed="1"] .acct-me{flex:0 0 auto;width:100%}
 .avatar{width:17px;height:1.0625rem;flex:0 0 17px;border-radius:50%;
   background:var(--surface-3);color:var(--ink-2);box-shadow:inset 0 0 0 1px var(--line);
-  display:grid;place-items:center;font-size:0.5625rem;font-weight:600;letter-spacing:0}
+  display:grid;place-items:center;font-size:.625rem;font-weight:600;letter-spacing:0}
 .nav[aria-current="page"] .avatar{background:var(--dry-soft);color:var(--dry-ink)}
 .avatar.is-lg{width:1.75rem;height:1.75rem;flex:0 0 1.75rem;font-size:0.75rem}
 #side[data-collapsed="1"] .acct-me{display:none}
 /* 未读数不是错误。红色留给真的出了问题的地方，
    这里用墨色，和整套克制一致。 */
 .nav-n{margin-left:auto;min-width:16px;height:1rem;padding:0 5px;border-radius:999px;
-  background:var(--ink);color:var(--on-pri);font-size:0.59375rem;font-weight:700;line-height:1rem;
+  background:var(--ink);color:var(--on-pri);font-size:.625rem;font-weight:700;line-height:1rem;
   text-align:center;font-family:var(--mono)}
 /* 深色主题里 --err 是浅红（给文字用的），白字压上去只有 2.7:1。
    角标是个色块不是文字色，所以这里单独定一个够深的底。 */
@@ -285,7 +285,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 /* ---------- 控件 ---------- */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;
   min-height:1.875rem;padding:0 var(--s3);border:1px solid var(--line);border-radius:var(--r2);
-  background:var(--surface);cursor:pointer;font-size:0.78125rem;font-weight:500;white-space:nowrap;
+  background:var(--surface);cursor:pointer;font-size:.8125rem;font-weight:500;white-space:nowrap;
   transition:background .14s,border-color .14s,color .14s}
 .btn:hover:not([disabled]){background:var(--surface-3);border-color:var(--ink-4)}
 .btn:active{transform:translateY(.5px)}
@@ -338,7 +338,7 @@ button.card:hover,.tile:hover{border-color:var(--ink-4);background:var(--surface
 button.card .card-h,.tile .card-h{border-bottom:0;margin-bottom:0;padding:0}
 
 /* 状态：圆点加文字，不是实心药丸 */
-.chip{display:inline-flex;align-items:center;gap:5px;font-size:0.71875rem;font-weight:500;
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:.75rem;font-weight:500;
   white-space:nowrap;color:var(--ink-2);padding:0;height:auto;background:none}
 /* 状态靠颜色和字就说清了，前面那个圆点是多的——它既不表示进度也不表示级别。 */
 .c-dry{color:var(--dry)}.c-wet{color:var(--wet)}.c-ok{color:var(--ok)}.c-err{color:var(--err)}
@@ -364,7 +364,7 @@ textarea.input{min-height:4.5rem;padding:var(--s3);resize:vertical;line-height:1
 #syncbar{border-color:var(--err);background:var(--err-soft)}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:var(--r2);overflow:hidden;
   height:2rem;background:var(--surface);align-self:flex-start}
-.seg-i{appearance:none;border:0;background:var(--surface);color:var(--ink-2);font:inherit;font-size:0.78125rem;
+.seg-i{appearance:none;border:0;background:var(--surface);color:var(--ink-2);font:inherit;font-size:.8125rem;
   padding:0 14px;cursor:pointer;border-left:1px solid var(--line)}
 .seg-i:first-child{border-left:0}
 .seg-i[aria-checked="true"]{background:var(--dry-soft);color:var(--dry-ink);font-weight:550}
@@ -395,7 +395,7 @@ svg[width]{flex:0 0 auto}
 .ctl-dd.is-fix .dd-v{flex:1 1 auto;min-width:0;text-align:left}
 @media(max-width:640px){.ctl-dd.is-fix{width:auto;flex:1 1 auto}}
 .menu-s{padding:6px 7px 4px;border-bottom:1px solid var(--line-2);margin-bottom:4px}
-.menu-s>.input{min-height:1.875rem;font-size:0.78125rem}
+.menu-s>.input{min-height:1.875rem;font-size:.8125rem}
 .menu-i.is-cur{background:var(--surface-2)}
 .kbd{display:inline-block;min-width:1.125rem;padding:0 4px;border:1px solid var(--line);
   border-bottom-width:2px;border-radius:4px;background:var(--surface);
@@ -412,7 +412,7 @@ svg[width]{flex:0 0 auto}
   text-align:left;color:var(--ink)}
 .at-i.is-on{background:var(--dry-soft)}
 .at-i.is-on strong{color:var(--dry-ink)}
-.hint{font-size:0.71875rem;color:var(--ink-3)}
+.hint{font-size:.75rem;color:var(--ink-3)}
 
 /* ---------- 表格：去框，只留发丝线 ---------- */
 /* 卡片变成真盒子之后，原先直接写在 .card 里、贴着边排的内容全都和卡头对不齐了
@@ -534,7 +534,7 @@ label.row:has(input[type="checkbox"]),label.row:has(input[type="radio"]){
 .aln-c{display:inline-flex;flex-direction:column;align-items:center;gap:1px;
   min-width:34px;padding:4px 6px;border-radius:var(--r1);background:var(--surface-2);
   border:1px solid var(--line-2);font-family:var(--mono);font-size:0.8125rem;font-weight:600}
-.aln-c b{font-size:0.59375rem;font-weight:500;color:var(--ink-4)}
+.aln-c b{font-size:.625rem;font-weight:500;color:var(--ink-4)}
 .aln-c.is-mut{background:var(--dry-soft);border-color:var(--dry);color:var(--dry-ink)}
 .seek{padding:var(--s7) 0 var(--s5)}
 .seek-eg{display:grid;gap:var(--s3);grid-template-columns:1fr 1fr;margin-top:var(--s4)}
@@ -542,7 +542,7 @@ label.row:has(input[type="checkbox"]),label.row:has(input[type="radio"]){
   border:1px solid var(--line);border-radius:var(--r2);background:var(--surface);cursor:pointer;
   color:var(--ink);transition:border-color .14s,background .14s}
 .segg:hover{border-color:var(--dry-dim);background:var(--surface-2)}
-.segg .num{font-weight:600;font-size:0.78125rem;flex:0 0 auto}
+.segg .num{font-weight:600;font-size:.8125rem;flex:0 0 auto}
 @media(max-width:640px){.seek-eg{grid-template-columns:1fr}}
 .wlist{display:flex;flex-direction:column;border:1px solid var(--line);
   border-radius:var(--r3);background:var(--surface);overflow:hidden}
@@ -574,8 +574,8 @@ label.row:has(input[type="checkbox"]),label.row:has(input[type="radio"]){
 .dstats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s3);
   background:var(--surface-2);border-radius:var(--r2);padding:var(--s3)}
 .dstats span{display:flex;flex-direction:column;gap:2px;min-width:0}
-.dstats b{font-size:0.65625rem;font-weight:500;color:var(--ink-3)}
-.dstats i{font-style:normal;font-size:0.71875rem;color:var(--ink);
+.dstats b{font-size:.6875rem;font-weight:500;color:var(--ink-3)}
+.dstats i{font-style:normal;font-size:.75rem;color:var(--ink);
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .dstats i.ok{color:var(--ok)}
 .dstats i.dim{color:var(--ink-4)}
@@ -602,7 +602,7 @@ button.scard.is-click:focus-visible{outline:2px solid var(--focus);outline-offse
 .scard-n{font-size:0.9375rem;font-weight:600;letter-spacing:-.015em;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .scard-slug{font-size:0.6875rem;color:var(--ink-4);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.scard-d{margin:0;font-size:0.78125rem;line-height:1.65;color:var(--ink-2);min-height:2.6em;
+.scard-d{margin:0;font-size:.8125rem;line-height:1.65;color:var(--ink-2);min-height:2.6em;
   overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .scard-tags{display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start}
 /* 一排卡片要等高，底栏（开启按钮在那里）要对齐：
@@ -712,9 +712,9 @@ button.scard.is-click:focus-visible{outline:2px solid var(--focus);outline-offse
 .tbl-wrap.is-stick th{white-space:nowrap}
 .tbl-wrap.is-prev table{width:auto;min-width:100%}
 .tbl-wrap.is-prev th,.tbl-wrap.is-prev td{white-space:nowrap}
-table{border-collapse:separate;border-spacing:0;width:100%;font-size:0.78125rem}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:.8125rem}
 thead th{position:sticky;top:0;z-index:1;background:var(--surface);text-align:left;
-  font-size:0.65625rem;font-weight:600;letter-spacing:.03em;color:var(--ink-3);
+  font-size:.6875rem;font-weight:600;letter-spacing:.03em;color:var(--ink-3);
   padding:var(--s3) var(--s4) var(--s2) 0;border-bottom:1px solid var(--line);white-space:nowrap}
 thead th:last-child{padding-right:0}
 tbody td{padding:var(--s2) var(--s4) var(--s2) 0;border-bottom:1px solid var(--line-2);vertical-align:middle}
@@ -747,7 +747,7 @@ th[aria-sort] .sort-i{opacity:1}
   border:1px solid var(--line);border-radius:var(--r3);box-shadow:var(--sh-1);
   padding:var(--s5)}
 .kpi>div{background:transparent;padding:0}
-.kpi .t-sm{font-size:0.65625rem;font-weight:600;letter-spacing:.03em;color:var(--ink-3)}
+.kpi .t-sm{font-size:.6875rem;font-weight:600;letter-spacing:.03em;color:var(--ink-3)}
 .kpi .v{font-size:2rem;font-weight:500;line-height:1.1;margin-top:var(--s2);letter-spacing:-.03em;
   font-family:var(--mono);font-variant-numeric:tabular-nums}
 .kpi .v .t-md{font-size:0.875rem;color:var(--ink-3)}
@@ -755,7 +755,7 @@ th[aria-sort] .sort-i{opacity:1}
 .toast-host{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--s6) + env(safe-area-inset-bottom,0px));
   z-index:100;display:flex;flex-direction:column;gap:var(--s2);align-items:center;pointer-events:none}
 .toast{background:var(--ink);color:var(--paper);padding:var(--s2) var(--s4);border-radius:999px;
-  font-size:0.78125rem;font-weight:500;box-shadow:var(--sh-3),0 0 0 1px rgba(255,255,255,.14);
+  font-size:.8125rem;font-weight:500;box-shadow:var(--sh-3),0 0 0 1px rgba(255,255,255,.14);
   max-width:min(92vw,520px);
   animation:in .2s cubic-bezier(.2,.7,.3,1)}
 /* ---- 序列检索 ---- */
@@ -776,7 +776,7 @@ th[aria-sort] .sort-i{opacity:1}
 /* 四段进度。连接线画在每一段的左侧，首段不画。 */
 .stages{display:grid;grid-template-columns:repeat(4,1fr)}
 .stg{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;
-  font-size:0.71875rem;color:var(--ink-4)}
+  font-size:.75rem;color:var(--ink-4)}
 .stg::before{content:"";position:absolute;top:8px;left:calc(-50% + 11px);
   width:calc(100% - 22px);height:2px;background:var(--line-2)}
 .stg:first-child::before{display:none}
@@ -793,17 +793,17 @@ th[aria-sort] .sort-i{opacity:1}
 .hit{display:grid;grid-template-columns:30px minmax(0,1fr);gap:var(--s4);
   padding:var(--s4) var(--s5);border:1px solid var(--line);border-radius:var(--r2);
   background:var(--surface);box-shadow:var(--sh-1)}
-.hit-r{font-family:var(--mono);font-size:1.0625rem;font-weight:600;color:var(--ink-4);line-height:1.3}
+.hit-r{font-family:var(--mono);font-size:1rem;font-weight:600;color:var(--ink-4);line-height:1.3}
 .hit-t{font-size:0.875rem;font-weight:600;color:var(--dry)}
 .hit-m{display:flex;flex-wrap:wrap;gap:var(--s3) var(--s7);margin-top:var(--s3)}
 .hit-m>div{display:flex;flex-direction:column;gap:1px}
-.hit-m .k{font-size:0.65625rem;color:var(--ink-4);letter-spacing:.03em}
+.hit-m .k{font-size:.6875rem;color:var(--ink-4);letter-spacing:.03em}
 .hit-m .v{font-family:var(--mono);font-size:0.9375rem;font-weight:600;color:var(--dry)}
 .aln{margin-top:var(--s4);padding-top:var(--s4);border-top:1px solid var(--line-2);
   overflow-x:auto}
-.aln-b{font-family:var(--mono);font-size:0.71875rem;line-height:1.5;white-space:pre;
+.aln-b{font-family:var(--mono);font-size:.75rem;line-height:1.5;white-space:pre;
   margin-bottom:var(--s3)}
-.aln-n{display:inline-block;width:78px;color:var(--ink-4);font-size:0.65625rem}
+.aln-n{display:inline-block;width:78px;color:var(--ink-4);font-size:.6875rem}
 .aln-m{color:var(--dry)}
 
 /* ---- 能力入口：发射台 ---- */
@@ -914,13 +914,13 @@ table[aria-label="批量推理任务"] .acts>.alnk{width:100%;min-width:0;justif
 .sdot.is-hard{background:var(--err);border-color:var(--err)}
 .sdot.is-on{box-shadow:0 0 0 2px var(--ink);transform:scale(1.12)}
 .sdot:not([disabled]):hover{transform:scale(1.25)}
-.sleg{display:inline-flex;align-items:center;gap:5px;font-size:0.71875rem;color:var(--ink-4)}
+.sleg{display:inline-flex;align-items:center;gap:5px;font-size:.75rem;color:var(--ink-4)}
 .sleg .sdot{width:0.5625rem;height:0.5625rem;cursor:default}
 .pipe-tool .ell{flex:1 1 auto;min-width:0;text-align:left}
 .pipe-skip{min-height:1.625rem;padding:0 9px;font-size:0.75rem}
 .sld-row{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3) var(--s5)}
 .sld{display:flex;align-items:center;gap:var(--s3);min-width:0}
-.sld>b{font-family:var(--mono);font-size:0.78125rem;font-weight:600;min-width:52px;
+.sld>b{font-family:var(--mono);font-size:.8125rem;font-weight:600;min-width:52px;
   text-align:right;font-variant-numeric:tabular-nums}
 .sld input[type=range]{appearance:none;width:132px;height:3px;border-radius:2px;
   background:var(--surface-3);outline:none;cursor:pointer}
@@ -967,22 +967,22 @@ table[aria-label="批量推理任务"] .acts>.alnk{width:100%;min-width:0;justif
 .chat-q{max-width:72ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .nav-more{color:var(--dry);font-weight:500;padding-left:calc(var(--s3) + 28px)}
 .mini:hover{background:var(--surface-2)}
-.mini-n{font-size:0.78125rem;font-weight:500;min-width:0;max-width:34ch;
+.mini-n{font-size:.8125rem;font-weight:500;min-width:0;max-width:34ch;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.mini-p{font-family:var(--mono);font-size:0.78125rem;font-weight:600;color:var(--ink-3);
+.mini-p{font-family:var(--mono);font-size:.8125rem;font-weight:600;color:var(--ink-3);
   font-variant-numeric:tabular-nums;width:40px;text-align:right}
 @media(max-width:700px){.mini .mini-p,.mini>.t-sm:last-of-type{display:none}}
 
 /* ---- 任务表单：标签右对齐、必填带红星，照 Protenix Server 那张表的排布 ---- */
 .fgrid{display:flex;flex-direction:column;gap:var(--s4)}
 .frow{display:grid;grid-template-columns:104px minmax(0,1fr);gap:var(--s4);align-items:start}
-.flab{text-align:right;font-size:0.78125rem;color:var(--ink-2);padding-top:7px;line-height:1.4}
+.flab{text-align:right;font-size:.8125rem;color:var(--ink-2);padding-top:7px;line-height:1.4}
 .flab>i{color:var(--err);font-style:normal;margin-right:3px}
 .fctl{display:flex;flex-wrap:wrap;align-items:center;gap:6px;min-width:0}
 .fctl>.input{max-width:420px}
 .fctl>textarea.input{max-width:100%;width:100%;font-family:var(--mono);font-size:0.75rem;letter-spacing:.04em}
-.fhint{flex:1 0 100%;font-size:0.71875rem;color:var(--ink-4);line-height:1.5}
-.fna{font-size:0.78125rem;color:var(--ink-4);padding:7px 0}
+.fhint{flex:1 0 100%;font-size:.75rem;color:var(--ink-4);line-height:1.5}
+.fna{font-size:.8125rem;color:var(--ink-4);padding:7px 0}
 .ecard{border:1px solid var(--line-2);border-radius:var(--r2);background:var(--surface-2);padding:var(--s4)}
 .seedb{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:var(--r1);
   background:var(--surface);height:2rem;padding-right:2px}
@@ -1012,9 +1012,9 @@ table[aria-label="批量推理任务"] .acts>.alnk{width:100%;min-width:0;justif
   min-width:2.75rem;height:1.5rem;padding:0 7px;border-radius:var(--r1);
   background:var(--surface-2);border:1px solid var(--line);
   font-family:var(--mono);font-size:0.6875rem;color:var(--ink-3);text-transform:lowercase}
-.fcard-m{display:flex;gap:var(--s3);align-items:baseline;font-size:0.71875rem;color:var(--ink-4)}
+.fcard-m{display:flex;gap:var(--s3);align-items:baseline;font-size:.75rem;color:var(--ink-4)}
 .fcard-m>:first-child{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.fcard-s{margin:0;font-size:0.71875rem;color:var(--ink-4);line-height:1.6}
+.fcard-s{margin:0;font-size:.75rem;color:var(--ink-4);line-height:1.6}
 .fcard-n{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .fcard-a{display:flex;flex-wrap:wrap;gap:6px;align-items:center;
   padding-top:var(--s3);margin-top:auto;border-top:1px solid var(--line-2)}
@@ -1034,7 +1034,7 @@ table[aria-label="批量推理任务"] .acts>.alnk{width:100%;min-width:0;justif
 .scard.is-stop{opacity:.72;border-style:dashed}
 /* 高级参数：默认一个收起的小按钮，展开后就地出现，不跳页 */
 .advb{display:flex;flex-direction:column;gap:var(--s3);align-items:flex-start}
-.advb-t{min-height:1.625rem;padding:0 .5rem;font-size:0.71875rem;color:var(--ink-3);gap:6px}
+.advb-t{min-height:1.625rem;padding:0 .5rem;font-size:.75rem;color:var(--ink-3);gap:6px}
 .advb-t .car{transition:transform .15s}
 .advb.is-open .advb-t{color:var(--ink)}
 .advb.is-open .advb-t .car{transform:rotate(180deg)}
@@ -1057,7 +1057,7 @@ table[aria-label="批量推理任务"] .acts>.alnk{width:100%;min-width:0;justif
 /* 工具列和可选动作各占固定槽位，三行的下拉才会对齐——
    有「跳过」的那一行不能把下拉往左顶。 */
 /* 一段的主体：上面一行是名字与工具，下面一行是这一段做什么的一句话。 */
-.pipe-skip{min-height:1.5rem;padding:0 8px;font-size:0.71875rem}
+.pipe-skip{min-height:1.5rem;padding:0 8px;font-size:.75rem}
 .pfld{display:inline-flex;align-items:baseline;gap:3px;padding:1px 7px;border-radius:var(--r1);
   background:var(--surface-2);border:1px solid var(--line);
   font-size:0.6875rem;color:var(--ink-2);white-space:nowrap}
@@ -1071,7 +1071,7 @@ table[aria-label="批量推理任务"] .acts>.alnk{width:100%;min-width:0;justif
 .pipe-n .ctl-dd .ell{flex:1 1 auto;text-align:left}
 .pipe-t>.t-sm{align-self:center}
 @media(max-width:620px){.pipe-t{width:138px}}
-.egv{font-family:var(--mono);font-size:0.71875rem;line-height:1.55;color:var(--ink-3);
+.egv{font-family:var(--mono);font-size:.75rem;line-height:1.55;color:var(--ink-3);
   background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r1);
   padding:8px 10px;word-break:break-all}
 .trh td{background:var(--surface-2)}
@@ -1088,22 +1088,22 @@ table[aria-label="批量推理任务"] .acts>.alnk{width:100%;min-width:0;justif
   transition:border-color .14s,box-shadow .14s}
 .jcard:hover{border-color:var(--ink-4);box-shadow:var(--sh-2)}
 .jcard-t{display:flex;align-items:center;gap:9px}
-.jcard-t strong{font-size:0.84375rem;font-weight:600;min-width:0;overflow:hidden;
+.jcard-t strong{font-size:.875rem;font-weight:600;min-width:0;overflow:hidden;
   text-overflow:ellipsis;white-space:nowrap}
 .jcard-t .cap-ic{flex:0 0 24px}
 .jcard-t .cap-ic.is-wet{background:var(--wet-soft);color:var(--wet)}
-.jcard-m{font-size:0.71875rem;color:var(--ink-4);overflow:hidden;
+.jcard-m{font-size:.75rem;color:var(--ink-4);overflow:hidden;
   text-overflow:ellipsis;white-space:nowrap}
 .jcard-s{display:flex;align-items:flex-end;gap:var(--s5);margin-top:2px;min-width:0}
 .jcard>.rail{position:absolute;left:var(--s4);right:var(--s4);bottom:10px;margin:0}
 .jcard-s .sv{display:block;font-family:var(--sans);font-variant-numeric:tabular-nums;
   font-feature-settings:"tnum" 1,"lnum" 1;font-size:1.375rem;font-weight:550;letter-spacing:-.02em;
   letter-spacing:-.025em;line-height:1.08;font-variant-numeric:tabular-nums}
-.jcard-s .sk{display:block;font-size:0.65625rem;font-weight:400;color:var(--ink-4);margin-top:3px}
+.jcard-s .sk{display:block;font-size:.6875rem;font-weight:400;color:var(--ink-4);margin-top:3px}
 /* 任务卡右下角的「下载」。卡本身可点，所以这颗按钮要吃掉自己的点击（见 data-task 的 open）。
    只有已完成且有产物的卡才画它，位置选右下：进行中的卡那里是进度条，而进度条和下载不会同时出现。 */
 .jcard-dl{position:absolute;right:var(--s4);bottom:var(--s4);z-index:1;
-  min-height:1.5rem;padding:0 8px;font-size:0.71875rem}
+  min-height:1.5rem;padding:0 8px;font-size:.75rem}
 .jcard:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 /* 任务详情的统计条：值用等宽 21px，文本型的值（时间）也放得下；
    .kpi 的 32px 是给单页主指标用的，塞四个格子就会换行、字也顶出来。 */
@@ -1112,7 +1112,7 @@ table[aria-label="批量推理任务"] .acts>.alnk{width:100%;min-width:0;justif
   border-radius:var(--r3);box-shadow:var(--sh-1);padding:var(--s4) var(--s5)}
 .tstats>div{display:flex;flex-direction:column;gap:3px;min-width:0}
 .tstats .k{font-size:0.6875rem;color:var(--ink-4)}
-.tstats .v{font-family:var(--mono);font-size:1.3125rem;font-weight:600;line-height:1.2;
+.tstats .v{font-family:var(--mono);font-size:1.25rem;font-weight:600;line-height:1.2;
   letter-spacing:-.02em;font-variant-numeric:tabular-nums;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tstats .s{font-size:0.6875rem;color:var(--ink-4)}
@@ -1125,10 +1125,10 @@ table[aria-label="批量推理任务"] .acts>.alnk{width:100%;min-width:0;justif
 .wcard{cursor:default;height:auto;min-height:9.375rem}
 .wcard-f{display:flex;align-items:center;gap:var(--s2);margin-top:var(--s2);
   padding-top:var(--s3);border-top:1px solid var(--line-2)}
-.jcard-o{margin-left:auto;font-size:0.71875rem;color:var(--ink-3);text-align:right;
+.jcard-o{margin-left:auto;font-size:.75rem;color:var(--ink-3);text-align:right;
   min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .jst{display:inline-flex;align-items:center;gap:5px;margin-left:auto;flex:0 0 auto;
-  font-size:0.71875rem;font-weight:600;color:var(--ink-3);white-space:nowrap}
+  font-size:.75rem;font-weight:600;color:var(--ink-3);white-space:nowrap}
 .jst>i{width:6px;height:0.375rem;border-radius:50%;background:var(--ink-4)}
 /* 完成＝已经停下来的事，用墨色；蓝色留给「可点」和「正在算」。
    原先完成是蓝的，于是这一页上蓝色同时表示可点、计算类、已完成——
@@ -1150,15 +1150,15 @@ table[aria-label="批量推理任务"] .acts>.alnk{width:100%;min-width:0;justif
 .pcard-st{margin-left:auto;flex:0 0 auto;font-size:0.6875rem;font-weight:600;color:var(--dry)}
 .pcard.c-wet .pcard-st{color:var(--wet-ink)}
 .pcard.c-mut .pcard-st{color:var(--ink-3)}
-.pcard-g{font-size:0.78125rem;line-height:1.5;color:var(--ink-3);min-height:2.3125rem;
+.pcard-g{font-size:.8125rem;line-height:1.5;color:var(--ink-3);min-height:2.3125rem;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .pcard-s{display:flex;gap:var(--s5);flex-wrap:wrap}
 /* 卡底一行：左边资源，右边任务数。和描述之间拉开，并用一条细线收口。 */
 .pcard-f{display:flex;align-items:baseline;gap:var(--s3);width:100%;margin-top:auto;
   padding-top:var(--s3);border-top:1px solid var(--line-2)}
-.pcard-s .sv{display:block;font-family:var(--mono);font-size:1.1875rem;font-weight:500;
+.pcard-s .sv{display:block;font-family:var(--mono);font-size:1.125rem;font-weight:500;
   letter-spacing:-.025em;font-variant-numeric:tabular-nums;line-height:1.08}
-.pcard-s .sk{display:block;font-size:0.65625rem;font-weight:400;color:var(--ink-4);margin-top:3px}
+.pcard-s .sk{display:block;font-size:.6875rem;font-weight:400;color:var(--ink-4);margin-top:3px}
 .rail{display:block;height:3px;border-radius:999px;background:var(--surface-3);overflow:hidden}
 .rail>i{display:block;height:100%;border-radius:999px;background:var(--dry)}
 
@@ -1167,10 +1167,10 @@ table[aria-label="批量推理任务"] .acts>.alnk{width:100%;min-width:0;justif
   background:var(--pop);border:1px solid var(--line);border-radius:11px;
   box-shadow:var(--sh-3);max-height:min(58vh,340px);overflow:auto;
   animation:in .13s cubic-bezier(.2,.7,.3,1)}
-.menu-l{padding:5px 9px 4px;font-size:0.65625rem;font-weight:600;color:var(--ink-4);letter-spacing:.04em}
+.menu-l{padding:5px 9px 4px;font-size:.6875rem;font-weight:600;color:var(--ink-4);letter-spacing:.04em}
 .menu-i{display:grid;grid-template-columns:16px minmax(0,1fr);gap:10px;align-items:center;
   width:100%;padding:7px 9px;border:0;border-radius:var(--r1);background:transparent;
-  color:var(--ink);font:inherit;font-size:0.78125rem;text-align:left;cursor:pointer}
+  color:var(--ink);font:inherit;font-size:.8125rem;text-align:left;cursor:pointer}
 /* 悬停不用 --surface-3：那是一块中性灰，压在暖纸上像贴了张纸片。
    用蓝的最淡一档，和产品里「选中」的语义一致，也还在同一个色温上。 */
 .menu-i:hover,.menu-i:focus-visible{background:var(--dry-soft);color:var(--dry-ink);outline:0}
@@ -1178,7 +1178,7 @@ table[aria-label="批量推理任务"] .acts>.alnk{width:100%;min-width:0;justif
 .menu-i[aria-checked="true"]:hover,.menu-i.is-on:hover{background:var(--dry-soft)}
 .menu-i .ck{color:var(--dry);display:grid;place-items:center}
 .menu-i .nm{display:block;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.menu-i .sb{display:block;font-size:0.71875rem;color:var(--ink-4);overflow:hidden;
+.menu-i .sb{display:block;font-size:.75rem;color:var(--ink-4);overflow:hidden;
   text-overflow:ellipsis;white-space:nowrap}
 .menu-sep{height:1px;background:var(--line-2);margin:4px 3px}
 /* 消息面板：比菜单宽一点，因为每条要放得下标题、时间、标签和出处四样。
@@ -1189,9 +1189,9 @@ table[aria-label="批量推理任务"] .acts>.alnk{width:100%;min-width:0;justif
 .menu:has(.ib-wrap){max-width:min(25rem,calc(100vw - 1.5rem))}
 .ib-wrap{width:min(23.5rem,calc(100vw - 2.5rem));max-width:100%}
 .ib-h{display:flex;align-items:baseline;gap:var(--s2);padding:5px 9px 4px}
-.ib-h .t{font-size:0.78125rem;font-weight:600;color:var(--ink-2);letter-spacing:0}
+.ib-h .t{font-size:.8125rem;font-weight:600;color:var(--ink-2);letter-spacing:0}
 .ib-x{margin-left:auto;border:0;background:transparent;padding:0;cursor:pointer;
-  color:var(--dry);font:inherit;font-size:0.71875rem}
+  color:var(--dry);font:inherit;font-size:.75rem}
 .ib-x:hover{text-decoration:underline}
 .menu-i.is-ib{grid-template-columns:7px minmax(0,1fr);gap:8px;align-items:start}
 .menu-i.is-ib .dot{width:5px;height:5px;border-radius:50%;background:transparent;margin-top:6px}
@@ -1219,7 +1219,7 @@ dialog{border:1px solid var(--line);padding:0;border-radius:var(--r3);background
   color:var(--ink);box-shadow:var(--sh-3);max-width:min(94vw,440px);width:100%}
 dialog .card-h,dialog .card-b{padding:var(--s5)}
 dialog .card-h{margin:0;border-bottom:1px solid var(--line)}
-dialog .card-h>strong{font-size:0.84375rem;letter-spacing:-.02em;text-transform:none;color:var(--ink)}
+dialog .card-h>strong{font-size:.875rem;letter-spacing:-.02em;text-transform:none;color:var(--ink)}
 dialog::backdrop{background:rgba(12,12,17,.5);backdrop-filter:blur(2px)}
 
 /* ---------- 工作台 ---------- */
@@ -1238,7 +1238,7 @@ body[data-route="project"] #view{padding:0;overflow:hidden}
 .pjx{display:flex;flex-direction:column;height:100%;min-height:0}
 .pjx-top{flex:0 0 auto;display:flex;align-items:center;gap:var(--s3);
   padding:var(--s3) var(--s5);border-bottom:1px solid var(--line);background:var(--paper)}
-.pjx-n{font-size:1.0625rem;letter-spacing:-.02em;color:var(--ink);line-height:1.25;
+.pjx-n{font-size:1rem;letter-spacing:-.02em;color:var(--ink);line-height:1.25;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pjx-back,.pjx-ic,.pjx-add{display:inline-flex;align-items:center;justify-content:center;
   flex:0 0 auto;width:2rem;height:2rem;border-radius:var(--r1);border:1px solid transparent;
@@ -1250,7 +1250,7 @@ body[data-route="project"] #view{padding:0;overflow:hidden}
 .pjx-ic{position:relative;overflow:visible}
 .pjx-ic .nav-n{position:absolute;top:-4px;right:-4px;margin:0;
   min-width:0.9375rem;height:0.9375rem;padding:0 3px;
-  font-size:0.5625rem;line-height:0.9375rem;
+  font-size:.625rem;line-height:0.9375rem;
   box-shadow:0 0 0 2px var(--surface)}
 .pjx-back:hover,.pjx-ic:hover,.pjx-add:hover{background:var(--surface-2);color:var(--ink)}
 .pjx-b{flex:1 1 auto;display:flex;min-height:0}
@@ -1428,7 +1428,7 @@ body.is-pjdrag{cursor:col-resize;user-select:none}
   background:var(--surface)}
 .pw-tabs{display:flex;gap:var(--s5);padding:0 var(--s5);border-bottom:1px solid var(--line);flex:0 0 auto}
 .pw-tab{border:0;background:transparent;padding:13px 0;cursor:pointer;color:var(--ink-3);
-  font-size:0.78125rem;font-weight:500;border-bottom:2px solid transparent;margin-bottom:-1px}
+  font-size:.8125rem;font-weight:500;border-bottom:2px solid transparent;margin-bottom:-1px}
 .pw-tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--dry)}
 .pw-leftb{flex:1;min-height:0;overflow:auto;padding:0 var(--s5) var(--s5)}
 .pw-main{display:flex;flex-direction:column;min-width:0;min-height:0;background:var(--paper)}
@@ -1484,14 +1484,14 @@ body.is-pjdrag{cursor:col-resize;user-select:none}
 .pwcard.is-kb.is-on{border-color:var(--ink);box-shadow:inset 3px 0 0 0 var(--ink)}
 .kbprev{box-shadow:none}
 .kbpre{margin:0;max-height:26rem;overflow:auto;white-space:pre-wrap;word-break:break-word;
-  font-family:var(--mono);font-size:0.71875rem;line-height:1.6;color:var(--ink-2);
+  font-family:var(--mono);font-size:.75rem;line-height:1.6;color:var(--ink-2);
   background:var(--surface-2);border-radius:var(--r2);padding:var(--s3)}
 .cap-row.is-wet .cap-ic,.pickchip.is-wet .cap-ic{background:var(--wet-soft);color:var(--wet)}
-.cap-n{font-size:0.78125rem;font-weight:600;color:var(--ink);letter-spacing:-.005em;
+.cap-n{font-size:.8125rem;font-weight:600;color:var(--ink);letter-spacing:-.005em;
   min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cap-row[aria-pressed="true"] .cap-n{color:var(--dry-ink)}
 .cap-row.is-wet[aria-pressed="true"] .cap-n{color:var(--wet-ink)}
-.cap-q{font-size:0.71875rem;line-height:1.5;color:var(--ink-4);
+.cap-q{font-size:.75rem;line-height:1.5;color:var(--ink-4);
   display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;
   overflow:hidden;min-width:0}
 @media(max-width:1000px){.caps{grid-template-columns:repeat(3,minmax(0,1fr))}}
@@ -1525,17 +1525,17 @@ body.is-pjdrag{cursor:col-resize;user-select:none}
 .inf-wait{margin:auto;display:flex;flex-direction:column;align-items:center;gap:var(--s2);
   color:var(--ink-4);font-size:0.8125rem}
 .inf-q{align-self:flex-end;max-width:85%;padding:var(--s2) var(--s4);border-radius:.75rem .75rem .25rem .75rem;
-  background:var(--dry-soft);color:var(--dry-ink);font-size:0.84375rem;line-height:1.65;
+  background:var(--dry-soft);color:var(--dry-ink);font-size:.875rem;line-height:1.65;
   white-space:pre-wrap;word-break:break-word}
 .inf-a{align-self:flex-start;max-width:100%;min-width:0;display:flex;flex-direction:column;
   padding:var(--s3) var(--s4);border:1px solid var(--line-2);border-radius:.75rem .75rem .75rem .25rem;
-  background:var(--surface);font-size:0.84375rem;line-height:1.7;white-space:pre-wrap;word-break:break-word}
+  background:var(--surface);font-size:.875rem;line-height:1.7;white-space:pre-wrap;word-break:break-word}
 .inf-a.is-err{border-color:var(--err);background:var(--err-soft)}
 .inf-a.is-wait,.inf-a.is-none{color:var(--ink-4);border-style:dashed;background:transparent}
 .inf-u{font-size:0.6875rem;color:var(--ink-4);margin-top:auto;padding-top:10px}
 /* 竖排之后列头都挤在最上面，答复一条条往下排，哪条是谁的就看不出来了。
    窄屏给每一格补一个模型名；宽屏靠列头，这一行是多余的。 */
-.inf-foot{margin:0;text-align:center;font-size:0.71875rem;color:var(--ink-4)}
+.inf-foot{margin:0;text-align:center;font-size:.75rem;color:var(--ink-4)}
 @media(max-width:900px){
   .inf-g{grid-template-columns:minmax(0,1fr)!important}
   .inf-h{position:static}
@@ -1605,7 +1605,7 @@ body.is-pjdrag{cursor:col-resize;user-select:none}
 /* 不给拖拽手柄：高度由内容决定，不由鼠标决定。
    一行起步，随内容长，到 --ask-max 为止，再多就自己滚。 */
 .ask-t{width:100%;border:0;background:transparent;color:inherit;resize:none;
-  font:inherit;font-size:0.84375rem;line-height:1.7;min-height:1.5rem;padding:0;
+  font:inherit;font-size:.875rem;line-height:1.7;min-height:1.5rem;padding:0;
   max-height:var(--ask-max,320px);overflow-y:auto}
 /* 首页那一个定高：它是这一屏的主体，边打字边长高会把下面那排快捷指令一路往下推。
    进了对话之后才按内容长——那时它在底部，长高不会推动别的东西。 */
@@ -1641,7 +1641,7 @@ body.is-pjdrag{cursor:col-resize;user-select:none}
 .ctl:hover{border-color:var(--ink-4);color:var(--ink)}
 /* 图标在按钮里的体量：15px 图标配 28px 框只占 54%，看着像个空框。
    提到 17px，和文字控件的视觉重量对齐。 */
-.ctl-ic{width:28px;padding:0;justify-content:center;font-size:0.96875rem;font-weight:600}
+.ctl-ic{width:28px;padding:0;justify-content:center;font-size:1rem;font-weight:600}
 .ctl-ic svg{width:1.0625rem;height:1.0625rem}
 .ctl-pick{border-color:var(--ink);background:var(--ink);color:var(--on-pri);font-weight:600}
 .ctl-go{background:var(--ink);border-color:var(--ink);color:var(--on-pri);padding:0 14px}
@@ -1704,7 +1704,7 @@ select.sel-raw,.sel-raw{position:absolute!important;width:1px!important;height:1
 .ask-bar [data-act="bindproj"]{max-width:min(17rem,45%);overflow:hidden}
 .ask-bar [data-act="bindproj"] .dd-v{min-width:0;overflow:hidden;
   text-overflow:ellipsis;white-space:nowrap}
-.ctl-dd.as-input{height:2rem;min-height:2rem;border-radius:var(--r1);font-size:0.78125rem;
+.ctl-dd.as-input{height:2rem;min-height:2rem;border-radius:var(--r1);font-size:.8125rem;
   color:var(--ink);padding:0 10px}
 .menu-i.is-off{opacity:.45;cursor:not-allowed}
 
@@ -1817,7 +1817,7 @@ body[data-route="chat"] #view{padding-bottom:0}
 .qks{display:flex;flex-wrap:wrap;gap:var(--s2);justify-content:center;margin-top:var(--s2)}
 .qk{display:inline-flex;align-items:center;gap:7px;min-height:2rem;padding:0 12px 0 9px;
   border:1px solid var(--line);border-radius:999px;background:var(--surface);
-  color:var(--ink-2);cursor:pointer;font:inherit;font-size:0.78125rem;white-space:nowrap;
+  color:var(--ink-2);cursor:pointer;font:inherit;font-size:.8125rem;white-space:nowrap;
   transition:background .14s,border-color .14s,color .14s}
 .qk:hover{background:var(--surface-2);border-color:var(--ink-4);color:var(--ink)}
 .qk:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
@@ -1827,7 +1827,7 @@ body[data-route="chat"] #view{padding-bottom:0}
   background:transparent;color:var(--ink-4)}
 .qk-ic.is-wet{background:transparent;color:var(--wet)}
 .qk-ic svg{width:0.8125rem;height:0.8125rem}
-@media(max-width:640px){.greet{font-size:1.875rem!important}.qks{gap:6px}.qk{font-size:0.71875rem;min-height:1.875rem}}
+@media(max-width:640px){.greet{font-size:1.875rem!important}.qks{gap:6px}.qk{font-size:.75rem;min-height:1.875rem}}
 
 .chat-ask::before{content:"";position:absolute;left:0;right:0;top:calc(-1 * var(--s5));
   height:var(--s5);background:linear-gradient(to bottom,transparent,var(--paper));
@@ -1939,7 +1939,7 @@ input[type="range"]::-moz-range-thumb{width:0.875rem;height:0.875rem;border-radi
   transition:border-color .14s,color .14s}
 .drop-t{font-size:0.8125rem;font-weight:550;color:var(--ink-2)}
 /* balance 是为了不让最后一个字单独掉到下一行（「…要预测的目 / 标」）。 */
-.drop-s{font-size:0.71875rem;color:var(--ink-4);max-width:46ch;line-height:1.6;
+.drop-s{font-size:.75rem;color:var(--ink-4);max-width:46ch;line-height:1.6;
   text-wrap:balance}
 .drop:hover{border-color:var(--dry);background:var(--dry-soft);color:var(--dry-ink)}
 .drop:hover .drop-t{color:var(--dry-ink)}
@@ -2031,7 +2031,7 @@ input[type="range"]::-moz-range-thumb{width:0.875rem;height:0.875rem;border-radi
   margin-top:1px}
 .cot-s.is-err .cot-i{background:var(--err)}
 .cot-s.is-skip .cot-i{background:transparent;box-shadow:inset 0 0 0 1px var(--ink-4)}
-.cot-n{font-size:0.78125rem;font-weight:500;color:var(--ink-2);min-width:0}
+.cot-n{font-size:.8125rem;font-weight:500;color:var(--ink-2);min-width:0}
 .cot-k{font-size:0.625rem;font-weight:600;letter-spacing:.03em;color:var(--ink-4);
   margin-right:5px}
 .cot-ms{font-size:0.6875rem;color:var(--ink-4);white-space:nowrap}
@@ -2093,7 +2093,7 @@ tr.row-go:focus-visible{outline:2px solid var(--focus);outline-offset:-2px}
 /* 工具条里的小按钮：无边框的 ghost 挨着说明文字时读起来就是一串灰字。
    描一条边，它才看得出来是能点的。 */
 .btn-tool{display:inline-flex;align-items:center;gap:5px;min-height:1.75rem;padding:0 10px;
-  font-size:0.71875rem;border:1px solid var(--line);border-radius:var(--r1);
+  font-size:.75rem;border:1px solid var(--line);border-radius:var(--r1);
   background:var(--surface);color:var(--ink-2);cursor:pointer;white-space:nowrap}
 .btn-tool:hover{border-color:var(--ink-4);color:var(--ink);background:var(--surface-2)}
 .filerow[aria-checked="true"]{border-color:var(--dry);background:var(--dry-soft);color:var(--dry-ink)}
@@ -2147,18 +2147,18 @@ tbody tr.is-me>td{background:var(--dry-soft);font-weight:600}
 @media (prefers-reduced-motion:reduce){.kadv-t .car{transition:none}}
 .kstat{display:flex;flex-wrap:wrap;gap:var(--s5)}
 .kstat>span{display:flex;flex-direction:column;gap:1px}
-.kstat .sv{font-size:1.1875rem;font-weight:500;letter-spacing:-.025em;line-height:1.15;color:var(--ink);
+.kstat .sv{font-size:1.125rem;font-weight:500;letter-spacing:-.025em;line-height:1.15;color:var(--ink);
   font-variant-numeric:tabular-nums}
-.kstat .sk{font-size:0.65625rem;color:var(--ink-4);font-weight:450}
+.kstat .sk{font-size:.6875rem;color:var(--ink-4);font-weight:450}
 /* 跑的过程按行走，每行一个勾——像看着它一步步做完，不是一根进度条 */
-.klog{display:flex;flex-direction:column;gap:2px;font-family:var(--mono);font-size:0.71875rem;
+.klog{display:flex;flex-direction:column;gap:2px;font-family:var(--mono);font-size:.75rem;
   line-height:1.7;color:var(--ink-4)}
 .klog i{font-style:normal;color:var(--ok);margin-right:6px}
 .klog .cur{color:var(--ink-2)}
 .klog .cur i{color:var(--dry)}
 .rmchip{display:inline-flex;align-items:center;gap:5px;padding:2px 4px 2px 9px;
   border-radius:999px;background:var(--dry-soft);color:var(--dry-ink);
-  font-size:0.71875rem;font-weight:500}
+  font-size:.75rem;font-weight:500}
 .rmchip button{border:0;background:transparent;color:inherit;cursor:pointer;font-size:0.875rem;
   line-height:1;padding:0 4px;min-height:1.5rem;min-width:1.5rem}
 @media(max-width:720px){.kform{grid-template-columns:1fr}}
@@ -2215,7 +2215,7 @@ tbody tr.is-me>td{background:var(--dry-soft);font-weight:600}
 dialog{border-radius:.875rem}
 
 /* ---------- 表格：表头不铺底色，只靠一条线和小一号的字 ---------- */
-thead th{color:var(--ink-3);font-weight:600;font-size:0.71875rem;border-bottom:1px solid var(--line)}
+thead th{color:var(--ink-3);font-weight:600;font-size:.75rem;border-bottom:1px solid var(--line)}
 tbody tr:hover{background:var(--surface-2)}
 /* 操作列钉在右边，会盖住横向滚过来的内容：左边留出一格，链接不贴着前一列的字。 */
 .tbl-wrap.is-list th:last-child,.tbl-wrap.is-list td:last-child{padding-left:var(--s5)}
@@ -2230,7 +2230,7 @@ tbody tr:hover{background:var(--surface-2)}
 .chip.c-mut{background:var(--surface-3);color:var(--ink-3)}
 
 /* ---------- 页签 ---------- */
-.tab{font-size:0.84375rem}
+.tab{font-size:.875rem}
 .tab.is-on{color:var(--ink);border-bottom-color:var(--dry);font-weight:600}
 
 /* ---------- 输入 ---------- */
@@ -2252,7 +2252,7 @@ tbody tr:hover{background:var(--surface-2)}
 .turn-me .turn-g{color:var(--dry);line-height:2.4}
 
 /* ---------- 项目页 ---------- */
-.pjx-new{min-height:1.875rem;padding:0 12px;font-size:0.78125rem;white-space:nowrap}
+.pjx-new{min-height:1.875rem;padding:0 12px;font-size:.8125rem;white-space:nowrap}
 .outbar.is-inline{position:relative;top:auto;padding-top:0;flex:0 0 auto;z-index:8}
 .outbar.is-inline .outbar-p{position:absolute;right:0;top:100%;z-index:20}
 .pjx-conv{display:inline-flex;align-items:center;gap:var(--s2);min-width:0;max-width:100%;
@@ -2260,7 +2260,7 @@ tbody tr:hover{background:var(--surface-2)}
   background:transparent;cursor:pointer;font:inherit;color:var(--ink)}
 .pjx-conv:hover{background:var(--surface-2);border-color:var(--line)}
 .pjx-conv:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
-.pjx-conv-n{font-size:0.84375rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pjx-conv-n{font-size:.875rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pjx-conv svg{flex:0 0 auto;color:var(--ink-4)}
 .pjx-exps{gap:var(--s2);padding-top:var(--s3)}
 .pjx-sec{display:flex;align-items:center;gap:var(--s2);padding:var(--s3) 0 2px}
@@ -2280,14 +2280,14 @@ tbody tr:hover{background:var(--surface-2)}
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pjx-card-kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(4.25rem,1fr));gap:4px var(--s3)}
 .pjx-card-kv>span{display:flex;flex-direction:column;min-width:0}
-.pjx-card-kv i{font-style:normal;font-size:0.65625rem;color:var(--ink-4)}
+.pjx-card-kv i{font-style:normal;font-size:.6875rem;color:var(--ink-4)}
 .pjx-card-kv b{font-size:0.75rem;font-weight:500;color:var(--ink-2);
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 /* ---------- 模型接入 / 推理 ---------- */
 .prov-mk{display:grid;place-items:center;flex:0 0 2rem;width:2rem;height:2rem;border-radius:.5rem;
   background:var(--surface-3);color:var(--ink-2);font-weight:650;font-size:0.8125rem}
-.prov-mk.is-sm{flex-basis:1.625rem;width:1.625rem;height:1.625rem;font-size:0.71875rem;border-radius:.4375rem}
+.prov-mk.is-sm{flex-basis:1.625rem;width:1.625rem;height:1.625rem;font-size:.75rem;border-radius:.4375rem}
 .provs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
 .prov{position:relative;display:flex;align-items:center;gap:var(--s3);min-width:0;padding:var(--s3);
   border:1px solid var(--line);border-radius:.625rem;background:var(--surface);cursor:pointer}
@@ -2370,7 +2370,7 @@ body[data-route="me"] .acct-b{background:var(--surface-3)}
 .outbar:not(.is-inline){flex-direction:row;align-items:center;gap:var(--s2);flex-wrap:wrap}
 .outbar:not(.is-inline) .outbar-p{flex:0 0 100%;margin-left:auto}
 .outbar-back{min-height:1.875rem;padding:0 10px;font-size:0.75rem}
-.outbar-new{min-height:1.875rem;padding:0 12px;font-size:0.78125rem;white-space:nowrap}
+.outbar-new{min-height:1.875rem;padding:0 12px;font-size:.8125rem;white-space:nowrap}
 /* 输入框顶上的一排卡片 */
 .askchips{display:flex;flex-wrap:wrap;gap:6px;padding-bottom:var(--s2)}
 .rmchip{padding:3px 4px 3px 8px;border-radius:.5rem;border:1px solid var(--dry-dim);font-weight:600}
@@ -2394,7 +2394,7 @@ body[data-route="me"] .acct-b{background:var(--surface-3)}
   border:1px solid var(--line-2);border-radius:.625rem;overflow:hidden}
 .pdw-s{display:flex;flex-direction:column;gap:2px;padding:var(--s3) var(--s4);background:var(--surface)}
 .pdw-s b{font-size:1.25rem;font-weight:600;line-height:1.2}
-.pdw-s span{font-size:0.71875rem;color:var(--ink-3)}
+.pdw-s span{font-size:.75rem;color:var(--ink-3)}
 
 /* 项目页两边的顶栏同高 */
 .pjx-tabs,.pjx-chat-h{height:2.75rem;box-sizing:border-box;align-items:stretch}
@@ -2407,7 +2407,7 @@ body[data-route="me"] .acct-b{background:var(--surface-3)}
   width:min(18rem,100%);border:1px solid var(--line);border-radius:.5rem;background:var(--surface);color:var(--ink-4)}
 .fbar-q:hover{border-color:var(--ink-4)}
 .fbar-q:focus-within{border-color:var(--dry);box-shadow:0 0 0 3px var(--dry-soft)}
-.fbar-q input{flex:1 1 auto;min-width:0;height:100%;min-height:1.75rem;border:0;outline:0;background:transparent;color:var(--ink);font-size:0.78125rem}
+.fbar-q input{flex:1 1 auto;min-width:0;height:100%;min-height:1.75rem;border:0;outline:0;background:transparent;color:var(--ink);font-size:.8125rem}
 .fbar-q input::placeholder{color:var(--ink-4)}
 
 /* 全部对话：一段一行，时间统一靠右 */
@@ -2421,7 +2421,7 @@ body[data-route="me"] .acct-b{background:var(--surface-3)}
 .chcard-n{width:auto;flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .chcard .chip{flex:0 0 auto}
 .chcard-q{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
-.chcard-at{flex:0 0 6.5rem;text-align:right;font-size:0.71875rem;color:var(--ink-4)}
+.chcard-at{flex:0 0 6.5rem;text-align:right;font-size:.75rem;color:var(--ink-4)}
 .chcard-x{position:static;flex:0 0 auto}
 @media(max-width:40rem){.chcard-at{flex-basis:auto}.chcard .chip.c-mut{display:none}}
 
@@ -2440,10 +2440,10 @@ body[data-route="me"] .acct-b{background:var(--surface-3)}
 .nav[aria-current="page"]{background:var(--surface);color:var(--ink);box-shadow:0 0 0 1px var(--line)}
 .nav-group.is-sep,.side-foot{border-color:var(--line)}
 /* 对话页右上角：产出文件、历史对话 */
-.outbar-b{border-radius:.5rem;font-size:0.78125rem;font-weight:500;color:var(--ink-2)}
+.outbar-b{border-radius:.5rem;font-size:.8125rem;font-weight:500;color:var(--ink-2)}
 .outbar-b:not(:disabled){border-color:var(--dry-dim);color:var(--dry-ink);background:var(--dry-soft)}
 .outbar-b:not(:disabled) .num{background:var(--dry);color:var(--on-dry)}
-.outbar-hist{min-height:1.875rem;padding:0 11px;font-size:0.78125rem;gap:5px}
+.outbar-hist{min-height:1.875rem;padding:0 11px;font-size:.8125rem;gap:5px}
 /* 首页历史入口占独立顶行，随主内容区域右对齐，矮屏也不会压住问候语。 */
 .land-top{display:flex;justify-self:end;align-self:flex-end;margin-left:auto;width:max-content;gap:var(--s2);z-index:2}
 
@@ -2500,7 +2500,7 @@ dialog{max-height:calc(100dvh - 32px);overflow-y:auto}
 .research-home::before{content:"";position:absolute;z-index:-1;pointer-events:none;top:0;left:-2rem;right:-2rem;height:22rem;background:url('./assets/research-chat-bg.jpg') right top/cover no-repeat;mask-image:linear-gradient(#000 35%,transparent 100%);opacity:.72}
 .page.chat.is-land.research-home{display:flex;align-items:stretch;gap:0;padding:1.25rem 0 2rem;min-height:100%}
 .research-top{display:flex;align-items:center;justify-content:space-between;gap:1rem}
-.research-top strong{font-size:1.1rem;font-weight:650}
+.research-top strong{font-size:1.125rem;font-weight:650}
 .research-home .land{max-width:66rem;width:100%;gap:0;padding-top:clamp(3rem,14vh,9rem)}
 .research-home .greet{font-size:clamp(1.65rem,2.6vw,2.35rem);font-weight:650;line-height:1.3;letter-spacing:-.03em}
 .research-subtitle{font-size:1rem;color:var(--ink-3);margin:.65rem 0 1.6rem}
@@ -2524,21 +2524,21 @@ dialog{max-height:calc(100dvh - 32px);overflow-y:auto}
 .research-home .ctl-proj{max-width:17rem}
 .research-home .research-upload{gap:.5rem;width:auto;padding-inline:.4rem}
 .research-home .qks{margin-top:1.5rem;gap:.65rem}
-.research-home .qk{min-height:2rem;padding-inline:.8rem;font-size:.78rem}
+.research-home .qk{min-height:2rem;padding-inline:.8rem;font-size:.8125rem}
 .research-home .qk-ic{color:var(--ink-3)}
 
 @media(max-width:640px){
-.research-home .land{padding-top:2.6rem}.research-subtitle{font-size:.8rem;margin-bottom:1.25rem}
-.research-home .ask-b{padding:1rem}.research-home .ask-t.is-fix{height:7rem;min-height:7rem;max-height:7rem;font-size:.9rem}
+.research-home .land{padding-top:2.6rem}.research-subtitle{font-size:.8125rem;margin-bottom:1.25rem}
+.research-home .ask-b{padding:1rem}.research-home .ask-t.is-fix{height:7rem;min-height:7rem;max-height:7rem;font-size:.875rem}
 .research-home .research-upload span{display:none}.research-home .ctl-proj{max-width:7rem}.research-home .ask-bar{gap:5px}
-.research-domains{margin-bottom:1rem}.research-domain{min-width:9rem;font-size:.8rem;padding-inline:.7rem}
-.research-home .qks{gap:.4rem;margin-top:1rem}.research-home .qk{font-size:.72rem;padding-inline:.6rem}
+.research-domains{margin-bottom:1rem}.research-domain{min-width:9rem;font-size:.8125rem;padding-inline:.7rem}
+.research-home .qks{gap:.4rem;margin-top:1rem}.research-home .qk{font-size:.75rem;padding-inline:.6rem}
 
 .research-home::before{height:15rem;left:0;right:0}
 }
 @media(prefers-reduced-motion:reduce){.research-domain-list{scroll-behavior:auto}}
 
-.research-agent{display:inline-flex;align-items:center;gap:.5rem;align-self:flex-start;max-width:100%;padding:.3rem .6rem;border:1px solid var(--dry-dim);border-radius:999px;background:var(--dry-soft);color:var(--dry-ink);font-size:.78rem}
+.research-agent{display:inline-flex;align-items:center;gap:.5rem;align-self:flex-start;max-width:100%;padding:.3rem .6rem;border:1px solid var(--dry-dim);border-radius:999px;background:var(--dry-soft);color:var(--dry-ink);font-size:.8125rem}
 .research-agent svg{width:1rem;height:1rem}.research-agent button{padding:0 .2rem;border:0;background:transparent;color:inherit;cursor:pointer;font-size:1rem;line-height:1}
 
 .research-composer{width:100%;min-width:0;background:var(--surface-2);border:1px solid var(--line);border-radius:1.25rem}
@@ -2550,15 +2550,15 @@ dialog{max-height:calc(100dvh - 32px);overflow-y:auto}
 .research-project-outside .ctl-proj{max-width:100%;width:auto;min-width:0;gap:.5rem;padding:.35rem .55rem;background:var(--surface);border:1px solid var(--line);border-radius:.5rem;color:var(--ink-2);height:auto;min-height:2rem}
 .research-project-label{flex-shrink:0;color:var(--ink-3);font-size:.75rem}
 .research-project-outside .ctl-proj .dd-v{max-width:23rem}
-@media(max-width:640px){.research-project-outside{padding:.55rem .65rem}.research-project-outside .ctl-proj{font-size:.7rem;gap:.35rem}.research-project-label{font-size:.7rem}}
+@media(max-width:640px){.research-project-outside{padding:.55rem .65rem}.research-project-outside .ctl-proj{font-size:.6875rem;gap:.35rem}.research-project-label{font-size:.6875rem}}
 .research-project-outside .ctl-proj:hover{background:var(--surface-2);border-color:var(--line)}
 .research-composer .research-upload{width:2rem;padding:0;flex-shrink:0}
 @media(max-width:640px){
 .research-send-controls{width:100%;gap:.35rem;flex-wrap:wrap}
-.research-send-controls .research-agent{font-size:.65rem;gap:.3rem;padding:.25rem .4rem}
+.research-send-controls .research-agent{font-size:.6875rem;gap:.3rem;padding:.25rem .4rem}
 .research-send-controls .research-agent svg{width:.8rem;height:.8rem}
-.research-send-controls .ctl-mdl{width:8rem;min-width:0;font-size:.65rem}
-.research-send-controls .ctl-mdl .ctl-dd{font-size:.65rem}
+.research-send-controls .ctl-mdl{width:8rem;min-width:0;font-size:.6875rem}
+.research-send-controls .ctl-mdl .ctl-dd{font-size:.6875rem}
 .research-send-controls .ctl-mdl .tool-ic{display:none}
 .research-send-controls .ctl-go{width:2rem;min-width:2rem}
 .research-project-outside .ctl-proj{max-width:100%}
@@ -3064,7 +3064,7 @@ body[data-route=workbench] #view{padding-block:0 var(--s8);padding-inline:max(va
 @media(min-width:1101px) and (min-height:650px){.rh-discoveries-wrap{margin-top:0}.rh-discoveries{overflow:visible}}
 .rh-discover-heading{gap:0}
 
-body[data-route="materials"] #view,body[data-route="files"] #view{padding:0;background:var(--surface)}
+body[data-route="materials"] #view,body[data-route="files"] #view,body[data-route="shared"] #view{padding:0;background:var(--surface)}
 .ms-shell{display:grid;grid-template-columns:240px minmax(0,1fr);min-height:calc(100vh - 48px);color:var(--ink)}
 .ms-shell button,.ms-shell input,.ms-shell select{font:inherit}.ms-shell button{cursor:pointer}.ms-shell button:disabled{cursor:not-allowed;opacity:.5}.ms-shell svg{width:20px;height:20px;flex-shrink:0}
 .ms-sidebar{background:var(--paper);border-right:1px solid var(--line);padding:30px 16px;display:flex;flex-direction:column;gap:5px;min-width:0}.ms-sidebar h2{font-size:20px;margin:0 10px 26px}.ms-sidebar h3{font-size:12px;color:var(--ink-3);font-weight:500;margin:28px 10px 12px}.ms-nav{border:0;background:transparent;color:var(--ink-2);display:flex;align-items:center;gap:12px;text-align:left;min-height:40px;width:100%;padding:9px 12px;border-radius:8px}.ms-nav span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}.ms-nav small{color:var(--ink-3)}.ms-nav:hover,.ms-nav.selected{background:var(--surface-3);color:var(--ink)}.ms-nav.selected{font-weight:600}.ms-project-nav{max-height:260px;overflow:auto}.ms-trash{margin-top:auto;padding-top:36px}
@@ -3089,7 +3089,7 @@ body[data-route=schedules] #view,body[data-route=schedulenew] #view,body[data-ro
 .st-layout{display:grid;grid-template-columns:314px minmax(0,1fr);min-height:100%;color:var(--ink);background:var(--surface);font-family:"Noto Sans SC",Inter,"PingFang SC",sans-serif}
 .st-layout *{box-sizing:border-box}.st-layout button,.st-layout input,.st-layout select,.st-layout textarea{font:inherit}.st-layout button{cursor:pointer;color:inherit}.st-layout button:focus-visible,.st-layout input:focus-visible,.st-layout select:focus-visible,.st-layout textarea:focus-visible{outline:2px solid var(--dry);outline-offset:3px}
 .st-icon{width:20px;height:20px;flex:none}.st-list{padding:26px 22px;background:var(--surface-2);border-right:1px solid var(--line);min-width:0}.st-list-head{display:flex;align-items:center;gap:14px}.st-list-head h1{font-size:22px;font-weight:600;margin:0 auto 0 0}.st-icon-button{display:inline-flex;align-items:center;justify-content:center;width:30px;height:36px;border:0;background:none;border-radius:8px}.st-icon-button:hover,.st-row:hover,.st-new:hover{background:var(--surface-3,var(--bg))}.st-new{display:flex;align-items:center;gap:10px;padding:10px 0;margin:22px 0;border:0;background:none;font-size:17px!important;font-weight:600!important}.st-list h2{font-size:15px;color:var(--ink-3);font-weight:400;margin:22px 0 10px}.st-row{display:flex;flex-direction:column;gap:4px;width:100%;padding:14px 8px;text-align:left;background:none;border:0;border-radius:8px;margin:4px 0 10px;overflow-wrap:anywhere}.st-row strong{font-size:17px;font-weight:550}.st-row small{font-size:14px;color:var(--ink-3)}.st-row[aria-current=true]{background:var(--line-2)}.st-empty{font-size:14px;color:var(--ink-3);padding:12px 0}.st-search{width:100%;margin:14px 0 8px}.st-filter{display:block;width:100%;margin-bottom:12px}
-.st-main{padding:26px clamp(24px,5vw,90px) 36px;min-width:0}.st-home{padding-top:clamp(60px,11vh,154px)}.st-intro{text-align:center;margin:0 auto 44px}.st-intro>img{width:62px;height:62px}.st-intro h2{font-size:28px;font-weight:600;margin:14px 0}.st-intro p{font-size:18px;color:var(--ink-3);line-height:1.6;margin:0}.st-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px;max-width:908px;margin:auto}.st-card{display:flex;align-items:center;gap:22px;border:1px dashed var(--line);border-radius:var(--r4);padding:24px 28px;min-height:144px;background:var(--surface);text-align:left}.st-card:hover{background:var(--surface-2);border-color:var(--ink-3)}.st-card span{min-width:0}.st-card strong{font-size:21px;font-weight:550}.st-card p{font-size:17px;color:var(--ink-3);line-height:1.6;margin:8px 0 0}.st-note{font-size:12px;color:var(--ink-3);line-height:1.6;margin:24px 0 0}.st-back{display:inline-flex;gap:8px;align-items:center;border:0;background:none;padding:0;color:var(--ink-3)!important;font-size:14px!important}.st-main>h2{font-size:28px;font-weight:600;margin:18px 0 8px}.st-subtitle{font-size:15px;color:var(--ink-3);margin:0 0 22px}.st-form{display:flex;flex-direction:column;gap:16px;max-width:800px}.st-field{display:flex;flex-direction:column;gap:8px;font-size:15px}.st-field>span,.st-field legend{font-weight:550}.st-form .input{min-height:46px;padding:11px 16px;width:100%;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:8px}.st-form textarea{resize:vertical;min-height:90px}.st-period{border:0;padding:0;margin:0;min-width:0}.st-period legend{margin-bottom:10px;font-size:15px}.st-period-options{display:flex;gap:8px;flex-wrap:wrap}.st-period-options label{position:relative}.st-period-options input{position:absolute;opacity:0}.st-period-options span{display:block;border:1px solid var(--line);border-radius:8px;padding:11px 22px;font-size:16px;cursor:pointer}.st-period-options input:checked+span{background:var(--line-2)}.st-period-options input:focus-visible+span{outline:2px solid var(--dry);outline-offset:3px}.st-inline{display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap}.st-inline .st-field{flex:1;min-width:130px}.st-check{display:flex;align-items:center;gap:10px;font-size:15px}.st-check input{width:18px;height:18px;accent-color:var(--ink)}.st-preview{padding:14px 18px;background:var(--surface-2);border-radius:8px;line-height:1.6}.st-preview p{margin:4px 0 0;color:var(--ink-3);font-size:14px}.st-actions{display:flex;justify-content:flex-end;gap:12px;flex-wrap:wrap}.st-actions .btn{padding:11px 22px;min-height:46px;border-radius:8px;font-size:16px}.st-errors{padding:12px 16px;border:1px solid var(--err);border-radius:8px;color:var(--err);font-size:14px}.st-detail{max-width:800px}.st-detail dl{display:grid;grid-template-columns:110px minmax(0,1fr);gap:20px;margin:30px 0}.st-detail dt{color:var(--ink-3)}.st-detail dd{margin:0;overflow-wrap:anywhere;white-space:pre-wrap}.st-detail h3{font-size:18px;margin-top:32px}.st-danger{color:var(--err)!important}.st-mobile-back{display:none}
+.st-main{padding:26px clamp(24px,5vw,90px) 36px;min-width:0}.st-home{padding-top:clamp(60px,11vh,154px)}.st-intro{text-align:center;margin:0 auto 44px}.st-intro>img{width:62px;height:62px}.st-intro h2{font-size:28px;font-weight:600;margin:14px 0}.st-intro p{font-size:18px;color:var(--ink-3);line-height:1.6;margin:0}.st-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px;max-width:908px;margin:auto}.st-card{display:flex;align-items:center;gap:22px;border:1px solid var(--line);border-radius:var(--r4);padding:24px 28px;min-height:144px;background:var(--surface);text-align:left}.st-card:hover{background:var(--surface-2);border-color:var(--ink-3)}.st-card span{min-width:0}.st-card strong{font-size:21px;font-weight:550}.st-card p{font-size:17px;color:var(--ink-3);line-height:1.6;margin:8px 0 0}.st-note{font-size:12px;color:var(--ink-3);line-height:1.6;margin:24px 0 0}.st-back{display:inline-flex;gap:8px;align-items:center;border:0;background:none;padding:0;color:var(--ink-3)!important;font-size:14px!important}.st-main>h2{font-size:28px;font-weight:600;margin:18px 0 8px}.st-subtitle{font-size:15px;color:var(--ink-3);margin:0 0 22px}.st-form{display:flex;flex-direction:column;gap:16px;max-width:800px}.st-field{display:flex;flex-direction:column;gap:8px;font-size:15px}.st-field>span,.st-field legend{font-weight:550}.st-form .input{min-height:46px;padding:11px 16px;width:100%;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:8px}.st-form textarea{resize:vertical;min-height:90px}.st-period{border:0;padding:0;margin:0;min-width:0}.st-period legend{margin-bottom:10px;font-size:15px}.st-period-options{display:flex;gap:8px;flex-wrap:wrap}.st-period-options label{position:relative}.st-period-options input{position:absolute;opacity:0}.st-period-options span{display:block;border:1px solid var(--line);border-radius:8px;padding:11px 22px;font-size:16px;cursor:pointer}.st-period-options input:checked+span{background:var(--line-2)}.st-period-options input:focus-visible+span{outline:2px solid var(--dry);outline-offset:3px}.st-inline{display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap}.st-inline .st-field{flex:1;min-width:130px}.st-check{display:flex;align-items:center;gap:10px;font-size:15px}.st-check input{width:18px;height:18px;accent-color:var(--ink)}.st-preview{padding:14px 18px;background:var(--surface-2);border-radius:8px;line-height:1.6}.st-preview p{margin:4px 0 0;color:var(--ink-3);font-size:14px}.st-actions{display:flex;justify-content:flex-end;gap:12px;flex-wrap:wrap}.st-actions .btn{padding:11px 22px;min-height:46px;border-radius:8px;font-size:16px}.st-errors{padding:12px 16px;border:1px solid var(--err);border-radius:8px;color:var(--err);font-size:14px}.st-detail{max-width:800px}.st-detail dl{display:grid;grid-template-columns:110px minmax(0,1fr);gap:20px;margin:30px 0}.st-detail dt{color:var(--ink-3)}.st-detail dd{margin:0;overflow-wrap:anywhere;white-space:pre-wrap}.st-detail h3{font-size:18px;margin-top:32px}.st-danger{color:var(--err)!important}.st-mobile-back{display:none}
 @media(max-width:1200px){.st-layout{grid-template-columns:270px minmax(0,1fr)}.st-main{padding-inline:28px}.st-grid{gap:18px}.st-card{padding:22px;gap:16px}.st-card strong{font-size:18px}.st-card p{font-size:15px}}
 @media(max-width:850px){.st-layout{grid-template-columns:230px minmax(0,1fr)}.st-list{padding-inline:16px}.st-grid{grid-template-columns:1fr}.st-intro p{font-size:16px}.st-home{padding-top:50px}.st-row strong{font-size:15px}}
 @media(max-width:600px){.st-layout{display:block}.st-list{border-right:0;min-height:100%}.st-main{padding:24px 18px}.st-layout[data-mode=home] .st-main{border-top:1px solid var(--line)}.st-layout:not([data-mode=home]) .st-list{display:none}.st-mobile-back{display:block}.st-main>h2{font-size:25px}.st-card{min-height:120px}.st-form .st-inline{align-items:stretch}.st-actions .btn{flex:1}.st-intro{margin-bottom:28px}.st-layout button{min-height:44px}}
@@ -3116,10 +3116,10 @@ html[data-theme=dark] .st-icon,html[data-theme=dark] .st-intro>img{filter:invert
 .st-layout .btn-pri,.st-dialog .btn-pri{color:var(--on-pri);background:var(--ink);border-color:var(--ink)}
 .st-layout .btn-pri:hover:not([disabled]),.st-dialog .btn-pri:hover:not([disabled]){color:var(--on-pri);background:var(--primary-hover);border-color:var(--primary-hover)}
 .st-dialog{width:min(760px,calc(100vw - 40px));max-width:760px;max-height:calc(100dvh - 48px);padding:0;border:1px solid var(--line);border-radius:18px;background:var(--surface);color:var(--ink);overflow:auto;overscroll-behavior:contain}
-.st-dialog::backdrop{background:rgb(0 0 0 / .35)}.st-modal-body{padding:28px 32px}.st-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px}.st-modal-head h2{font-size:24px;margin:0 0 8px}.st-close{width:36px;height:36px;flex:none;border:0;border-radius:8px;background:none;color:var(--ink-3);font:inherit;font-size:28px;cursor:pointer}.st-close:hover{background:var(--surface-3)}.st-dialog .st-form{max-width:none}.st-dialog .st-actions{position:sticky;bottom:-28px;margin:0 -32px -28px;padding:16px 32px 24px;background:var(--surface);border-top:1px solid var(--line);z-index:1}.st-dialog .st-subtitle{line-height:1.6}.st-dialog .st-form select{font:inherit}.st-dialog .st-icon{filter:none}
+.st-dialog::backdrop{background:rgb(0 0 0 / .35)}.st-modal-body{padding:28px 32px}.st-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px}.st-modal-head h2{font-size:24px;margin:0 0 8px}.st-close{width:36px;height:36px;flex:none;border:0;border-radius:8px;background:none;color:var(--ink-3);font:inherit;font-size:28px;cursor:pointer}.st-close:hover{background:var(--surface-3)}.st-dialog .st-form{max-width:none}.st-dialog .st-actions{position:sticky;bottom:0;margin:0 -32px -28px;padding:16px 32px 24px;background:var(--surface);border-top:1px solid var(--line);z-index:1}.st-dialog .st-subtitle{line-height:1.6}.st-dialog .st-form select{font:inherit}.st-dialog .st-icon{filter:none}
 .st-content-main{padding:28px 36px}.st-content-head{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:32px}.st-content-head h2{font-size:26px;margin:0 0 8px;overflow-wrap:anywhere}.st-content-head .btn{gap:8px;min-height:40px}.st-content-columns{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:36px;max-width:1300px}.st-output h3{font-size:16px;margin:0 0 18px}.st-instruction{white-space:pre-wrap;overflow-wrap:anywhere;font-size:16px;line-height:1.9;padding-bottom:28px;margin:0 0 30px;border-bottom:1px solid var(--line)}.st-output-empty{text-align:center;padding:70px 24px;color:var(--ink-3);line-height:1.8}.st-output-empty>.st-icon{width:36px;height:36px}.st-output-empty h4{font-size:18px;font-weight:500;margin:16px 0 8px}.st-output-empty p{font-size:14px;margin:0}.st-summary{border:1px solid var(--line);border-radius:18px;padding:24px;align-self:start;overflow-wrap:anywhere}.st-summary h3{color:var(--ink-3);font-size:13px;font-weight:500;margin:24px 0 12px}.st-summary h3:first-child{margin-top:0}.st-summary p{font-size:14px;line-height:1.8;margin:0}.st-summary-plan{display:flex;align-items:center;gap:12px}.st-summary-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px;border-top:1px solid var(--line);padding-top:20px}.st-summary-actions .btn{min-height:36px}.st-run{padding:24px 0;border-bottom:1px solid var(--line)}.st-run time{font-size:12px;color:var(--ink-3)}.st-run p{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.8}
 @media(max-width:1200px){.st-content-columns{grid-template-columns:1fr}.st-summary{max-width:100%;order:2}.st-content-main{padding:24px}}
-@media(max-width:600px){.st-dialog{width:calc(100vw - 20px);max-height:calc(100dvh - 20px);border-radius:14px}.st-modal-body{padding:20px 18px}.st-dialog .st-actions{bottom:-20px;margin:0 -18px -20px;padding:14px 18px 20px}.st-content-main{padding:22px 18px}.st-content-head{flex-wrap:wrap}.st-content-head h2{font-size:24px}.st-close{min-height:44px}.st-summary{padding:20px}}
+@media(max-width:600px){.st-dialog{width:calc(100vw - 20px);max-height:calc(100dvh - 20px);border-radius:14px}.st-modal-body{padding:20px 18px}.st-dialog .st-actions{bottom:0;margin:0 -18px -20px;padding:14px 18px 20px}.st-content-main{padding:22px 18px}.st-content-head{flex-wrap:wrap}.st-content-head h2{font-size:24px}.st-close{min-height:44px}.st-summary{padding:20px}}
 .st-sample{font-size:14px;line-height:1.8;overflow-wrap:anywhere}.st-sample-label{display:inline-block;padding:4px 10px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink-3);font-size:12px;margin-bottom:16px}.st-sample h4{font-size:21px;font-weight:600;line-height:1.5;margin:0 0 14px}.st-sample>p{margin:0 0 20px}.st-sample h5{font-size:15px;margin:24px 0 10px}.st-sample ul{padding-left:20px;margin:0 0 20px}.st-sample li{margin:6px 0}.st-sample-table{width:100%;overflow:auto;border:1px solid var(--line);border-radius:10px}.st-sample table{width:100%;border-collapse:collapse;font-size:13px}.st-sample th{text-align:left;background:var(--paper);font-weight:500;color:var(--ink-3)}.st-sample th,.st-sample td{padding:12px 14px;vertical-align:top;min-width:90px}.st-sample td{border-top:1px solid var(--line)}.st-sample td:last-child{min-width:180px}.st-sample .st-sample-note{font-size:12px;color:var(--ink-3);line-height:1.8;padding:14px 16px;background:var(--paper);border-radius:8px;margin-top:20px}.st-sample-library,.st-sample-option{border-top:1px solid var(--line);padding:16px 0}.st-sample-library>summary,.st-sample-option>summary{cursor:pointer;font-size:14px;color:var(--ink-2);padding:4px 0}.st-sample-option .st-sample{padding-top:20px}.st-sample-library>summary:focus-visible,.st-sample-option>summary:focus-visible{outline:2px solid var(--dry);outline-offset:4px}
 @media(max-width:600px){.st-sample h4{font-size:19px}.st-sample th,.st-sample td{padding:10px;min-width:75px}.st-sample td:last-child{min-width:145px}}
 
@@ -3640,13 +3640,13 @@ body[data-route="chat"] #main{flex-direction:row}
 .history-meta-at{flex:0 0 auto;margin-left:auto;font-variant-numeric:tabular-nums}
 .history-title{font-size:.8125rem;line-height:1.6}.history-meta{font-size:.6875rem;color:var(--ink-3);margin-top:3px}
 .history-more{flex:none;width:28px;min-height:32px;color:var(--ink-2);border:0;background:transparent;border-radius:6px;cursor:pointer}
-.history-empty{padding:24px 8px;font-size:.8rem;color:var(--ink-3);line-height:1.8}
+.history-empty{padding:24px 8px;font-size:.8125rem;color:var(--ink-3);line-height:1.8}
 .history-foot{font-size:.6875rem;color:var(--ink-3);border-top:1px solid var(--line);padding:12px 8px 0}
 body[data-route="chat"] #view{min-width:0;padding-inline:clamp(16px,3vw,40px)}
 body[data-route="chat"] .research-top .outbar-hist,body[data-route="chat"] .outbar-hist,body[data-route="chat"] .outbar-new{display:none}
 /* 水印保留：这一页顶部本来就空，去掉之后整屏没有一处落脚点。
    它在 visual-system.css 里已经压到很淡，不会抢文字。 */
-.history-conversation-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.9rem;font-weight:600;margin-right:auto}
+.history-conversation-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.875rem;font-weight:600;margin-right:auto}
 @media(max-width:760px){body[data-route="chat"] #main{flex-direction:column}.chat-history{flex:0 0 auto;border-right:0;border-bottom:1px solid var(--line);padding:12px 16px;gap:10px}.chat-history .history-list{max-height:210px;flex:auto}.chat-history .history-foot{display:none}.chat-history-head strong{font-size:.875rem}}
 
 
@@ -4014,6 +4014,21 @@ h1.pjx-n{font-size:18px!important;font-weight:600!important;margin:0!important;l
 .page,.page.wb.wb-workstation,.al-page,.page.rs,.settings-layout,.st-layout{max-width:min(100%,clamp(73.75rem,78vw,100rem))!important}
 .projects-page .pgrid,.pgrid{grid-template-columns:repeat(auto-fill,minmax(min(100%,22rem),1fr))}
 @media(min-width:1800px){.rh-project-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.rh-card-section p{-webkit-line-clamp:3}}
+/* 逐页走查：点击目标、容器与标题分量 */
+.ms-row-actions button{min-width:32px;padding-inline:6px}
+.lnk{padding-inline:4px;min-width:32px;text-align:center}
+.rs-link{padding-inline:4px}
+.st-back{min-height:32px!important;padding-inline:4px!important}
+.request-inbox h2{font-size:14px!important;font-weight:600;margin:0 0 8px}
+.request-inbox{margin:8px 0 28px!important}
+.ms-toolbar{align-items:center}.ms-types,.ms-views{min-height:32px}
+.tl-card h2,.rs-project-card h2{font-size:16px!important}
+.shared-detail .shared-asset-head h2{font-size:18px!important}
+/* 侧栏分组标题：之前被锁成 22px 高、26px 行高，文字溢出到下一项的选中底块下面 */
+#side .nav-group .lbl{display:block;height:auto!important;min-height:0;line-height:1.4!important;padding:8px 12px 6px!important}
+.ms-views button{min-height:32px;min-width:32px;padding:6px;align-items:center;justify-content:center}
+.project-team-add{font-size:14px}
+.rs small:not([class]),.ms-main small:not([class]),.tl-card small:not([class]){font-size:11px}
 
 
 /* 项目卡标题被挤成两行、断在「结合界 / 面」：标题被写死 max-width:calc(100% - 55px)，
@@ -5015,7 +5030,7 @@ function roundTabs(active){
     </div>
     <div class="row wrap" style="gap:var(--s2);border-bottom:1px solid var(--line);padding-bottom:var(--s3)">
       ${RTABS.map(([k,n])=>`<button class="btn ${active===k?'':'btn-gh'}" type="button" data-go="${k}"
-        style="min-height:1.75rem;font-size:0.78125rem${active===k?';border-color:var(--dry);color:var(--dry-ink);background:var(--dry-soft);font-weight:600':''}">${n}</button>`).join('')}
+        style="min-height:1.75rem;font-size:.8125rem${active===k?';border-color:var(--dry);color:var(--dry-ink);background:var(--dry-soft);font-weight:600':''}">${n}</button>`).join('')}
     </div>
   </div>`;
 }
@@ -5253,7 +5268,7 @@ const COPYSRC={};
 function cpBtn(key,text,label){
   COPYSRC[key]=text;
   return `<button class="btn btn-gh cpbtn" type="button" data-copy="${esc(key)}"
-    style="min-height:1.5rem;padding:0 9px;font-size:0.71875rem">${esc(label||'复制')}</button>`;
+    style="min-height:1.5rem;padding:0 9px;font-size:.75rem">${esc(label||'复制')}</button>`;
 }
 function bindCopy(){
   view.querySelectorAll('[data-copy]').forEach(b=>b.onclick=()=>{
@@ -6602,7 +6617,7 @@ function labCard(b){
         <span class="scard-ic${st.phase==='执行'?' is-wet':''}">${
           '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 3.5v6L4.5 18a2 2 0 0 0 1.8 3h11.4a2 2 0 0 0 1.8-3l-5-8.5v-6M8 3.5h8M7.5 14h9"/></svg>'}</span>
         <span class="col grow" style="gap:1px;min-width:0">
-          <strong class="scard-n">${esc(b.name||(pr.n+' · Round '+b.round))}</strong>
+          <strong class="scard-n" title="${esc(b.name||(pr.n+' · Round '+b.round))}">${esc(b.name||(pr.n+' · Round '+b.round))}</strong>
           <span class="scard-slug num">${esc(b.id)}　${esc(pnOf(b.pid))}</span></span>
         ${batchChips(b)}</div>
       <div class="col" style="gap:5px">
@@ -6683,9 +6698,9 @@ V.labdet=()=>{
     ${[['数据条数',b.n,''],['进度',pg+'%',''],
        ['已走步数',(b.log||[]).length+' / '+EXP_STATUS.length,''],
        ['结果',b.results==='none'?'未回':(RESULTS_STATUS[b.results]||b.results),
-        (b.results==='all'?'color:var(--ok);':'')+'font-size:1.0625rem;font-weight:600;font-family:var(--sans);line-height:1.9']]
+        (b.results==='all'?'color:var(--ok);':'')+'font-size:1rem;font-weight:600;font-family:var(--sans);line-height:1.9']]
       .concat([[nx?(nx.who==='你'?'下一步 · 待你处理':'下一步 · 实验节点执行中'):'下一步',nx?nx.act:'已结束',
-        (nx&&nx.who==='你'?'color:var(--wet-ink);':'')+'font-size:1.0625rem;font-weight:600;font-family:var(--sans);line-height:1.9']])
+        (nx&&nx.who==='你'?'color:var(--wet-ink);':'')+'font-size:1rem;font-weight:600;font-family:var(--sans);line-height:1.9']])
       .map(([k,v,stl])=>`<div><div class="t-sm">${k}</div><div class="v" style="${stl}">${esc(String(v))}</div></div>`).join('')}
   </div>
   <div class="row wrap" style="gap:var(--s3);align-items:center">
@@ -7703,7 +7718,7 @@ V.dsnew=()=>{
     <span class="t-sm mut2">${ready?'建立后为草稿，发布后才能用于训练':'请填写名称、文件和目标列'}</span>
     <span class="grow"></span>
     <button class="btn" type="button" data-act="dscancel">取消</button>
-    <button class="btn btn-pri" type="button" data-act="dsmake" ${ready?'':'disabled'}>建立数据集</button>
+    <button class="btn btn-pri" type="button" data-act="dsmake" ${ready?'':'disabled title="先填写名称、数据文件和目标列"'}>建立数据集</button>
   </div>
 </div>`;
 };
@@ -10687,6 +10702,7 @@ function grid(){
     const res=[[(typeof materialsRows==='function'?materialsRows().filter(x=>x.pid===p.id).length:FILES().filter(x=>x.pid===p.id).length),'资料'],[(p.tools||[]).length,'工具'],
                [(p.arch||[]).length,'归档']].filter(x=>x[0]);
     const nt=(workbenchData({pid:p.id}).tasks||[]).filter(t=>t.pid===p.id&&t.isTask!==false&&t.status!=='canceled').length;
+    if(nt)res.push([nt,'个任务']);
     return `<div class="project-card-wrap"><button class="pcard ${cc}" type="button" data-proj="${p.id}">
       <span class="pcard-t">
         <strong>${esc(p.name)}</strong>
@@ -10696,7 +10712,6 @@ function grid(){
       <span class="pcard-f">
         <span class="t-sm mut2">${res.length?res.map(x=>'<b class="num">'+x[0]+'</b> '+x[1]).join(' · '):'还没有资源'}</span>
         <span class="grow"></span>
-        <span class="t-sm mut2"><b class="num">${nt}</b> 个任务</span>
       </span>
     </button></div>`}).join('')+`</div>`;
 }
@@ -11911,7 +11926,7 @@ return `<section class="card">
       ${P.chains.map((c,i)=>`<div class="col" style="gap:4px">
         <div class="row"><span class="t-sm mut2">链 ${esc(c.id)}</span><span class="grow"></span>
           <span class="t-sm mut2 num">${c.seq.length} 残基</span></div>
-        <textarea class="input num" data-chain="${i}" style="min-height:3.875rem;font-size:0.71875rem;line-height:1.75">${esc(c.seq)}</textarea>
+        <textarea class="input num" data-chain="${i}" style="min-height:3.875rem;font-size:.75rem;line-height:1.75">${esc(c.seq)}</textarea>
       </div>`).join('')}
       <div class="row"><span class="grow"></span>
         <button class="btn btn-gh" type="button" data-act="reparse">重新解析编辑后的序列</button></div>
@@ -11941,7 +11956,7 @@ return `<section class="card">
   <div class="card-h"><strong>选择设计位点</strong>
     <span class="grow"></span><span class="t-sm mut2">已选 <span class="num">${IN.sel.size}</span> 个残基</span></div>
   <div class="card-b col" style="gap:var(--s4)">
-    <div id="seqmap" style="font-size:0.78125rem;line-height:2;background:var(--surface-2);
+    <div id="seqmap" style="font-size:.8125rem;line-height:2;background:var(--surface-2);
       border:1px solid var(--line);border-radius:var(--r2);padding:var(--s4);user-select:none">${html}</div>
     <div class="row wrap" style="gap:var(--s3);align-items:flex-end">
       <div class="field grow" style="max-width:360px"><label class="label" for="res">位点（区间与单点可混写）</label>
@@ -12091,7 +12106,7 @@ V.shelf=()=>{
       <span class="scard-ic${t.cap==='wet'?' is-wet':''}">${
         capOf(t)?capIcon(capOf(t)):'◇'}</span>
       <span class="col grow" style="gap:1px;min-width:0">
-        <strong class="scard-n">${esc(t.n)}</strong>
+        <strong class="scard-n" title="${esc(t.n)}">${esc(t.n)}</strong>
         ${slug(t.n)!==t.n?`<span class="scard-slug num">${esc(slug(t.n))}</span>`:''}</span>
       ${pubOK(t.n)?'':'<span class="chip c-err">已停用</span>'}
       ${t.appr?'<span class="chip c-wet" title="它生成的任务单要你确认排期之后才会提交执行">需确认排期</span>':''}
@@ -12430,7 +12445,7 @@ function feedNote(cap){
     <span class="t-sm num grow">${esc(fd.name)}</span>
     <span class="t-sm mut2">来自 ${esc(fd.from)}　${esc(fd.at)}</span>
     <button class="btn btn-gh" type="button" data-act="feedclr"
-      style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem">断开</button>
+      style="min-height:1.5rem;padding:0 8px;font-size:.75rem">断开</button>
   </div>`;
 }
 
@@ -12446,7 +12461,7 @@ function artCard(t){
     <span class="grow"></span>
     <span class="t-sm mut2">${A.length} 个</span>
     <button class="btn btn-gh" type="button" data-artzip="${esc(t.id)}"
-      style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem">全部打包</button></div>
+      style="min-height:1.5rem;padding:0 8px;font-size:.75rem">全部打包</button></div>
     ${/* 这里原先有一段讲「下载是现算的、存入项目是冻住的」。
          两颗按钮各自的 title 已经说了这件事，正文再讲一遍是旁白：
          它解释产品怎么运作，而不是帮人做下一步。 */''}
@@ -12459,9 +12474,9 @@ function artCard(t){
           <span class="chip">${esc(a.n)}</span>
           <button class="btn btn-gh" type="button" data-artdl="${esc(t.id)}|${i}"
             title="现在按当前数据算一份，下到的是最新那一版"
-            style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem">下载</button>
+            style="min-height:1.5rem;padding:0 8px;font-size:.75rem">下载</button>
           ${(function(){const rec=archRecOf(a,t);
-            const S1='style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem"';
+            const S1='style="min-height:1.5rem;padding:0 8px;font-size:.75rem"';
             return rec
               ?`<button class="btn btn-gh" type="button" data-archgo="${esc(rec.id)}" ${S1}
                   title="${esc(rec.at)} 存入，指纹 ${esc(String(rec.hash))}"
@@ -12479,7 +12494,7 @@ function artCard(t){
           <span class="lbl">接到下一步</span>
           ${cons.map(c=>`<button class="btn btn-gh" type="button"
             data-artuse="${esc(t.id)}|${i}|${esc(c.cap)}"
-            style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem"
+            style="min-height:1.5rem;padding:0 8px;font-size:.75rem"
             title="把这个产物接到「${esc(c.nd.n)}」的输入上">${esc(capName(c.cap))} · ${esc(c.nd.n)}</button>`).join('')}
         </div>`:''}
         ${artSinks(a.f).length?`<div class="row wrap" style="gap:var(--s2);align-items:baseline">
@@ -12694,7 +12709,7 @@ function archCard(){
     <div class="card-h"><strong>本项目的归档</strong><span class="grow"></span>
       <span class="t-sm mut2">${L.length} 件</span>
       <button class="btn btn-gh" type="button" data-mkreport="${S.round}"
-        style="min-height:1.5rem;padding:0 9px;font-size:0.71875rem">生成 Round ${S.round} 报告</button></div>
+        style="min-height:1.5rem;padding:0 9px;font-size:.75rem">生成 Round ${S.round} 报告</button></div>
     <div class="card-b col" style="gap:var(--s4)">
       <p class="t-sm mut" style="margin:0;max-width:72ch">这里放的是<strong>冻住的那一份</strong>：
         内容在存入的那一刻定下来，之后数据再变它也不变。报告、送检单、作为某次决策依据的候选表，
@@ -12706,11 +12721,11 @@ function archCard(){
           <span class="num t-md grow" style="min-width:0;word-break:break-all">${esc(x.name)}</span>
           <span class="chip">${esc(x.n)}</span>
           <button class="btn btn-gh" type="button" data-archdl="${esc(x.id)}"
-            style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem">下载</button>
+            style="min-height:1.5rem;padding:0 8px;font-size:.75rem">下载</button>
           <button class="btn btn-gh" type="button" data-archnote="${esc(x.id)}"
-            style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem">备注</button>
+            style="min-height:1.5rem;padding:0 8px;font-size:.75rem">备注</button>
           <button class="btn btn-gh" type="button" data-archdel="${esc(x.id)}"
-            style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem">删除</button>
+            style="min-height:1.5rem;padding:0 8px;font-size:.75rem">删除</button>
         </div>
         <div class="row wrap" style="gap:var(--s3)">
           <span class="t-sm mut2 num">${esc(x.id)}</span>
@@ -12719,7 +12734,7 @@ function archCard(){
           <span class="t-sm mut2 num" title="内容指纹，不是密码学哈希，只用来认出两份内容是不是同一份">#${esc(x.hash)}</span>
           ${x.from&&x.from.task&&x.from.task!=='—'
             ? `<button class="btn btn-gh" type="button" data-gotask="${esc(x.from.task)}"
-                style="min-height:1.5rem;padding:0 7px;font-size:0.71875rem">产自 ${esc(x.from.task)}</button>`
+                style="min-height:1.5rem;padding:0 7px;font-size:.75rem">产自 ${esc(x.from.task)}</button>`
             : (x.from&&x.from.round?`<span class="t-sm mut2">Round ${x.from.round}</span>`:'')}
         </div>
         ${x.note?`<span class="t-sm mut">${esc(x.note)}</span>`:''}
@@ -13016,7 +13031,7 @@ return `<section class="card" id="detail">
         ${dd==null?'':`<span class="t-sm" style="color:${(FIELD[pk].better==='high')===(dd>0)?'var(--dry)':'var(--err)'}">
           这一步 ${(dd>0?'+':'')+dd.toFixed(FIELD[pk].dec)}${FIELD[pk].unit}</span>`}
         <span class="grow"></span>
-        ${x.wt?'':`<button class="btn btn-gh" style="min-height:1.5rem;padding:0 6px;font-size:0.71875rem"
+        ${x.wt?'':`<button class="btn btn-gh" style="min-height:1.5rem;padding:0 6px;font-size:.75rem"
           type="button" data-detail="${x.id}">看这一代</button>`}
       </div>`}).join('')}
     </div>
@@ -13109,7 +13124,7 @@ function structCard(opt){
       </select>
       ${vwModeSel()}
       <button class="btn btn-gh" type="button" data-go="viewer"
-        style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem">放大看</button></div>
+        style="min-height:1.5rem;padding:0 8px;font-size:.75rem">放大看</button></div>
     <div class="card-b col" style="gap:var(--s3)">
       <div id="mol" style="position:relative;width:100%;height:${h}px;border-radius:var(--r2);
         overflow:hidden;background:var(--surface-2);border:1px solid var(--line)"></div>
@@ -13280,7 +13295,7 @@ function variantDiff(){
         <td class="num">${m.pos}</td>
         ${projFields(pr).map(k=>`<td class="num">${fmtv(cur,k)||'—'}</td>`).join('')}
         <td style="text-align:right">
-          <button class="btn btn-gh" style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem"
+          <button class="btn btn-gh" style="min-height:1.5rem;padding:0 8px;font-size:.75rem"
             type="button" data-locate="${m.pos}">${VW.struct?'在结构上定位':'先载入结构'}</button></td>
       </tr>`).join('')}</tbody></table></div>
 
@@ -13303,7 +13318,7 @@ function seqTrack(){
         background:${on?HILITE:'transparent'};color:${on?'var(--on-pri)':plddtColor(x.b)};font-weight:${on?600:500}">${T3[x.resn]||'X'}</i>`}
     h+='</span>';
   }
-  return `<div style="font-size:0.78125rem;line-height:2;background:var(--surface-2);border:1px solid var(--line);
+  return `<div style="font-size:.8125rem;line-height:2;background:var(--surface-2);border:1px solid var(--line);
     border-radius:var(--r2);padding:var(--s4);user-select:none;max-height:10.5rem;overflow:auto">${h}</div>`;
 }
 /* M5-F02 PAE：单色渐变、标链边界、悬停给残基对与误差 */
@@ -14023,9 +14038,9 @@ function kwResult(){
         </div>
         <div class="row wrap" style="gap:var(--s2);margin-top:var(--s3)">
           <span class="grow"></span>
-          <button class="btn btn-gh" style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem"
+          <button class="btn btn-gh" style="min-height:1.5rem;padding:0 8px;font-size:.75rem"
             type="button" data-kwacc="${esc(e.acc)}">取回序列与结构</button>
-          <button class="btn btn-gh" style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem"
+          <button class="btn btn-gh" style="min-height:1.5rem;padding:0 8px;font-size:.75rem"
             type="button" data-kwuse="${esc(e.acc)}">选作预测输入</button>
         </div>
       </div>
@@ -14060,7 +14075,7 @@ function hitListHTML(){
         <div class="hit-m">
           ${[['Score',h.score],['一致度',h.pct.toFixed(1)+'%'],['比对长度',h.aln+' AA']]
             .map(([k,v])=>`<div><span class="k">${k}</span><span class="v">${v}</span></div>`).join('')}
-          <div><span class="k">比对区间</span><span class="v" style="font-size:0.78125rem">查询 ${h.qs}–${h.qe} ／ 目标 ${h.ts}–${h.te}</span></div>
+          <div><span class="k">比对区间</span><span class="v" style="font-size:.8125rem">查询 ${h.qs}–${h.qe} ／ 目标 ${h.ts}–${h.te}</span></div>
         </div>
         <div class="col" style="gap:3px;margin-top:var(--s3)">
           <div class="row"><span class="t-xs mut2 grow">命中区域（查询全长 ${SK.q.length} AA）</span>
@@ -14071,14 +14086,14 @@ function hitListHTML(){
           <span class="chip c-mut">来源：${esc(h.src)} ${esc(h.acc)}</span>
           <span class="chip c-mut">全长 ${h.len} AA</span>
           <span class="grow"></span>
-          <button class="btn btn-gh" style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem"
+          <button class="btn btn-gh" style="min-height:1.5rem;padding:0 8px;font-size:.75rem"
             type="button" data-hit="${esc(h.key)}" aria-expanded="${SK.open===h.key}">
             ${SK.open===h.key?'收起比对':'查看比对'}</button>
-          <button class="btn btn-gh" style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem"
+          <button class="btn btn-gh" style="min-height:1.5rem;padding:0 8px;font-size:.75rem"
             type="button" data-seekstruct="${esc(h.acc)}">看结构</button>
-          <button class="btn btn-gh" style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem"
+          <button class="btn btn-gh" style="min-height:1.5rem;padding:0 8px;font-size:.75rem"
             type="button" data-hitpred="${esc(h.key)}">用于预测</button>
-          <button class="btn btn-gh" style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem"
+          <button class="btn btn-gh" style="min-height:1.5rem;padding:0 8px;font-size:.75rem"
             type="button" data-hitdes="${esc(h.acc)}">用作设计靶点</button>
           ${(function(){const e=SEEK_CORPUS().find(x=>x.key===h.key);
             return e?cpBtn('hit_'+h.key,'>'+h.key+' '+e.name+'\n'
@@ -14120,7 +14135,7 @@ function seekResult(){
   ${seekHead()}
   <div class="row wrap" style="gap:var(--s3)">
     <div class="col grow" style="gap:6px">
-      <h2 style="font-size:1.0625rem">搜索结果 <span class="num mut2" style="font-size:0.875rem;font-weight:400">${H.length}${
+      <h2 style="font-size:1rem">搜索结果 <span class="num mut2" style="font-size:0.875rem;font-weight:400">${H.length}${
         fltOn()&&H.length!==SK.hits.length?` / ${SK.hits.length}`:''}</span></h2>
     </div>
     ${SK.hits.length?`<span class="ctl ctl-sel">
@@ -14202,7 +14217,7 @@ return `<div class="col" style="gap:var(--s5)">
   <section class="card"><div class="card-h"><strong>序列与结构</strong>
     <span class="grow"></span>
     ${VW.struct?`<span class="t-sm mut2">${esc(VW.name||'')}</span>`
-      :`<button class="btn btn-gh" style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem"
+      :`<button class="btn btn-gh" style="min-height:1.5rem;padding:0 8px;font-size:.75rem"
           type="button" data-go="viewer">去载入结构</button>`}</div>
     <div class="card-b col" style="gap:var(--s4)">
       ${VW.struct?`
@@ -14236,7 +14251,7 @@ return `<div class="col" style="gap:var(--s5)">
   </section>
 
   <div class="row wrap"><div class="col grow" style="gap:6px">
-      <h2 style="font-size:1.0625rem;letter-spacing:-.02em">本项目的变体</h2>
+      <h2 style="font-size:1rem;letter-spacing:-.02em">本项目的变体</h2>
       <p class="mut t-md">变体是项目级资产，不属于任何一轮</p></div>
     <button class="btn" type="button" data-act="addfail">录入失败样本</button></div>
 
@@ -14305,7 +14320,7 @@ return `<div class="col" style="gap:var(--s5)">
     <tbody>${L.map(x=>`<tr><td class="num">${x.site}</td><td class="num">${x.n}</td>
       <td class="num">${x.best}</td><td class="num">${x.rounds}</td>
       <td class="t-sm mut">${esc(x.note)}</td>
-      <td style="text-align:right"><button class="btn btn-gh" style="min-height:1.5rem;padding:0 7px;font-size:0.71875rem"
+      <td style="text-align:right"><button class="btn btn-gh" style="min-height:1.5rem;padding:0 7px;font-size:.75rem"
         type="button" data-trace="${x.site}">全部历史</button></td></tr>`).join('')}
     </tbody></table></div>`
     :`<div class="empty"><strong class="t-md" style="color:var(--ink)">没有这个位点的记录</strong>
@@ -14389,9 +14404,9 @@ function taskRow(t){const st=TASK_ST[t.st]||['—',''];
     <td style="text-align:right"><div class="row" style="gap:6px;justify-content:flex-end">
       ${dlReady(t)?`<button class="btn btn-gh" type="button" data-artzip="${esc(t.id)}"
         title="${esc(dlTitle(t))}"
-        style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem">下载</button>`:''}
+        style="min-height:1.5rem;padding:0 8px;font-size:.75rem">下载</button>`:''}
       <button class="btn btn-gh" type="button" data-task="${esc(t.id)}"
-        style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem">详情</button></div></td></tr>`}
+        style="min-height:1.5rem;padding:0 8px;font-size:.75rem">详情</button></div></td></tr>`}
 
 /* 全部任务：Protenix Server 的形状——任务名、状态、创建时间、输入、输出。
    不进左侧导航：它是从新建对话页进去的记录，不是一条并行的功能线。 */
@@ -14733,9 +14748,9 @@ function jobTable(L){
       <td style="text-align:right"><div class="row" style="gap:6px;justify-content:flex-end">
         ${dlReady(t)?`<button class="btn btn-gh" type="button" data-artzip="${esc(t.id)}"
           title="${esc(dlTitle(t))}"
-          style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem">下载</button>`:''}
+          style="min-height:1.5rem;padding:0 8px;font-size:.75rem">下载</button>`:''}
         <button class="btn btn-gh" type="button" data-task="${esc(t.id)}"
-          style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem">详情</button></div></td>
+          style="min-height:1.5rem;padding:0 8px;font-size:.75rem">详情</button></div></td>
     </tr>`}).join('')}</tbody></table></div></div>`;
 }
 function jobCards(L){
@@ -15408,7 +15423,7 @@ function FILES(pid){
         有了 f 才知道它能接到哪个节点上。 */
   TASKS.filter(t=>t.st==='done').forEach(t=>artsOf(t).forEach(a=>out.push({
     kind:'art',f:a.f,name:a.name,bytes:null,at:t.at,pid:t.pid,round:t.r,cap:t.cap,
-    from:'任务 '+t.id+'　'+capName(t.cap),tid:t.id,art:a})));
+    from:'任务 '+t.id+' · '+capName(t.cap),tid:t.id,art:a})));
   /* ② 本会话下载过的 */
   (DB.dls||[]).forEach(d=>out.push({kind:'out',name:d.name,bytes:d.bytes,at:d.at,
     pid:d.pid,round:d.round,cap:ROUTE_CAP[d.route]||null,
@@ -15496,7 +15511,7 @@ function kbPreview(p,name){
     <strong class="t-md grow" style="min-width:0;word-break:break-all">${esc(name)}</strong>
     <span class="t-xs mut2">${f?fmtBytes(f.size):''}</span>
     <button class="btn btn-gh" type="button" data-act="kbclose"
-      style="min-height:1.5rem;padding:0 9px;font-size:0.71875rem">关闭预览</button></div>`;
+      style="min-height:1.5rem;padding:0 9px;font-size:.75rem">关闭预览</button></div>`;
   let body;
   if(!f){
     body=`<div class="col" style="gap:4px">
@@ -15634,7 +15649,7 @@ function capLanding(route,cap,title,sub,quick,newTx,pipeOpt,foot){
     <span class="t-sm mut2 num">${L.length}</span>
     <span class="grow"></span>
     ${L.length>3?`<button class="btn btn-gh" type="button" data-jhist="${route}"
-      style="min-height:1.5rem;padding:0 9px;font-size:0.71875rem">查看全部</button>`:''}
+      style="min-height:1.5rem;padding:0 9px;font-size:.75rem">查看全部</button>`:''}
   </div>
   ${L.length?jobCards(L.slice(0,3)):jobMini([],route)}
 </div>`;
@@ -15759,7 +15774,7 @@ function predForm(){
         style="height:2rem;min-width:190px"><span class="dd-v">${esc(PF.model)}</span>
         <span class="car" aria-hidden="true"></span></button>
       <button class="btn btn-gh" type="button" data-pick-tool="str"
-        style="min-height:1.75rem;padding:0 9px;font-size:0.71875rem;margin-left:var(--s2)">换工具</button>`,
+        style="min-height:1.75rem;padding:0 9px;font-size:.75rem;margin-left:var(--s2)">换工具</button>`,
       esc((MODELS.find(m=>m.n===PF.model)||{}).s||''))}
     ${C.msa?fRow('用 MSA',0,fSeg('msa',PF.msa,[['true','是'],['false','否']]),
         '检索同源序列做多序列比对。关掉更快，单体精度通常会降')
@@ -15824,7 +15839,7 @@ function predForm(){
           border-top:1px solid var(--line-2)">
         <div class="row"><span class="lbl grow">连接 ${i+1}</span>
           <button class="btn btn-gh" type="button" data-bonddel="${i}"
-            style="min-height:1.5rem;padding:0 .5rem;font-size:0.71875rem">删除</button></div>
+            style="min-height:1.5rem;padding:0 .5rem;font-size:.75rem">删除</button></div>
         ${[['a','一端'],['b','另一端']].map(([side,lbl])=>`<div class="bondrow">
           <span class="t-sm mut2 bondrow-l">${lbl}</span>
           <label class="advf"><span class="advf-k">链</span>
@@ -15986,7 +16001,7 @@ function designForm(){
       ${VW.struct?`<div class="row wrap" style="gap:var(--s3);align-items:center">
         <span class="chip c-dry">已载入 ${esc(VW.name||'')}</span>
         <span class="t-sm mut2">已选 <b class="num">${VW.sel.size}</b> 个残基作为结合热点</span>
-        ${VW.sel.size?'<button class="btn btn-gh" style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem" type="button" data-act="vwclearsel">清空</button>':''}
+        ${VW.sel.size?'<button class="btn btn-gh" style="min-height:1.5rem;padding:0 8px;font-size:.75rem" type="button" data-act="vwclearsel">清空</button>':''}
       </div>`
       :`<div class="empty" style="padding:var(--s5)"><div class="col" style="gap:4px">
         <strong class="t-md" style="color:var(--ink)">还没有载入靶点结构</strong>
@@ -16000,8 +16015,8 @@ function designForm(){
         aria-pressed="${DF.mode===k}">
         <strong class="t-md">${n}</strong>
         <span class="row" style="gap:6px;align-items:baseline">
-          <b class="num" style="font-size:1.1875rem;font-weight:500;letter-spacing:-.025em;${
-            N==null?'font-size:0.84375rem;color:var(--ink-4)':''}">${N==null?'算不出':N}</b>
+          <b class="num" style="font-size:1.125rem;font-weight:500;letter-spacing:-.025em;${
+            N==null?'font-size:.875rem;color:var(--ink-4)':''}">${N==null?'算不出':N}</b>
           <span class="t-sm mut2">${N==null?'':'条候选'}</span></span>
         <span class="t-sm mut">${d}</span>
         <span class="t-xs mut2" style="line-height:1.55">${esc(dfWhy(k))}</span></button>`}).join('')}
@@ -17657,7 +17672,7 @@ ${L.length} 条候选中 ${pass.length} 条通过 ipTM ≥ ${S.gate.toFixed(2)} 
     <p class="t-md mut">三个文件：可执行脚本、结构化结果、人读报告。复制或下载后可在本地完整重跑。</p>
     ${names.map(n=>`<div class="col" style="gap:var(--s2)">
       <div class="row"><span class="num t-md grow">${n}</span>
-        <button class="btn btn-gh" style="min-height:1.5rem;padding:0 6px;font-size:0.71875rem" type="button" data-cp="${n}">复制</button></div>
+        <button class="btn btn-gh" style="min-height:1.5rem;padding:0 6px;font-size:.75rem" type="button" data-cp="${n}">复制</button></div>
       <pre style="margin:0;max-height:7rem;overflow:auto;background:var(--surface-2);border:1px solid var(--line);
         border-radius:var(--r2);padding:var(--s3);font-size:0.6875rem;line-height:1.6;white-space:pre-wrap">${esc(files[n]).slice(0,600)}</pre>
     </div>`).join('')}</div>`;
@@ -17780,6 +17795,10 @@ function go(r,o){
   if(MDL_TAB_ROUTE[r]){S.mtab=MDL_TAB_ROUTE[r];S.jobPick=null;S.checkpointPick=null;r='mdl'}
   const t=ROUTE_HOME(r);
   if(t!=='mdl')S.checkpointPick=null;
+  /* 切页先收掉浮层：开着的弹窗、资料空间的更多菜单，否则它们会跨页面留在屏上 */
+  if(t!==S.route){document.querySelectorAll('dialog[open]').forEach(d=>{try{d.close()}catch(e){}});document.querySelectorAll('.ms-menu').forEach(m=>m.remove());}
+  /* 侧栏点「资料空间」回到全部资料，不停在上一次的「与你共享」页签 */
+  if(t==='materials'&&r==='materials'&&typeof MATERIALS!=='undefined'&&!(o&&o.keepTab))Object.assign(MATERIALS,{tab:'all',space:'',query:''});
   if(t!==S.route)backPush(S.route);S._anim=(t!==S.route);S.route=t;Object.assign(S,o||{});S.page=1;
   LS.set('route',t);LS.set('pid',S.pid);LS.set('round',S.round);location.hash=t;render();window.scrollTo(0,0)}
 /* 同一个人常开两个标签页：一个看结果、一个排板。闸门与选中集都进了 localStorage，
@@ -22093,10 +22112,10 @@ function iterationInboxRow(s,r,owner){
                 :(s.members.find(m=>m.id===r.reviewBy)?.name||s.members.find(m=>m.id===s.owner)?.name||'项目负责人');
  const label=r.state==='pending'?(owner?'待审批':'申请中'):'待导入';
  const act=owner
-  ? '<button class="btn btn-pri" type="button" data-inbox-approve="'+esc(r.id)+'" data-inbox-sid="'+esc(s.id)+'">批准</button>'
+  ? '<button class="btn" type="button" data-inbox-approve="'+esc(r.id)+'" data-inbox-sid="'+esc(s.id)+'">批准</button>'
    +'<button class="btn" type="button" data-inbox-reject="'+esc(r.id)+'" data-inbox-sid="'+esc(s.id)+'">拒绝</button>'
   : (r.state==='approved'
-     ? '<button class="btn btn-pri" type="button" data-inbox-import="'+esc(r.id)+'" data-inbox-sid="'+esc(s.id)+'">确认导入</button>'
+     ? '<button class="btn" type="button" data-inbox-import="'+esc(r.id)+'" data-inbox-sid="'+esc(s.id)+'">确认导入</button>'
      : '<button class="btn" type="button" data-inbox-withdraw="'+esc(r.id)+'" data-inbox-sid="'+esc(s.id)+'">撤回申请</button>');
  return '<li class="inbox-row">'
   +'<div class="inbox-main"><strong>'+esc(a?.name||'来源资产不可用')+'</strong>'
@@ -22894,7 +22913,7 @@ function researchActivities(){
  if(entries.length){const rank=a=>{const m=String(a.at||'').match(/(今天|昨天)\s*(\d{1,2}):(\d{2})/);return m?(m[1]==='今天'?1440:0)+Number(m[2])*60+Number(m[3]):0;};return entries.sort((a,b)=>rank(b)-rank(a));}
  return workbenchData().tasks.filter(t=>t.at&&t.isTask!==false).slice(0,8).map(t=>({id:t.key,title:t.name+' · '+t.statusText,by:'记录',at:t.at,pid:t.pid,project:t.projectName}));
 }
-function researchActivityHTML(a,i){return '<button class="rh-activity" type="button" data-wb-project="'+esc(a.pid)+'"><span class="rh-avatar color-'+i%3+'">'+esc(a.by.slice(0,1))+'</span><span class="rh-activity-copy"><strong>'+esc(a.by)+' · '+esc(a.title)+'</strong><small>'+esc(a.project)+' · '+esc(researchTime(a.at))+'</small></span></button>';}
+function researchActivityHTML(a,i){return '<button class="rh-activity" type="button" data-wb-project="'+esc(a.pid)+'"><span class="rh-avatar color-'+i%3+'">'+esc(a.by.slice(0,1))+'</span><span class="rh-activity-copy"><strong title="'+esc(a.by)+' · '+esc(a.title)+'">'+esc(a.by)+' · '+esc(a.title)+'</strong><small>'+esc(a.project)+' · '+esc(researchTime(a.at))+'</small></span></button>';}
 function researchResources(projects){
  return (RS.data.resources||[]).filter(r=>r.state==='published'&&r.visibility==='public').map(r=>{
   const terms=[r.name,r.description,...(r.tags||[])].join(' ').toLowerCase();
@@ -22953,6 +22972,7 @@ function materialsSpace(x){return x.sharedId?(x.spaceName||'共享课题')+'（�
 function materialsFiltered(rows=materialsRows()){const m=MATERIALS,p=materialsPrefs();return rows.filter(x=>{const own=x.owner===materialsActor();return (m.tab==='trash'?p.trash.includes(x.id):!p.trash.includes(x.id))&&(m.tab!=='mine'||own)&&(m.tab!=='shared'||!!x.sharedId||x.pid&&!!rsProjectShared(x.pid)&&!materialsOwn(materialsProject(x.pid)))&&(m.tab!=='stars'||p.stars.includes(x.id))&&(!m.space||(m.space==='public'?!x.pid&&!x.sharedId:x.pid===m.space))&&(m.type==='all'||materialsType(x)===m.type)&&(!m.query||(x.name+' '+materialsSpace(x)+' '+(x.content||'')).toLowerCase().includes(m.query.toLowerCase()));}).sort((a,b)=>m.sort==='name'?a.name.localeCompare(b.name,'zh-CN'):materialsTime(b.at)-materialsTime(a.at));}
 function materialsIcon(name){const paths={folder:'M3 7V5h6l2 2h10v13H3z',file:'M6 3h8l4 4v14H6zM14 3v5h4M9 12h6M9 16h6',users:'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 3a4 4 0 1 1 0 8 4 4 0 0 1 0-8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75',star:'m12 3 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z',trash:'M3 6h18M9 6V3h6v3M6 6l1 15h10l1-15M10 10v7M14 10v7',grid:'M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z',list:'M8 5h13M8 12h13M8 19h13M3 5h1M3 12h1M3 19h1',search:'M21 21l-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0'};return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+(paths[name]||paths.file)+'"/></svg>';}
 
+function materialsSubtitle(){const m=MATERIALS;if(m.space==='public')return '操作规范、仪器手册与通用文献，跨课题复用。';if(m.space)return '名称与成员权限跟随课题，上传即归档。';return{shared:'其他课题共享给你的资料；用文件旁的「+」申请添加到我的课题。',stars:'你收藏的资料，取消收藏即从这里移除。',mine:'你上传或创建的资料，按课题归档。',trash:'删除的资料保留在这里，可随时恢复。'}[m.tab]||'课题资料随课题归档，公共资料跨课题复用。';}
 function materialsNav(label,tab,count){return '<button type="button" class="ms-nav '+(MATERIALS.tab===tab&&!MATERIALS.space?'selected':'')+'" data-ms-tab="'+tab+'">'+materialsIcon(tab==='shared'?'users':tab==='stars'?'star':tab==='trash'?'trash':'file')+'<span>'+label+'</span><small>'+count+'</small></button>';}
 function materialsRow(x){const star=materialsPrefs().stars.includes(x.id),trash=MATERIALS.tab==='trash';return '<article class="ms-file" data-ms-row="'+esc(x.id)+'"><button class="ms-file-main" type="button" data-ms-open="'+esc(x.id)+'">'+fileIc(fileExt(x))+'<span><strong>'+esc(x.name)+'</strong><small>'+esc(x.kind==='link'?'链接':fileExt(x).toUpperCase())+' · '+(x.kind==='import'?'从共享课题导入':x.kind==='shared'?'共享资产':x.bytes==null?'资料引用':fmtBytes(x.bytes))+'</small></span></button><span class="ms-cell">'+esc(materialsSpace(x))+'</span><span class="ms-cell">'+esc(x.owner===materialsActor()?'我':'课题成员')+'</span><time class="ms-cell">'+esc(x.at||'—')+'</time><div class="ms-row-actions">'+(trash?'<button type="button" data-ms-restore="'+esc(x.id)+'">恢复</button>':'<button type="button" aria-label="'+(star?'取消收藏':'收藏')+' '+esc(x.name)+'" aria-pressed="'+star+'" data-ms-star="'+esc(x.id)+'">'+(star?'已收藏':'收藏')+'</button>'+(x.sharedId?'':'<button type="button" class="ms-more" aria-label="更多：'+esc(x.name)+'" aria-haspopup="menu" data-ms-more="'+esc(x.id)+'">···</button>')+'')+'</div></article>';}
 /* 行尾「更多」：分享（放进我能发布的共享课题）；菜单点外面即关 */
@@ -22982,7 +23002,7 @@ function materialsShareDialog(x){
  });
 }
 V.materials=()=>{const m=MATERIALS,all=materialsRows(),prefs=materialsPrefs(),live=all.filter(x=>!prefs.trash.includes(x.id)),rows=materialsFiltered(all),projects=DB.projects.filter(materialsVisible),title=m.space?(m.space==='public'?'公共资料':materialsProject(m.space)?.name||'课题资料'):({all:'全部资料',mine:'我的资料',shared:'与你共享',stars:'已收藏',trash:'回收站'})[m.tab];const count=tab=>{const previous={...m};Object.assign(m,{tab,space:'',query:'',type:'all'});const value=materialsFiltered(all).length;Object.assign(m,previous);return value;};
-return '<div class="ms-shell"><aside class="ms-sidebar" aria-label="资料空间导航"><h2>资料空间</h2>'+[['全部资料','all'],['我的资料','mine'],['与你共享','shared'],['已收藏','stars']].map(([n,t])=>materialsNav(n,t,count(t))).join('')+'<label class="ms-mobile-space">资料归属<select id="ms-mobile-space" aria-label="选择课题资料空间"><option value="">全部课题资料</option>'+projects.map(p=>'<option value="'+esc(p.id)+'" '+(m.space===p.id?'selected':'')+'>'+esc(p.name)+'</option>').join('')+'<option value="public" '+(m.space==='public'?'selected':'')+'>公共资料</option></select></label><h3>课题资料</h3><div class="ms-project-nav">'+projects.map(p=>'<button type="button" class="ms-nav '+(m.space===p.id?'selected':'')+'" data-ms-space="'+esc(p.id)+'">'+materialsIcon('folder')+'<span>'+esc(p.name)+'</span></button>').join('')+'</div><button type="button" class="ms-nav '+(m.space==='public'?'selected':'')+'" data-ms-space="public">'+materialsIcon('folder')+'<span>公共资料</span></button><h3>最近访问</h3>'+prefs.recent.map(id=>live.find(x=>x.id===id)).filter(Boolean).slice(0,3).map(x=>'<button type="button" class="ms-nav" data-ms-open="'+esc(x.id)+'">'+materialsIcon('file')+'<span>'+esc(x.name)+'</span></button>').join('')+'<div class="ms-trash">'+materialsNav('回收站','trash',count('trash'))+'</div></aside><section class="ms-main"><header class="ms-header"><div><p class="ms-breadcrumb">资料空间 / '+esc(title)+'</p><h1>'+esc(title)+'</h1><p>课题资料随课题归档，公共资料跨课题复用。</p></div><div class="ms-head-actions"><label class="ms-search">'+materialsIcon('search')+'<input id="ms-search" type="search" aria-label="搜索资料" placeholder="搜索资料名称、内容或课题" value="'+esc(m.query)+'"></label><button type="button" class="btn btn-pri" data-ms-create '+(!m.ready||m.error||!materialsEditable(m.space==='public'?'':m.space)?'disabled':'')+'>＋ 新建 / 上传</button></div></header><div class="ms-toolbar"><div class="ms-types" aria-label="资料类型">'+[['all','全部'],['doc','文档'],['slides','演示文稿'],['sheet','表格'],['image','图像'],['link','链接'],['other','其他']].map(([k,n])=>'<button type="button" class="pill '+(m.type===k?'on':'')+'" aria-pressed="'+(m.type===k)+'" data-ms-type="'+k+'">'+n+'</button>').join('')+'</div><div class="ms-views"><button type="button" aria-label="网格视图" aria-pressed="'+m.grid+'" data-ms-view="grid">'+materialsIcon('grid')+'</button><button type="button" aria-label="列表视图" aria-pressed="'+!m.grid+'" data-ms-view="list">'+materialsIcon('list')+'</button></div></div>'+(m.error?'<div role="alert" class="ms-empty">'+esc(m.error)+'<button class="btn" data-ms-retry>重试</button></div>':!m.ready?'<div class="ms-empty" role="status">正在读取资料…</div>':((m.tab==='all'&&!m.space&&!m.query)?'<section class="ms-spaces"><h2>常用课题与公共资料</h2><div>'+[...projects.slice(0,2).map(p=>({id:p.id,name:p.name,desc:p.archived||p.state==='archived'?'已归档 · 只读':'名称与成员权限跟随课题'})),{id:'public',name:'公共资料',desc:'操作规范、仪器手册与通用文献'}].map(p=>'<button type="button" data-ms-space="'+esc(p.id)+'">'+materialsIcon('folder')+'<strong>'+esc(p.name)+'</strong><p>'+p.desc+'</p><small>'+live.filter(x=>p.id==='public'?!x.pid&&!x.sharedId:x.pid===p.id).length+' 项资料</small></button>').join('')+'</div></section>':'')+'<div class="ms-list-heading"><h2>'+ (m.tab==='trash'?'已移入回收站':'全部文件')+' <small>'+rows.length+' 项</small></h2><label>排序 <select id="ms-sort" aria-label="资料排序"><option value="new" '+(m.sort==='new'?'selected':'')+'>最近更新</option><option value="name" '+(m.sort==='name'?'selected':'')+'>名称</option></select></label></div>'+(rows.length?'<div class="ms-files '+(m.grid?'is-grid':'')+'">'+(!m.grid?'<div class="ms-table-head"><span>名称</span><span>归属课题 / 空间</span><span>更新者</span><span>更新时间</span><span>操作</span></div>':'')+rows.map(materialsRow).join('')+'</div>':'<div class="ms-empty">'+materialsIcon(m.tab==='shared'?'users':'folder')+'<h2>'+(m.query||m.type!=='all'?'没有匹配的资料':m.tab==='shared'?'还没有与你共享的资料':m.tab==='trash'?'回收站为空':'这里还没有资料')+'</h2><p>'+(m.tab==='shared'?'你加入的共享课题资料会显示在这里。':m.query||m.type!=='all'?'尝试其他关键词或资料类型。':'新建文档、添加链接或上传文件，开始积累科研资料。')+'</p>'+((m.query||m.type!=='all')?'<button class="btn" data-ms-reset>清除筛选</button>':m.tab==='shared'?'<button class="btn" type="button" data-go="projects">去课题项目申请加入</button>':m.tab==='trash'?'':'<button class="btn btn-pri" type="button" data-ms-create>新建 / 上传</button>')+'</div>'))+'<footer class="ms-footer">'+(m.space&&m.space!=='public'?'<button class="ms-link" type="button" data-ms-project="'+esc(m.space)+'">进入对应课题 →</button>':'<span>资料归属与课题保持一致</span>')+'<span>新增内容保存在当前浏览器 · 尚未同步到服务器</span></footer></section></div>';};
+return '<div class="ms-shell"><aside class="ms-sidebar" aria-label="资料空间导航"><h2>资料空间</h2>'+[['全部资料','all'],['我的资料','mine'],['与你共享','shared'],['已收藏','stars']].map(([n,t])=>materialsNav(n,t,count(t))).join('')+'<label class="ms-mobile-space">资料归属<select id="ms-mobile-space" aria-label="选择课题资料空间"><option value="">全部课题资料</option>'+projects.map(p=>'<option value="'+esc(p.id)+'" '+(m.space===p.id?'selected':'')+'>'+esc(p.name)+'</option>').join('')+'<option value="public" '+(m.space==='public'?'selected':'')+'>公共资料</option></select></label><h3>课题资料</h3><div class="ms-project-nav">'+projects.map(p=>'<button type="button" class="ms-nav '+(m.space===p.id?'selected':'')+'" data-ms-space="'+esc(p.id)+'" title="'+esc(p.name)+'">'+materialsIcon('folder')+'<span>'+esc(p.name)+'</span></button>').join('')+'</div><button type="button" class="ms-nav '+(m.space==='public'?'selected':'')+'" data-ms-space="public">'+materialsIcon('folder')+'<span>公共资料</span></button><h3>最近访问</h3>'+prefs.recent.map(id=>live.find(x=>x.id===id)).filter(Boolean).slice(0,3).map(x=>'<button type="button" class="ms-nav" data-ms-open="'+esc(x.id)+'">'+materialsIcon('file')+'<span>'+esc(x.name)+'</span></button>').join('')+'<div class="ms-trash">'+materialsNav('回收站','trash',count('trash'))+'</div></aside><section class="ms-main"><header class="ms-header"><div><p class="ms-breadcrumb">资料空间 / '+esc(title)+'</p><h1>'+esc(title)+'</h1><p>'+esc(materialsSubtitle())+'</p></div><div class="ms-head-actions"><label class="ms-search">'+materialsIcon('search')+'<input id="ms-search" type="search" aria-label="搜索资料" placeholder="搜索资料名称、内容或课题" value="'+esc(m.query)+'"></label><button type="button" class="btn btn-pri" data-ms-create '+(!m.ready||m.error||!materialsEditable(m.space==='public'?'':m.space)?'disabled':'')+'>＋ 新建 / 上传</button></div></header><div class="ms-toolbar"><div class="ms-types" aria-label="资料类型">'+[['all','全部'],['doc','文档'],['slides','演示文稿'],['sheet','表格'],['image','图像'],['link','链接'],['other','其他']].map(([k,n])=>'<button type="button" class="pill '+(m.type===k?'on':'')+'" aria-pressed="'+(m.type===k)+'" data-ms-type="'+k+'">'+n+'</button>').join('')+'</div><div class="ms-views"><button type="button" aria-label="网格视图" aria-pressed="'+m.grid+'" data-ms-view="grid">'+materialsIcon('grid')+'</button><button type="button" aria-label="列表视图" aria-pressed="'+!m.grid+'" data-ms-view="list">'+materialsIcon('list')+'</button></div></div>'+(m.error?'<div role="alert" class="ms-empty">'+esc(m.error)+'<button class="btn" data-ms-retry>重试</button></div>':!m.ready?'<div class="ms-empty" role="status">正在读取资料…</div>':((m.tab==='all'&&!m.space&&!m.query)?'<section class="ms-spaces"><h2>常用课题与公共资料</h2><div>'+[...projects.slice(0,2).map(p=>({id:p.id,name:p.name,desc:p.archived||p.state==='archived'?'已归档 · 只读':'名称与成员权限跟随课题'})),{id:'public',name:'公共资料',desc:'操作规范、仪器手册与通用文献'}].map(p=>'<button type="button" data-ms-space="'+esc(p.id)+'">'+materialsIcon('folder')+'<strong>'+esc(p.name)+'</strong><p>'+p.desc+'</p><small>'+live.filter(x=>p.id==='public'?!x.pid&&!x.sharedId:x.pid===p.id).length+' 项资料</small></button>').join('')+'</div></section>':'')+'<div class="ms-list-heading"><h2>'+ (m.tab==='trash'?'已移入回收站':'全部文件')+' <small>'+rows.length+' 项</small></h2><label>排序 <select id="ms-sort" aria-label="资料排序"><option value="new" '+(m.sort==='new'?'selected':'')+'>最近更新</option><option value="name" '+(m.sort==='name'?'selected':'')+'>名称</option></select></label></div>'+(rows.length?'<div class="ms-files '+(m.grid?'is-grid':'')+'">'+(!m.grid?'<div class="ms-table-head"><span>名称</span><span>归属课题 / 空间</span><span>更新者</span><span>更新时间</span><span>操作</span></div>':'')+rows.map(materialsRow).join('')+'</div>':'<div class="ms-empty">'+materialsIcon(m.tab==='shared'?'users':'folder')+'<h2>'+(m.query||m.type!=='all'?'没有匹配的资料':m.tab==='shared'?'还没有与你共享的资料':m.tab==='trash'?'回收站为空':'这里还没有资料')+'</h2><p>'+(m.tab==='shared'?'你加入的共享课题资料会显示在这里。':m.query||m.type!=='all'?'尝试其他关键词或资料类型。':'新建文档、添加链接或上传文件，开始积累科研资料。')+'</p>'+((m.query||m.type!=='all')?'<button class="btn" data-ms-reset>清除筛选</button>':m.tab==='shared'?'<button class="btn" type="button" data-go="projects">去课题项目申请加入</button>':m.tab==='trash'?'':'<button class="btn btn-pri" type="button" data-ms-create>新建 / 上传</button>')+'</div>'))+'<footer class="ms-footer">'+(m.space&&m.space!=='public'?'<button class="ms-link" type="button" data-ms-project="'+esc(m.space)+'">进入对应课题 →</button>':'<span>资料归属与课题保持一致</span>')+'<span>新增内容保存在当前浏览器 · 尚未同步到服务器</span></footer></section></div>';};
 V.files=V.materials;
 const materialsNavGroup=NAV.find(g=>g[0]==='A');materialsNavGroup[2].push(['materials','资料空间','M4 4h10l5 5v11H4zM14 4v6h5M8 14h7M8 17h5','按课题积累、查找和复用科研资料']);NAVNAME.materials='资料空间';NAVNAME.files='资料空间';BACKNAME.materials='资料空间';NAV_PARENT.files='materials';NAV_ROUTE.materials=1;
 function materialsCreate(){const m=MATERIALS;modal('新建资料 / 上传文件','<div class="ms-form"><label>资料归属<select class="input" id="ms-target">'+(materialsEditable('')?'<option value="">公共资料</option>':'')+DB.projects.filter(p=>materialsVisible(p)&&materialsEditable(p.id)).map(p=>'<option value="'+esc(p.id)+'" '+(m.space===p.id?'selected':'')+'>'+esc(p.name)+'</option>').join('')+'</select></label><label>创建方式<select class="input" id="ms-kind"><option value="doc">文档</option><option value="link">链接</option><option value="upload">上传文件</option></select></label><label id="ms-name-wrap">名称<input class="input" id="ms-name" maxlength="120" required></label><label id="ms-content-wrap">内容<textarea class="input" id="ms-content" rows="7"></textarea></label><label hidden id="ms-url-wrap">链接地址<input class="input" id="ms-url" type="url" placeholder="https://"></label><label hidden id="ms-file-wrap">选择文件<input id="ms-upload" type="file" multiple><small>单次最多 20 个文件，总大小不超过 25 MB。</small></label><p id="ms-form-error" role="alert"></p></div>','保存',()=>{materialsSaveForm();return false;});const kind=document.getElementById('ms-kind');kind.onchange=()=>{for(const [id,show]of [['ms-name-wrap',kind.value!=='upload'],['ms-content-wrap',kind.value==='doc'],['ms-url-wrap',kind.value==='link'],['ms-file-wrap',kind.value==='upload']])document.getElementById(id).hidden=!show;};}
@@ -23146,7 +23166,9 @@ function navigationProjectProgress(p,shared){
   const tasks=(workbenchData({pid:p.id}).tasks||[]).filter(t=>t.pid===p.id&&t.isTask!==false&&!['canceled'].includes(t.status));
   const member=shared?.members.find(m=>m.id==='me'&&m.status==='active');
   const editable=shared?['owner','admin','editor'].includes(member?.role):can('edit')&&(p.ownerId||'me')==='me';
-  const pending=editable?tasks.filter(t=>t.needsAction||t.status==='failed'):[];
+  /* 与工作台卡片同一口径：先过 wbAttentionTasks（已读回执等），再取失败/待动作 */
+  const attention=typeof wbAttentionTasks==='function'?wbAttentionTasks(tasks):tasks;
+  const pending=editable?attention.filter(t=>t.needsAction||t.status==='failed'):[];
   const active=tasks.filter(t=>['active','queued'].includes(t.status));
   const completed=tasks.filter(t=>t.status==='done').sort((a,b)=>String(b.at||'').localeCompare(String(a.at||'')));
   if(pending.length){
@@ -23548,7 +23570,7 @@ function toolPublishActions(r){
  const disabled=can('edit')?'':' disabled';
  if(r.state==='pending')return '<button class="rs-link" type="button" data-rs-resource="'+esc(r.id)+'">查看发布进度</button>';
  if(r.state==='published')return '<button class="rs-link" type="button" data-tool-market="'+esc(r.id)+'">查看市场</button>';
- return '<button class="btn btn-pri" type="button" data-tool-publish="'+esc(r.id)+'"'+disabled+'>'+(r.state==='rejected'?'重新发布':'发布')+'</button>';
+ return '<button class="btn" type="button" data-tool-publish="'+esc(r.id)+'"'+disabled+'>'+(r.state==='rejected'?'重新发布':'发布')+'</button>';
 }
 function toolPublishForm(r){return Object.assign(rsNewResource('tool'),rsClone(r),{editId:r.id,files:[],uploading:false,uploadError:''});}
 async function toolSubmitPublication(id){
@@ -23772,8 +23794,8 @@ function alPlanSteps(f,basic,readonly){
  </nav>
  <div class="al-plan-body">${alReadMode(sections[current],readonly)}</div>
  <div class="al-plan-actions">
-  <button class="btn" type="button" data-al-plan-step="${current-1}" ${current===0?'disabled':''}>上一步</button>
-  ${current<sections.length-1?`<button class="btn btn-pri" type="button" data-al-plan-step="${current+1}">下一步</button>`:
+  <button class="btn" type="button" data-al-plan-step="${current-1}" ${current===0?'disabled title="已是第一步"':''}>上一步</button>
+  ${current<sections.length-1?`<button class="btn" type="button" data-al-plan-step="${current+1}">下一步</button>`:
   readonly?'':'<button class="btn btn-pri" type="button" data-al-panel="preflight">预检并创建任务</button>'}
  </div>`;
 }

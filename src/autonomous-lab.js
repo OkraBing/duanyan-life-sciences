@@ -200,8 +200,8 @@ function alPlanSteps(f,basic,readonly){
  </nav>
  <div class="al-plan-body">${alReadMode(sections[current],readonly)}</div>
  <div class="al-plan-actions">
-  <button class="btn" type="button" data-al-plan-step="${current-1}" ${current===0?'disabled':''}>上一步</button>
-  ${current<sections.length-1?`<button class="btn btn-pri" type="button" data-al-plan-step="${current+1}">下一步</button>`:
+  <button class="btn" type="button" data-al-plan-step="${current-1}" ${current===0?'disabled title="已是第一步"':''}>上一步</button>
+  ${current<sections.length-1?`<button class="btn" type="button" data-al-plan-step="${current+1}">下一步</button>`:
   readonly?'':'<button class="btn btn-pri" type="button" data-al-panel="preflight">预检并创建任务</button>'}
  </div>`;
 }

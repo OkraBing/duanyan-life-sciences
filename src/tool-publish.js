@@ -4,7 +4,7 @@ function toolPublishActions(r){
  const disabled=can('edit')?'':' disabled';
  if(r.state==='pending')return '<button class="rs-link" type="button" data-rs-resource="'+esc(r.id)+'">查看发布进度</button>';
  if(r.state==='published')return '<button class="rs-link" type="button" data-tool-market="'+esc(r.id)+'">查看市场</button>';
- return '<button class="btn btn-pri" type="button" data-tool-publish="'+esc(r.id)+'"'+disabled+'>'+(r.state==='rejected'?'重新发布':'发布')+'</button>';
+ return '<button class="btn" type="button" data-tool-publish="'+esc(r.id)+'"'+disabled+'>'+(r.state==='rejected'?'重新发布':'发布')+'</button>';
 }
 function toolPublishForm(r){return Object.assign(rsNewResource('tool'),rsClone(r),{editId:r.id,files:[],uploading:false,uploadError:''});}
 async function toolSubmitPublication(id){

@@ -337,10 +337,10 @@ function iterationInboxRow(s,r,owner){
                 :(s.members.find(m=>m.id===r.reviewBy)?.name||s.members.find(m=>m.id===s.owner)?.name||'项目负责人');
  const label=r.state==='pending'?(owner?'待审批':'申请中'):'待导入';
  const act=owner
-  ? '<button class="btn btn-pri" type="button" data-inbox-approve="'+esc(r.id)+'" data-inbox-sid="'+esc(s.id)+'">批准</button>'
+  ? '<button class="btn" type="button" data-inbox-approve="'+esc(r.id)+'" data-inbox-sid="'+esc(s.id)+'">批准</button>'
    +'<button class="btn" type="button" data-inbox-reject="'+esc(r.id)+'" data-inbox-sid="'+esc(s.id)+'">拒绝</button>'
   : (r.state==='approved'
-     ? '<button class="btn btn-pri" type="button" data-inbox-import="'+esc(r.id)+'" data-inbox-sid="'+esc(s.id)+'">确认导入</button>'
+     ? '<button class="btn" type="button" data-inbox-import="'+esc(r.id)+'" data-inbox-sid="'+esc(s.id)+'">确认导入</button>'
      : '<button class="btn" type="button" data-inbox-withdraw="'+esc(r.id)+'" data-inbox-sid="'+esc(s.id)+'">撤回申请</button>');
  return '<li class="inbox-row">'
   +'<div class="inbox-main"><strong>'+esc(a?.name||'来源资产不可用')+'</strong>'

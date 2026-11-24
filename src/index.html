@@ -72,7 +72,7 @@ html,body{height:100%}
      2816px 以上封顶 20px，再大就该是看两列而不是把字撑大
    下限 16px：小屏不缩，缩了反而更难读。 */
 html{font-size:clamp(16px, 11.5px + 0.3125vw, 20px)}
-body{margin:0;background:var(--paper);color:var(--ink);font-size:0.84375rem;line-height:1.6;
+body{margin:0;background:var(--paper);color:var(--ink);font-size:.875rem;line-height:1.6;
   font-family:Inter,"PingFang SC","Noto Sans SC","Source Han Sans SC",system-ui,sans-serif;
   font-feature-settings:"cv05","ss01";-webkit-font-smoothing:antialiased;letter-spacing:-.003em}
 h1,h2,h3,h4{margin:0;font-weight:600;letter-spacing:-.022em}
@@ -96,12 +96,12 @@ button,input,select,textarea{font:inherit;color:inherit}
 /* 数值一律等宽 —— 这是「仪器」和「后台」的分界线 */
 .num,td.num,th.num,.v,code,pre{font-family:var(--mono);font-variant-numeric:tabular-nums;
   letter-spacing:-.01em;font-feature-settings:"zero"}
-.t-xs{font-size:0.65625rem}.t-sm{font-size:0.71875rem}.t-md{font-size:0.78125rem}
+.t-xs{font-size:.6875rem}.t-sm{font-size:.75rem}.t-md{font-size:.8125rem}
 .mut{color:var(--ink-2)}.mut2{color:var(--ink-3)}
 /* 小标签：10px，字距拉开，这是整套设计的声音 */
 /* 不强制大写。这个领域里大小写带语义：ipTM、pLDDT、pI、kcat、α
    被转成全大写就是把内容改坏了；加宽字距的全大写小标签也是通用模板的标记。 */
-.lbl{font-size:0.65625rem;font-weight:600;letter-spacing:.03em;color:var(--ink-3)}
+.lbl{font-size:.6875rem;font-weight:600;letter-spacing:.03em;color:var(--ink-3)}
 .row{display:flex;align-items:center;gap:var(--s3)}
 .col{display:flex;flex-direction:column}
 .wrap{flex-wrap:wrap}
@@ -214,7 +214,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 #side[data-collapsed="1"] .nav-group.is-sep{margin:0 var(--s2);padding:var(--s2) 0}
 .nav{display:flex;align-items:center;gap:var(--s3);width:100%;min-height:1.9375rem;padding:0 var(--s3);
   border:0;background:transparent;border-radius:var(--r2);color:var(--ink-2);cursor:pointer;
-  text-align:left;font-size:0.78125rem;font-weight:450;position:relative}
+  text-align:left;font-size:.8125rem;font-weight:450;position:relative}
 .nav:hover{background:var(--surface-3);color:var(--ink)}
 .nav[aria-current="page"]{color:var(--dry);font-weight:600;background:transparent}
 .nav[aria-current="page"]::before{content:"";position:absolute;left:-12px;top:7px;bottom:7px;
@@ -256,14 +256,14 @@ button,input,select,textarea{font:inherit;color:inherit}
 #side[data-collapsed="1"] .acct-me{flex:0 0 auto;width:100%}
 .avatar{width:17px;height:1.0625rem;flex:0 0 17px;border-radius:50%;
   background:var(--surface-3);color:var(--ink-2);box-shadow:inset 0 0 0 1px var(--line);
-  display:grid;place-items:center;font-size:0.5625rem;font-weight:600;letter-spacing:0}
+  display:grid;place-items:center;font-size:.625rem;font-weight:600;letter-spacing:0}
 .nav[aria-current="page"] .avatar{background:var(--dry-soft);color:var(--dry-ink)}
 .avatar.is-lg{width:1.75rem;height:1.75rem;flex:0 0 1.75rem;font-size:0.75rem}
 #side[data-collapsed="1"] .acct-me{display:none}
 /* 未读数不是错误。红色留给真的出了问题的地方，
    这里用墨色，和整套克制一致。 */
 .nav-n{margin-left:auto;min-width:16px;height:1rem;padding:0 5px;border-radius:999px;
-  background:var(--ink);color:var(--on-pri);font-size:0.59375rem;font-weight:700;line-height:1rem;
+  background:var(--ink);color:var(--on-pri);font-size:.625rem;font-weight:700;line-height:1rem;
   text-align:center;font-family:var(--mono)}
 /* 深色主题里 --err 是浅红（给文字用的），白字压上去只有 2.7:1。
    角标是个色块不是文字色，所以这里单独定一个够深的底。 */
@@ -285,7 +285,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 /* ---------- 控件 ---------- */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;
   min-height:1.875rem;padding:0 var(--s3);border:1px solid var(--line);border-radius:var(--r2);
-  background:var(--surface);cursor:pointer;font-size:0.78125rem;font-weight:500;white-space:nowrap;
+  background:var(--surface);cursor:pointer;font-size:.8125rem;font-weight:500;white-space:nowrap;
   transition:background .14s,border-color .14s,color .14s}
 .btn:hover:not([disabled]){background:var(--surface-3);border-color:var(--ink-4)}
 .btn:active{transform:translateY(.5px)}
@@ -338,7 +338,7 @@ button.card:hover,.tile:hover{border-color:var(--ink-4);background:var(--surface
 button.card .card-h,.tile .card-h{border-bottom:0;margin-bottom:0;padding:0}
 
 /* 状态：圆点加文字，不是实心药丸 */
-.chip{display:inline-flex;align-items:center;gap:5px;font-size:0.71875rem;font-weight:500;
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:.75rem;font-weight:500;
   white-space:nowrap;color:var(--ink-2);padding:0;height:auto;background:none}
 /* 状态靠颜色和字就说清了，前面那个圆点是多的——它既不表示进度也不表示级别。 */
 .c-dry{color:var(--dry)}.c-wet{color:var(--wet)}.c-ok{color:var(--ok)}.c-err{color:var(--err)}
@@ -364,7 +364,7 @@ textarea.input{min-height:4.5rem;padding:var(--s3);resize:vertical;line-height:1
 #syncbar{border-color:var(--err);background:var(--err-soft)}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:var(--r2);overflow:hidden;
   height:2rem;background:var(--surface);align-self:flex-start}
-.seg-i{appearance:none;border:0;background:var(--surface);color:var(--ink-2);font:inherit;font-size:0.78125rem;
+.seg-i{appearance:none;border:0;background:var(--surface);color:var(--ink-2);font:inherit;font-size:.8125rem;
   padding:0 14px;cursor:pointer;border-left:1px solid var(--line)}
 .seg-i:first-child{border-left:0}
 .seg-i[aria-checked="true"]{background:var(--dry-soft);color:var(--dry-ink);font-weight:550}
@@ -395,7 +395,7 @@ svg[width]{flex:0 0 auto}
 .ctl-dd.is-fix .dd-v{flex:1 1 auto;min-width:0;text-align:left}
 @media(max-width:640px){.ctl-dd.is-fix{width:auto;flex:1 1 auto}}
 .menu-s{padding:6px 7px 4px;border-bottom:1px solid var(--line-2);margin-bottom:4px}
-.menu-s>.input{min-height:1.875rem;font-size:0.78125rem}
+.menu-s>.input{min-height:1.875rem;font-size:.8125rem}
 .menu-i.is-cur{background:var(--surface-2)}
 .kbd{display:inline-block;min-width:1.125rem;padding:0 4px;border:1px solid var(--line);
   border-bottom-width:2px;border-radius:4px;background:var(--surface);
@@ -412,7 +412,7 @@ svg[width]{flex:0 0 auto}
   text-align:left;color:var(--ink)}
 .at-i.is-on{background:var(--dry-soft)}
 .at-i.is-on strong{color:var(--dry-ink)}
-.hint{font-size:0.71875rem;color:var(--ink-3)}
+.hint{font-size:.75rem;color:var(--ink-3)}
 
 /* ---------- 表格：去框，只留发丝线 ---------- */
 /* 卡片变成真盒子之后，原先直接写在 .card 里、贴着边排的内容全都和卡头对不齐了
@@ -534,7 +534,7 @@ label.row:has(input[type="checkbox"]),label.row:has(input[type="radio"]){
 .aln-c{display:inline-flex;flex-direction:column;align-items:center;gap:1px;
   min-width:34px;padding:4px 6px;border-radius:var(--r1);background:var(--surface-2);
   border:1px solid var(--line-2);font-family:var(--mono);font-size:0.8125rem;font-weight:600}
-.aln-c b{font-size:0.59375rem;font-weight:500;color:var(--ink-4)}
+.aln-c b{font-size:.625rem;font-weight:500;color:var(--ink-4)}
 .aln-c.is-mut{background:var(--dry-soft);border-color:var(--dry);color:var(--dry-ink)}
 .seek{padding:var(--s7) 0 var(--s5)}
 .seek-eg{display:grid;gap:var(--s3);grid-template-columns:1fr 1fr;margin-top:var(--s4)}
@@ -542,7 +542,7 @@ label.row:has(input[type="checkbox"]),label.row:has(input[type="radio"]){
   border:1px solid var(--line);border-radius:var(--r2);background:var(--surface);cursor:pointer;
   color:var(--ink);transition:border-color .14s,background .14s}
 .segg:hover{border-color:var(--dry-dim);background:var(--surface-2)}
-.segg .num{font-weight:600;font-size:0.78125rem;flex:0 0 auto}
+.segg .num{font-weight:600;font-size:.8125rem;flex:0 0 auto}
 @media(max-width:640px){.seek-eg{grid-template-columns:1fr}}
 .wlist{display:flex;flex-direction:column;border:1px solid var(--line);
   border-radius:var(--r3);background:var(--surface);overflow:hidden}
@@ -574,8 +574,8 @@ label.row:has(input[type="checkbox"]),label.row:has(input[type="radio"]){
 .dstats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s3);
   background:var(--surface-2);border-radius:var(--r2);padding:var(--s3)}
 .dstats span{display:flex;flex-direction:column;gap:2px;min-width:0}
-.dstats b{font-size:0.65625rem;font-weight:500;color:var(--ink-3)}
-.dstats i{font-style:normal;font-size:0.71875rem;color:var(--ink);
+.dstats b{font-size:.6875rem;font-weight:500;color:var(--ink-3)}
+.dstats i{font-style:normal;font-size:.75rem;color:var(--ink);
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .dstats i.ok{color:var(--ok)}
 .dstats i.dim{color:var(--ink-4)}
@@ -602,7 +602,7 @@ button.scard.is-click:focus-visible{outline:2px solid var(--focus);outline-offse
 .scard-n{font-size:0.9375rem;font-weight:600;letter-spacing:-.015em;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .scard-slug{font-size:0.6875rem;color:var(--ink-4);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.scard-d{margin:0;font-size:0.78125rem;line-height:1.65;color:var(--ink-2);min-height:2.6em;
+.scard-d{margin:0;font-size:.8125rem;line-height:1.65;color:var(--ink-2);min-height:2.6em;
   overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .scard-tags{display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start}
 /* 一排卡片要等高，底栏（开启按钮在那里）要对齐：
@@ -712,9 +712,9 @@ button.scard.is-click:focus-visible{outline:2px solid var(--focus);outline-offse
 .tbl-wrap.is-stick th{white-space:nowrap}
 .tbl-wrap.is-prev table{width:auto;min-width:100%}
 .tbl-wrap.is-prev th,.tbl-wrap.is-prev td{white-space:nowrap}
-table{border-collapse:separate;border-spacing:0;width:100%;font-size:0.78125rem}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:.8125rem}
 thead th{position:sticky;top:0;z-index:1;background:var(--surface);text-align:left;
-  font-size:0.65625rem;font-weight:600;letter-spacing:.03em;color:var(--ink-3);
+  font-size:.6875rem;font-weight:600;letter-spacing:.03em;color:var(--ink-3);
   padding:var(--s3) var(--s4) var(--s2) 0;border-bottom:1px solid var(--line);white-space:nowrap}
 thead th:last-child{padding-right:0}
 tbody td{padding:var(--s2) var(--s4) var(--s2) 0;border-bottom:1px solid var(--line-2);vertical-align:middle}
@@ -747,7 +747,7 @@ th[aria-sort] .sort-i{opacity:1}
   border:1px solid var(--line);border-radius:var(--r3);box-shadow:var(--sh-1);
   padding:var(--s5)}
 .kpi>div{background:transparent;padding:0}
-.kpi .t-sm{font-size:0.65625rem;font-weight:600;letter-spacing:.03em;color:var(--ink-3)}
+.kpi .t-sm{font-size:.6875rem;font-weight:600;letter-spacing:.03em;color:var(--ink-3)}
 .kpi .v{font-size:2rem;font-weight:500;line-height:1.1;margin-top:var(--s2);letter-spacing:-.03em;
   font-family:var(--mono);font-variant-numeric:tabular-nums}
 .kpi .v .t-md{font-size:0.875rem;color:var(--ink-3)}
@@ -755,7 +755,7 @@ th[aria-sort] .sort-i{opacity:1}
 .toast-host{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--s6) + env(safe-area-inset-bottom,0px));
   z-index:100;display:flex;flex-direction:column;gap:var(--s2);align-items:center;pointer-events:none}
 .toast{background:var(--ink);color:var(--paper);padding:var(--s2) var(--s4);border-radius:999px;
-  font-size:0.78125rem;font-weight:500;box-shadow:var(--sh-3),0 0 0 1px rgba(255,255,255,.14);
+  font-size:.8125rem;font-weight:500;box-shadow:var(--sh-3),0 0 0 1px rgba(255,255,255,.14);
   max-width:min(92vw,520px);
   animation:in .2s cubic-bezier(.2,.7,.3,1)}
 /* ---- 序列检索 ---- */
@@ -776,7 +776,7 @@ th[aria-sort] .sort-i{opacity:1}
 /* 四段进度。连接线画在每一段的左侧，首段不画。 */
 .stages{display:grid;grid-template-columns:repeat(4,1fr)}
 .stg{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;
-  font-size:0.71875rem;color:var(--ink-4)}
+  font-size:.75rem;color:var(--ink-4)}
 .stg::before{content:"";position:absolute;top:8px;left:calc(-50% + 11px);
   width:calc(100% - 22px);height:2px;background:var(--line-2)}
 .stg:first-child::before{display:none}
@@ -793,17 +793,17 @@ th[aria-sort] .sort-i{opacity:1}
 .hit{display:grid;grid-template-columns:30px minmax(0,1fr);gap:var(--s4);
   padding:var(--s4) var(--s5);border:1px solid var(--line);border-radius:var(--r2);
   background:var(--surface);box-shadow:var(--sh-1)}
-.hit-r{font-family:var(--mono);font-size:1.0625rem;font-weight:600;color:var(--ink-4);line-height:1.3}
+.hit-r{font-family:var(--mono);font-size:1rem;font-weight:600;color:var(--ink-4);line-height:1.3}
 .hit-t{font-size:0.875rem;font-weight:600;color:var(--dry)}
 .hit-m{display:flex;flex-wrap:wrap;gap:var(--s3) var(--s7);margin-top:var(--s3)}
 .hit-m>div{display:flex;flex-direction:column;gap:1px}
-.hit-m .k{font-size:0.65625rem;color:var(--ink-4);letter-spacing:.03em}
+.hit-m .k{font-size:.6875rem;color:var(--ink-4);letter-spacing:.03em}
 .hit-m .v{font-family:var(--mono);font-size:0.9375rem;font-weight:600;color:var(--dry)}
 .aln{margin-top:var(--s4);padding-top:var(--s4);border-top:1px solid var(--line-2);
   overflow-x:auto}
-.aln-b{font-family:var(--mono);font-size:0.71875rem;line-height:1.5;white-space:pre;
+.aln-b{font-family:var(--mono);font-size:.75rem;line-height:1.5;white-space:pre;
   margin-bottom:var(--s3)}
-.aln-n{display:inline-block;width:78px;color:var(--ink-4);font-size:0.65625rem}
+.aln-n{display:inline-block;width:78px;color:var(--ink-4);font-size:.6875rem}
 .aln-m{color:var(--dry)}
 
 /* ---- 能力入口：发射台 ---- */
@@ -914,13 +914,13 @@ table[aria-label="批量推理任务"] .acts>.alnk{width:100%;min-width:0;justif
 .sdot.is-hard{background:var(--err);border-color:var(--err)}
 .sdot.is-on{box-shadow:0 0 0 2px var(--ink);transform:scale(1.12)}
 .sdot:not([disabled]):hover{transform:scale(1.25)}
-.sleg{display:inline-flex;align-items:center;gap:5px;font-size:0.71875rem;color:var(--ink-4)}
+.sleg{display:inline-flex;align-items:center;gap:5px;font-size:.75rem;color:var(--ink-4)}
 .sleg .sdot{width:0.5625rem;height:0.5625rem;cursor:default}
 .pipe-tool .ell{flex:1 1 auto;min-width:0;text-align:left}
 .pipe-skip{min-height:1.625rem;padding:0 9px;font-size:0.75rem}
 .sld-row{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3) var(--s5)}
 .sld{display:flex;align-items:center;gap:var(--s3);min-width:0}
-.sld>b{font-family:var(--mono);font-size:0.78125rem;font-weight:600;min-width:52px;
+.sld>b{font-family:var(--mono);font-size:.8125rem;font-weight:600;min-width:52px;
   text-align:right;font-variant-numeric:tabular-nums}
 .sld input[type=range]{appearance:none;width:132px;height:3px;border-radius:2px;
   background:var(--surface-3);outline:none;cursor:pointer}
@@ -967,22 +967,22 @@ table[aria-label="批量推理任务"] .acts>.alnk{width:100%;min-width:0;justif
 .chat-q{max-width:72ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .nav-more{color:var(--dry);font-weight:500;padding-left:calc(var(--s3) + 28px)}
 .mini:hover{background:var(--surface-2)}
-.mini-n{font-size:0.78125rem;font-weight:500;min-width:0;max-width:34ch;
+.mini-n{font-size:.8125rem;font-weight:500;min-width:0;max-width:34ch;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.mini-p{font-family:var(--mono);font-size:0.78125rem;font-weight:600;color:var(--ink-3);
+.mini-p{font-family:var(--mono);font-size:.8125rem;font-weight:600;color:var(--ink-3);
   font-variant-numeric:tabular-nums;width:40px;text-align:right}
 @media(max-width:700px){.mini .mini-p,.mini>.t-sm:last-of-type{display:none}}
 
 /* ---- 任务表单：标签右对齐、必填带红星，照 Protenix Server 那张表的排布 ---- */
 .fgrid{display:flex;flex-direction:column;gap:var(--s4)}
 .frow{display:grid;grid-template-columns:104px minmax(0,1fr);gap:var(--s4);align-items:start}
-.flab{text-align:right;font-size:0.78125rem;color:var(--ink-2);padding-top:7px;line-height:1.4}
+.flab{text-align:right;font-size:.8125rem;color:var(--ink-2);padding-top:7px;line-height:1.4}
 .flab>i{color:var(--err);font-style:normal;margin-right:3px}
 .fctl{display:flex;flex-wrap:wrap;align-items:center;gap:6px;min-width:0}
 .fctl>.input{max-width:420px}
 .fctl>textarea.input{max-width:100%;width:100%;font-family:var(--mono);font-size:0.75rem;letter-spacing:.04em}
-.fhint{flex:1 0 100%;font-size:0.71875rem;color:var(--ink-4);line-height:1.5}
-.fna{font-size:0.78125rem;color:var(--ink-4);padding:7px 0}
+.fhint{flex:1 0 100%;font-size:.75rem;color:var(--ink-4);line-height:1.5}
+.fna{font-size:.8125rem;color:var(--ink-4);padding:7px 0}
 .ecard{border:1px solid var(--line-2);border-radius:var(--r2);background:var(--surface-2);padding:var(--s4)}
 .seedb{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:var(--r1);
   background:var(--surface);height:2rem;padding-right:2px}
@@ -1012,9 +1012,9 @@ table[aria-label="批量推理任务"] .acts>.alnk{width:100%;min-width:0;justif
   min-width:2.75rem;height:1.5rem;padding:0 7px;border-radius:var(--r1);
   background:var(--surface-2);border:1px solid var(--line);
   font-family:var(--mono);font-size:0.6875rem;color:var(--ink-3);text-transform:lowercase}
-.fcard-m{display:flex;gap:var(--s3);align-items:baseline;font-size:0.71875rem;color:var(--ink-4)}
+.fcard-m{display:flex;gap:var(--s3);align-items:baseline;font-size:.75rem;color:var(--ink-4)}
 .fcard-m>:first-child{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.fcard-s{margin:0;font-size:0.71875rem;color:var(--ink-4);line-height:1.6}
+.fcard-s{margin:0;font-size:.75rem;color:var(--ink-4);line-height:1.6}
 .fcard-n{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .fcard-a{display:flex;flex-wrap:wrap;gap:6px;align-items:center;
   padding-top:var(--s3);margin-top:auto;border-top:1px solid var(--line-2)}
@@ -1034,7 +1034,7 @@ table[aria-label="批量推理任务"] .acts>.alnk{width:100%;min-width:0;justif
 .scard.is-stop{opacity:.72;border-style:dashed}
 /* 高级参数：默认一个收起的小按钮，展开后就地出现，不跳页 */
 .advb{display:flex;flex-direction:column;gap:var(--s3);align-items:flex-start}
-.advb-t{min-height:1.625rem;padding:0 .5rem;font-size:0.71875rem;color:var(--ink-3);gap:6px}
+.advb-t{min-height:1.625rem;padding:0 .5rem;font-size:.75rem;color:var(--ink-3);gap:6px}
 .advb-t .car{transition:transform .15s}
 .advb.is-open .advb-t{color:var(--ink)}
 .advb.is-open .advb-t .car{transform:rotate(180deg)}
@@ -1057,7 +1057,7 @@ table[aria-label="批量推理任务"] .acts>.alnk{width:100%;min-width:0;justif
 /* 工具列和可选动作各占固定槽位，三行的下拉才会对齐——
    有「跳过」的那一行不能把下拉往左顶。 */
 /* 一段的主体：上面一行是名字与工具，下面一行是这一段做什么的一句话。 */
-.pipe-skip{min-height:1.5rem;padding:0 8px;font-size:0.71875rem}
+.pipe-skip{min-height:1.5rem;padding:0 8px;font-size:.75rem}
 .pfld{display:inline-flex;align-items:baseline;gap:3px;padding:1px 7px;border-radius:var(--r1);
   background:var(--surface-2);border:1px solid var(--line);
   font-size:0.6875rem;color:var(--ink-2);white-space:nowrap}
@@ -1071,7 +1071,7 @@ table[aria-label="批量推理任务"] .acts>.alnk{width:100%;min-width:0;justif
 .pipe-n .ctl-dd .ell{flex:1 1 auto;text-align:left}
 .pipe-t>.t-sm{align-self:center}
 @media(max-width:620px){.pipe-t{width:138px}}
-.egv{font-family:var(--mono);font-size:0.71875rem;line-height:1.55;color:var(--ink-3);
+.egv{font-family:var(--mono);font-size:.75rem;line-height:1.55;color:var(--ink-3);
   background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r1);
   padding:8px 10px;word-break:break-all}
 .trh td{background:var(--surface-2)}
@@ -1088,22 +1088,22 @@ table[aria-label="批量推理任务"] .acts>.alnk{width:100%;min-width:0;justif
   transition:border-color .14s,box-shadow .14s}
 .jcard:hover{border-color:var(--ink-4);box-shadow:var(--sh-2)}
 .jcard-t{display:flex;align-items:center;gap:9px}
-.jcard-t strong{font-size:0.84375rem;font-weight:600;min-width:0;overflow:hidden;
+.jcard-t strong{font-size:.875rem;font-weight:600;min-width:0;overflow:hidden;
   text-overflow:ellipsis;white-space:nowrap}
 .jcard-t .cap-ic{flex:0 0 24px}
 .jcard-t .cap-ic.is-wet{background:var(--wet-soft);color:var(--wet)}
-.jcard-m{font-size:0.71875rem;color:var(--ink-4);overflow:hidden;
+.jcard-m{font-size:.75rem;color:var(--ink-4);overflow:hidden;
   text-overflow:ellipsis;white-space:nowrap}
 .jcard-s{display:flex;align-items:flex-end;gap:var(--s5);margin-top:2px;min-width:0}
 .jcard>.rail{position:absolute;left:var(--s4);right:var(--s4);bottom:10px;margin:0}
 .jcard-s .sv{display:block;font-family:var(--sans);font-variant-numeric:tabular-nums;
   font-feature-settings:"tnum" 1,"lnum" 1;font-size:1.375rem;font-weight:550;letter-spacing:-.02em;
   letter-spacing:-.025em;line-height:1.08;font-variant-numeric:tabular-nums}
-.jcard-s .sk{display:block;font-size:0.65625rem;font-weight:400;color:var(--ink-4);margin-top:3px}
+.jcard-s .sk{display:block;font-size:.6875rem;font-weight:400;color:var(--ink-4);margin-top:3px}
 /* 任务卡右下角的「下载」。卡本身可点，所以这颗按钮要吃掉自己的点击（见 data-task 的 open）。
    只有已完成且有产物的卡才画它，位置选右下：进行中的卡那里是进度条，而进度条和下载不会同时出现。 */
 .jcard-dl{position:absolute;right:var(--s4);bottom:var(--s4);z-index:1;
-  min-height:1.5rem;padding:0 8px;font-size:0.71875rem}
+  min-height:1.5rem;padding:0 8px;font-size:.75rem}
 .jcard:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 /* 任务详情的统计条：值用等宽 21px，文本型的值（时间）也放得下；
    .kpi 的 32px 是给单页主指标用的，塞四个格子就会换行、字也顶出来。 */
@@ -1112,7 +1112,7 @@ table[aria-label="批量推理任务"] .acts>.alnk{width:100%;min-width:0;justif
   border-radius:var(--r3);box-shadow:var(--sh-1);padding:var(--s4) var(--s5)}
 .tstats>div{display:flex;flex-direction:column;gap:3px;min-width:0}
 .tstats .k{font-size:0.6875rem;color:var(--ink-4)}
-.tstats .v{font-family:var(--mono);font-size:1.3125rem;font-weight:600;line-height:1.2;
+.tstats .v{font-family:var(--mono);font-size:1.25rem;font-weight:600;line-height:1.2;
   letter-spacing:-.02em;font-variant-numeric:tabular-nums;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tstats .s{font-size:0.6875rem;color:var(--ink-4)}
@@ -1125,10 +1125,10 @@ table[aria-label="批量推理任务"] .acts>.alnk{width:100%;min-width:0;justif
 .wcard{cursor:default;height:auto;min-height:9.375rem}
 .wcard-f{display:flex;align-items:center;gap:var(--s2);margin-top:var(--s2);
   padding-top:var(--s3);border-top:1px solid var(--line-2)}
-.jcard-o{margin-left:auto;font-size:0.71875rem;color:var(--ink-3);text-align:right;
+.jcard-o{margin-left:auto;font-size:.75rem;color:var(--ink-3);text-align:right;
   min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .jst{display:inline-flex;align-items:center;gap:5px;margin-left:auto;flex:0 0 auto;
-  font-size:0.71875rem;font-weight:600;color:var(--ink-3);white-space:nowrap}
+  font-size:.75rem;font-weight:600;color:var(--ink-3);white-space:nowrap}
 .jst>i{width:6px;height:0.375rem;border-radius:50%;background:var(--ink-4)}
 /* 完成＝已经停下来的事，用墨色；蓝色留给「可点」和「正在算」。
    原先完成是蓝的，于是这一页上蓝色同时表示可点、计算类、已完成——
@@ -1150,15 +1150,15 @@ table[aria-label="批量推理任务"] .acts>.alnk{width:100%;min-width:0;justif
 .pcard-st{margin-left:auto;flex:0 0 auto;font-size:0.6875rem;font-weight:600;color:var(--dry)}
 .pcard.c-wet .pcard-st{color:var(--wet-ink)}
 .pcard.c-mut .pcard-st{color:var(--ink-3)}
-.pcard-g{font-size:0.78125rem;line-height:1.5;color:var(--ink-3);min-height:2.3125rem;
+.pcard-g{font-size:.8125rem;line-height:1.5;color:var(--ink-3);min-height:2.3125rem;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .pcard-s{display:flex;gap:var(--s5);flex-wrap:wrap}
 /* 卡底一行：左边资源，右边任务数。和描述之间拉开，并用一条细线收口。 */
 .pcard-f{display:flex;align-items:baseline;gap:var(--s3);width:100%;margin-top:auto;
   padding-top:var(--s3);border-top:1px solid var(--line-2)}
-.pcard-s .sv{display:block;font-family:var(--mono);font-size:1.1875rem;font-weight:500;
+.pcard-s .sv{display:block;font-family:var(--mono);font-size:1.125rem;font-weight:500;
   letter-spacing:-.025em;font-variant-numeric:tabular-nums;line-height:1.08}
-.pcard-s .sk{display:block;font-size:0.65625rem;font-weight:400;color:var(--ink-4);margin-top:3px}
+.pcard-s .sk{display:block;font-size:.6875rem;font-weight:400;color:var(--ink-4);margin-top:3px}
 .rail{display:block;height:3px;border-radius:999px;background:var(--surface-3);overflow:hidden}
 .rail>i{display:block;height:100%;border-radius:999px;background:var(--dry)}
 
@@ -1167,10 +1167,10 @@ table[aria-label="批量推理任务"] .acts>.alnk{width:100%;min-width:0;justif
   background:var(--pop);border:1px solid var(--line);border-radius:11px;
   box-shadow:var(--sh-3);max-height:min(58vh,340px);overflow:auto;
   animation:in .13s cubic-bezier(.2,.7,.3,1)}
-.menu-l{padding:5px 9px 4px;font-size:0.65625rem;font-weight:600;color:var(--ink-4);letter-spacing:.04em}
+.menu-l{padding:5px 9px 4px;font-size:.6875rem;font-weight:600;color:var(--ink-4);letter-spacing:.04em}
 .menu-i{display:grid;grid-template-columns:16px minmax(0,1fr);gap:10px;align-items:center;
   width:100%;padding:7px 9px;border:0;border-radius:var(--r1);background:transparent;
-  color:var(--ink);font:inherit;font-size:0.78125rem;text-align:left;cursor:pointer}
+  color:var(--ink);font:inherit;font-size:.8125rem;text-align:left;cursor:pointer}
 /* 悬停不用 --surface-3：那是一块中性灰，压在暖纸上像贴了张纸片。
    用蓝的最淡一档，和产品里「选中」的语义一致，也还在同一个色温上。 */
 .menu-i:hover,.menu-i:focus-visible{background:var(--dry-soft);color:var(--dry-ink);outline:0}
@@ -1178,7 +1178,7 @@ table[aria-label="批量推理任务"] .acts>.alnk{width:100%;min-width:0;justif
 .menu-i[aria-checked="true"]:hover,.menu-i.is-on:hover{background:var(--dry-soft)}
 .menu-i .ck{color:var(--dry);display:grid;place-items:center}
 .menu-i .nm{display:block;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.menu-i .sb{display:block;font-size:0.71875rem;color:var(--ink-4);overflow:hidden;
+.menu-i .sb{display:block;font-size:.75rem;color:var(--ink-4);overflow:hidden;
   text-overflow:ellipsis;white-space:nowrap}
 .menu-sep{height:1px;background:var(--line-2);margin:4px 3px}
 /* 消息面板：比菜单宽一点，因为每条要放得下标题、时间、标签和出处四样。
@@ -1189,9 +1189,9 @@ table[aria-label="批量推理任务"] .acts>.alnk{width:100%;min-width:0;justif
 .menu:has(.ib-wrap){max-width:min(25rem,calc(100vw - 1.5rem))}
 .ib-wrap{width:min(23.5rem,calc(100vw - 2.5rem));max-width:100%}
 .ib-h{display:flex;align-items:baseline;gap:var(--s2);padding:5px 9px 4px}
-.ib-h .t{font-size:0.78125rem;font-weight:600;color:var(--ink-2);letter-spacing:0}
+.ib-h .t{font-size:.8125rem;font-weight:600;color:var(--ink-2);letter-spacing:0}
 .ib-x{margin-left:auto;border:0;background:transparent;padding:0;cursor:pointer;
-  color:var(--dry);font:inherit;font-size:0.71875rem}
+  color:var(--dry);font:inherit;font-size:.75rem}
 .ib-x:hover{text-decoration:underline}
 .menu-i.is-ib{grid-template-columns:7px minmax(0,1fr);gap:8px;align-items:start}
 .menu-i.is-ib .dot{width:5px;height:5px;border-radius:50%;background:transparent;margin-top:6px}
@@ -1219,7 +1219,7 @@ dialog{border:1px solid var(--line);padding:0;border-radius:var(--r3);background
   color:var(--ink);box-shadow:var(--sh-3);max-width:min(94vw,440px);width:100%}
 dialog .card-h,dialog .card-b{padding:var(--s5)}
 dialog .card-h{margin:0;border-bottom:1px solid var(--line)}
-dialog .card-h>strong{font-size:0.84375rem;letter-spacing:-.02em;text-transform:none;color:var(--ink)}
+dialog .card-h>strong{font-size:.875rem;letter-spacing:-.02em;text-transform:none;color:var(--ink)}
 dialog::backdrop{background:rgba(12,12,17,.5);backdrop-filter:blur(2px)}
 
 /* ---------- 工作台 ---------- */
@@ -1238,7 +1238,7 @@ body[data-route="project"] #view{padding:0;overflow:hidden}
 .pjx{display:flex;flex-direction:column;height:100%;min-height:0}
 .pjx-top{flex:0 0 auto;display:flex;align-items:center;gap:var(--s3);
   padding:var(--s3) var(--s5);border-bottom:1px solid var(--line);background:var(--paper)}
-.pjx-n{font-size:1.0625rem;letter-spacing:-.02em;color:var(--ink);line-height:1.25;
+.pjx-n{font-size:1rem;letter-spacing:-.02em;color:var(--ink);line-height:1.25;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pjx-back,.pjx-ic,.pjx-add{display:inline-flex;align-items:center;justify-content:center;
   flex:0 0 auto;width:2rem;height:2rem;border-radius:var(--r1);border:1px solid transparent;
@@ -1250,7 +1250,7 @@ body[data-route="project"] #view{padding:0;overflow:hidden}
 .pjx-ic{position:relative;overflow:visible}
 .pjx-ic .nav-n{position:absolute;top:-4px;right:-4px;margin:0;
   min-width:0.9375rem;height:0.9375rem;padding:0 3px;
-  font-size:0.5625rem;line-height:0.9375rem;
+  font-size:.625rem;line-height:0.9375rem;
   box-shadow:0 0 0 2px var(--surface)}
 .pjx-back:hover,.pjx-ic:hover,.pjx-add:hover{background:var(--surface-2);color:var(--ink)}
 .pjx-b{flex:1 1 auto;display:flex;min-height:0}
@@ -1428,7 +1428,7 @@ body.is-pjdrag{cursor:col-resize;user-select:none}
   background:var(--surface)}
 .pw-tabs{display:flex;gap:var(--s5);padding:0 var(--s5);border-bottom:1px solid var(--line);flex:0 0 auto}
 .pw-tab{border:0;background:transparent;padding:13px 0;cursor:pointer;color:var(--ink-3);
-  font-size:0.78125rem;font-weight:500;border-bottom:2px solid transparent;margin-bottom:-1px}
+  font-size:.8125rem;font-weight:500;border-bottom:2px solid transparent;margin-bottom:-1px}
 .pw-tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--dry)}
 .pw-leftb{flex:1;min-height:0;overflow:auto;padding:0 var(--s5) var(--s5)}
 .pw-main{display:flex;flex-direction:column;min-width:0;min-height:0;background:var(--paper)}
@@ -1484,14 +1484,14 @@ body.is-pjdrag{cursor:col-resize;user-select:none}
 .pwcard.is-kb.is-on{border-color:var(--ink);box-shadow:inset 3px 0 0 0 var(--ink)}
 .kbprev{box-shadow:none}
 .kbpre{margin:0;max-height:26rem;overflow:auto;white-space:pre-wrap;word-break:break-word;
-  font-family:var(--mono);font-size:0.71875rem;line-height:1.6;color:var(--ink-2);
+  font-family:var(--mono);font-size:.75rem;line-height:1.6;color:var(--ink-2);
   background:var(--surface-2);border-radius:var(--r2);padding:var(--s3)}
 .cap-row.is-wet .cap-ic,.pickchip.is-wet .cap-ic{background:var(--wet-soft);color:var(--wet)}
-.cap-n{font-size:0.78125rem;font-weight:600;color:var(--ink);letter-spacing:-.005em;
+.cap-n{font-size:.8125rem;font-weight:600;color:var(--ink);letter-spacing:-.005em;
   min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cap-row[aria-pressed="true"] .cap-n{color:var(--dry-ink)}
 .cap-row.is-wet[aria-pressed="true"] .cap-n{color:var(--wet-ink)}
-.cap-q{font-size:0.71875rem;line-height:1.5;color:var(--ink-4);
+.cap-q{font-size:.75rem;line-height:1.5;color:var(--ink-4);
   display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;
   overflow:hidden;min-width:0}
 @media(max-width:1000px){.caps{grid-template-columns:repeat(3,minmax(0,1fr))}}
@@ -1525,17 +1525,17 @@ body.is-pjdrag{cursor:col-resize;user-select:none}
 .inf-wait{margin:auto;display:flex;flex-direction:column;align-items:center;gap:var(--s2);
   color:var(--ink-4);font-size:0.8125rem}
 .inf-q{align-self:flex-end;max-width:85%;padding:var(--s2) var(--s4);border-radius:.75rem .75rem .25rem .75rem;
-  background:var(--dry-soft);color:var(--dry-ink);font-size:0.84375rem;line-height:1.65;
+  background:var(--dry-soft);color:var(--dry-ink);font-size:.875rem;line-height:1.65;
   white-space:pre-wrap;word-break:break-word}
 .inf-a{align-self:flex-start;max-width:100%;min-width:0;display:flex;flex-direction:column;
   padding:var(--s3) var(--s4);border:1px solid var(--line-2);border-radius:.75rem .75rem .75rem .25rem;
-  background:var(--surface);font-size:0.84375rem;line-height:1.7;white-space:pre-wrap;word-break:break-word}
+  background:var(--surface);font-size:.875rem;line-height:1.7;white-space:pre-wrap;word-break:break-word}
 .inf-a.is-err{border-color:var(--err);background:var(--err-soft)}
 .inf-a.is-wait,.inf-a.is-none{color:var(--ink-4);border-style:dashed;background:transparent}
 .inf-u{font-size:0.6875rem;color:var(--ink-4);margin-top:auto;padding-top:10px}
 /* 竖排之后列头都挤在最上面，答复一条条往下排，哪条是谁的就看不出来了。
    窄屏给每一格补一个模型名；宽屏靠列头，这一行是多余的。 */
-.inf-foot{margin:0;text-align:center;font-size:0.71875rem;color:var(--ink-4)}
+.inf-foot{margin:0;text-align:center;font-size:.75rem;color:var(--ink-4)}
 @media(max-width:900px){
   .inf-g{grid-template-columns:minmax(0,1fr)!important}
   .inf-h{position:static}
@@ -1605,7 +1605,7 @@ body.is-pjdrag{cursor:col-resize;user-select:none}
 /* 不给拖拽手柄：高度由内容决定，不由鼠标决定。
    一行起步，随内容长，到 --ask-max 为止，再多就自己滚。 */
 .ask-t{width:100%;border:0;background:transparent;color:inherit;resize:none;
-  font:inherit;font-size:0.84375rem;line-height:1.7;min-height:1.5rem;padding:0;
+  font:inherit;font-size:.875rem;line-height:1.7;min-height:1.5rem;padding:0;
   max-height:var(--ask-max,320px);overflow-y:auto}
 /* 首页那一个定高：它是这一屏的主体，边打字边长高会把下面那排快捷指令一路往下推。
    进了对话之后才按内容长——那时它在底部，长高不会推动别的东西。 */
@@ -1641,7 +1641,7 @@ body.is-pjdrag{cursor:col-resize;user-select:none}
 .ctl:hover{border-color:var(--ink-4);color:var(--ink)}
 /* 图标在按钮里的体量：15px 图标配 28px 框只占 54%，看着像个空框。
    提到 17px，和文字控件的视觉重量对齐。 */
-.ctl-ic{width:28px;padding:0;justify-content:center;font-size:0.96875rem;font-weight:600}
+.ctl-ic{width:28px;padding:0;justify-content:center;font-size:1rem;font-weight:600}
 .ctl-ic svg{width:1.0625rem;height:1.0625rem}
 .ctl-pick{border-color:var(--ink);background:var(--ink);color:var(--on-pri);font-weight:600}
 .ctl-go{background:var(--ink);border-color:var(--ink);color:var(--on-pri);padding:0 14px}
@@ -1704,7 +1704,7 @@ select.sel-raw,.sel-raw{position:absolute!important;width:1px!important;height:1
 .ask-bar [data-act="bindproj"]{max-width:min(17rem,45%);overflow:hidden}
 .ask-bar [data-act="bindproj"] .dd-v{min-width:0;overflow:hidden;
   text-overflow:ellipsis;white-space:nowrap}
-.ctl-dd.as-input{height:2rem;min-height:2rem;border-radius:var(--r1);font-size:0.78125rem;
+.ctl-dd.as-input{height:2rem;min-height:2rem;border-radius:var(--r1);font-size:.8125rem;
   color:var(--ink);padding:0 10px}
 .menu-i.is-off{opacity:.45;cursor:not-allowed}
 
@@ -1817,7 +1817,7 @@ body[data-route="chat"] #view{padding-bottom:0}
 .qks{display:flex;flex-wrap:wrap;gap:var(--s2);justify-content:center;margin-top:var(--s2)}
 .qk{display:inline-flex;align-items:center;gap:7px;min-height:2rem;padding:0 12px 0 9px;
   border:1px solid var(--line);border-radius:999px;background:var(--surface);
-  color:var(--ink-2);cursor:pointer;font:inherit;font-size:0.78125rem;white-space:nowrap;
+  color:var(--ink-2);cursor:pointer;font:inherit;font-size:.8125rem;white-space:nowrap;
   transition:background .14s,border-color .14s,color .14s}
 .qk:hover{background:var(--surface-2);border-color:var(--ink-4);color:var(--ink)}
 .qk:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
@@ -1827,7 +1827,7 @@ body[data-route="chat"] #view{padding-bottom:0}
   background:transparent;color:var(--ink-4)}
 .qk-ic.is-wet{background:transparent;color:var(--wet)}
 .qk-ic svg{width:0.8125rem;height:0.8125rem}
-@media(max-width:640px){.greet{font-size:1.875rem!important}.qks{gap:6px}.qk{font-size:0.71875rem;min-height:1.875rem}}
+@media(max-width:640px){.greet{font-size:1.875rem!important}.qks{gap:6px}.qk{font-size:.75rem;min-height:1.875rem}}
 
 .chat-ask::before{content:"";position:absolute;left:0;right:0;top:calc(-1 * var(--s5));
   height:var(--s5);background:linear-gradient(to bottom,transparent,var(--paper));
@@ -1939,7 +1939,7 @@ input[type="range"]::-moz-range-thumb{width:0.875rem;height:0.875rem;border-radi
   transition:border-color .14s,color .14s}
 .drop-t{font-size:0.8125rem;font-weight:550;color:var(--ink-2)}
 /* balance 是为了不让最后一个字单独掉到下一行（「…要预测的目 / 标」）。 */
-.drop-s{font-size:0.71875rem;color:var(--ink-4);max-width:46ch;line-height:1.6;
+.drop-s{font-size:.75rem;color:var(--ink-4);max-width:46ch;line-height:1.6;
   text-wrap:balance}
 .drop:hover{border-color:var(--dry);background:var(--dry-soft);color:var(--dry-ink)}
 .drop:hover .drop-t{color:var(--dry-ink)}
@@ -2031,7 +2031,7 @@ input[type="range"]::-moz-range-thumb{width:0.875rem;height:0.875rem;border-radi
   margin-top:1px}
 .cot-s.is-err .cot-i{background:var(--err)}
 .cot-s.is-skip .cot-i{background:transparent;box-shadow:inset 0 0 0 1px var(--ink-4)}
-.cot-n{font-size:0.78125rem;font-weight:500;color:var(--ink-2);min-width:0}
+.cot-n{font-size:.8125rem;font-weight:500;color:var(--ink-2);min-width:0}
 .cot-k{font-size:0.625rem;font-weight:600;letter-spacing:.03em;color:var(--ink-4);
   margin-right:5px}
 .cot-ms{font-size:0.6875rem;color:var(--ink-4);white-space:nowrap}
@@ -2093,7 +2093,7 @@ tr.row-go:focus-visible{outline:2px solid var(--focus);outline-offset:-2px}
 /* 工具条里的小按钮：无边框的 ghost 挨着说明文字时读起来就是一串灰字。
    描一条边，它才看得出来是能点的。 */
 .btn-tool{display:inline-flex;align-items:center;gap:5px;min-height:1.75rem;padding:0 10px;
-  font-size:0.71875rem;border:1px solid var(--line);border-radius:var(--r1);
+  font-size:.75rem;border:1px solid var(--line);border-radius:var(--r1);
   background:var(--surface);color:var(--ink-2);cursor:pointer;white-space:nowrap}
 .btn-tool:hover{border-color:var(--ink-4);color:var(--ink);background:var(--surface-2)}
 .filerow[aria-checked="true"]{border-color:var(--dry);background:var(--dry-soft);color:var(--dry-ink)}
@@ -2147,18 +2147,18 @@ tbody tr.is-me>td{background:var(--dry-soft);font-weight:600}
 @media (prefers-reduced-motion:reduce){.kadv-t .car{transition:none}}
 .kstat{display:flex;flex-wrap:wrap;gap:var(--s5)}
 .kstat>span{display:flex;flex-direction:column;gap:1px}
-.kstat .sv{font-size:1.1875rem;font-weight:500;letter-spacing:-.025em;line-height:1.15;color:var(--ink);
+.kstat .sv{font-size:1.125rem;font-weight:500;letter-spacing:-.025em;line-height:1.15;color:var(--ink);
   font-variant-numeric:tabular-nums}
-.kstat .sk{font-size:0.65625rem;color:var(--ink-4);font-weight:450}
+.kstat .sk{font-size:.6875rem;color:var(--ink-4);font-weight:450}
 /* 跑的过程按行走，每行一个勾——像看着它一步步做完，不是一根进度条 */
-.klog{display:flex;flex-direction:column;gap:2px;font-family:var(--mono);font-size:0.71875rem;
+.klog{display:flex;flex-direction:column;gap:2px;font-family:var(--mono);font-size:.75rem;
   line-height:1.7;color:var(--ink-4)}
 .klog i{font-style:normal;color:var(--ok);margin-right:6px}
 .klog .cur{color:var(--ink-2)}
 .klog .cur i{color:var(--dry)}
 .rmchip{display:inline-flex;align-items:center;gap:5px;padding:2px 4px 2px 9px;
   border-radius:999px;background:var(--dry-soft);color:var(--dry-ink);
-  font-size:0.71875rem;font-weight:500}
+  font-size:.75rem;font-weight:500}
 .rmchip button{border:0;background:transparent;color:inherit;cursor:pointer;font-size:0.875rem;
   line-height:1;padding:0 4px;min-height:1.5rem;min-width:1.5rem}
 @media(max-width:720px){.kform{grid-template-columns:1fr}}
@@ -2215,7 +2215,7 @@ tbody tr.is-me>td{background:var(--dry-soft);font-weight:600}
 dialog{border-radius:.875rem}
 
 /* ---------- 表格：表头不铺底色，只靠一条线和小一号的字 ---------- */
-thead th{color:var(--ink-3);font-weight:600;font-size:0.71875rem;border-bottom:1px solid var(--line)}
+thead th{color:var(--ink-3);font-weight:600;font-size:.75rem;border-bottom:1px solid var(--line)}
 tbody tr:hover{background:var(--surface-2)}
 /* 操作列钉在右边，会盖住横向滚过来的内容：左边留出一格，链接不贴着前一列的字。 */
 .tbl-wrap.is-list th:last-child,.tbl-wrap.is-list td:last-child{padding-left:var(--s5)}
@@ -2230,7 +2230,7 @@ tbody tr:hover{background:var(--surface-2)}
 .chip.c-mut{background:var(--surface-3);color:var(--ink-3)}
 
 /* ---------- 页签 ---------- */
-.tab{font-size:0.84375rem}
+.tab{font-size:.875rem}
 .tab.is-on{color:var(--ink);border-bottom-color:var(--dry);font-weight:600}
 
 /* ---------- 输入 ---------- */
@@ -2252,7 +2252,7 @@ tbody tr:hover{background:var(--surface-2)}
 .turn-me .turn-g{color:var(--dry);line-height:2.4}
 
 /* ---------- 项目页 ---------- */
-.pjx-new{min-height:1.875rem;padding:0 12px;font-size:0.78125rem;white-space:nowrap}
+.pjx-new{min-height:1.875rem;padding:0 12px;font-size:.8125rem;white-space:nowrap}
 .outbar.is-inline{position:relative;top:auto;padding-top:0;flex:0 0 auto;z-index:8}
 .outbar.is-inline .outbar-p{position:absolute;right:0;top:100%;z-index:20}
 .pjx-conv{display:inline-flex;align-items:center;gap:var(--s2);min-width:0;max-width:100%;
@@ -2260,7 +2260,7 @@ tbody tr:hover{background:var(--surface-2)}
   background:transparent;cursor:pointer;font:inherit;color:var(--ink)}
 .pjx-conv:hover{background:var(--surface-2);border-color:var(--line)}
 .pjx-conv:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
-.pjx-conv-n{font-size:0.84375rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pjx-conv-n{font-size:.875rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pjx-conv svg{flex:0 0 auto;color:var(--ink-4)}
 .pjx-exps{gap:var(--s2);padding-top:var(--s3)}
 .pjx-sec{display:flex;align-items:center;gap:var(--s2);padding:var(--s3) 0 2px}
@@ -2280,14 +2280,14 @@ tbody tr:hover{background:var(--surface-2)}
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pjx-card-kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(4.25rem,1fr));gap:4px var(--s3)}
 .pjx-card-kv>span{display:flex;flex-direction:column;min-width:0}
-.pjx-card-kv i{font-style:normal;font-size:0.65625rem;color:var(--ink-4)}
+.pjx-card-kv i{font-style:normal;font-size:.6875rem;color:var(--ink-4)}
 .pjx-card-kv b{font-size:0.75rem;font-weight:500;color:var(--ink-2);
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 /* ---------- 模型接入 / 推理 ---------- */
 .prov-mk{display:grid;place-items:center;flex:0 0 2rem;width:2rem;height:2rem;border-radius:.5rem;
   background:var(--surface-3);color:var(--ink-2);font-weight:650;font-size:0.8125rem}
-.prov-mk.is-sm{flex-basis:1.625rem;width:1.625rem;height:1.625rem;font-size:0.71875rem;border-radius:.4375rem}
+.prov-mk.is-sm{flex-basis:1.625rem;width:1.625rem;height:1.625rem;font-size:.75rem;border-radius:.4375rem}
 .provs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
 .prov{position:relative;display:flex;align-items:center;gap:var(--s3);min-width:0;padding:var(--s3);
   border:1px solid var(--line);border-radius:.625rem;background:var(--surface);cursor:pointer}
@@ -2370,7 +2370,7 @@ body[data-route="me"] .acct-b{background:var(--surface-3)}
 .outbar:not(.is-inline){flex-direction:row;align-items:center;gap:var(--s2);flex-wrap:wrap}
 .outbar:not(.is-inline) .outbar-p{flex:0 0 100%;margin-left:auto}
 .outbar-back{min-height:1.875rem;padding:0 10px;font-size:0.75rem}
-.outbar-new{min-height:1.875rem;padding:0 12px;font-size:0.78125rem;white-space:nowrap}
+.outbar-new{min-height:1.875rem;padding:0 12px;font-size:.8125rem;white-space:nowrap}
 /* 输入框顶上的一排卡片 */
 .askchips{display:flex;flex-wrap:wrap;gap:6px;padding-bottom:var(--s2)}
 .rmchip{padding:3px 4px 3px 8px;border-radius:.5rem;border:1px solid var(--dry-dim);font-weight:600}
@@ -2394,7 +2394,7 @@ body[data-route="me"] .acct-b{background:var(--surface-3)}
   border:1px solid var(--line-2);border-radius:.625rem;overflow:hidden}
 .pdw-s{display:flex;flex-direction:column;gap:2px;padding:var(--s3) var(--s4);background:var(--surface)}
 .pdw-s b{font-size:1.25rem;font-weight:600;line-height:1.2}
-.pdw-s span{font-size:0.71875rem;color:var(--ink-3)}
+.pdw-s span{font-size:.75rem;color:var(--ink-3)}
 
 /* 项目页两边的顶栏同高 */
 .pjx-tabs,.pjx-chat-h{height:2.75rem;box-sizing:border-box;align-items:stretch}
@@ -2407,7 +2407,7 @@ body[data-route="me"] .acct-b{background:var(--surface-3)}
   width:min(18rem,100%);border:1px solid var(--line);border-radius:.5rem;background:var(--surface);color:var(--ink-4)}
 .fbar-q:hover{border-color:var(--ink-4)}
 .fbar-q:focus-within{border-color:var(--dry);box-shadow:0 0 0 3px var(--dry-soft)}
-.fbar-q input{flex:1 1 auto;min-width:0;height:100%;min-height:1.75rem;border:0;outline:0;background:transparent;color:var(--ink);font-size:0.78125rem}
+.fbar-q input{flex:1 1 auto;min-width:0;height:100%;min-height:1.75rem;border:0;outline:0;background:transparent;color:var(--ink);font-size:.8125rem}
 .fbar-q input::placeholder{color:var(--ink-4)}
 
 /* 全部对话：一段一行，时间统一靠右 */
@@ -2421,7 +2421,7 @@ body[data-route="me"] .acct-b{background:var(--surface-3)}
 .chcard-n{width:auto;flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .chcard .chip{flex:0 0 auto}
 .chcard-q{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
-.chcard-at{flex:0 0 6.5rem;text-align:right;font-size:0.71875rem;color:var(--ink-4)}
+.chcard-at{flex:0 0 6.5rem;text-align:right;font-size:.75rem;color:var(--ink-4)}
 .chcard-x{position:static;flex:0 0 auto}
 @media(max-width:40rem){.chcard-at{flex-basis:auto}.chcard .chip.c-mut{display:none}}
 
@@ -2440,10 +2440,10 @@ body[data-route="me"] .acct-b{background:var(--surface-3)}
 .nav[aria-current="page"]{background:var(--surface);color:var(--ink);box-shadow:0 0 0 1px var(--line)}
 .nav-group.is-sep,.side-foot{border-color:var(--line)}
 /* 对话页右上角：产出文件、历史对话 */
-.outbar-b{border-radius:.5rem;font-size:0.78125rem;font-weight:500;color:var(--ink-2)}
+.outbar-b{border-radius:.5rem;font-size:.8125rem;font-weight:500;color:var(--ink-2)}
 .outbar-b:not(:disabled){border-color:var(--dry-dim);color:var(--dry-ink);background:var(--dry-soft)}
 .outbar-b:not(:disabled) .num{background:var(--dry);color:var(--on-dry)}
-.outbar-hist{min-height:1.875rem;padding:0 11px;font-size:0.78125rem;gap:5px}
+.outbar-hist{min-height:1.875rem;padding:0 11px;font-size:.8125rem;gap:5px}
 /* 首页历史入口占独立顶行，随主内容区域右对齐，矮屏也不会压住问候语。 */
 .land-top{display:flex;justify-self:end;align-self:flex-end;margin-left:auto;width:max-content;gap:var(--s2);z-index:2}
 
@@ -2500,7 +2500,7 @@ dialog{max-height:calc(100dvh - 32px);overflow-y:auto}
 .research-home::before{content:"";position:absolute;z-index:-1;pointer-events:none;top:0;left:-2rem;right:-2rem;height:22rem;background:url('./assets/research-chat-bg.jpg') right top/cover no-repeat;mask-image:linear-gradient(#000 35%,transparent 100%);opacity:.72}
 .page.chat.is-land.research-home{display:flex;align-items:stretch;gap:0;padding:1.25rem 0 2rem;min-height:100%}
 .research-top{display:flex;align-items:center;justify-content:space-between;gap:1rem}
-.research-top strong{font-size:1.1rem;font-weight:650}
+.research-top strong{font-size:1.125rem;font-weight:650}
 .research-home .land{max-width:66rem;width:100%;gap:0;padding-top:clamp(3rem,14vh,9rem)}
 .research-home .greet{font-size:clamp(1.65rem,2.6vw,2.35rem);font-weight:650;line-height:1.3;letter-spacing:-.03em}
 .research-subtitle{font-size:1rem;color:var(--ink-3);margin:.65rem 0 1.6rem}
@@ -2524,21 +2524,21 @@ dialog{max-height:calc(100dvh - 32px);overflow-y:auto}
 .research-home .ctl-proj{max-width:17rem}
 .research-home .research-upload{gap:.5rem;width:auto;padding-inline:.4rem}
 .research-home .qks{margin-top:1.5rem;gap:.65rem}
-.research-home .qk{min-height:2rem;padding-inline:.8rem;font-size:.78rem}
+.research-home .qk{min-height:2rem;padding-inline:.8rem;font-size:.8125rem}
 .research-home .qk-ic{color:var(--ink-3)}
 
 @media(max-width:640px){
-.research-home .land{padding-top:2.6rem}.research-subtitle{font-size:.8rem;margin-bottom:1.25rem}
-.research-home .ask-b{padding:1rem}.research-home .ask-t.is-fix{height:7rem;min-height:7rem;max-height:7rem;font-size:.9rem}
+.research-home .land{padding-top:2.6rem}.research-subtitle{font-size:.8125rem;margin-bottom:1.25rem}
+.research-home .ask-b{padding:1rem}.research-home .ask-t.is-fix{height:7rem;min-height:7rem;max-height:7rem;font-size:.875rem}
 .research-home .research-upload span{display:none}.research-home .ctl-proj{max-width:7rem}.research-home .ask-bar{gap:5px}
-.research-domains{margin-bottom:1rem}.research-domain{min-width:9rem;font-size:.8rem;padding-inline:.7rem}
-.research-home .qks{gap:.4rem;margin-top:1rem}.research-home .qk{font-size:.72rem;padding-inline:.6rem}
+.research-domains{margin-bottom:1rem}.research-domain{min-width:9rem;font-size:.8125rem;padding-inline:.7rem}
+.research-home .qks{gap:.4rem;margin-top:1rem}.research-home .qk{font-size:.75rem;padding-inline:.6rem}
 
 .research-home::before{height:15rem;left:0;right:0}
 }
 @media(prefers-reduced-motion:reduce){.research-domain-list{scroll-behavior:auto}}
 
-.research-agent{display:inline-flex;align-items:center;gap:.5rem;align-self:flex-start;max-width:100%;padding:.3rem .6rem;border:1px solid var(--dry-dim);border-radius:999px;background:var(--dry-soft);color:var(--dry-ink);font-size:.78rem}
+.research-agent{display:inline-flex;align-items:center;gap:.5rem;align-self:flex-start;max-width:100%;padding:.3rem .6rem;border:1px solid var(--dry-dim);border-radius:999px;background:var(--dry-soft);color:var(--dry-ink);font-size:.8125rem}
 .research-agent svg{width:1rem;height:1rem}.research-agent button{padding:0 .2rem;border:0;background:transparent;color:inherit;cursor:pointer;font-size:1rem;line-height:1}
 
 .research-composer{width:100%;min-width:0;background:var(--surface-2);border:1px solid var(--line);border-radius:1.25rem}
@@ -2550,15 +2550,15 @@ dialog{max-height:calc(100dvh - 32px);overflow-y:auto}
 .research-project-outside .ctl-proj{max-width:100%;width:auto;min-width:0;gap:.5rem;padding:.35rem .55rem;background:var(--surface);border:1px solid var(--line);border-radius:.5rem;color:var(--ink-2);height:auto;min-height:2rem}
 .research-project-label{flex-shrink:0;color:var(--ink-3);font-size:.75rem}
 .research-project-outside .ctl-proj .dd-v{max-width:23rem}
-@media(max-width:640px){.research-project-outside{padding:.55rem .65rem}.research-project-outside .ctl-proj{font-size:.7rem;gap:.35rem}.research-project-label{font-size:.7rem}}
+@media(max-width:640px){.research-project-outside{padding:.55rem .65rem}.research-project-outside .ctl-proj{font-size:.6875rem;gap:.35rem}.research-project-label{font-size:.6875rem}}
 .research-project-outside .ctl-proj:hover{background:var(--surface-2);border-color:var(--line)}
 .research-composer .research-upload{width:2rem;padding:0;flex-shrink:0}
 @media(max-width:640px){
 .research-send-controls{width:100%;gap:.35rem;flex-wrap:wrap}
-.research-send-controls .research-agent{font-size:.65rem;gap:.3rem;padding:.25rem .4rem}
+.research-send-controls .research-agent{font-size:.6875rem;gap:.3rem;padding:.25rem .4rem}
 .research-send-controls .research-agent svg{width:.8rem;height:.8rem}
-.research-send-controls .ctl-mdl{width:8rem;min-width:0;font-size:.65rem}
-.research-send-controls .ctl-mdl .ctl-dd{font-size:.65rem}
+.research-send-controls .ctl-mdl{width:8rem;min-width:0;font-size:.6875rem}
+.research-send-controls .ctl-mdl .ctl-dd{font-size:.6875rem}
 .research-send-controls .ctl-mdl .tool-ic{display:none}
 .research-send-controls .ctl-go{width:2rem;min-width:2rem}
 .research-project-outside .ctl-proj{max-width:100%}
@@ -4028,7 +4028,7 @@ function roundTabs(active){
     </div>
     <div class="row wrap" style="gap:var(--s2);border-bottom:1px solid var(--line);padding-bottom:var(--s3)">
       ${RTABS.map(([k,n])=>`<button class="btn ${active===k?'':'btn-gh'}" type="button" data-go="${k}"
-        style="min-height:1.75rem;font-size:0.78125rem${active===k?';border-color:var(--dry);color:var(--dry-ink);background:var(--dry-soft);font-weight:600':''}">${n}</button>`).join('')}
+        style="min-height:1.75rem;font-size:.8125rem${active===k?';border-color:var(--dry);color:var(--dry-ink);background:var(--dry-soft);font-weight:600':''}">${n}</button>`).join('')}
     </div>
   </div>`;
 }
@@ -4266,7 +4266,7 @@ const COPYSRC={};
 function cpBtn(key,text,label){
   COPYSRC[key]=text;
   return `<button class="btn btn-gh cpbtn" type="button" data-copy="${esc(key)}"
-    style="min-height:1.5rem;padding:0 9px;font-size:0.71875rem">${esc(label||'复制')}</button>`;
+    style="min-height:1.5rem;padding:0 9px;font-size:.75rem">${esc(label||'复制')}</button>`;
 }
 function bindCopy(){
   view.querySelectorAll('[data-copy]').forEach(b=>b.onclick=()=>{
@@ -5615,7 +5615,7 @@ function labCard(b){
         <span class="scard-ic${st.phase==='执行'?' is-wet':''}">${
           '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 3.5v6L4.5 18a2 2 0 0 0 1.8 3h11.4a2 2 0 0 0 1.8-3l-5-8.5v-6M8 3.5h8M7.5 14h9"/></svg>'}</span>
         <span class="col grow" style="gap:1px;min-width:0">
-          <strong class="scard-n">${esc(b.name||(pr.n+' · Round '+b.round))}</strong>
+          <strong class="scard-n" title="${esc(b.name||(pr.n+' · Round '+b.round))}">${esc(b.name||(pr.n+' · Round '+b.round))}</strong>
           <span class="scard-slug num">${esc(b.id)}　${esc(pnOf(b.pid))}</span></span>
         ${batchChips(b)}</div>
       <div class="col" style="gap:5px">
@@ -5696,9 +5696,9 @@ V.labdet=()=>{
     ${[['数据条数',b.n,''],['进度',pg+'%',''],
        ['已走步数',(b.log||[]).length+' / '+EXP_STATUS.length,''],
        ['结果',b.results==='none'?'未回':(RESULTS_STATUS[b.results]||b.results),
-        (b.results==='all'?'color:var(--ok);':'')+'font-size:1.0625rem;font-weight:600;font-family:var(--sans);line-height:1.9']]
+        (b.results==='all'?'color:var(--ok);':'')+'font-size:1rem;font-weight:600;font-family:var(--sans);line-height:1.9']]
       .concat([[nx?(nx.who==='你'?'下一步 · 待你处理':'下一步 · 实验节点执行中'):'下一步',nx?nx.act:'已结束',
-        (nx&&nx.who==='你'?'color:var(--wet-ink);':'')+'font-size:1.0625rem;font-weight:600;font-family:var(--sans);line-height:1.9']])
+        (nx&&nx.who==='你'?'color:var(--wet-ink);':'')+'font-size:1rem;font-weight:600;font-family:var(--sans);line-height:1.9']])
       .map(([k,v,stl])=>`<div><div class="t-sm">${k}</div><div class="v" style="${stl}">${esc(String(v))}</div></div>`).join('')}
   </div>
   <div class="row wrap" style="gap:var(--s3);align-items:center">
@@ -6716,7 +6716,7 @@ V.dsnew=()=>{
     <span class="t-sm mut2">${ready?'建立后为草稿，发布后才能用于训练':'请填写名称、文件和目标列'}</span>
     <span class="grow"></span>
     <button class="btn" type="button" data-act="dscancel">取消</button>
-    <button class="btn btn-pri" type="button" data-act="dsmake" ${ready?'':'disabled'}>建立数据集</button>
+    <button class="btn btn-pri" type="button" data-act="dsmake" ${ready?'':'disabled title="先填写名称、数据文件和目标列"'}>建立数据集</button>
   </div>
 </div>`;
 };
@@ -9700,6 +9700,7 @@ function grid(){
     const res=[[(typeof materialsRows==='function'?materialsRows().filter(x=>x.pid===p.id).length:FILES().filter(x=>x.pid===p.id).length),'资料'],[(p.tools||[]).length,'工具'],
                [(p.arch||[]).length,'归档']].filter(x=>x[0]);
     const nt=(workbenchData({pid:p.id}).tasks||[]).filter(t=>t.pid===p.id&&t.isTask!==false&&t.status!=='canceled').length;
+    if(nt)res.push([nt,'个任务']);
     return `<div class="project-card-wrap"><button class="pcard ${cc}" type="button" data-proj="${p.id}">
       <span class="pcard-t">
         <strong>${esc(p.name)}</strong>
@@ -9709,7 +9710,6 @@ function grid(){
       <span class="pcard-f">
         <span class="t-sm mut2">${res.length?res.map(x=>'<b class="num">'+x[0]+'</b> '+x[1]).join(' · '):'还没有资源'}</span>
         <span class="grow"></span>
-        <span class="t-sm mut2"><b class="num">${nt}</b> 个任务</span>
       </span>
     </button></div>`}).join('')+`</div>`;
 }
@@ -10924,7 +10924,7 @@ return `<section class="card">
       ${P.chains.map((c,i)=>`<div class="col" style="gap:4px">
         <div class="row"><span class="t-sm mut2">链 ${esc(c.id)}</span><span class="grow"></span>
           <span class="t-sm mut2 num">${c.seq.length} 残基</span></div>
-        <textarea class="input num" data-chain="${i}" style="min-height:3.875rem;font-size:0.71875rem;line-height:1.75">${esc(c.seq)}</textarea>
+        <textarea class="input num" data-chain="${i}" style="min-height:3.875rem;font-size:.75rem;line-height:1.75">${esc(c.seq)}</textarea>
       </div>`).join('')}
       <div class="row"><span class="grow"></span>
         <button class="btn btn-gh" type="button" data-act="reparse">重新解析编辑后的序列</button></div>
@@ -10954,7 +10954,7 @@ return `<section class="card">
   <div class="card-h"><strong>选择设计位点</strong>
     <span class="grow"></span><span class="t-sm mut2">已选 <span class="num">${IN.sel.size}</span> 个残基</span></div>
   <div class="card-b col" style="gap:var(--s4)">
-    <div id="seqmap" style="font-size:0.78125rem;line-height:2;background:var(--surface-2);
+    <div id="seqmap" style="font-size:.8125rem;line-height:2;background:var(--surface-2);
       border:1px solid var(--line);border-radius:var(--r2);padding:var(--s4);user-select:none">${html}</div>
     <div class="row wrap" style="gap:var(--s3);align-items:flex-end">
       <div class="field grow" style="max-width:360px"><label class="label" for="res">位点（区间与单点可混写）</label>
@@ -11104,7 +11104,7 @@ V.shelf=()=>{
       <span class="scard-ic${t.cap==='wet'?' is-wet':''}">${
         capOf(t)?capIcon(capOf(t)):'◇'}</span>
       <span class="col grow" style="gap:1px;min-width:0">
-        <strong class="scard-n">${esc(t.n)}</strong>
+        <strong class="scard-n" title="${esc(t.n)}">${esc(t.n)}</strong>
         ${slug(t.n)!==t.n?`<span class="scard-slug num">${esc(slug(t.n))}</span>`:''}</span>
       ${pubOK(t.n)?'':'<span class="chip c-err">已停用</span>'}
       ${t.appr?'<span class="chip c-wet" title="它生成的任务单要你确认排期之后才会提交执行">需确认排期</span>':''}
@@ -11443,7 +11443,7 @@ function feedNote(cap){
     <span class="t-sm num grow">${esc(fd.name)}</span>
     <span class="t-sm mut2">来自 ${esc(fd.from)}　${esc(fd.at)}</span>
     <button class="btn btn-gh" type="button" data-act="feedclr"
-      style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem">断开</button>
+      style="min-height:1.5rem;padding:0 8px;font-size:.75rem">断开</button>
   </div>`;
 }
 
@@ -11459,7 +11459,7 @@ function artCard(t){
     <span class="grow"></span>
     <span class="t-sm mut2">${A.length} 个</span>
     <button class="btn btn-gh" type="button" data-artzip="${esc(t.id)}"
-      style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem">全部打包</button></div>
+      style="min-height:1.5rem;padding:0 8px;font-size:.75rem">全部打包</button></div>
     ${/* 这里原先有一段讲「下载是现算的、存入项目是冻住的」。
          两颗按钮各自的 title 已经说了这件事，正文再讲一遍是旁白：
          它解释产品怎么运作，而不是帮人做下一步。 */''}
@@ -11472,9 +11472,9 @@ function artCard(t){
           <span class="chip">${esc(a.n)}</span>
           <button class="btn btn-gh" type="button" data-artdl="${esc(t.id)}|${i}"
             title="现在按当前数据算一份，下到的是最新那一版"
-            style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem">下载</button>
+            style="min-height:1.5rem;padding:0 8px;font-size:.75rem">下载</button>
           ${(function(){const rec=archRecOf(a,t);
-            const S1='style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem"';
+            const S1='style="min-height:1.5rem;padding:0 8px;font-size:.75rem"';
             return rec
               ?`<button class="btn btn-gh" type="button" data-archgo="${esc(rec.id)}" ${S1}
                   title="${esc(rec.at)} 存入，指纹 ${esc(String(rec.hash))}"
@@ -11492,7 +11492,7 @@ function artCard(t){
           <span class="lbl">接到下一步</span>
           ${cons.map(c=>`<button class="btn btn-gh" type="button"
             data-artuse="${esc(t.id)}|${i}|${esc(c.cap)}"
-            style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem"
+            style="min-height:1.5rem;padding:0 8px;font-size:.75rem"
             title="把这个产物接到「${esc(c.nd.n)}」的输入上">${esc(capName(c.cap))} · ${esc(c.nd.n)}</button>`).join('')}
         </div>`:''}
         ${artSinks(a.f).length?`<div class="row wrap" style="gap:var(--s2);align-items:baseline">
@@ -11707,7 +11707,7 @@ function archCard(){
     <div class="card-h"><strong>本项目的归档</strong><span class="grow"></span>
       <span class="t-sm mut2">${L.length} 件</span>
       <button class="btn btn-gh" type="button" data-mkreport="${S.round}"
-        style="min-height:1.5rem;padding:0 9px;font-size:0.71875rem">生成 Round ${S.round} 报告</button></div>
+        style="min-height:1.5rem;padding:0 9px;font-size:.75rem">生成 Round ${S.round} 报告</button></div>
     <div class="card-b col" style="gap:var(--s4)">
       <p class="t-sm mut" style="margin:0;max-width:72ch">这里放的是<strong>冻住的那一份</strong>：
         内容在存入的那一刻定下来，之后数据再变它也不变。报告、送检单、作为某次决策依据的候选表，
@@ -11719,11 +11719,11 @@ function archCard(){
           <span class="num t-md grow" style="min-width:0;word-break:break-all">${esc(x.name)}</span>
           <span class="chip">${esc(x.n)}</span>
           <button class="btn btn-gh" type="button" data-archdl="${esc(x.id)}"
-            style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem">下载</button>
+            style="min-height:1.5rem;padding:0 8px;font-size:.75rem">下载</button>
           <button class="btn btn-gh" type="button" data-archnote="${esc(x.id)}"
-            style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem">备注</button>
+            style="min-height:1.5rem;padding:0 8px;font-size:.75rem">备注</button>
           <button class="btn btn-gh" type="button" data-archdel="${esc(x.id)}"
-            style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem">删除</button>
+            style="min-height:1.5rem;padding:0 8px;font-size:.75rem">删除</button>
         </div>
         <div class="row wrap" style="gap:var(--s3)">
           <span class="t-sm mut2 num">${esc(x.id)}</span>
@@ -11732,7 +11732,7 @@ function archCard(){
           <span class="t-sm mut2 num" title="内容指纹，不是密码学哈希，只用来认出两份内容是不是同一份">#${esc(x.hash)}</span>
           ${x.from&&x.from.task&&x.from.task!=='—'
             ? `<button class="btn btn-gh" type="button" data-gotask="${esc(x.from.task)}"
-                style="min-height:1.5rem;padding:0 7px;font-size:0.71875rem">产自 ${esc(x.from.task)}</button>`
+                style="min-height:1.5rem;padding:0 7px;font-size:.75rem">产自 ${esc(x.from.task)}</button>`
             : (x.from&&x.from.round?`<span class="t-sm mut2">Round ${x.from.round}</span>`:'')}
         </div>
         ${x.note?`<span class="t-sm mut">${esc(x.note)}</span>`:''}
@@ -12029,7 +12029,7 @@ return `<section class="card" id="detail">
         ${dd==null?'':`<span class="t-sm" style="color:${(FIELD[pk].better==='high')===(dd>0)?'var(--dry)':'var(--err)'}">
           这一步 ${(dd>0?'+':'')+dd.toFixed(FIELD[pk].dec)}${FIELD[pk].unit}</span>`}
         <span class="grow"></span>
-        ${x.wt?'':`<button class="btn btn-gh" style="min-height:1.5rem;padding:0 6px;font-size:0.71875rem"
+        ${x.wt?'':`<button class="btn btn-gh" style="min-height:1.5rem;padding:0 6px;font-size:.75rem"
           type="button" data-detail="${x.id}">看这一代</button>`}
       </div>`}).join('')}
     </div>
@@ -12122,7 +12122,7 @@ function structCard(opt){
       </select>
       ${vwModeSel()}
       <button class="btn btn-gh" type="button" data-go="viewer"
-        style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem">放大看</button></div>
+        style="min-height:1.5rem;padding:0 8px;font-size:.75rem">放大看</button></div>
     <div class="card-b col" style="gap:var(--s3)">
       <div id="mol" style="position:relative;width:100%;height:${h}px;border-radius:var(--r2);
         overflow:hidden;background:var(--surface-2);border:1px solid var(--line)"></div>
@@ -12293,7 +12293,7 @@ function variantDiff(){
         <td class="num">${m.pos}</td>
         ${projFields(pr).map(k=>`<td class="num">${fmtv(cur,k)||'—'}</td>`).join('')}
         <td style="text-align:right">
-          <button class="btn btn-gh" style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem"
+          <button class="btn btn-gh" style="min-height:1.5rem;padding:0 8px;font-size:.75rem"
             type="button" data-locate="${m.pos}">${VW.struct?'在结构上定位':'先载入结构'}</button></td>
       </tr>`).join('')}</tbody></table></div>
 
@@ -12316,7 +12316,7 @@ function seqTrack(){
         background:${on?HILITE:'transparent'};color:${on?'var(--on-pri)':plddtColor(x.b)};font-weight:${on?600:500}">${T3[x.resn]||'X'}</i>`}
     h+='</span>';
   }
-  return `<div style="font-size:0.78125rem;line-height:2;background:var(--surface-2);border:1px solid var(--line);
+  return `<div style="font-size:.8125rem;line-height:2;background:var(--surface-2);border:1px solid var(--line);
     border-radius:var(--r2);padding:var(--s4);user-select:none;max-height:10.5rem;overflow:auto">${h}</div>`;
 }
 /* M5-F02 PAE：单色渐变、标链边界、悬停给残基对与误差 */
@@ -13036,9 +13036,9 @@ function kwResult(){
         </div>
         <div class="row wrap" style="gap:var(--s2);margin-top:var(--s3)">
           <span class="grow"></span>
-          <button class="btn btn-gh" style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem"
+          <button class="btn btn-gh" style="min-height:1.5rem;padding:0 8px;font-size:.75rem"
             type="button" data-kwacc="${esc(e.acc)}">取回序列与结构</button>
-          <button class="btn btn-gh" style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem"
+          <button class="btn btn-gh" style="min-height:1.5rem;padding:0 8px;font-size:.75rem"
             type="button" data-kwuse="${esc(e.acc)}">选作预测输入</button>
         </div>
       </div>
@@ -13073,7 +13073,7 @@ function hitListHTML(){
         <div class="hit-m">
           ${[['Score',h.score],['一致度',h.pct.toFixed(1)+'%'],['比对长度',h.aln+' AA']]
             .map(([k,v])=>`<div><span class="k">${k}</span><span class="v">${v}</span></div>`).join('')}
-          <div><span class="k">比对区间</span><span class="v" style="font-size:0.78125rem">查询 ${h.qs}–${h.qe} ／ 目标 ${h.ts}–${h.te}</span></div>
+          <div><span class="k">比对区间</span><span class="v" style="font-size:.8125rem">查询 ${h.qs}–${h.qe} ／ 目标 ${h.ts}–${h.te}</span></div>
         </div>
         <div class="col" style="gap:3px;margin-top:var(--s3)">
           <div class="row"><span class="t-xs mut2 grow">命中区域（查询全长 ${SK.q.length} AA）</span>
@@ -13084,14 +13084,14 @@ function hitListHTML(){
           <span class="chip c-mut">来源：${esc(h.src)} ${esc(h.acc)}</span>
           <span class="chip c-mut">全长 ${h.len} AA</span>
           <span class="grow"></span>
-          <button class="btn btn-gh" style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem"
+          <button class="btn btn-gh" style="min-height:1.5rem;padding:0 8px;font-size:.75rem"
             type="button" data-hit="${esc(h.key)}" aria-expanded="${SK.open===h.key}">
             ${SK.open===h.key?'收起比对':'查看比对'}</button>
-          <button class="btn btn-gh" style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem"
+          <button class="btn btn-gh" style="min-height:1.5rem;padding:0 8px;font-size:.75rem"
             type="button" data-seekstruct="${esc(h.acc)}">看结构</button>
-          <button class="btn btn-gh" style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem"
+          <button class="btn btn-gh" style="min-height:1.5rem;padding:0 8px;font-size:.75rem"
             type="button" data-hitpred="${esc(h.key)}">用于预测</button>
-          <button class="btn btn-gh" style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem"
+          <button class="btn btn-gh" style="min-height:1.5rem;padding:0 8px;font-size:.75rem"
             type="button" data-hitdes="${esc(h.acc)}">用作设计靶点</button>
           ${(function(){const e=SEEK_CORPUS().find(x=>x.key===h.key);
             return e?cpBtn('hit_'+h.key,'>'+h.key+' '+e.name+'\n'
@@ -13133,7 +13133,7 @@ function seekResult(){
   ${seekHead()}
   <div class="row wrap" style="gap:var(--s3)">
     <div class="col grow" style="gap:6px">
-      <h2 style="font-size:1.0625rem">搜索结果 <span class="num mut2" style="font-size:0.875rem;font-weight:400">${H.length}${
+      <h2 style="font-size:1rem">搜索结果 <span class="num mut2" style="font-size:0.875rem;font-weight:400">${H.length}${
         fltOn()&&H.length!==SK.hits.length?` / ${SK.hits.length}`:''}</span></h2>
     </div>
     ${SK.hits.length?`<span class="ctl ctl-sel">
@@ -13215,7 +13215,7 @@ return `<div class="col" style="gap:var(--s5)">
   <section class="card"><div class="card-h"><strong>序列与结构</strong>
     <span class="grow"></span>
     ${VW.struct?`<span class="t-sm mut2">${esc(VW.name||'')}</span>`
-      :`<button class="btn btn-gh" style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem"
+      :`<button class="btn btn-gh" style="min-height:1.5rem;padding:0 8px;font-size:.75rem"
           type="button" data-go="viewer">去载入结构</button>`}</div>
     <div class="card-b col" style="gap:var(--s4)">
       ${VW.struct?`
@@ -13249,7 +13249,7 @@ return `<div class="col" style="gap:var(--s5)">
   </section>
 
   <div class="row wrap"><div class="col grow" style="gap:6px">
-      <h2 style="font-size:1.0625rem;letter-spacing:-.02em">本项目的变体</h2>
+      <h2 style="font-size:1rem;letter-spacing:-.02em">本项目的变体</h2>
       <p class="mut t-md">变体是项目级资产，不属于任何一轮</p></div>
     <button class="btn" type="button" data-act="addfail">录入失败样本</button></div>
 
@@ -13318,7 +13318,7 @@ return `<div class="col" style="gap:var(--s5)">
     <tbody>${L.map(x=>`<tr><td class="num">${x.site}</td><td class="num">${x.n}</td>
       <td class="num">${x.best}</td><td class="num">${x.rounds}</td>
       <td class="t-sm mut">${esc(x.note)}</td>
-      <td style="text-align:right"><button class="btn btn-gh" style="min-height:1.5rem;padding:0 7px;font-size:0.71875rem"
+      <td style="text-align:right"><button class="btn btn-gh" style="min-height:1.5rem;padding:0 7px;font-size:.75rem"
         type="button" data-trace="${x.site}">全部历史</button></td></tr>`).join('')}
     </tbody></table></div>`
     :`<div class="empty"><strong class="t-md" style="color:var(--ink)">没有这个位点的记录</strong>
@@ -13402,9 +13402,9 @@ function taskRow(t){const st=TASK_ST[t.st]||['—',''];
     <td style="text-align:right"><div class="row" style="gap:6px;justify-content:flex-end">
       ${dlReady(t)?`<button class="btn btn-gh" type="button" data-artzip="${esc(t.id)}"
         title="${esc(dlTitle(t))}"
-        style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem">下载</button>`:''}
+        style="min-height:1.5rem;padding:0 8px;font-size:.75rem">下载</button>`:''}
       <button class="btn btn-gh" type="button" data-task="${esc(t.id)}"
-        style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem">详情</button></div></td></tr>`}
+        style="min-height:1.5rem;padding:0 8px;font-size:.75rem">详情</button></div></td></tr>`}
 
 /* 全部任务：Protenix Server 的形状——任务名、状态、创建时间、输入、输出。
    不进左侧导航：它是从新建对话页进去的记录，不是一条并行的功能线。 */
@@ -13746,9 +13746,9 @@ function jobTable(L){
       <td style="text-align:right"><div class="row" style="gap:6px;justify-content:flex-end">
         ${dlReady(t)?`<button class="btn btn-gh" type="button" data-artzip="${esc(t.id)}"
           title="${esc(dlTitle(t))}"
-          style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem">下载</button>`:''}
+          style="min-height:1.5rem;padding:0 8px;font-size:.75rem">下载</button>`:''}
         <button class="btn btn-gh" type="button" data-task="${esc(t.id)}"
-          style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem">详情</button></div></td>
+          style="min-height:1.5rem;padding:0 8px;font-size:.75rem">详情</button></div></td>
     </tr>`}).join('')}</tbody></table></div></div>`;
 }
 function jobCards(L){
@@ -14421,7 +14421,7 @@ function FILES(pid){
         有了 f 才知道它能接到哪个节点上。 */
   TASKS.filter(t=>t.st==='done').forEach(t=>artsOf(t).forEach(a=>out.push({
     kind:'art',f:a.f,name:a.name,bytes:null,at:t.at,pid:t.pid,round:t.r,cap:t.cap,
-    from:'任务 '+t.id+'　'+capName(t.cap),tid:t.id,art:a})));
+    from:'任务 '+t.id+' · '+capName(t.cap),tid:t.id,art:a})));
   /* ② 本会话下载过的 */
   (DB.dls||[]).forEach(d=>out.push({kind:'out',name:d.name,bytes:d.bytes,at:d.at,
     pid:d.pid,round:d.round,cap:ROUTE_CAP[d.route]||null,
@@ -14509,7 +14509,7 @@ function kbPreview(p,name){
     <strong class="t-md grow" style="min-width:0;word-break:break-all">${esc(name)}</strong>
     <span class="t-xs mut2">${f?fmtBytes(f.size):''}</span>
     <button class="btn btn-gh" type="button" data-act="kbclose"
-      style="min-height:1.5rem;padding:0 9px;font-size:0.71875rem">关闭预览</button></div>`;
+      style="min-height:1.5rem;padding:0 9px;font-size:.75rem">关闭预览</button></div>`;
   let body;
   if(!f){
     body=`<div class="col" style="gap:4px">
@@ -14647,7 +14647,7 @@ function capLanding(route,cap,title,sub,quick,newTx,pipeOpt,foot){
     <span class="t-sm mut2 num">${L.length}</span>
     <span class="grow"></span>
     ${L.length>3?`<button class="btn btn-gh" type="button" data-jhist="${route}"
-      style="min-height:1.5rem;padding:0 9px;font-size:0.71875rem">查看全部</button>`:''}
+      style="min-height:1.5rem;padding:0 9px;font-size:.75rem">查看全部</button>`:''}
   </div>
   ${L.length?jobCards(L.slice(0,3)):jobMini([],route)}
 </div>`;
@@ -14772,7 +14772,7 @@ function predForm(){
         style="height:2rem;min-width:190px"><span class="dd-v">${esc(PF.model)}</span>
         <span class="car" aria-hidden="true"></span></button>
       <button class="btn btn-gh" type="button" data-pick-tool="str"
-        style="min-height:1.75rem;padding:0 9px;font-size:0.71875rem;margin-left:var(--s2)">换工具</button>`,
+        style="min-height:1.75rem;padding:0 9px;font-size:.75rem;margin-left:var(--s2)">换工具</button>`,
       esc((MODELS.find(m=>m.n===PF.model)||{}).s||''))}
     ${C.msa?fRow('用 MSA',0,fSeg('msa',PF.msa,[['true','是'],['false','否']]),
         '检索同源序列做多序列比对。关掉更快，单体精度通常会降')
@@ -14837,7 +14837,7 @@ function predForm(){
           border-top:1px solid var(--line-2)">
         <div class="row"><span class="lbl grow">连接 ${i+1}</span>
           <button class="btn btn-gh" type="button" data-bonddel="${i}"
-            style="min-height:1.5rem;padding:0 .5rem;font-size:0.71875rem">删除</button></div>
+            style="min-height:1.5rem;padding:0 .5rem;font-size:.75rem">删除</button></div>
         ${[['a','一端'],['b','另一端']].map(([side,lbl])=>`<div class="bondrow">
           <span class="t-sm mut2 bondrow-l">${lbl}</span>
           <label class="advf"><span class="advf-k">链</span>
@@ -14999,7 +14999,7 @@ function designForm(){
       ${VW.struct?`<div class="row wrap" style="gap:var(--s3);align-items:center">
         <span class="chip c-dry">已载入 ${esc(VW.name||'')}</span>
         <span class="t-sm mut2">已选 <b class="num">${VW.sel.size}</b> 个残基作为结合热点</span>
-        ${VW.sel.size?'<button class="btn btn-gh" style="min-height:1.5rem;padding:0 8px;font-size:0.71875rem" type="button" data-act="vwclearsel">清空</button>':''}
+        ${VW.sel.size?'<button class="btn btn-gh" style="min-height:1.5rem;padding:0 8px;font-size:.75rem" type="button" data-act="vwclearsel">清空</button>':''}
       </div>`
       :`<div class="empty" style="padding:var(--s5)"><div class="col" style="gap:4px">
         <strong class="t-md" style="color:var(--ink)">还没有载入靶点结构</strong>
@@ -15013,8 +15013,8 @@ function designForm(){
         aria-pressed="${DF.mode===k}">
         <strong class="t-md">${n}</strong>
         <span class="row" style="gap:6px;align-items:baseline">
-          <b class="num" style="font-size:1.1875rem;font-weight:500;letter-spacing:-.025em;${
-            N==null?'font-size:0.84375rem;color:var(--ink-4)':''}">${N==null?'算不出':N}</b>
+          <b class="num" style="font-size:1.125rem;font-weight:500;letter-spacing:-.025em;${
+            N==null?'font-size:.875rem;color:var(--ink-4)':''}">${N==null?'算不出':N}</b>
           <span class="t-sm mut2">${N==null?'':'条候选'}</span></span>
         <span class="t-sm mut">${d}</span>
         <span class="t-xs mut2" style="line-height:1.55">${esc(dfWhy(k))}</span></button>`}).join('')}
@@ -16670,7 +16670,7 @@ ${L.length} 条候选中 ${pass.length} 条通过 ipTM ≥ ${S.gate.toFixed(2)} 
     <p class="t-md mut">三个文件：可执行脚本、结构化结果、人读报告。复制或下载后可在本地完整重跑。</p>
     ${names.map(n=>`<div class="col" style="gap:var(--s2)">
       <div class="row"><span class="num t-md grow">${n}</span>
-        <button class="btn btn-gh" style="min-height:1.5rem;padding:0 6px;font-size:0.71875rem" type="button" data-cp="${n}">复制</button></div>
+        <button class="btn btn-gh" style="min-height:1.5rem;padding:0 6px;font-size:.75rem" type="button" data-cp="${n}">复制</button></div>
       <pre style="margin:0;max-height:7rem;overflow:auto;background:var(--surface-2);border:1px solid var(--line);
         border-radius:var(--r2);padding:var(--s3);font-size:0.6875rem;line-height:1.6;white-space:pre-wrap">${esc(files[n]).slice(0,600)}</pre>
     </div>`).join('')}</div>`;
@@ -16793,6 +16793,10 @@ function go(r,o){
   if(MDL_TAB_ROUTE[r]){S.mtab=MDL_TAB_ROUTE[r];S.jobPick=null;S.checkpointPick=null;r='mdl'}
   const t=ROUTE_HOME(r);
   if(t!=='mdl')S.checkpointPick=null;
+  /* 切页先收掉浮层：开着的弹窗、资料空间的更多菜单，否则它们会跨页面留在屏上 */
+  if(t!==S.route){document.querySelectorAll('dialog[open]').forEach(d=>{try{d.close()}catch(e){}});document.querySelectorAll('.ms-menu').forEach(m=>m.remove());}
+  /* 侧栏点「资料空间」回到全部资料，不停在上一次的「与你共享」页签 */
+  if(t==='materials'&&r==='materials'&&typeof MATERIALS!=='undefined'&&!(o&&o.keepTab))Object.assign(MATERIALS,{tab:'all',space:'',query:''});
   if(t!==S.route)backPush(S.route);S._anim=(t!==S.route);S.route=t;Object.assign(S,o||{});S.page=1;
   LS.set('route',t);LS.set('pid',S.pid);LS.set('round',S.round);location.hash=t;render();window.scrollTo(0,0)}
 /* 同一个人常开两个标签页：一个看结果、一个排板。闸门与选中集都进了 localStorage，

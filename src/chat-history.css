@@ -17,13 +17,13 @@ body[data-route="chat"] #main{flex-direction:row}
 .history-meta-at{flex:0 0 auto;margin-left:auto;font-variant-numeric:tabular-nums}
 .history-title{font-size:.8125rem;line-height:1.6}.history-meta{font-size:.6875rem;color:var(--ink-3);margin-top:3px}
 .history-more{flex:none;width:28px;min-height:32px;color:var(--ink-2);border:0;background:transparent;border-radius:6px;cursor:pointer}
-.history-empty{padding:24px 8px;font-size:.8rem;color:var(--ink-3);line-height:1.8}
+.history-empty{padding:24px 8px;font-size:.8125rem;color:var(--ink-3);line-height:1.8}
 .history-foot{font-size:.6875rem;color:var(--ink-3);border-top:1px solid var(--line);padding:12px 8px 0}
 body[data-route="chat"] #view{min-width:0;padding-inline:clamp(16px,3vw,40px)}
 body[data-route="chat"] .research-top .outbar-hist,body[data-route="chat"] .outbar-hist,body[data-route="chat"] .outbar-new{display:none}
 /* 水印保留：这一页顶部本来就空，去掉之后整屏没有一处落脚点。
    它在 visual-system.css 里已经压到很淡，不会抢文字。 */
-.history-conversation-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.9rem;font-weight:600;margin-right:auto}
+.history-conversation-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.875rem;font-weight:600;margin-right:auto}
 @media(max-width:760px){body[data-route="chat"] #main{flex-direction:column}.chat-history{flex:0 0 auto;border-right:0;border-bottom:1px solid var(--line);padding:12px 16px;gap:10px}.chat-history .history-list{max-height:210px;flex:auto}.chat-history .history-foot{display:none}.chat-history-head strong{font-size:.875rem}}
 
 

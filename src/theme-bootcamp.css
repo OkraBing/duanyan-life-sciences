@@ -129,3 +129,18 @@ h1.pjx-n{font-size:18px!important;font-weight:600!important;margin:0!important;l
 .page,.page.wb.wb-workstation,.al-page,.page.rs,.settings-layout,.st-layout{max-width:min(100%,clamp(73.75rem,78vw,100rem))!important}
 .projects-page .pgrid,.pgrid{grid-template-columns:repeat(auto-fill,minmax(min(100%,22rem),1fr))}
 @media(min-width:1800px){.rh-project-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.rh-card-section p{-webkit-line-clamp:3}}
+/* 逐页走查：点击目标、容器与标题分量 */
+.ms-row-actions button{min-width:32px;padding-inline:6px}
+.lnk{padding-inline:4px;min-width:32px;text-align:center}
+.rs-link{padding-inline:4px}
+.st-back{min-height:32px!important;padding-inline:4px!important}
+.request-inbox h2{font-size:14px!important;font-weight:600;margin:0 0 8px}
+.request-inbox{margin:8px 0 28px!important}
+.ms-toolbar{align-items:center}.ms-types,.ms-views{min-height:32px}
+.tl-card h2,.rs-project-card h2{font-size:16px!important}
+.shared-detail .shared-asset-head h2{font-size:18px!important}
+/* 侧栏分组标题：之前被锁成 22px 高、26px 行高，文字溢出到下一项的选中底块下面 */
+#side .nav-group .lbl{display:block;height:auto!important;min-height:0;line-height:1.4!important;padding:8px 12px 6px!important}
+.ms-views button{min-height:32px;min-width:32px;padding:6px;align-items:center;justify-content:center}
+.project-team-add{font-size:14px}
+.rs small:not([class]),.ms-main small:not([class]),.tl-card small:not([class]){font-size:11px}

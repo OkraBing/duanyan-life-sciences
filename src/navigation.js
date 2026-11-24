@@ -18,7 +18,9 @@ function navigationProjectProgress(p,shared){
   const tasks=(workbenchData({pid:p.id}).tasks||[]).filter(t=>t.pid===p.id&&t.isTask!==false&&!['canceled'].includes(t.status));
   const member=shared?.members.find(m=>m.id==='me'&&m.status==='active');
   const editable=shared?['owner','admin','editor'].includes(member?.role):can('edit')&&(p.ownerId||'me')==='me';
-  const pending=editable?tasks.filter(t=>t.needsAction||t.status==='failed'):[];
+  /* 与工作台卡片同一口径：先过 wbAttentionTasks（已读回执等），再取失败/待动作 */
+  const attention=typeof wbAttentionTasks==='function'?wbAttentionTasks(tasks):tasks;
+  const pending=editable?attention.filter(t=>t.needsAction||t.status==='failed'):[];
   const active=tasks.filter(t=>['active','queued'].includes(t.status));
   const completed=tasks.filter(t=>t.status==='done').sort((a,b)=>String(b.at||'').localeCompare(String(a.at||'')));
   if(pending.length){
