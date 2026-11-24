@@ -328,3 +328,27 @@ body[data-route="chat"]:has(.chat-history:not([hidden])) .research-home .researc
 .ms-row-actions button[aria-pressed="true"]{color:var(--dry-ink)}
 .ms-row-actions button.is-danger:hover{color:var(--err);background:var(--err-soft,var(--surface-2))}
 @media(max-width:600px){.ms-row-actions{flex-wrap:wrap}.ms-row-actions button{min-height:44px;padding:0 10px!important}}
+/* 定时任务详情：这一页原来自成一套字阶（标题 18、正文 14/27、示例标题 21、字重 700、小字 11），
+   比全站大一号。收到同一把尺子上：页面标题 22/600、区块标题 15/600、正文 13/22、标签 12、读数等宽。 */
+.st-content-head h2{font-size:22px!important;font-weight:600!important;line-height:1.4!important;margin:0 0 4px!important}
+.st-content-head .st-subtitle{font-size:13px!important;line-height:21px!important;margin:0 0 20px!important}
+.st-output h3{font-size:15px!important;font-weight:600!important;line-height:24px!important;margin:0 0 10px!important}
+.st-output h3+*{margin-top:0!important}
+.st-instruction{font-size:13px!important;line-height:22px!important;margin:0 0 24px!important;padding:0 0 24px!important}
+.st-sample h4{font-size:15px!important;font-weight:600!important;line-height:24px!important;margin:0 0 8px!important}
+.st-sample h5{font-size:13px!important;font-weight:600!important;line-height:22px!important;margin:20px 0 8px!important}
+.st-sample p,.st-sample li{font-size:13px!important;line-height:22px!important}
+.st-sample p{margin:0 0 14px!important}
+.st-sample ul{margin:0 0 14px!important}
+.st-sample-label{font-size:12px!important;line-height:18px!important;margin:0 0 12px!important}
+.st-sample-note{font-size:12px!important;line-height:20px!important;margin:16px 0 0!important}
+.st-sample-table th{font-size:12px!important;font-weight:500!important;line-height:20px!important}
+.st-sample-table td{font-size:13px!important;line-height:22px!important}
+.st-summary{padding:20px!important}
+.st-summary h3{font-size:12px!important;font-weight:500!important;line-height:18px!important;color:var(--ink-3)!important;margin:20px 0 6px!important}
+.st-summary h3:first-child{margin-top:0!important}
+.st-summary p{font-size:13px!important;line-height:22px!important}
+.st-summary .st-summary-plan{font-size:14px!important;font-weight:500!important}
+.st-summary .st-note{font-size:12px!important;line-height:18px!important;padding:8px 0 0!important}
+.st-summary-actions{margin-top:20px!important;padding-top:16px!important}
+.st-summary-actions .btn{font-size:13px!important;min-height:32px!important}
