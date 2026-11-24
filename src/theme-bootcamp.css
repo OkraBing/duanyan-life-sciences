@@ -275,3 +275,6 @@ body[data-route="set"] .tbl-wrap td:nth-child(4),body[data-route="set"] .tbl-wra
 .pjx-card-h,.pjx-card-row2{width:100%;box-sizing:border-box}
 .pjx-card-h .pjx-card-n{flex:1 1 auto!important}
 .pjx-card-h .chip{flex:none;margin-left:auto}
+/* 对话首页：列表栏已有「科研对话」标题，正文左上角不再重复；列表栏收起时才显示正文这个 */
+body[data-route="chat"]:has(.chat-history:not(.is-collapsed):not([hidden])) .research-home .research-top>strong{display:none}
+body[data-route="chat"]:has(.chat-history:not(.is-collapsed):not([hidden])) .research-home .research-top{min-height:0;height:0;margin:0;padding:0;overflow:hidden}
