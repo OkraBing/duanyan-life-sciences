@@ -4170,6 +4170,23 @@ body[data-route="set"] .tbl-wrap td:nth-child(4),body[data-route="set"] .tbl-wra
 body[data-route="chat"]:has(.chat-history:not(.is-collapsed):not([hidden])) .research-home .research-top>strong{display:none}
 body[data-route="chat"]:has(.chat-history:not(.is-collapsed):not([hidden])) .research-home .research-top{min-height:0;height:0;margin:0;padding:0;overflow:hidden}
 .st-list .st-search{height:32px!important;min-height:32px!important;font-size:13px!important;padding:0 10px!important;border-radius:8px;margin:0 0 8px!important;width:100%}
+/* 对话列表收起：不留竖条。「展开列表」「新建对话」两个图标按钮浮在正文左上角，与标题同一行 */
+body[data-route="chat"] #main{position:relative}
+@media(min-width:761px){
+.chat-history.is-collapsed{position:absolute!important;left:16px;top:12px;z-index:4;flex:none!important;width:auto!important;height:auto!important;min-height:0!important;padding:0!important;border:0!important;background:none!important;box-shadow:none!important;display:flex!important;flex-direction:row!important;align-items:center!important;gap:6px}
+.chat-history.is-collapsed .chat-history-head{margin:0!important;padding:0!important;min-height:0}
+.chat-history.is-collapsed .chat-history-head-tools{gap:0}
+.chat-history.is-collapsed .history-collapse,.chat-history.is-collapsed .history-new-mini{display:grid!important;place-items:center;width:32px!important;height:32px!important;min-height:32px!important;padding:0!important;border:1px solid var(--line)!important;border-radius:8px!important;background:var(--surface)!important;color:var(--ink-2)!important}
+.chat-history.is-collapsed .history-collapse:hover,.chat-history.is-collapsed .history-new-mini:hover{background:var(--surface-2)!important;border-color:var(--ink-4)!important}
+/* 首页：标题跟在两个按钮后面（按钮 · 按钮 · 科研对话），正文里那个标题不再出现；对话页：只留两个按钮，正文顶栏让出位置 */
+.chat-history.is-collapsed .chat-history-head,.chat-history.is-collapsed .chat-history-head-tools{display:contents!important}
+.chat-history.is-collapsed .history-collapse{order:1}.chat-history.is-collapsed .history-new-mini{order:2}
+.chat-history.is-collapsed .chat-history-head strong{order:3;display:none;font-size:18px;font-weight:600;line-height:32px;margin-left:6px;white-space:nowrap}
+body[data-route="chat"]:has(#view .page.is-land) .chat-history.is-collapsed .chat-history-head strong{display:block!important}
+body[data-route="chat"]:has(.chat-history.is-collapsed) #view>.page:not(.is-land)>:first-child{padding-left:84px!important;min-height:32px}
+}
+body[data-route="chat"]:has(.chat-history:not([hidden])) .research-home .research-top>strong{display:none!important}
+body[data-route="chat"]:has(.chat-history:not([hidden])) .research-home .research-top{min-height:0;height:0;margin:0;padding:0;overflow:hidden}
 
 
 /* 项目卡标题被挤成两行、断在「结合界 / 面」：标题被写死 max-width:calc(100% - 55px)，
