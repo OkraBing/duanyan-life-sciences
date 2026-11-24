@@ -69,7 +69,7 @@ body[data-route=workbench] #view{padding-block:0 var(--s8);padding-inline:max(va
 .rh-activities-wrap,.rh-discoveries-wrap,.rh-projects{display:flex;flex-direction:column;min-height:0}
 .rh-activities-wrap .rh-project-toolbar,.rh-discoveries-wrap .rh-project-toolbar{height:auto;min-height:40px;padding:0 0 12px}
 .rh-project-toolbar h2{margin:0}
-.rh-project-toolbar .rh-shuffle{flex:none}
+.rh-project-toolbar .rh-pager{flex:none}
 .rh-project-toolbar .rh-search{margin-left:auto}
 .rh-project-toolbar>.rh-link:last-child{margin-left:auto}
 .rh-project-toolbar>h2+.rh-link:last-child,.rh-project-toolbar>.rh-search+.rh-link{margin-left:auto}

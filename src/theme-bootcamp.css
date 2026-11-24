@@ -302,8 +302,6 @@ body[data-route="chat"]:has(.chat-history:not([hidden])) .research-home .researc
 .rh-discovery-row{border-bottom:0!important;border-radius:8px!important;padding:10px 12px!important;margin:0 -12px;width:calc(100% + 24px)!important;box-sizing:border-box}
 .rh-discovery-row:hover{background:var(--surface-2)!important}
 .rh-discovery-row:focus-visible{outline:2px solid var(--dry);outline-offset:-2px}
-.rh-shuffle{display:inline-flex!important;align-items:center;gap:5px}
-.rh-shuffle:hover{text-decoration:none!important;color:var(--ink)}
 /* 对话首页领域条：hover/选中是贴合条形的胶囊，不是被容器裁掉一角的方块 */
 .research-domain{border-radius:999px!important;margin:0 3px;border-right:0!important;position:relative}
 .research-domain+.research-domain::before{content:'';position:absolute;left:-4px;top:22%;bottom:22%;width:1px;background:var(--line)}
@@ -352,3 +350,11 @@ body[data-route="chat"]:has(.chat-history:not([hidden])) .research-home .researc
 .st-summary .st-note{font-size:12px!important;line-height:18px!important;padding:8px 0 0!important}
 .st-summary-actions{margin-top:20px!important;padding-top:16px!important}
 .st-summary-actions .btn{font-size:13px!important;min-height:32px!important}
+
+/* 课题翻页：两个图标按钮夹一个等宽页码，到头置灰 */
+.rh-pager{display:inline-flex;align-items:center;gap:2px;flex:none}
+.rh-pager-btn{display:grid;place-items:center;width:28px;height:28px;padding:0;border:0;border-radius:6px;background:none;color:var(--ink-3);cursor:pointer}
+.rh-pager-btn:hover:not([disabled]){background:var(--surface-2);color:var(--ink)}
+.rh-pager-btn[disabled]{color:var(--line);cursor:default}
+.rh-pager-btn:focus-visible{outline:2px solid var(--dry);outline-offset:-2px}
+.rh-pager-n{font-size:12px;line-height:18px;color:var(--ink-3);padding:0 4px;font-variant-numeric:tabular-nums}

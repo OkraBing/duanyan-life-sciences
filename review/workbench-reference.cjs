@@ -53,19 +53,23 @@ function contrast(a,b){const lum=c=>c.slice(0,3).map(v=>(v/=255)<=.04045?v/12.92
   }
  });
 
- await check('04 「换一批」能轮到全部课题，到底后回到第一组',async p=>{
+ await check('04 上一页 / 下一页能走遍全部课题，到头即禁用',async p=>{
   const expected=await p.evaluate(()=>workbenchData().projects.map(x=>x.id)),seen=new Set();
-  const firstBatch=await p.locator('[data-wb-project-id]').evaluateAll(es=>es.map(e=>e.dataset.wbProjectId));
-  firstBatch.forEach(id=>seen.add(id));
-  const btn=p.locator('[data-rh-project-shuffle]');
-  if(expected.length>3){assert.equal(await btn.count(),1);
-   for(let i=0;i<10&&seen.size<expected.length;i++){await btn.click();await settle(p);
-    for(const id of await p.locator('[data-wb-project-id]').evaluateAll(es=>es.map(e=>e.dataset.wbProjectId)))seen.add(id);}
-   assert.deepEqual(seen,new Set(expected));
-   // 再点，应绕回第一组
-   await btn.click();await settle(p);
-   assert.deepEqual(await p.locator('[data-wb-project-id]').evaluateAll(es=>es.map(e=>e.dataset.wbProjectId)),firstBatch);
-  }else assert.equal(await btn.count(),0);
+  const ids=()=>p.locator('[data-wb-project-id]').evaluateAll(es=>es.map(e=>e.dataset.wbProjectId));
+  (await ids()).forEach(id=>seen.add(id));
+  const prev=p.locator('[data-rh-project-page="prev"]'),next=p.locator('[data-rh-project-page="next"]');
+  if(expected.length>3){
+   assert.equal(await next.count(),1,'课题多于一页却没有翻页控件');
+   assert.equal(await prev.isDisabled(),true,'第一页的「上一页」应该是禁用的');
+   for(let i=0;i<10&&!(await next.isDisabled());i++){await next.click();await settle(p);
+    for(const id of await ids())seen.add(id);}
+   assert.deepEqual(seen,new Set(expected),'一路翻到底没能走遍全部课题');
+   assert.equal(await next.isDisabled(),true,'最后一页的「下一页」应该是禁用的');
+   // 往回翻一页，「下一页」要重新可用；页码跟着走
+   await prev.click();await settle(p);
+   assert.equal(await next.isDisabled(),false,'退回上一页后「下一页」仍然禁用');
+   assert.match(await p.locator('.rh-pager-n').innerText(),/^\d+ \/ \d+$/);
+  }else assert.equal(await next.count(),0,'课题不足一页时不该出现翻页控件');
  });
 
  await check('05 每张卡都能进到自己的课题',async p=>{
