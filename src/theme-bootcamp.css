@@ -225,3 +225,34 @@ body[data-route="set"] .tbl-wrap td:nth-child(4),body[data-route="set"] .tbl-wra
 .st-dialog textarea.input{min-height:76px!important}
 .st-period-options span{line-height:1.4}
 #side[data-collapsed="1"] .nav-group.is-sep{margin-inline:0!important;padding:12px 12px 8px!important}
+/* ===== 二级列表面板统一规格（科研对话 / 定时任务 / 资料空间 / 设置菜单），以科研对话为准 =====
+   面板 264 宽、白底、内边距 24/16/12；标题 18/600；新建按钮 32 高描边；分组标签 11/600；
+   条目 13/400、圆角 8、次行 11；页脚说明 11、上边线 */
+.st-layout{grid-template-columns:264px minmax(0,1fr)!important}
+.ms-shell{grid-template-columns:264px minmax(0,1fr)!important}
+.st-list,.ms-sidebar{background:var(--surface)!important;padding:24px 16px 12px!important;display:flex!important;flex-direction:column}
+.st-list-head{margin:0 0 16px!important;padding:0 8px;min-height:29px;align-items:center}
+.st-list-head h1,.ms-sidebar>h2{font-size:18px!important;font-weight:600!important;line-height:29px!important;margin:0!important}
+.ms-sidebar>h2{margin:0 0 16px!important;padding:0 8px}
+.st-new{font-size:13px!important;font-weight:500!important;height:32px;min-height:32px!important;padding:0 12px!important;margin:0 0 4px!important;gap:6px!important}
+.st-new svg{width:14px;height:14px}
+.st-list h2,.ms-sidebar h3,.history-group{font-size:11px!important;font-weight:600!important;color:var(--ink-3)!important;letter-spacing:0!important;margin:16px 0 6px!important;padding:0 8px!important}
+.st-list .ms-nav:not(.st-new),.ms-sidebar .ms-nav{font-size:13px!important;font-weight:400!important;padding:8px!important;border-radius:8px!important;min-height:36px!important;gap:10px!important}
+.st-list .ms-nav:not(.st-new) strong,.ms-sidebar .ms-nav span{font-size:13px!important;font-weight:400!important}
+.ms-sidebar .ms-nav.selected span,.ms-sidebar .ms-nav.selected{font-weight:500!important}
+.st-list .ms-nav small,.ms-sidebar .ms-nav small{font-size:11px!important;font-weight:400!important;color:var(--ink-3)}
+.st-list .ms-nav svg,.ms-sidebar .ms-nav svg{width:16px;height:16px;flex:none}
+.st-note{font-size:11px!important;color:var(--ink-3);margin-top:auto!important;padding:12px 8px 0!important;border-top:1px solid var(--line)}
+.ms-trash{margin-top:auto!important;padding:12px 0 0!important;border-top:1px solid var(--line)}
+.settings-menu button,.settings-menu a{font-size:13px!important;font-weight:400!important;border-radius:8px!important;min-height:36px}
+.settings-menu [aria-current],.settings-menu .on,.settings-menu .is-on,.settings-menu .selected{font-weight:500!important}
+/* 课题卡「待处理」：角标在标签行右侧（与工作台角标同款），点角标即处理；原迷你块不再占位 */
+.project-card-wrap > .project-update.is-mini{display:none!important}
+.pcard-labels{display:flex!important;align-items:center;gap:6px;width:100%}
+.pcard-labels [data-pending-pill]{margin-left:auto;gap:0;cursor:pointer}
+.pcard-labels [data-pending-pill]::before{margin-right:6px}
+.pcard-labels [data-pending-pill] .project-update-count{font-family:inherit!important;margin-right:3px}
+.pcard-labels [data-pending-pill]:hover{background:var(--err-soft,var(--surface-2))}
+.pcard-labels [data-pending-pill]:focus-visible{outline:2px solid var(--dry);outline-offset:2px}
+@media(max-width:600px){.pcard-labels [data-pending-pill]{min-height:44px;padding:0 14px 0 12px}}
+.st-list-head h1{margin-right:auto!important}

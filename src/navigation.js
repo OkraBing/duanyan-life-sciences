@@ -42,7 +42,7 @@ function navigationProjectProgress(p,shared){
   }else return '';
   if(task)at=task.at||'';
  }
- if(kind==='confirm')return '<div class="navigation-progress project-update is-confirm is-mini"><span class="project-update-mini-label"><b class="project-update-count">'+pendingCount+'</b> 项待处理</span><button class="project-update-action" type="button" data-project-progress-pending="'+esc(p.id)+'">处理</button></div>';
+ if(kind==='confirm')return '<div class="navigation-progress project-update is-confirm is-mini"><span class="project-update-mini-label"><b class="project-update-count">'+pendingCount+'</b> 项待处理</span><button class="project-update-action" type="button" data-project-progress-pending="'+esc(p.id)+'" aria-label="处理 '+pendingCount+' 项待处理" title="处理 '+pendingCount+' 项待处理">处理</button></div>';
  const attrs=kind==='confirm'?'data-project-progress-pending="'+esc(p.id)+'"':task?'data-project-progress-task="'+esc(task.key)+'"':p?'data-project-progress-pid="'+esc(p.id)+'"':'data-project-progress-shared="'+esc(shared.id)+'"';
  return '<div class="navigation-progress project-update is-'+kind+'"><div class="project-update-head"><span>'+label+'</span>'+(at?'<time>'+esc(at)+'</time>':'')+'</div><strong>'+esc(title)+'</strong><p>'+esc(detail)+'</p>'+(percent!==null?'<div class="project-task-progress"><span>当前任务进度 '+percent+'%</span><progress value="'+percent+'" max="100" aria-label="当前任务进度 '+percent+'%"></progress></div>':'')+'<button class="project-update-action" type="button" '+attrs+'>'+action+' →</button></div>';
 }
@@ -197,12 +197,18 @@ rsMembersDialog=function(){
 const navigationTeamBind=wbBind;
 wbBind=function(root){
  navigationTeamBind(root);
+ /* 待处理角标放进标签行右侧：原来的迷你块只留作数据与处理入口，不再占位 */
+ root.querySelectorAll('.project-card-wrap').forEach(w=>{const mini=w.querySelector(':scope > .project-update.is-mini'),labels=w.querySelector('.pcard-labels');if(!mini||!labels||labels.querySelector('[data-pending-pill]'))return;
+  const n=mini.querySelector('.project-update-count')?.textContent||'';const pill=document.createElement('span');pill.className='project-update-mini-label';pill.setAttribute('data-pending-pill','');pill.setAttribute('role','button');pill.tabIndex=0;pill.title='处理 '+n+' 项待处理';pill.innerHTML='<b class="project-update-count">'+esc(n)+'</b> 项待处理';labels.appendChild(pill);
+  const fire=e=>{e.stopPropagation();e.preventDefault();mini.querySelector('.project-update-action')?.click();};pill.addEventListener('click',fire);pill.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ')fire(e);});});
  /* 课题卡整张可点：点到底栏或迷你卡的空白处也进课题，点到里面的按钮/链接则各归各 */
  root.querySelectorAll('.project-card-wrap:not(.is-shared-project)').forEach(w=>{if(w.dataset.wrapBound)return;w.dataset.wrapBound='1';w.addEventListener('click',e=>{if(e.target.closest('button,a,[data-act],select,input,label'))return;w.querySelector('.pcard')?.click();});});
  root.querySelectorAll('[data-project-clear-query]').forEach(b=>b.onclick=()=>{S.pq='';render();});
  root.querySelectorAll('[data-project-progress-pending]').forEach(button=>button.onclick=()=>{
  const pid=button.dataset.projectProgressPending;
- const tasks=(workbenchData({pid}).tasks||[]).filter(t=>t.pid===pid&&t.isTask!==false&&(t.needsAction||t.status==='failed'));
+ /* 与角标同一口径：先过 wbAttentionTasks，再取失败/待动作，弹窗里的条数才和角标上的数一致 */
+ const base=(workbenchData({pid}).tasks||[]).filter(t=>t.pid===pid&&t.isTask!==false&&t.status!=='canceled');
+ const tasks=(typeof wbAttentionTasks==='function'?wbAttentionTasks(base):base).filter(t=>t.needsAction||t.status==='failed');
  if(tasks.length===1){workbenchOpenTask(tasks[0].key);return;}/* 只有一项就直接进去，不用多点一层 */
  modal('待处理 · '+tasks.length+' 项','<div class="rs-dialog-scroll">'+tasks.map(t=>'<div class="rs-request"><strong>'+esc(t.name||t.id)+'</strong><p class="rs-help">'+esc(t.detail||t.label||'请查看并处理')+'</p><button class="btn" type="button" data-project-pending-task="'+esc(t.key)+'">查看并处理</button></div>').join('')+'</div>','关闭',()=>{});
  document.querySelectorAll('#dlg [data-project-pending-task]').forEach(item=>item.onclick=()=>{document.getElementById('dlg').close();workbenchOpenTask(item.dataset.projectPendingTask);});
@@ -239,3 +245,12 @@ V.files=V.materials;
  /* 直接以 #chat / #schedules 打开页面时也一样折叠 */
  setTimeout(()=>{if(THREE_COL.has(S.route)&&!S.collapsed&&!matchMedia('(max-width:860px)').matches){before=0;S.collapsed=1;render();}},0);
 })();
+
+/* 点已经选中的筛选胶囊 / 页签：状态不会变，不该触发整页重绘（会闪）。捕获阶段直接拦下。
+   对话与课题页里的胶囊是多选开关，不在此列。 */
+document.addEventListener('click',e=>{
+ if(['chat','project'].includes(S.route))return;
+ const t=e.target&&e.target.closest&&e.target.closest('#view .pill.is-on,#view .pill.on,#view [role="tab"][aria-selected="true"],#view .seg-i.on');
+ if(!t||t.closest('form,dialog'))return;
+ e.stopPropagation();e.preventDefault();
+},true);

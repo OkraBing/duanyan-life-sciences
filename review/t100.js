@@ -289,7 +289,7 @@ C(45,'B','数据集页能按项目筛',async(pg,h)=>{await h.go();await h.nav('s
   await h.go('#dsets');
   const has=await pg.$('#dsproj')||await pg.$('[data-dsproj]');
   if(!has)return '数据集页没有项目筛选器';});
-C(46,'B','数据集页默认展示全部项目的',async(pg,h)=>{await h.go('#dsets');
+C(46,'B','数据集页默认展示全部课题的',async(pg,h)=>{await h.go('#dsets');
   const r=await h.ev(()=>{const pid=new Set();
     document.querySelectorAll('[data-dspick],[data-dsrow]').forEach(e=>{});
     const all=[];DB.projects.forEach(p=>(p.dsets||[]).forEach(d=>all.push(p.id)));

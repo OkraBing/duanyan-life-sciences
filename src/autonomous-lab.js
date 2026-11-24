@@ -233,7 +233,7 @@ function alComposerContent(f,readonly=false,legacyExecution=''){
 }
 V.labnew=()=>{
  const f=alForm(),errors=alErrors(f),disabled=can('edit')?'':'disabled';
- const saveStatus=f.dirty?'有未保存的修改':f.savedAt?'本机已保存 '+f.savedAt:'尚未保存';
+ const saveStatus=f.dirty?'有未保存的修改':f.savedAt?'本机已保存 '+f.savedAt:'还没保存';
  return `<div class="page al-page">
   <header class="al-page-head">
    <div><button class="rs-link" data-go="lab">← 实验管理</button><h1>设计实验</h1><p>明确实验方案，系统生成执行编排，预检后创建任务。</p></div>

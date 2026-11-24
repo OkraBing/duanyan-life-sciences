@@ -4116,6 +4116,37 @@ body[data-route="set"] .tbl-wrap td:nth-child(4),body[data-route="set"] .tbl-wra
 .st-dialog textarea.input{min-height:76px!important}
 .st-period-options span{line-height:1.4}
 #side[data-collapsed="1"] .nav-group.is-sep{margin-inline:0!important;padding:12px 12px 8px!important}
+/* ===== 二级列表面板统一规格（科研对话 / 定时任务 / 资料空间 / 设置菜单），以科研对话为准 =====
+   面板 264 宽、白底、内边距 24/16/12；标题 18/600；新建按钮 32 高描边；分组标签 11/600；
+   条目 13/400、圆角 8、次行 11；页脚说明 11、上边线 */
+.st-layout{grid-template-columns:264px minmax(0,1fr)!important}
+.ms-shell{grid-template-columns:264px minmax(0,1fr)!important}
+.st-list,.ms-sidebar{background:var(--surface)!important;padding:24px 16px 12px!important;display:flex!important;flex-direction:column}
+.st-list-head{margin:0 0 16px!important;padding:0 8px;min-height:29px;align-items:center}
+.st-list-head h1,.ms-sidebar>h2{font-size:18px!important;font-weight:600!important;line-height:29px!important;margin:0!important}
+.ms-sidebar>h2{margin:0 0 16px!important;padding:0 8px}
+.st-new{font-size:13px!important;font-weight:500!important;height:32px;min-height:32px!important;padding:0 12px!important;margin:0 0 4px!important;gap:6px!important}
+.st-new svg{width:14px;height:14px}
+.st-list h2,.ms-sidebar h3,.history-group{font-size:11px!important;font-weight:600!important;color:var(--ink-3)!important;letter-spacing:0!important;margin:16px 0 6px!important;padding:0 8px!important}
+.st-list .ms-nav:not(.st-new),.ms-sidebar .ms-nav{font-size:13px!important;font-weight:400!important;padding:8px!important;border-radius:8px!important;min-height:36px!important;gap:10px!important}
+.st-list .ms-nav:not(.st-new) strong,.ms-sidebar .ms-nav span{font-size:13px!important;font-weight:400!important}
+.ms-sidebar .ms-nav.selected span,.ms-sidebar .ms-nav.selected{font-weight:500!important}
+.st-list .ms-nav small,.ms-sidebar .ms-nav small{font-size:11px!important;font-weight:400!important;color:var(--ink-3)}
+.st-list .ms-nav svg,.ms-sidebar .ms-nav svg{width:16px;height:16px;flex:none}
+.st-note{font-size:11px!important;color:var(--ink-3);margin-top:auto!important;padding:12px 8px 0!important;border-top:1px solid var(--line)}
+.ms-trash{margin-top:auto!important;padding:12px 0 0!important;border-top:1px solid var(--line)}
+.settings-menu button,.settings-menu a{font-size:13px!important;font-weight:400!important;border-radius:8px!important;min-height:36px}
+.settings-menu [aria-current],.settings-menu .on,.settings-menu .is-on,.settings-menu .selected{font-weight:500!important}
+/* 课题卡「待处理」：角标在标签行右侧（与工作台角标同款），点角标即处理；原迷你块不再占位 */
+.project-card-wrap > .project-update.is-mini{display:none!important}
+.pcard-labels{display:flex!important;align-items:center;gap:6px;width:100%}
+.pcard-labels [data-pending-pill]{margin-left:auto;gap:0;cursor:pointer}
+.pcard-labels [data-pending-pill]::before{margin-right:6px}
+.pcard-labels [data-pending-pill] .project-update-count{font-family:inherit!important;margin-right:3px}
+.pcard-labels [data-pending-pill]:hover{background:var(--err-soft,var(--surface-2))}
+.pcard-labels [data-pending-pill]:focus-visible{outline:2px solid var(--dry);outline-offset:2px}
+@media(max-width:600px){.pcard-labels [data-pending-pill]{min-height:44px;padding:0 14px 0 12px}}
+.st-list-head h1{margin-right:auto!important}
 
 
 /* 项目卡标题被挤成两行、断在「结合界 / 面」：标题被写死 max-width:calc(100% - 55px)，
@@ -4326,7 +4357,7 @@ function inferFailure(r){
    测定值放在 c.m 里，**按该项目实际测的字段**生成：
    Barstar 亲和力改造 只做亲和力就只有 KD，酶活项目就只有 kcat / Km。 */
 /* 当前项目的变体。读变体一律走这个，不要直接读 DB.cands——
-   那是全部项目的总表，切项目就不会变。 */
+   那是全部课题的总表，切项目就不会变。 */
 function CANDS(pid){const id=pid||S.pid;return DB.cands.filter(c=>c.pid===id)}
 /* 变体谱系。定向进化里最有价值的结构就是谱系：V-081(K27A/R59E) 是从 V-034(K27A) 长出来的，
    这个关系决定了「哪条路走通了、哪条路走死了」。设计页已经在说「最优亲本延伸」，
@@ -4409,7 +4440,7 @@ const S={
   bq:'', bDrawer:null, bTab:'log', checkpointPick:null
 };
 /* 八处代码直接取 p.rounds[len-1]，所以项目必须至少有一轮。
-   产品自己建的项目一定带 Round 1（见新建项目那一段），走不到零轮次；
+   产品自己建的项目一定带 Round 1（见新建课题那一段），走不到零轮次；
    这道保险是给以后可能出现的入口留的——导入、接口、脚本建出来的项目。 */
 const PRJ=()=>{
   const p=DB.projects.find(x=>x.id===S.pid)||DB.projects[0];
@@ -4418,7 +4449,7 @@ const PRJ=()=>{
   return p;
 };
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-/* 轮次状态表。原先缺了 open——而「新建项目」写进去的第一轮就是 open，
+/* 轮次状态表。原先缺了 open——而「新建课题」写进去的第一轮就是 open，
    于是用户建完第一个项目，点进课题详情或本轮，整页崩在这里的解构上。
    查表一律走 stateOf()：表里没有的状态退成「未知状态」，不让一个没登记的值掀翻整页。 */
 const STATE_MAP={open:['未开始','c-mut'],active:['进行中','c-dry'],assay:['送检中','c-wet'],
@@ -4550,11 +4581,11 @@ function mdlBtn(){
 function projBtn(explicit=false){
   const pn=S.bind?((DB.projects.find(x=>x.id===S.bind)||{}).name||''):'';
   return `<button class="ctl ctl-proj" type="button" data-act="bindproj"
-    title="这段对话绑定的项目" aria-label="关联项目">
+    title="这段对话绑定的项目" aria-label="关联课题">
     <svg width="14" height="14" style="width:0.875rem;height:0.875rem" viewBox="0 0 24 24" fill="none" aria-hidden="true"
       stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
       <path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4l2 2.2h7A1.5 1.5 0 0 1 19 9.7v7.8a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 3 17.5z"/></svg>
-    ${explicit?'<span class="research-project-label">关联项目</span>':''}<span class="dd-v">${S.bind?esc(pn)+' · R'+S.round:'选择项目'}</span>
+    ${explicit?'<span class="research-project-label">关联课题</span>':''}<span class="dd-v">${S.bind?esc(pn)+' · R'+S.round:'选择课题'}</span>
     <span class="car" aria-hidden="true"></span></button>`;
 }
 function askTop(withProj){
@@ -4565,7 +4596,7 @@ function askTop(withProj){
     <svg width="14" height="14" style="width:0.875rem;height:0.875rem" viewBox="0 0 24 24" fill="none" aria-hidden="true"
       stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
       <path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4l2 2.2h7A1.5 1.5 0 0 1 19 9.7v7.8a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 3 17.5z"/></svg>
-    <span class="dd-v">${S.bind?esc(pn)+' · R'+S.round:'选择项目'}</span>
+    <span class="dd-v">${S.bind?esc(pn)+' · R'+S.round:'选择课题'}</span>
     <span class="car" aria-hidden="true"></span></button>`);
   const cc=capChip();
   if(!bits.length&&!cc)return '';
@@ -6411,7 +6442,7 @@ function PMODELS(pid){const p=DB.projects.find(x=>x.id===(pid||S.pid));
   if(!p)return [];if(!p.models)p.models=[];return p.models}
 /* 「模型管理」挂在导航的「资源」下，回答的是「我手上一共有哪些模型」，
    不是「本课题里有哪些」——和数据集那一屏同一个道理。所以这三张表跨项目，
-   每行标关联项目，点一下回到那个项目；上面给一个项目筛选器。
+   每行标关联课题，点一下回到那个项目；上面给一个项目筛选器。
    底层存储不动：模型确实是从某个项目长出来的。 */
 function ALL_MODELS(){
   const out=[];
@@ -6469,13 +6500,13 @@ function dsUseCount(id){
   let k=0;DB.projects.forEach(p=>PMODELS(p.id).forEach(m=>{if(m.ds===id)k++}));
   return k;
 }
-/* 关联项目这一格：点一下回到那个项目。筛选交给上面的下拉——
+/* 关联课题这一格：点一下回到那个项目。筛选交给上面的下拉——
    同一个控件既筛选又跳转，点下去会出现两种结果，读不出是哪一种。 */
 function projCell(x){
   return `<td class="t-sm"><button class="lnk" type="button" data-projdw="${esc(x._pid)}"
     title="看项目「${esc(x._pn||'')}」的概况">${esc(x._pn||'—')}</button></td>`;
 }
-/* 列表里点关联项目：先在右边看个概况，要进去再进去——不把人从这张表里带走。 */
+/* 列表里点关联课题：先在右边看个概况，要进去再进去——不把人从这张表里带走。 */
 function projDrawer(pid){
   const p=DB.projects.find(x=>x.id===pid);if(!p)return '';
   const cs=CANDS(pid), fs=projFields(p);
@@ -6616,7 +6647,7 @@ V.labnew=()=>{
           <textarea class="input" rows="3" data-nx="desc"
             placeholder="例如「R3 的 KD 复测偏高，这次换 SPR 验一遍」">${esc(E.desc)}</textarea>
           <span class="t-xs mut2">留空也能提交。写了的话，结果回来时这段话会和数据放在一起</span></label>
-        <label class="field"><span class="label">关联项目</span>
+        <label class="field"><span class="label">关联课题</span>
           <span class="ctl ctl-sel"><select data-nx="pid">${DB.projects.map(x=>
             `<option value="${esc(x.id)}" ${x.id===S.pid?'selected':''}>${esc(x.name)}</option>`).join('')}</select>
             <span class="car" aria-hidden="true"></span></span>
@@ -6864,16 +6895,16 @@ V.dsets=()=>{
       <div class="col grow" style="gap:6px">
         <h1>数据集</h1>
         <p class="mut t-md" style="margin:0;max-width:60ch"
-          >用于模型训练的数据集，可按项目筛选</p>
+          >用于模型训练的数据集，可按课题筛选</p>
       </div>
     </div>
   </div>
 
   <div class="row wrap" style="gap:var(--s3);align-items:center">
     <span class="ctl ctl-sel fbar-sel">
-      <label class="sr" for="dsproj">按项目筛选</label>
+      <label class="sr" for="dsproj">按课题筛选</label>
       <select id="dsproj" data-ic="proj">
-        <option value="all" ${(S.dsProj||'all')==='all'?'selected':''}>全部项目（${ALL_DSETS().length}）</option>
+        <option value="all" ${(S.dsProj||'all')==='all'?'selected':''}>全部课题（${ALL_DSETS().length}）</option>
         ${DB.projects.map(x=>`<option value="${esc(x.id)}" ${S.dsProj===x.id?'selected':''}
           >${esc(x.name)}（${(x.dsets||[]).length}）</option>`).join('')}
       </select><span class="car" aria-hidden="true"></span></span>
@@ -6899,7 +6930,7 @@ function dsBody(){
     ${L.length?`<div class="tbl-wrap is-list"><table>
       <caption class="vh">数据集列表</caption>
       <thead><tr><th scope="col" class="c-nm">数据集名称/ID</th>
-        <th scope="col">关联项目</th><th scope="col">状态</th>
+        <th scope="col">关联课题</th><th scope="col">状态</th>
         <th scope="col">样本量</th><th scope="col">列数</th><th scope="col">目标列</th>
         <th scope="col">特征</th><th scope="col">切分（训/验/留出）</th>
         <th scope="col">训练任务</th><th scope="col">指纹</th>
@@ -7139,9 +7170,9 @@ function mdlBar(tab){
   const A=ALL_MODELS();
   return `<div class="row wrap" style="gap:var(--s3);align-items:center">
     <span class="ctl ctl-sel fbar-sel">
-      <label class="sr" for="mdlproj">按项目筛选</label>
+      <label class="sr" for="mdlproj">按课题筛选</label>
       <select id="mdlproj" data-ic="proj">
-        <option value="all" ${(S.mdlProj||'all')==='all'?'selected':''}>全部项目（${A.length}）</option>
+        <option value="all" ${(S.mdlProj||'all')==='all'?'selected':''}>全部课题</option>
         ${DB.projects.map(x=>`<option value="${esc(x.id)}" ${S.mdlProj===x.id?'selected':''}
           >${esc(x.name)}（${PMODELS(x.id).length}）</option>`).join('')}
       </select><span class="car" aria-hidden="true"></span></span>
@@ -7246,7 +7277,7 @@ function mdlCur(){
     ${L.length?`<div class="tbl-wrap is-list"><table>
       <caption class="vh">训出来的模型</caption>
       <thead><tr><th scope="col" class="c-nm">模型名称/ID</th>
-        <th scope="col">关联项目</th><th scope="col">在线部署</th>
+        <th scope="col">关联课题</th><th scope="col">在线部署</th>
         <th scope="col">预测目标</th>
         <!-- 基础模型从这张表上撑掉：每行都是 Descriptor Baseline，
              一列里每行都一样就不传达任何信息（R176），
@@ -7322,7 +7353,7 @@ function mdlJob(){
     ${L.length?`<div class="tbl-wrap is-list"><table>
       <caption class="vh">训练任务</caption>
       <thead><tr><th scope="col" class="c-nm">任务名称/ID</th>
-        <th scope="col">关联项目</th><th scope="col">状态</th><th scope="col">用时</th>
+        <th scope="col">关联课题</th><th scope="col">状态</th><th scope="col">用时</th>
         <th scope="col">基础模型</th><th scope="col">训练方法</th><th scope="col">参数量</th>
         <th scope="col">训练数据</th>
         <th scope="col">更新时间</th><th scope="col">操作</th></tr></thead>
@@ -7478,7 +7509,7 @@ function jobDrawer(m){
     chip:`<span class="chip ${st[1]}">${st[0]}</span>`,
     body:`<div class="col" style="gap:var(--s4)">
       <div class="col" style="gap:2px">
-        ${row('关联项目',`<button class="lnk" type="button" data-proj="${esc(m._pid)}"
+        ${row('关联课题',`<button class="lnk" type="button" data-proj="${esc(m._pid)}"
           >${esc(m._pn||'—')}</button>`)}
         ${row('预测目标',esc(tgtName(m.target)))}
         ${row('基础模型',esc(m.base||'Descriptor Baseline'))}
@@ -7575,7 +7606,7 @@ function mdlEval(){
     ${L.length?`<div class="tbl-wrap is-list"><table>
       <caption class="vh">每个模型在留出集上的指标</caption>
       <thead><tr><th scope="col" class="c-nm">模型名称/ID</th>
-        <th scope="col">关联项目</th><th scope="col">状态</th>
+        <th scope="col">关联课题</th><th scope="col">状态</th>
         <th scope="col">排序准确度</th><th scope="col">预测误差</th>
         <th scope="col">误差水平</th><th scope="col">评测集</th>
         <th scope="col">前瞻测试</th><th scope="col">操作</th></tr></thead>
@@ -7663,7 +7694,7 @@ function dsManifest(ds,q,sp){
    照 bootcamp 的「新建数据集」排：基本信息 / 数据来源 / 数据配置，底栏取消 + 建立。
    字段逐条对过，哪些留哪些不留：
      数据集名称、数据集描述        留——列表里先被读到的是名字；描述回答「这份是哪一轮、哪一批的」
-     数据来源 本地上传 / 已有文件   留，并改成「本地上传 / 项目文件」——
+     数据来源 本地上传 / 已有文件   留，并改成「本地上传 / 课题文件」——
                                    研究里要建集的表多半已经在项目里（任务产物、服务商回传、归档），
                                    让人先下载一遍再传回来是白绕一圈
      数据集类型 文本/图像/多模态    删——这一版只做单表回归，类型恒定，下拉里只有一个值
@@ -7694,7 +7725,7 @@ V.dsnew=()=>{
       </div>`:'';
   /* 本地上传那一支：文件名和行列指纹都在那张文件卡里，外面只留读不出来的报错，
      否则同一个文件名会在上下两行各出现一次。
-     项目文件那一支是从列表里挑的，挑中哪一份要在下面报清楚。 */
+     课题文件那一支是从列表里挑的，挑中哪一份要在下面报清楚。 */
   const readMeta=q?(n+' 行 × '+q.cols.length+' 列　指纹 '+q.fp):'';
   const readErr=NEWDS.err
     ? `<span class="t-xs" style="color:var(--err)">读不出来：${esc(NEWDS.err)}</span>`:'';
@@ -7727,7 +7758,7 @@ V.dsnew=()=>{
     <div class="fsec-b">
       <div class="field wide"><span class="label">取数方式</span>
         <span class="ctl-seg is-lg" role="radiogroup" aria-label="取数方式">
-          ${[['up','本地上传'],['proj','项目文件']].map(([k,nm])=>
+          ${[['up','本地上传'],['proj','课题文件']].map(([k,nm])=>
           `<button type="button" class="ctl-segi" data-dssrc="${k}" role="radio"
             aria-checked="${NEWDS.src===k?'true':'false'}">${nm}</button>`).join('')}
         </span>
@@ -7984,9 +8015,9 @@ V.chats=()=>{
   <div class="pg-hd"><div class="col" style="gap:6px"><h1>全部对话</h1></div></div>
   <div class="row wrap" style="gap:var(--s3);align-items:center">
       <span class="ctl ctl-sel fbar-sel">
-        <label class="sr" for="cproj">按项目筛选</label>
+        <label class="sr" for="cproj">按课题筛选</label>
         <select id="cproj" data-ic="proj">
-          <option value="all" ${(S.cProj||'all')==='all'?'selected':''}>全部项目（${SESSIONS.length}）</option>
+          <option value="all" ${(S.cProj||'all')==='all'?'selected':''}>全部课题（${SESSIONS.length}）</option>
           <option value="none" ${S.cProj==='none'?'selected':''}>没绑项目（${SESSIONS.filter(x=>!x.pid).length}）</option>
           ${DB.projects.map(x=>`<option value="${esc(x.id)}" ${S.cProj===x.id?'selected':''}
             >${esc(x.name)}（${SESSIONS.filter(y=>y.pid===x.id).length}）</option>`).join('')}
@@ -10813,9 +10844,9 @@ V.projects=()=>`
   <div class="row wrap projects-header" style="align-items:flex-end;gap:var(--s4)">
     <div class="col grow" style="gap:6px"><h1>项目管理</h1>
       <p class="mut t-md" style="margin:0">按靶点归档，跨轮累积</p></div>
-    <label class="fbar-q"><span class="sr">搜索项目</span>${SEARCH_IC}
-      <input id="pq" value="${esc(S.pq||'')}" placeholder="搜索项目名、靶点或目标"></label>
-    <button class="btn btn-pri" type="button" data-act="newproj">新建项目</button>
+    <label class="fbar-q"><span class="sr">搜索课题</span>${SEARCH_IC}
+      <input id="pq" value="${esc(S.pq||'')}" placeholder="搜索课题名、靶点或目标"></label>
+    <button class="btn btn-pri" type="button" data-act="newproj">新建课题</button>
   </div>
   <section>
     <div class="sec-h"><strong>${PLIST().length===DB.projects.length?'全部':'匹配到'} ${PLIST().length} 个</strong></div>
@@ -14643,7 +14674,7 @@ function regDataset(){
    ② api  —— 接了的话走哪个地址
    引用数是端砚页面上的数，不是本产品数出来的，所以标明了出处。 */
 const DATA_SRC_NOTE='名称、简介、大小、引用数与许可抄自端砚「科学数据」页（2026-11-13）；'
-  +'「已接入／未接入」是这个工作台自己的状态，端砚不管这件事。';
+  +'「已接入 / 未接入」是本工作台的接入状态。';
 const DATASRC=[
  {n:'UniProt（Universal Protein Resource）', ab:'UNIPROT', cap:'seq', org:'上海人工智能实验室',
   s:'全球最权威的蛋白质数据库，整合序列、功能注释及结构信息，支持生物医学与蛋白质组学研究。',
@@ -14894,7 +14925,7 @@ function jobList(route,cap,emptyTx,newTx){
   const L=pf==='全部'?L0:L0.filter(t=>t.pid===pf);
   const mode=LS.get('jmode','card');
   return `<div class="fltrow"><span class="t-sm mut2 fltrow-l">项目</span><span class="fltrow-s">
-    ${[['全部','全部项目']].concat(DB.projects.map(p=>[p.id,p.name]))
+    ${[['全部','全部课题']].concat(DB.projects.map(p=>[p.id,p.name]))
       .map(x=>`<button class="pill${pf===x[0]?' is-on':''}" type="button" data-jpf="${esc(x[0])}"
         aria-pressed="${pf===x[0]}">${esc(x[1])}</button>`).join('')}
   </span></div>
@@ -15707,7 +15738,7 @@ function filesNow(){const F=fileFilter();return FILES().filter(x=>fileKeep(x,F))
 function projPick(){
   const pr=DB.projects.find(x=>x.id===S.pid);
   return `<div class="row wrap" style="gap:var(--s2);align-items:center">
-    <span class="t-sm mut2" style="flex:0 0 auto">选择项目</span>
+    <span class="t-sm mut2" style="flex:0 0 auto">选择课题</span>
     <button class="ctl ctl-dd is-fix" type="button" data-projpick="1"
       title="这一次的产物记在哪个项目">
       ${ddIc('db')}<span class="dd-v ell">${esc(pr?pr.name:'未选项目')}</span>
@@ -18032,6 +18063,8 @@ function render(){
       b.setAttribute('aria-expanded',String(!S.collapsed));
     }
 })();
+  /* 只是折叠/展开侧栏：侧栏自己换状态，正文不重建（重建会让整页闪一下） */
+  if(S._sideOnly){S._sideOnly=0;if(typeof paintNav==='function')paintNav(true);return}
   paintNav();paintBanner();paintResearchHistory();
   Object.keys(COPYSRC).forEach(k=>delete COPYSRC[k]);
   /* 滚动位置只在换页时归零。原先每次 render 都归零，
@@ -18329,7 +18362,7 @@ function render(){
   q('[data-dssrc]',b=>b.onclick=()=>{
     if(NEWDS.src===b.dataset.dssrc)return;
     /* 换一条取数路径就把读进来的那份清掉：
-       留着的话，界面停在「项目文件」上，底下却还挂着刚才上传的那张表。 */
+       留着的话，界面停在「课题文件」上，底下却还挂着刚才上传的那张表。 */
     NEWDS.src=b.dataset.dssrc;NEWDS.from='';NEWDS.fileName='';NEWDS.text='';
     NEWDS.parsed=null;NEWDS.err='';NEWDS.target='';NEWDS.feats=null;render()});
   q('[data-dsf]',b=>b.onclick=()=>{
@@ -18526,11 +18559,11 @@ function render(){
     if(!d){toast('找不到这个数据集');return}
     render();toast(d.id+' 已发布');});
   q('[data-projpick]',b=>b.onclick=()=>{
-    searchMenu(b,'选择项目','搜项目名或靶点',
+    searchMenu(b,'选择课题','搜项目名或靶点',
       DB.projects.map(p=>({k:p.name,n:p.name,s:p.target?('靶点 '+p.target):''})),
       (DB.projects.find(x=>x.id===S.pid)||{}).name,
       n=>{const p=DB.projects.find(x=>x.name===n);if(!p)return;
-        S.pid=p.id;fixRound();render();toast('已选择项目「'+p.name+'」')},1);
+        S.pid=p.id;fixRound();render();toast('已选择课题「'+p.name+'」')},1);
   });
   q('[data-nodepick]',b=>b.onclick=()=>{
     const [cap,id]=b.dataset.nodepick.split('.'),nd=pipeNode(cap,id);
@@ -19250,7 +19283,7 @@ function act(a,el){
     const seed=parseInt(NEWDS.seed,10)||20260113;
     const sp=makeSplit(q.rows.length,[tr,va,1-tr-va],seed);
     const ds=addDset(S.pid,{name:NEWDS.name||NEWDS.fileName,
-      src:NEWDS.src==='proj'?'项目文件':'上传',desc:NEWDS.desc||'',file:NEWDS.fileName,
+      src:NEWDS.src==='proj'?'课题文件':'上传',desc:NEWDS.desc||'',file:NEWDS.fileName,
       rows:q.rows,cols:q.cols,target:NEWDS.target,feats:feats,task:'回归',
       split:sp,ratio:[tr,va,+(1-tr-va).toFixed(2)],seed:seed,fp:q.fp});
     emit(S.pid,[dsManifest(ds,q,sp)]);
@@ -19458,18 +19491,18 @@ function act(a,el){
   if(a==='kbclose'){S.kbPick=null;render();return}
   if(a==='kbadd'){const el=document.getElementById('kbfile');if(el)el.click();return}
   if(a==='newproj'){
-    modal('新建项目',`<div class="col" style="gap:var(--s4)">
-      <div class="field"><div class="row"><label class="label grow" for="pn">项目名称
+    modal('新建课题',`<div class="col" style="gap:var(--s4)">
+      <div class="field"><div class="row"><label class="label grow" for="pn">课题名称
             <span style="color:var(--err)">*</span></label>
           <span class="t-sm mut2 num" data-count="pn"></span></div>
         <input id="pn" class="input" maxlength="50" placeholder="例：Barnase–Barstar 结合界面 热稳定性改造"></div>
-      <div class="field"><div class="row"><label class="label grow" for="pd">项目描述</label>
+      <div class="field"><div class="row"><label class="label grow" for="pd">课题描述</label>
           <span class="t-sm mut2 num" data-count="pd"></span></div>
         <textarea id="pd" class="input" maxlength="200" style="min-height:4.75rem"
           placeholder="目标、关键问题或方法"></textarea></div>
     </div>`,'创建',()=>{
       const n=(document.getElementById('pn').value||'').trim();
-      if(!n){toast('项目名称必填');return false}
+      if(!n){toast('课题名称必填');return false}
       if(DB.projects.some(x=>x.name===n)){toast('已经有同名项目');return false}
       /* 研究对象和研究类型不在这儿问：现在只有蛋白这一包是全的，
          类型先按通用建，进了课题再随目标细化。 */
@@ -19486,7 +19519,7 @@ function act(a,el){
       go('pw');toast(`已创建「${n}」`);
     });return}
   if(a==='askfile'){const el=document.getElementById('askfile');if(el)el.click();return}
-  if(a==='side'){S.collapsed=S.collapsed?0:1;LS.set('collapsed',S.collapsed);render();return}
+  if(a==='side'){S.collapsed=S.collapsed?0:1;LS.set('collapsed',S.collapsed);S._sideOnly=1;render();return}
   if(a==='mdlimport'){
     modal('导入模型',`<div class="col" style="gap:var(--s4)">
       <div class="field"><div class="row"><label class="label grow" for="imn">模型名称
@@ -20505,7 +20538,7 @@ const WB_DATA = (function () {
   const isProject = id => list(DB.projects).some(p => p.id === id);
   const projectName = id => {
     const p = list(DB.projects).find(x => x.id === id);
-    return p ? p.name : (id ? '关联项目已删除' : '未关联项目');
+    return p ? p.name : (id ? '关联课题已删除' : '未关联课题');
   };
   const modelOpts = (tab, pid, extra) => Object.assign({
     mtab: tab, mdlProj: isProject(pid) ? pid : 'all', mq: '', bq: '',
@@ -20532,7 +20565,7 @@ const WB_DATA = (function () {
     return out;
   };
   function record(o) {
-    return Object.assign({ pid: null, project: '未关联项目', projectName: '未关联项目',
+    return Object.assign({ pid: null, project: '未关联课题', projectName: '未关联课题',
       progress: null, done: false, ongoing: false, terminal: false,
       isTask: true, needsAction: false, at: '', detail: '' }, o,
       { project: projectName(o.pid), projectName: projectName(o.pid), statusText: o.label });
@@ -21172,7 +21205,7 @@ function labSummary(b){
  return {status,label:labStatusLabels[status],done,total:steps.length,current,detail,progress:steps.length?Math.round(done/steps.length*100):null,ready,fails,active};
 }
 function labValidate(f,draft=false){
- const errors={};if(!f.name.trim())errors.name='请填写实验名称';if(!DB.projects.some(p=>p.id===f.pid))errors.pid='请选择关联项目';
+ const errors={};if(!f.name.trim())errors.name='请填写实验名称';if(!DB.projects.some(p=>p.id===f.pid))errors.pid='请选择关联课题';
  if(draft)return errors;
  if(!f.samples.split(/[\s,，;；]+/).some(x=>x.trim()))errors.samples='填写样本编号清单，明确每个实体样品';
  if(!f.sourceRef.trim())errors.sourceRef='填写样本清单／数据集版本或交接记录';
@@ -21189,7 +21222,7 @@ function labValidate(f,draft=false){
 }
 function labPersist(){
  try{localStorage.setItem('dy_lab_workflow_v1',JSON.stringify({schema:1,batches:BATCHES.filter(b=>b.localLab||b.workflow).map(b=>b.localLab?b:{id:b.id,workflow:b.workflow})}));return true;}
- catch(e){toast('本机存储失败，记录尚未保存。请导出备份或释放存储空间。');return false;}
+ catch(e){toast('本机存储失败，记录还没保存。请导出备份或释放存储空间。');return false;}
 }
 function labPersistMutation(b,previous){
  const oldStatus=b.status,oldResults=b.results;
@@ -21327,7 +21360,7 @@ function labStageConfig(s){
 }
 V.labnew=()=>{
  const f=labForm(),errors=Object.values(LABUI.errors);
- return `<div class="page lv"><header class="lv-head"><div><button type="button" class="lv-link" data-go="lab">← 实验管理</button><h1>${f.editing?'编辑实验草稿':'发起新实验'}</h1><p>先定义样品与检测目标，再为每个环节选择设备。</p></div><span class="lv-ref">本机实验方案 · 未下发设备</span></header>${errors.length?`<div class="lv-error-summary" role="alert">请补全 ${errors.length} 项信息：${errors.map(esc).join('；')}</div>`:''}<div class="lv-plan"><div><section class="lv-panel"><h2>01　实验与样品</h2><div class="lv-fields"><label class="lv-field"><span>关联项目 <i class="lv-required">*</i></span><select class="input" data-lv-field="pid" ${labInvalid('pid')}>${DB.projects.map(p=>`<option value="${esc(p.id)}" ${f.pid===p.id?'selected':''}>${esc(p.name)}</option>`).join('')}</select>${labError('pid')}</label><label class="lv-field"><span>实验模板</span><select class="input" data-lv-field="template">${Object.entries(LAB_TEMPLATES).map(([k,t])=>`<option value="${k}" ${f.template===k?'selected':''}>${t.name}</option>`).join('')}</select></label><label class="lv-field wide"><span>实验名称 <i class="lv-required">*</i></span><input class="input" id="lv-experiment-name" data-lv-field="name" value="${esc(f.name)}" placeholder="例如：R5 候选蛋白亲和力与热稳定性验证" ${labInvalid('name')}>${labError('name')}</label><label class="lv-field wide"><span>研究目标／判定标准</span><textarea class="input" id="lv-description" data-lv-field="desc" placeholder="这次实验要验证什么？用什么证据判定？">${esc(f.desc)}</textarea></label><label class="lv-field wide"><span>样本编号清单 <i class="lv-required">*</i></span><textarea class="input" id="lv-sample-ids" data-lv-field="samples" placeholder="每行一个实体样本编号，或使用逗号分隔" ${labInvalid('samples')}>${esc(f.samples)}</textarea><span class="lv-small">按编号去重；序列数据集不等同于实体样品已到位。</span>${labError('samples')}</label><label class="lv-field wide"><span>样本来源／数据版本 <i class="lv-required">*</i></span><input class="input" id="lv-source-ref" data-lv-field="sourceRef" value="${esc(f.sourceRef)}" placeholder="如：样本交接清单 v2 / 项目数据集 D001 v3" ${labInvalid('sourceRef')}>${labError('sourceRef')}</label></div></section><section class="lv-panel"><h2>02　表征目标与编排</h2><div class="lv-field"><span>需要哪些表征？</span><div class="lv-choices">${['affinity','stability','activity'].map(k=>`<label class="lv-choice"><input type="checkbox" data-lv-assay="${k}" ${f.assays.includes(k)?'checked':''}>${labStage(k).title}</label>`).join('')}</div>${labError('assays')}</div><div class="lv-field" style="margin-top:20px"><span>表征环节执行关系</span><div class="lv-choices">${[['parallel','并行表征'],['serial','依次表征']].map(([k,n])=>`<label class="lv-choice"><input type="radio" name="lv-mode" data-lv-mode="${k}" ${f.mode===k?'checked':''}>${n}</label>`).join('')}</div><p class="lv-small">前处理依次执行。并行表征在质控后分支，各分支都完成后再复核结论；依次表征也使用独立分样。</p></div>${f.mode==='parallel'&&f.assays.length>1?`<label class="lv-field"><span>分样与交接安排 <i class="lv-required">*</i></span><textarea class="input" id="lv-aliquot" data-lv-field="aliquot" placeholder="分别分配哪些样本／板位给各分支？确认样品余量与交接责任。" ${labInvalid('aliquot')}>${esc(f.aliquot)}</textarea>${labError('aliquot')}</label>`:''}${labError('graph')}</section><section class="lv-panel"><h2>03　环节设备与输入输出</h2><p class="lv-small">默认型号是能力参考，可按方法更换。设备实例与 SOP 未绑定时，这份方案还不是可执行的自动化程序。</p>${f.steps.map(labStageConfig).join('')}</section></div><aside class="lv-panel lv-preview"><h2>本次实验流程</h2><p class="lv-small">${LAB_TEMPLATES[f.template].name} · ${f.steps.length} 个环节<br>进度按完成环节计数，不代表时间或工作量。</p>${labFlowHTML(f.steps,f.mode,f.assays,false)}<div class="lv-note" style="margin-bottom:0">${f.mode==='parallel'?'独立分样 → 并行检测 → 汇总证据':'按前置依赖顺序执行'}<br>设备实例重复时需调整排期；本机暂不预约或控制设备。</div></aside></div><div class="lv-form-actions"><span class="lv-small">自动化下发尚未接入；创建后可由研究员逐环节记录。</span><button class="btn" type="button" data-lv-save="draft">保存草稿</button><button class="btn btn-pri" type="button" data-lv-save="ready">创建实验方案</button></div></div>`;
+ return `<div class="page lv"><header class="lv-head"><div><button type="button" class="lv-link" data-go="lab">← 实验管理</button><h1>${f.editing?'编辑实验草稿':'发起新实验'}</h1><p>先定义样品与检测目标，再为每个环节选择设备。</p></div><span class="lv-ref">本机实验方案 · 未下发设备</span></header>${errors.length?`<div class="lv-error-summary" role="alert">请补全 ${errors.length} 项信息：${errors.map(esc).join('；')}</div>`:''}<div class="lv-plan"><div><section class="lv-panel"><h2>01　实验与样品</h2><div class="lv-fields"><label class="lv-field"><span>关联课题 <i class="lv-required">*</i></span><select class="input" data-lv-field="pid" ${labInvalid('pid')}>${DB.projects.map(p=>`<option value="${esc(p.id)}" ${f.pid===p.id?'selected':''}>${esc(p.name)}</option>`).join('')}</select>${labError('pid')}</label><label class="lv-field"><span>实验模板</span><select class="input" data-lv-field="template">${Object.entries(LAB_TEMPLATES).map(([k,t])=>`<option value="${k}" ${f.template===k?'selected':''}>${t.name}</option>`).join('')}</select></label><label class="lv-field wide"><span>实验名称 <i class="lv-required">*</i></span><input class="input" id="lv-experiment-name" data-lv-field="name" value="${esc(f.name)}" placeholder="例如：R5 候选蛋白亲和力与热稳定性验证" ${labInvalid('name')}>${labError('name')}</label><label class="lv-field wide"><span>研究目标／判定标准</span><textarea class="input" id="lv-description" data-lv-field="desc" placeholder="这次实验要验证什么？用什么证据判定？">${esc(f.desc)}</textarea></label><label class="lv-field wide"><span>样本编号清单 <i class="lv-required">*</i></span><textarea class="input" id="lv-sample-ids" data-lv-field="samples" placeholder="每行一个实体样本编号，或使用逗号分隔" ${labInvalid('samples')}>${esc(f.samples)}</textarea><span class="lv-small">按编号去重；序列数据集不等同于实体样品已到位。</span>${labError('samples')}</label><label class="lv-field wide"><span>样本来源／数据版本 <i class="lv-required">*</i></span><input class="input" id="lv-source-ref" data-lv-field="sourceRef" value="${esc(f.sourceRef)}" placeholder="如：样本交接清单 v2 / 项目数据集 D001 v3" ${labInvalid('sourceRef')}>${labError('sourceRef')}</label></div></section><section class="lv-panel"><h2>02　表征目标与编排</h2><div class="lv-field"><span>需要哪些表征？</span><div class="lv-choices">${['affinity','stability','activity'].map(k=>`<label class="lv-choice"><input type="checkbox" data-lv-assay="${k}" ${f.assays.includes(k)?'checked':''}>${labStage(k).title}</label>`).join('')}</div>${labError('assays')}</div><div class="lv-field" style="margin-top:20px"><span>表征环节执行关系</span><div class="lv-choices">${[['parallel','并行表征'],['serial','依次表征']].map(([k,n])=>`<label class="lv-choice"><input type="radio" name="lv-mode" data-lv-mode="${k}" ${f.mode===k?'checked':''}>${n}</label>`).join('')}</div><p class="lv-small">前处理依次执行。并行表征在质控后分支，各分支都完成后再复核结论；依次表征也使用独立分样。</p></div>${f.mode==='parallel'&&f.assays.length>1?`<label class="lv-field"><span>分样与交接安排 <i class="lv-required">*</i></span><textarea class="input" id="lv-aliquot" data-lv-field="aliquot" placeholder="分别分配哪些样本／板位给各分支？确认样品余量与交接责任。" ${labInvalid('aliquot')}>${esc(f.aliquot)}</textarea>${labError('aliquot')}</label>`:''}${labError('graph')}</section><section class="lv-panel"><h2>03　环节设备与输入输出</h2><p class="lv-small">默认型号是能力参考，可按方法更换。设备实例与 SOP 未绑定时，这份方案还不是可执行的自动化程序。</p>${f.steps.map(labStageConfig).join('')}</section></div><aside class="lv-panel lv-preview"><h2>本次实验流程</h2><p class="lv-small">${LAB_TEMPLATES[f.template].name} · ${f.steps.length} 个环节<br>进度按完成环节计数，不代表时间或工作量。</p>${labFlowHTML(f.steps,f.mode,f.assays,false)}<div class="lv-note" style="margin-bottom:0">${f.mode==='parallel'?'独立分样 → 并行检测 → 汇总证据':'按前置依赖顺序执行'}<br>设备实例重复时需调整排期；本机暂不预约或控制设备。</div></aside></div><div class="lv-form-actions"><span class="lv-small">自动化下发尚未接入；创建后可由研究员逐环节记录。</span><button class="btn" type="button" data-lv-save="draft">保存草稿</button><button class="btn btn-pri" type="button" data-lv-save="ready">创建实验方案</button></div></div>`;
 };
 function labCounts(pid='all'){const list=BATCHES.filter(b=>pid==='all'||b.pid===pid).map(labSummary);return {normal:list.filter(s=>s.status==='normal').length,exception:list.filter(s=>s.status==='exception').length,conclusion:list.filter(s=>s.status==='conclusion').length,draft:list.filter(s=>s.status==='draft').length};}
 function labStats(workbench=false,pid='all'){const c=labCounts(pid);return `<div class="lv-stats">${['exception','normal','conclusion'].map(k=>`<button type="button" class="lv-stat" ${workbench?'data-lv-wb-status':'data-lv-filter'}="${k}" aria-label="查看${labStatusLabels[k]}实验">${labBadge(k)}<strong>${c[k]}</strong></button>`).join('')}</div>`;}
@@ -21398,12 +21431,12 @@ function rsShared(){return RS.data.shared.find(p=>p.id===RS.sharedPick);}
 function rsProjectShared(pid){return RS.data.shared.find(s=>s.projectId===pid);}
 function rsCopyIcon(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></svg>';}
 function rsProjectCopyError(p){
- if(!RS.ready)return '正在读取本机项目';if(RS.error)return RS.error;if(!can('edit'))return '当前身份没有创建权限';if(!p)return '找不到来源项目';
+ if(!RS.ready)return '正在读取本机项目';if(RS.error)return RS.error;if(!can('edit'))return '当前身份没有创建权限';if(!p)return '找不到来源课题';
  if((p.ownerId||'me')!=='me')return '仅项目所有者可以复制整个项目';const shared=rsProjectShared(p.id);if(shared&&shared.owner!=='me')return '仅共享课题所有者可以复制整个项目，请通过资产申请获取所需内容';return '';
 }
 function rsProjectCopyAction(p,place='header'){const error=rsProjectCopyError(p);return '<button class="'+(place==='card'?'project-copy-trigger':'btn pjx-copy')+'" type="button" data-rs-copy-project="'+esc(p.id)+'" aria-label="创建项目副本：'+esc(p.name)+'" aria-haspopup="dialog" title="'+esc(error||'创建项目副本')+'" '+(error?'disabled':'')+'>'+rsCopyIcon()+'创建项目副本'+'</button>';}
 function rsCopyProjectName(p){let i=1,name;do{const suffix=' - 副本'+(i===1?'':' '+i);name=p.name.slice(0,50-suffix.length)+suffix;i++;}while(DB.projects.some(x=>x.name===name));return name;}
-function rsCopyProjectNameError(name){return name.length<2||name.length>50?'项目名称须为 2–50 个字符':DB.projects.some(p=>p.name===name)?'已有同名项目，请换一个名称':'';}
+function rsCopyProjectNameError(name){return name.length<2||name.length>50?'课题名称须为 2–50 个字符':DB.projects.some(p=>p.name===name)?'已有同名项目，请换一个名称':'';}
 function rsCopyableModels(pid){const records=workbenchData({pid}).modelTasks.filter(t=>t.kind==='train'&&t.status==='done');return PMODELS(pid).filter(m=>inLib(m)&&records.some(t=>t.id===m.id)).map(m=>({model:m,record:records.find(t=>t.id===m.id)}));}
 async function rsCopyProject(pid,options={}){
  const source=rsProject(pid),error=rsProjectCopyError(source);if(error)throw new Error(error);const name=String(options.name||'').trim(),nameError=rsCopyProjectNameError(name);if(nameError)throw new Error(nameError);
@@ -21418,7 +21451,7 @@ async function rsCopyProject(pid,options={}){
 }
 function rsCopyProjectDialog(pid){
  const p=rsProject(pid),error=rsProjectCopyError(p);if(error){toast(error);return;}const models=rsCopyableModels(pid),dsets=p.dsets||[],archives=(p.arch||[]).filter(a=>typeof a.body==='string');
- modal('创建项目副本','<p class="rs-copy-summary">以「'+esc(p.name)+'」为起点，创建一个属于自己的独立我的课题。</p><label class="rs-field"><span>副本名称 <b>*</b></span><input class="input" id="rs-copy-name" value="'+esc(rsCopyProjectName(p))+'" maxlength="50" aria-describedby="rs-copy-name-error"><span class="rs-copy-name-error" id="rs-copy-name-error" role="alert"></span></label><strong class="label">副本内容</strong><div class="rs-copy-scopes"><label class="rs-copy-option"><input type="checkbox" checked disabled><span><strong>项目设置</strong><small>研究对象、目标约束与项目描述，始终保留。</small></span></label><label class="rs-copy-option"><input type="checkbox" id="rs-copy-knowledge" checked><span><strong>知识库与归档文件</strong><small>'+((p.kb||[]).length)+' 个已保存条目、'+archives.length+' 份已有归档。目录条目沿用原文件引用。</small></span></label><label class="rs-copy-option"><input type="checkbox" id="rs-copy-tools" checked><span><strong>工具引用</strong><small>'+((p.tools||[]).length)+' 个项目工具，不复制账号凭证。</small></span></label><label class="rs-copy-option"><input type="checkbox" id="rs-copy-assets" checked><span><strong>数据集与可用模型</strong><small>'+dsets.length+' 个数据集、'+models.length+' 个模型产物。新建独立编号；数据集为草稿，模型标记为导入。</small></span></label></div><p class="rs-copy-note">副本从第 1 轮开始。共享成员、权限申请、对话、任务和实验运行记录保留在原项目中；复制不会触发模型训练或实验执行。</p>','创建项目副本',()=>{
+ modal('创建项目副本','<p class="rs-copy-summary">以「'+esc(p.name)+'」为起点，创建一个属于自己的独立我的课题。</p><label class="rs-field"><span>副本名称 <b>*</b></span><input class="input" id="rs-copy-name" value="'+esc(rsCopyProjectName(p))+'" maxlength="50" aria-describedby="rs-copy-name-error"><span class="rs-copy-name-error" id="rs-copy-name-error" role="alert"></span></label><strong class="label">副本内容</strong><div class="rs-copy-scopes"><label class="rs-copy-option"><input type="checkbox" checked disabled><span><strong>项目设置</strong><small>研究对象、目标约束与课题描述，始终保留。</small></span></label><label class="rs-copy-option"><input type="checkbox" id="rs-copy-knowledge" checked><span><strong>知识库与归档文件</strong><small>'+((p.kb||[]).length)+' 个已保存条目、'+archives.length+' 份已有归档。目录条目沿用原文件引用。</small></span></label><label class="rs-copy-option"><input type="checkbox" id="rs-copy-tools" checked><span><strong>工具引用</strong><small>'+((p.tools||[]).length)+' 个项目工具，不复制账号凭证。</small></span></label><label class="rs-copy-option"><input type="checkbox" id="rs-copy-assets" checked><span><strong>数据集与可用模型</strong><small>'+dsets.length+' 个数据集、'+models.length+' 个模型产物。新建独立编号；数据集为草稿，模型标记为导入。</small></span></label></div><p class="rs-copy-note">副本从第 1 轮开始。共享成员、权限申请、对话、任务和实验运行记录保留在原项目中；复制不会触发模型训练或实验执行。</p>','创建项目副本',()=>{
  const name=document.getElementById('rs-copy-name').value.trim(),issue=rsCopyProjectNameError(name),input=document.getElementById('rs-copy-name');document.getElementById('rs-copy-name-error').textContent=issue;input.setAttribute('aria-invalid',String(!!issue));if(issue){input.focus();return false;}
  const options={name,knowledge:document.getElementById('rs-copy-knowledge').checked,tools:document.getElementById('rs-copy-tools').checked,assets:document.getElementById('rs-copy-assets').checked};
  return rsModalSave(async()=>{const copied=await rsCopyProject(pid,options);S.pid=copied.id;S.round=1;S.bind=copied.id;S.pq='';go('project');toast('已创建独立副本「'+copied.name+'」');});
@@ -21498,12 +21531,12 @@ function rsCandidates(pid){
 }
 function rsAssetLabel(k){return {knowledge:'知识条目',tool:'工具',dataset:'数据集',model:'模型',evaluation:'评测报告',experiment:'实验记录',conclusion:'实验结论',sampleSheet:'样本清单',inference:'推理记录'}[k]||k;}
 async function rsCreateShared(input){
- if(!can('edit'))throw new Error('当前身份没有编辑权限');const name=input.name.trim();if(name.length<2||name.length>50)throw new Error('项目名称须为 2–50 个字符');
+ if(!can('edit'))throw new Error('当前身份没有编辑权限');const name=input.name.trim();if(name.length<2||name.length>50)throw new Error('课题名称须为 2–50 个字符');
  if(input.mode!=='existing'&&RS.data.shared.some(p=>p.name===name))throw new Error('已有同名共享课题');const next=rsClone(RS.data);let p;
  if(input.mode==='existing'){p=rsProject(input.pid);if(!p||(p.ownerId||'me')!=='me')throw new Error('请选择自己的项目');if(next.shared.some(s=>s.projectId===p.id))throw new Error('该项目已开启共享');}
  else {p=rsBlankProject(name,input.goal||'');next.projects.push(p);}
  const candidates=input.mode==='existing'?rsCandidates(p.id):[];
- const record={id:rsId('shared'),projectId:p.id,name,goal:input.goal||p.desc||'',owner:'me',members:[{id:'me',name:'ZHANG',email:'',role:'owner',status:'active',at:nowStamp()}],assets:candidates.filter(a=>input.assets.includes(a.id)),requests:[],events:[{at:nowStamp(),by:'me',text:input.mode==='existing'?'从已有项目开启共享，保留原项目 ID':'创建共享课题'}],at:nowStamp()};
+ const record={id:rsId('shared'),projectId:p.id,name,goal:input.goal||p.desc||'',owner:'me',members:[{id:'me',name:'ZHANG',email:'',role:'owner',status:'active',at:nowStamp()}],assets:candidates.filter(a=>input.assets.includes(a.id)),requests:[],events:[{at:nowStamp(),by:'me',text:input.mode==='existing'?'从已有课题开启共享，保留原项目 ID':'创建共享课题'}],at:nowStamp()};
  next.shared.unshift(record);await rsSave(next);RS.sharedPick=record.id;LS.set('rs_shared_pick',record.id);RS.actor='me';RS.tab='assets';go('shareddetail');return record;
 }
 async function rsInvite(sid,email,name,role,institute=''){
@@ -21558,7 +21591,7 @@ V.sharednew=()=>{
  const gate=rsGate();if(gate)return gate;const f=RS.sharedForm||{mode:'existing',pid:rsPersonalProjects('me')[0]?.id||'',name:'',goal:'',assets:null};RS.sharedForm=f;
  const source=rsProject(f.pid);if(!f.initialized){f.name=f.mode==='existing'?source?.name||'':'';f.goal=f.mode==='existing'?source?.desc||'':'';f.initialized=true;}const candidates=f.mode==='existing'?rsCandidates(f.pid):[];
  if(f.assets===null)f.assets=candidates.map(a=>a.id);
- return '<div class="page rs rs-framed-form">'+rsHeader('新建共享课题','选择研究起点，再确定本次共享的资产范围。','<button class="btn" type="button" data-go="shared">返回</button>')+'<div class="rs-form-layout rs-form-layout-single"><div class="rs-form-card"><div class="rs-form-scroll" data-rs-form-scroll="shared"><h2>项目设置</h2><div class="rs-choice-row">'+[['existing','从已有项目开启共享'],['blank','创建空白共享课题']].map(([v,n])=>'<label class="rs-choice"><input type="radio" name="sharedmode" data-rs-shared-mode="'+v+'" '+(f.mode===v?'checked':'')+'>'+n+'</label>').join('')+'</div>'+
+ return '<div class="page rs rs-framed-form">'+rsHeader('新建共享课题','选择研究起点，再确定本次共享的资产范围。','<button class="btn" type="button" data-go="shared">返回</button>')+'<div class="rs-form-layout rs-form-layout-single"><div class="rs-form-card"><div class="rs-form-scroll" data-rs-form-scroll="shared"><h2>项目设置</h2><div class="rs-choice-row">'+[['existing','从已有课题开启共享'],['blank','创建空白共享课题']].map(([v,n])=>'<label class="rs-choice"><input type="radio" name="sharedmode" data-rs-shared-mode="'+v+'" '+(f.mode===v?'checked':'')+'>'+n+'</label>').join('')+'</div>'+
  (f.mode==='existing'?'<label class="rs-field"><span>选择我的课题</span><select class="input" data-rs-shared-source aria-label="选择我的课题">'+rsPersonalProjects('me').map(p=>'<option value="'+esc(p.id)+'" '+(p.id===f.pid?'selected':'')+'>'+esc(p.name)+'</option>').join('')+'</select></label>':'')+
  '<label class="rs-field"><span>共享课题名称 <b>*</b></span><input class="input" id="rs-shared-name" data-rs-shared-field="name" value="'+esc(f.name)+'" maxlength="50" placeholder="2–50 个字符"></label><label class="rs-field"><span>研究目标</span><textarea class="input" data-rs-shared-field="goal" rows="3" maxlength="500">'+esc(f.goal)+'</textarea></label><h2>共享资产范围</h2><p class="rs-help">仅共享所选内容，科研对话不共享。</p>'+
  (candidates.length?'<div class="rs-select-assets">'+candidates.map(a=>'<label class="rs-select-asset"><input type="checkbox" data-rs-publish-pick="'+esc(a.id)+'" '+(f.assets.includes(a.id)?'checked':'')+'><span><strong>'+esc(a.name)+'</strong><small>'+rsAssetLabel(a.kind)+' · '+esc(a.version)+' · '+esc(a.description)+'</small></span></label>').join('')+'</div>':'<div class="rs-soft-empty">创建后可以继续发布资产，并邀请成员。</div>')+'</div><div class="rs-form-footer"><p class="rs-dialog-error" id="rs-create-error" role="alert"></p><button class="btn" type="button" data-go="shared">取消</button><button class="btn btn-pri" type="button" data-rs-create-shared>创建共享课题</button></div></div></div></div>';
@@ -21587,7 +21620,7 @@ function rsRequestDialog(id,draft={}){
  create.onclick=()=>{
   const saved={reason:d.querySelector('#rs-request-reason').value,target:d.querySelector('#rs-target').value};d.close();
   setTimeout(()=>{
-   modal('新建我的课题','<label class="rs-field"><span>项目名称</span><input class="input" id="rs-personal-name" maxlength="50"></label>','创建',()=>rsModalSave(async()=>{
+   modal('新建我的课题','<label class="rs-field"><span>课题名称</span><input class="input" id="rs-personal-name" maxlength="50"></label>','创建',()=>rsModalSave(async()=>{
     const name=d.querySelector('#rs-personal-name').value.trim();if(name.length<2)throw new Error('名称至少 2 个字符');
     const next=rsClone(RS.data),target=rsBlankProject(name,'共享资产的接收项目',RS.actor);next.projects.push(target);await rsSave(next);
     setTimeout(()=>rsRequestDialog(id,{...saved,target:target.id}),30);
@@ -21620,7 +21653,7 @@ function rsPublishModelDialog(id){
  </dl><p class="rs-help">发布后会保存一份模型版本快照。当前 Demo 将共享记录保存在本机。</p>`;
  if(!shared){
    if(!can('edit')||(project.ownerId||'me')!=='me'){toast('需要课题所有者先开启共享');return}
-   modal('发布模型',info+'<p class="rs-help">该课题尚未开启共享。继续后可确认项目名称与共享内容。</p>','设置课题共享',()=>{
+   modal('发布模型',info+'<p class="rs-help">该课题尚未开启共享。继续后可确认课题名称与共享内容。</p>','设置课题共享',()=>{
      RS.sharedForm={mode:'existing',pid:project.id,name:project.name,goal:project.desc||'',assets:[asset.id],initialized:true};
      go('sharednew');
    });
@@ -21960,7 +21993,7 @@ V.workbench=()=>{
  const date=new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'long',timeZone:'Asia/Shanghai'});
  return '<div class="page wb"><header class="wb-header"><div class="wb-header-copy"><span class="wb-kicker">工作台</span><h1>'+wbViewGreeting()+'，ZHANG</h1></div><span class="wb-date">'+esc(date)+'</span></header><div class="wb-layout">'+
  '<section class="wb-panel wb-tasks" aria-labelledby="wb-tasks-title" aria-roledescription="轮播"><div class="wb-panel-heading"><h2 id="wb-tasks-title">课题进展</h2>'+iterationProjectControls(window,ps.length)+'</div>'+
- (window.items.length?'<div class="wb-project-grid" style="--wb-project-slots:'+window.slots+'">'+window.items.map(p=>{const scope=workbenchData({pid:p.id});return '<article class="wb-project-card" data-wb-project-id="'+esc(p.id)+'" aria-label="课题：'+esc(p.name)+'"><header class="wb-project-card-head">'+wbProjectMark(p)+'<h3><button class="wb-project-title" type="button" data-wb-project="'+esc(p.id)+'" title="'+esc(p.name)+'" aria-label="进入课题：'+esc(p.name)+'"><span>'+esc(p.name)+'</span>'+wbViewIcon('arrow')+'</button></h3></header>'+iterationTaskSection('experiment',scope.experiments||[],p.id)+iterationTaskSection('model',scope.modelTasks||[],p.id)+'</article>'}).join('')+'</div>':'<div class="wb-empty"><strong>还没有课题</strong><button class="btn btn-pri wb-button wb-button-primary" type="button" data-wb-create-project>新建项目</button></div>')+'</section>'+
+ (window.items.length?'<div class="wb-project-grid" style="--wb-project-slots:'+window.slots+'">'+window.items.map(p=>{const scope=workbenchData({pid:p.id});return '<article class="wb-project-card" data-wb-project-id="'+esc(p.id)+'" aria-label="课题：'+esc(p.name)+'"><header class="wb-project-card-head">'+wbProjectMark(p)+'<h3><button class="wb-project-title" type="button" data-wb-project="'+esc(p.id)+'" title="'+esc(p.name)+'" aria-label="进入课题：'+esc(p.name)+'"><span>'+esc(p.name)+'</span>'+wbViewIcon('arrow')+'</button></h3></header>'+iterationTaskSection('experiment',scope.experiments||[],p.id)+iterationTaskSection('model',scope.modelTasks||[],p.id)+'</article>'}).join('')+'</div>':'<div class="wb-empty"><strong>还没有课题</strong><button class="btn btn-pri wb-button wb-button-primary" type="button" data-wb-create-project>新建课题</button></div>')+'</section>'+
  '<section class="wb-panel wb-news" aria-labelledby="wb-news-title" aria-roledescription="轮播"><div class="wb-panel-heading"><div class="wb-panel-label">'+wbViewIcon('paper')+'<h2 id="wb-news-title">学术资讯</h2></div>'+iterationControls('news',ni,ps.length)+'</div>'+
  (np?'<div class="wb-news-context"><span title="'+esc(np.name)+'">'+esc(np.name)+'</span></div>':'')+
  (papers.length?'<ul class="wb-papers">'+papers.slice(0,1).map(wbViewPaper).join('')+'</ul>':'<div class="wb-empty wb-empty-news" role="status"><strong>'+(newsState==='loading'?'正在查找相关论文':newsState==='error'?'暂时无法获取论文':'暂无匹配论文')+'</strong><p>'+(newsState==='error'?'稍后重新进入工作台可重试。':'')+'</p></div>')+
@@ -22046,7 +22079,7 @@ function iterationConfirmDevice(id){
 }
 NAV_PARENT.devicedetail='devices';
 V.devicedetail=()=>{
- const d=labDevice(LABUI.devicePick);if(!d)return '<div class="page iteration-page"><header class="iteration-head"><div><h1>设备不存在</h1><p>该设备可能已移除，或尚未选择设备型号。</p></div></header><button class="btn" type="button" data-go="devices">返回设备列表</button></div>';
+ const d=labDevice(LABUI.devicePick);if(!d)return '<div class="page iteration-page"><header class="iteration-head"><div><h1>设备不存在</h1><p>设备可能已移除，或还没选择设备型号。</p></div></header><button class="btn" type="button" data-go="devices">返回设备列表</button></div>';
  const c=DEVICE_CONNECTIONS[d.id],state=iterationDeviceStatus(d.id);
  return '<div class="page iteration-page device-detail"><button class="rs-link" type="button" data-go="devices">← 设备管理</button><header class="iteration-head"><div><h1>'+esc(d.name)+'</h1><p>'+esc(d.model)+' · '+esc(d.brand)+'</p></div><div class="rs-actions"><button type="button" class="btn" data-device-use="'+d.id+'">加入实验方案</button>'+(state==='available'?'<button type="button" class="btn btn-pri" data-device-apply="'+d.id+'">申请接入</button>':'<span class="device-state '+state+'">'+(state==='pending'?'申请中':'已接入')+'</span>')+'</div></header><div class="device-capability"><div class="device-art">'+iterationEquipmentArt(d)+'</div><div><p>'+esc(d.desc)+'</p><div class="lv-tags">'+d.stages.map(k=>'<span class="lv-tag">'+esc(labStage(k).title)+'</span>').join('')+'</div></div></div><div class="device-detail-layout"><div>'+d.stages.map(k=>'<section class="device-section"><h2>'+esc(labStage(k).title)+'</h2>'+labIO(k)+'</section>').join('')+'</div><aside><section class="device-section"><h2>方法条件</h2><p>'+esc(d.why)+'</p><h3>数据交接</h3><p>'+esc(d.native)+'</p><a class="rs-link" href="'+esc(d.url)+'" target="_blank" rel="noopener noreferrer">厂商资料 '+wbViewIcon('external')+'</a></section>'+(c?'<section class="device-section"><h2>接入记录</h2><dl class="asset-key-values"><dt>设备实例</dt><dd>'+esc(c.resource)+'</dd><dt>申请说明</dt><dd style="white-space:pre-wrap">'+esc(c.requestNote||'未填写')+'</dd><dt>申请时间</dt><dd>'+esc(c.at)+'</dd></dl>'+(state==='pending'&&S.as===0&&can('edit')?'<button class="btn" type="button" data-device-confirm="'+d.id+'">确认接入</button>':'')+'</section>':'')+'</aside></div></div>';
 };
@@ -22387,7 +22420,7 @@ V.sharednew=()=>{
  const source=rsProject(f.pid);if(!f.initialized){f.name=f.mode==='existing'?source?.name||'':'';f.goal=f.mode==='existing'?source?.desc||'':'';f.initialized=true;}
  const candidates=f.mode==='existing'?rsCandidates(f.pid):[];if(f.assets===null)f.assets=candidates.filter(a=>a.kind==='knowledge').map(a=>a.id);
  const groups=[['知识库',['knowledge']],['工具与模型',['tool','model']],['数据与报告',['dataset','sampleSheet','evaluation','conclusion','inference']],['实验',['experiment']]];
- return '<div class="page rs rs-framed-form"><header class="iteration-head"><div><h1>新建共享课题</h1></div><button class="btn" type="button" data-go="shared">返回共享课题</button></header><div class="rs-form-layout rs-form-layout-single"><div class="rs-form-card"><div class="rs-form-scroll" data-rs-form-scroll="shared"><div class="rs-choice-row">'+[['existing','已有项目'],['blank','空白项目']].map(([v,n])=>'<label class="rs-choice"><input type="radio" name="sharedmode" data-rs-shared-mode="'+v+'" '+(f.mode===v?'checked':'')+'>'+n+'</label>').join('')+'</div><div class="rs-fields-grid">'+(f.mode==='existing'?'<label class="rs-field"><span>来源项目</span><select class="input" data-rs-shared-source aria-label="来源项目">'+rsPersonalProjects('me').map(p=>'<option value="'+esc(p.id)+'" '+(p.id===f.pid?'selected':'')+'>'+esc(p.name)+'</option>').join('')+'</select></label>':'')+'<label class="rs-field"><span>共享课题名称 <b>*</b></span><input class="input" id="rs-shared-name" data-rs-shared-field="name" value="'+esc(f.name)+'" maxlength="50"></label></div><label class="rs-field"><span>研究目标 <small>选填</small></span><textarea class="input" data-rs-shared-field="goal" rows="2" maxlength="500">'+esc(f.goal)+'</textarea></label><div class="rs-card-top"><h2>共享内容</h2><span class="rs-help" data-shared-selection-count>已选 '+f.assets.length+' 项</span><button class="rs-link" type="button" data-shared-all>全选</button></div><p class="rs-help">仅共享所选内容，科研对话不共享。</p>'+groups.map(([name,kinds],i)=>{const items=candidates.filter(a=>kinds.includes(a.kind));if(!items.length)return '';return '<details class="shared-select-group" '+(!i?'open':'')+'><summary><strong>'+name+'</strong><span>'+items.length+' 项</span></summary><div>'+items.map(a=>'<label class="rs-select-asset"><input type="checkbox" data-rs-publish-pick="'+esc(a.id)+'" '+(f.assets.includes(a.id)?'checked':'')+'>'+iterationAssetFile(a)+'<span><strong>'+esc(a.name)+'</strong><small>'+esc(a.kind==='knowledge'?'资料引用':rsAssetLabel(a.kind))+'</small></span></label>').join('')+'</div></details>';}).join('')+(!candidates.length?'<p class="rs-help">创建后可共享资产并邀请成员。</p>':'')+'</div><div class="rs-form-footer"><p class="rs-dialog-error" id="rs-create-error" role="alert"></p><button class="btn" type="button" data-go="shared">取消</button><button class="btn btn-pri" type="button" data-rs-create-shared>创建共享课题</button></div></div></div></div>';
+ return '<div class="page rs rs-framed-form"><header class="iteration-head"><div><h1>新建共享课题</h1></div><button class="btn" type="button" data-go="shared">返回共享课题</button></header><div class="rs-form-layout rs-form-layout-single"><div class="rs-form-card"><div class="rs-form-scroll" data-rs-form-scroll="shared"><div class="rs-choice-row">'+[['existing','已有课题'],['blank','空白课题']].map(([v,n])=>'<label class="rs-choice"><input type="radio" name="sharedmode" data-rs-shared-mode="'+v+'" '+(f.mode===v?'checked':'')+'>'+n+'</label>').join('')+'</div><div class="rs-fields-grid">'+(f.mode==='existing'?'<label class="rs-field"><span>来源课题</span><select class="input" data-rs-shared-source aria-label="来源课题">'+rsPersonalProjects('me').map(p=>'<option value="'+esc(p.id)+'" '+(p.id===f.pid?'selected':'')+'>'+esc(p.name)+'</option>').join('')+'</select></label>':'')+'<label class="rs-field"><span>共享课题名称 <b>*</b></span><input class="input" id="rs-shared-name" data-rs-shared-field="name" value="'+esc(f.name)+'" maxlength="50"></label></div><label class="rs-field"><span>研究目标 <small>选填</small></span><textarea class="input" data-rs-shared-field="goal" rows="2" maxlength="500">'+esc(f.goal)+'</textarea></label><div class="rs-card-top"><h2>共享内容</h2><span class="rs-help" data-shared-selection-count>已选 '+f.assets.length+' 项</span><button class="rs-link" type="button" data-shared-all>全选</button></div><p class="rs-help">仅共享所选内容，科研对话不共享。</p>'+groups.map(([name,kinds],i)=>{const items=candidates.filter(a=>kinds.includes(a.kind));if(!items.length)return '';return '<details class="shared-select-group" '+(!i?'open':'')+'><summary><strong>'+name+'</strong><span>'+items.length+' 项</span></summary><div>'+items.map(a=>'<label class="rs-select-asset"><input type="checkbox" data-rs-publish-pick="'+esc(a.id)+'" '+(f.assets.includes(a.id)?'checked':'')+'>'+iterationAssetFile(a)+'<span><strong>'+esc(a.name)+'</strong><small>'+esc(a.kind==='knowledge'?'资料引用':rsAssetLabel(a.kind))+'</small></span></label>').join('')+'</div></details>';}).join('')+(!candidates.length?'<p class="rs-help">创建后可共享资产并邀请成员。</p>':'')+'</div><div class="rs-form-footer"><p class="rs-dialog-error" id="rs-create-error" role="alert"></p><button class="btn" type="button" data-go="shared">取消</button><button class="btn btn-pri" type="button" data-rs-create-shared>创建共享课题</button></div></div></div></div>';
 };
 const iterationSharedFormBind=rsBind;
 rsBind=function(root){
@@ -23082,8 +23115,10 @@ function materialsFiltered(rows=materialsRows()){const m=MATERIALS,p=materialsPr
 function materialsIcon(name){const paths={folder:'M3 7V5h6l2 2h10v13H3z',file:'M6 3h8l4 4v14H6zM14 3v5h4M9 12h6M9 16h6',users:'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 3a4 4 0 1 1 0 8 4 4 0 0 1 0-8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75',star:'m12 3 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z',trash:'M3 6h18M9 6V3h6v3M6 6l1 15h10l1-15M10 10v7M14 10v7',grid:'M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z',list:'M8 5h13M8 12h13M8 19h13M3 5h1M3 12h1M3 19h1',search:'M21 21l-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0'};return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+(paths[name]||paths.file)+'"/></svg>';}
 
 function materialsSubtitle(){const m=MATERIALS;if(m.space==='public')return '操作规范、仪器手册与通用文献，跨课题复用。';if(m.space)return '名称与成员权限跟随课题，上传即归档。';return{shared:'其他课题共享给你的资料；用文件旁的「+」申请添加到我的课题。',stars:'你收藏的资料，取消收藏即从这里移除。',mine:'你上传或创建的资料，按课题归档。',trash:'删除的资料保留在这里，可随时恢复。'}[m.tab]||'课题资料随课题归档，公共资料跨课题复用。';}
+/* 时间统一成一种写法：今天只给时分，其余给 月-日 时:分；原值留在 title 里 */
+function materialsWhen(at){const t=String(at||'');if(!t||t==='—')return '—';const today=nowStamp().slice(0,10);if(t.startsWith(today))return '今天 '+t.slice(11,16);if(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}/.test(t))return t.slice(5,16);return t;}
 function materialsNav(label,tab,count){return '<button type="button" class="ms-nav '+(MATERIALS.tab===tab&&!MATERIALS.space?'selected':'')+'" data-ms-tab="'+tab+'">'+materialsIcon(tab==='shared'?'users':tab==='stars'?'star':tab==='trash'?'trash':'file')+'<span>'+label+'</span><small>'+count+'</small></button>';}
-function materialsRow(x){const star=materialsPrefs().stars.includes(x.id),trash=MATERIALS.tab==='trash';return '<article class="ms-file" data-ms-row="'+esc(x.id)+'"><button class="ms-file-main" type="button" data-ms-open="'+esc(x.id)+'">'+fileIc(fileExt(x))+'<span><strong>'+esc(x.name)+'</strong><small>'+esc(x.kind==='link'?'链接':fileExt(x).toUpperCase())+' · '+(x.kind==='import'?'从共享课题导入':x.kind==='shared'?'共享资产':x.bytes==null?'资料引用':fmtBytes(x.bytes))+'</small></span></button><span class="ms-cell">'+esc(materialsSpace(x))+'</span><span class="ms-cell">'+esc(x.owner===materialsActor()?'我':'课题成员')+'</span><time class="ms-cell">'+esc(x.at||'—')+'</time><div class="ms-row-actions">'+(trash?'<button type="button" data-ms-restore="'+esc(x.id)+'">恢复</button>':'<button type="button" aria-label="'+(star?'取消收藏':'收藏')+' '+esc(x.name)+'" aria-pressed="'+star+'" data-ms-star="'+esc(x.id)+'">'+(star?'已收藏':'收藏')+'</button>'+(x.sharedId?'':'<button type="button" class="ms-more" aria-label="更多：'+esc(x.name)+'" aria-haspopup="menu" data-ms-more="'+esc(x.id)+'">···</button>')+'')+'</div></article>';}
+function materialsRow(x){const star=materialsPrefs().stars.includes(x.id),trash=MATERIALS.tab==='trash';return '<article class="ms-file" data-ms-row="'+esc(x.id)+'"><button class="ms-file-main" type="button" data-ms-open="'+esc(x.id)+'">'+fileIc(fileExt(x))+'<span><strong>'+esc(x.name)+'</strong><small>'+esc(x.kind==='link'?'链接':fileExt(x).toUpperCase())+' · '+(x.kind==='import'?'从共享课题导入':x.kind==='shared'?'共享资产':x.bytes==null?'资料引用':fmtBytes(x.bytes))+'</small></span></button><span class="ms-cell">'+esc(materialsSpace(x))+'</span><span class="ms-cell">'+esc(x.owner===materialsActor()?'我':'课题成员')+'</span><time class="ms-cell" title="'+esc(x.at||'')+'">'+esc(materialsWhen(x.at))+'</time><div class="ms-row-actions">'+(trash?'<button type="button" data-ms-restore="'+esc(x.id)+'">恢复</button>':'<button type="button" aria-label="'+(star?'取消收藏':'收藏')+' '+esc(x.name)+'" aria-pressed="'+star+'" data-ms-star="'+esc(x.id)+'">'+(star?'已收藏':'收藏')+'</button>'+(x.sharedId?'':'<button type="button" class="ms-more" aria-label="更多：'+esc(x.name)+'" aria-haspopup="menu" data-ms-more="'+esc(x.id)+'">···</button>')+'')+'</div></article>';}
 /* 行尾「更多」：分享（放进我能发布的共享课题）；菜单点外面即关 */
 function materialsMoreMenu(btn,id){
  document.querySelector('.ms-menu')?.remove();
@@ -23112,7 +23147,7 @@ function materialsShareDialog(x){
  });
 }
 V.materials=()=>{const m=MATERIALS,all=materialsRows(),prefs=materialsPrefs(),live=all.filter(x=>!prefs.trash.includes(x.id)),rows=materialsFiltered(all),projects=DB.projects.filter(materialsVisible),title=m.space?(m.space==='public'?'公共资料':materialsProject(m.space)?.name||'课题资料'):({all:'全部资料',mine:'我的资料',shared:'与你共享',stars:'已收藏',trash:'回收站'})[m.tab];const count=tab=>{const previous={...m};Object.assign(m,{tab,space:'',query:'',type:'all'});const value=materialsFiltered(all).length;Object.assign(m,previous);return value;};
-return '<div class="ms-shell"><aside class="ms-sidebar" aria-label="资料空间导航"><h2>资料空间</h2>'+[['全部资料','all'],['我的资料','mine'],['与你共享','shared'],['已收藏','stars']].map(([n,t])=>materialsNav(n,t,count(t))).join('')+'<label class="ms-mobile-space">资料归属<select id="ms-mobile-space" aria-label="选择课题资料空间"><option value="">全部课题资料</option>'+projects.map(p=>'<option value="'+esc(p.id)+'" '+(m.space===p.id?'selected':'')+'>'+esc(p.name)+'</option>').join('')+'<option value="public" '+(m.space==='public'?'selected':'')+'>公共资料</option></select></label><h3>课题资料</h3><div class="ms-project-nav">'+projects.map(p=>'<button type="button" class="ms-nav '+(m.space===p.id?'selected':'')+'" data-ms-space="'+esc(p.id)+'" title="'+esc(p.name)+'">'+materialsIcon('folder')+'<span>'+esc(p.name)+'</span></button>').join('')+'</div><button type="button" class="ms-nav '+(m.space==='public'?'selected':'')+'" data-ms-space="public">'+materialsIcon('folder')+'<span>公共资料</span></button><h3>最近访问</h3>'+prefs.recent.map(id=>live.find(x=>x.id===id)).filter(Boolean).slice(0,3).map(x=>'<button type="button" class="ms-nav" data-ms-open="'+esc(x.id)+'">'+materialsIcon('file')+'<span>'+esc(x.name)+'</span></button>').join('')+'<div class="ms-trash">'+materialsNav('回收站','trash',count('trash'))+'</div></aside><section class="ms-main"><header class="ms-header"><div><p class="ms-breadcrumb">资料空间 / '+esc(title)+'</p><h1>'+esc(title)+'</h1><p>'+esc(materialsSubtitle())+'</p></div><div class="ms-head-actions"><label class="ms-search">'+materialsIcon('search')+'<input id="ms-search" type="search" aria-label="搜索资料" placeholder="搜索资料名称、内容或课题" value="'+esc(m.query)+'"></label><button type="button" class="btn btn-pri" data-ms-create '+(!m.ready||m.error||!materialsEditable(m.space==='public'?'':m.space)?'disabled':'')+'>＋ 新建 / 上传</button></div></header><div class="ms-toolbar"><div class="ms-types" aria-label="资料类型">'+[['all','全部'],['doc','文档'],['slides','演示文稿'],['sheet','表格'],['image','图像'],['link','链接'],['other','其他']].map(([k,n])=>'<button type="button" class="pill '+(m.type===k?'on':'')+'" aria-pressed="'+(m.type===k)+'" data-ms-type="'+k+'">'+n+'</button>').join('')+'</div><div class="ms-views"><button type="button" aria-label="网格视图" aria-pressed="'+m.grid+'" data-ms-view="grid">'+materialsIcon('grid')+'</button><button type="button" aria-label="列表视图" aria-pressed="'+!m.grid+'" data-ms-view="list">'+materialsIcon('list')+'</button></div></div>'+(m.error?'<div role="alert" class="ms-empty">'+esc(m.error)+'<button class="btn" data-ms-retry>重试</button></div>':!m.ready?'<div class="ms-empty" role="status">正在读取资料…</div>':((m.tab==='all'&&!m.space&&!m.query)?'<section class="ms-spaces"><h2>常用课题与公共资料</h2><div>'+[...projects.slice(0,2).map(p=>({id:p.id,name:p.name,desc:p.archived||p.state==='archived'?'已归档 · 只读':'名称与成员权限跟随课题'})),{id:'public',name:'公共资料',desc:'操作规范、仪器手册与通用文献'}].map(p=>'<button type="button" data-ms-space="'+esc(p.id)+'">'+materialsIcon('folder')+'<strong>'+esc(p.name)+'</strong><p>'+p.desc+'</p><small>'+live.filter(x=>p.id==='public'?!x.pid&&!x.sharedId:x.pid===p.id).length+' 项资料</small></button>').join('')+'</div></section>':'')+'<div class="ms-list-heading"><h2>'+ (m.tab==='trash'?'已移入回收站':'全部文件')+' <small>'+rows.length+' 项</small></h2><label>排序 <select id="ms-sort" aria-label="资料排序"><option value="new" '+(m.sort==='new'?'selected':'')+'>最近更新</option><option value="name" '+(m.sort==='name'?'selected':'')+'>名称</option></select></label></div>'+(rows.length?'<div class="ms-files '+(m.grid?'is-grid':'')+'">'+(!m.grid?'<div class="ms-table-head"><span>名称</span><span>归属课题 / 空间</span><span>更新者</span><span>更新时间</span><span>操作</span></div>':'')+rows.map(materialsRow).join('')+'</div>':'<div class="ms-empty">'+materialsIcon(m.tab==='shared'?'users':'folder')+'<h2>'+(m.query||m.type!=='all'?'没有匹配的资料':m.tab==='shared'?'还没有与你共享的资料':m.tab==='trash'?'回收站为空':'这里还没有资料')+'</h2><p>'+(m.tab==='shared'?'你加入的共享课题资料会显示在这里。':m.query||m.type!=='all'?'尝试其他关键词或资料类型。':'新建文档、添加链接或上传文件，开始积累科研资料。')+'</p>'+((m.query||m.type!=='all')?'<button class="btn" data-ms-reset>清除筛选</button>':m.tab==='shared'?'<button class="btn" type="button" data-go="projects">去课题项目申请加入</button>':m.tab==='trash'?'':'<button class="btn btn-pri" type="button" data-ms-create>新建 / 上传</button>')+'</div>'))+'<footer class="ms-footer">'+(m.space&&m.space!=='public'?'<button class="ms-link" type="button" data-ms-project="'+esc(m.space)+'">进入对应课题 →</button>':'<span>资料归属与课题保持一致</span>')+'<span>新增内容保存在当前浏览器 · 尚未同步到服务器</span></footer></section></div>';};
+return '<div class="ms-shell"><aside class="ms-sidebar" aria-label="资料空间导航"><h2>资料空间</h2>'+[['全部资料','all'],['我的资料','mine'],['与你共享','shared'],['已收藏','stars']].map(([n,t])=>materialsNav(n,t,count(t))).join('')+'<label class="ms-mobile-space">资料归属<select id="ms-mobile-space" aria-label="选择课题资料空间"><option value="">全部课题资料</option>'+projects.map(p=>'<option value="'+esc(p.id)+'" '+(m.space===p.id?'selected':'')+'>'+esc(p.name)+'</option>').join('')+'<option value="public" '+(m.space==='public'?'selected':'')+'>公共资料</option></select></label><h3>课题资料</h3><div class="ms-project-nav">'+projects.map(p=>'<button type="button" class="ms-nav '+(m.space===p.id?'selected':'')+'" data-ms-space="'+esc(p.id)+'" title="'+esc(p.name)+'">'+materialsIcon('folder')+'<span>'+esc(p.name)+'</span></button>').join('')+'</div><button type="button" class="ms-nav '+(m.space==='public'?'selected':'')+'" data-ms-space="public">'+materialsIcon('folder')+'<span>公共资料</span></button><h3>最近访问</h3>'+prefs.recent.map(id=>live.find(x=>x.id===id)).filter(Boolean).slice(0,3).map(x=>'<button type="button" class="ms-nav" data-ms-open="'+esc(x.id)+'">'+materialsIcon('file')+'<span>'+esc(x.name)+'</span></button>').join('')+'<div class="ms-trash">'+materialsNav('回收站','trash',count('trash'))+'</div></aside><section class="ms-main"><header class="ms-header"><div><p class="ms-breadcrumb">资料空间 / '+esc(title)+'</p><h1>'+esc(title)+'</h1><p>'+esc(materialsSubtitle())+'</p></div><div class="ms-head-actions"><label class="ms-search">'+materialsIcon('search')+'<input id="ms-search" type="search" aria-label="搜索资料" placeholder="搜索资料名称、内容或课题" value="'+esc(m.query)+'"></label><button type="button" class="btn btn-pri" data-ms-create '+(!m.ready||m.error||!materialsEditable(m.space==='public'?'':m.space)?'disabled':'')+'>＋ 新建 / 上传</button></div></header><div class="ms-toolbar"><div class="ms-types" aria-label="资料类型">'+[['all','全部'],['doc','文档'],['slides','演示文稿'],['sheet','表格'],['image','图像'],['link','链接'],['other','其他']].map(([k,n])=>'<button type="button" class="pill '+(m.type===k?'on':'')+'" aria-pressed="'+(m.type===k)+'" data-ms-type="'+k+'">'+n+'</button>').join('')+'</div><div class="ms-views"><button type="button" aria-label="网格视图" aria-pressed="'+m.grid+'" data-ms-view="grid">'+materialsIcon('grid')+'</button><button type="button" aria-label="列表视图" aria-pressed="'+!m.grid+'" data-ms-view="list">'+materialsIcon('list')+'</button></div></div>'+(m.error?'<div role="alert" class="ms-empty">'+esc(m.error)+'<button class="btn" data-ms-retry>重试</button></div>':!m.ready?'<div class="ms-empty" role="status">正在读取资料…</div>':((m.tab==='all'&&!m.space&&!m.query)?'<section class="ms-spaces"><h2>常用课题与公共资料</h2><div>'+[...projects.slice(0,2).map(p=>({id:p.id,name:p.name,desc:p.archived||p.state==='archived'?'已归档 · 只读':'名称与成员权限跟随课题'})),{id:'public',name:'公共资料',desc:'操作规范、仪器手册与通用文献'}].map(p=>'<button type="button" data-ms-space="'+esc(p.id)+'">'+materialsIcon('folder')+'<strong>'+esc(p.name)+'</strong><p>'+p.desc+'</p><small>'+live.filter(x=>p.id==='public'?!x.pid&&!x.sharedId:x.pid===p.id).length+' 项资料</small></button>').join('')+'</div></section>':'')+'<div class="ms-list-heading"><h2>'+ (m.tab==='trash'?'已移入回收站':'全部文件')+' <small>'+rows.length+' 项</small></h2><label>排序 <select id="ms-sort" aria-label="资料排序"><option value="new" '+(m.sort==='new'?'selected':'')+'>最近更新</option><option value="name" '+(m.sort==='name'?'selected':'')+'>名称</option></select></label></div>'+(rows.length?'<div class="ms-files '+(m.grid?'is-grid':'')+'">'+(!m.grid?'<div class="ms-table-head"><span>名称</span><span>归属课题 / 空间</span><span>更新者</span><span>更新时间</span><span>操作</span></div>':'')+rows.map(materialsRow).join('')+'</div>':'<div class="ms-empty">'+materialsIcon(m.tab==='shared'?'users':'folder')+'<h2>'+(m.query||m.type!=='all'?'没有匹配的资料':m.tab==='shared'?'还没有与你共享的资料':m.tab==='trash'?'回收站为空':'这里还没有资料')+'</h2><p>'+(m.tab==='shared'?'你加入的共享课题资料会显示在这里。':m.query||m.type!=='all'?'尝试其他关键词或资料类型。':'新建文档、添加链接或上传文件，开始积累科研资料。')+'</p>'+((m.query||m.type!=='all')?'<button class="btn" data-ms-reset>清除筛选</button>':m.tab==='shared'?'<button class="btn" type="button" data-go="projects">去课题项目申请加入</button>':m.tab==='trash'?'':'<button class="btn btn-pri" type="button" data-ms-create>新建 / 上传</button>')+'</div>'))+'<footer class="ms-footer">'+(m.space&&m.space!=='public'?'<button class="ms-link" type="button" data-ms-project="'+esc(m.space)+'">进入对应课题 →</button>':'<span>资料归属与课题保持一致</span>')+'<span>新增内容保存在当前浏览器 · 还没同步到服务器</span></footer></section></div>';};
 V.files=V.materials;
 const materialsNavGroup=NAV.find(g=>g[0]==='A');materialsNavGroup[2].push(['materials','资料空间','M4 4h10l5 5v11H4zM14 4v6h5M8 14h7M8 17h5','按课题积累、查找和复用科研资料']);NAVNAME.materials='资料空间';NAVNAME.files='资料空间';BACKNAME.materials='资料空间';NAV_PARENT.files='materials';NAV_ROUTE.materials=1;
 function materialsCreate(){const m=MATERIALS;modal('新建资料 / 上传文件','<div class="ms-form"><label>资料归属<select class="input" id="ms-target">'+(materialsEditable('')?'<option value="">公共资料</option>':'')+DB.projects.filter(p=>materialsVisible(p)&&materialsEditable(p.id)).map(p=>'<option value="'+esc(p.id)+'" '+(m.space===p.id?'selected':'')+'>'+esc(p.name)+'</option>').join('')+'</select></label><label>创建方式<select class="input" id="ms-kind"><option value="doc">文档</option><option value="link">链接</option><option value="upload">上传文件</option></select></label><label id="ms-name-wrap">名称<input class="input" id="ms-name" maxlength="120" required></label><label id="ms-content-wrap">内容<textarea class="input" id="ms-content" rows="7"></textarea></label><label hidden id="ms-url-wrap">链接地址<input class="input" id="ms-url" type="url" placeholder="https://"></label><label hidden id="ms-file-wrap">选择文件<input id="ms-upload" type="file" multiple><small>单次最多 20 个文件，总大小不超过 25 MB。</small></label><p id="ms-form-error" role="alert"></p></div>','保存',()=>{materialsSaveForm();return false;});const kind=document.getElementById('ms-kind');kind.onchange=()=>{for(const [id,show]of [['ms-name-wrap',kind.value!=='upload'],['ms-content-wrap',kind.value==='doc'],['ms-url-wrap',kind.value==='link'],['ms-file-wrap',kind.value==='upload']])document.getElementById(id).hidden=!show;};}
@@ -23172,7 +23207,7 @@ function stSidebar(){
  return '<aside class="st-list ms-sidebar" aria-label="定时任务列表"><div class="st-list-head"><h1>定时任务</h1><button class="st-icon-button" data-st-action="filters" aria-label="筛选任务" aria-expanded="'+ST.filters+'">'+stIcon('filter')+'</button><button class="st-icon-button" data-st-action="search" aria-label="搜索任务" aria-expanded="'+ST.search+'">'+stIcon('search')+'</button></div>'+
  (ST.search?'<input class="input st-search" id="st-search" placeholder="搜索任务名称" aria-label="搜索任务名称" value="'+esc(ST.query)+'">':'')+
  (ST.filters?'<select class="input st-filter" id="st-filter" aria-label="任务状态">'+[['all','全部任务'],['on','已开启'],['off','已暂停']].map(([v,n])=>'<option value="'+v+'" '+(ST.filter===v?'selected':'')+'>'+n+'</option>').join('')+'</select>':'')+
- '<button class="st-new ms-nav" data-st-action="new">'+stIcon('plus')+'新建任务</button>'+[true,false].map(on=>'<h2>'+(on?'已开启':'已暂停')+'</h2>'+ (rows.filter(t=>t.enabled===on).map(t=>'<button class="st-row ms-nav" data-st-pick="'+esc(t.id)+'" aria-current="'+(S.route==='scheduledetail'&&ST.pick===t.id)+'">'+stIcon('clock')+'<span class="st-row-copy"><strong title="'+esc(t.name)+'">'+esc(t.name)+'</strong><small>'+(on?esc(stWhen(stNext(t),t.zone)):'已暂停')+' · '+esc(ST_PERIODS[t.period])+(t.example?' · 示例':'')+'</small></span></button>').join('')||'<p class="st-empty">'+(ST.query?'没有匹配的任务':on?'暂无已开启任务':'暂无已暂停任务')+'</p>')).join('')+'<p class="st-note">本机计划 · 后台调度尚未接入</p></aside>';
+ '<button class="st-new ms-nav" data-st-action="new">'+stIcon('plus')+'新建任务</button>'+[true,false].map(on=>'<h2>'+(on?'已开启':'已暂停')+'</h2>'+ (rows.filter(t=>t.enabled===on).map(t=>'<button class="st-row ms-nav" data-st-pick="'+esc(t.id)+'" aria-current="'+(S.route==='scheduledetail'&&ST.pick===t.id)+'">'+stIcon('clock')+'<span class="st-row-copy"><strong title="'+esc(t.name)+'">'+esc(t.name)+'</strong><small>'+(on?esc(stWhen(stNext(t),t.zone)):'已暂停')+' · '+esc(ST_PERIODS[t.period])+(t.example?' · 示例':'')+'</small></span></button>').join('')||'<p class="st-empty">'+(ST.query?'没有匹配的任务':on?'暂无已开启任务':'暂无已暂停任务')+'</p>')).join('')+'<p class="st-note">本机计划 · 后台调度还没接入</p></aside>';
 }
 function stHome(){return '<main class="st-main st-home"><div class="st-intro"><img src="assets/tasks/hero-clock.svg" alt="" width="62" height="62"><h2>安排任务</h2><p>让端砚按计划追踪文献、整理数据，持续跟进科研进展。</p></div><div class="st-grid">'+ST_TEMPLATES.map(([icon,name,desc],i)=>'<button class="st-card" data-st-template="'+i+'">'+stIcon(icon)+'<span><strong>'+name+'</strong><p>'+desc+'</p></span></button>').join('')+'</div></main>';}
 function stField(label,key,value,type='text',extra=''){return '<label class="st-field"><span>'+label+'</span><input class="input" name="'+key+'" type="'+type+'" value="'+esc(value||'')+'" '+extra+'></label>';}
@@ -23186,7 +23221,7 @@ function stForm(){const f=ST.form||(ST.form=stBlank());return '<section class="s
  (f.period==='once'?stField('执行日期 *','date',f.date,'date','required'):f.period==='weekly'?'<label class="st-field"><span>星期</span><select class="input" name="weekday">'+['日','一','二','三','四','五','六'].map((v,i)=>'<option value="'+i+'" '+(Number(f.weekday)===i?'selected':'')+'>星期'+v+'</option>').join('')+'</select></label>':f.period==='monthly'?stField('每月几日 *','monthday',f.monthday,'number','min="1" max="31" required'):'')+
  stField('执行时间 *','time',f.time,'time','required')+'<label class="st-field"><span>时区</span><select class="input" name="zone">'+ST_ZONES.map(z=>'<option '+(z===f.zone?'selected':'')+'>'+z+'</option>').join('')+'</select></label></div>'+
  '<label class="st-field"><span>结果保存至</span><select class="input" name="destination">'+[['papers','关联课题 / 数据与文献'],['report','关联课题 / 研究报告']].map(([v,n])=>'<option value="'+v+'" '+(f.destination===v?'selected':'')+'>'+n+'</option>').join('')+'</select></label>'+
- '<label class="st-check"><input name="notify" type="checkbox" '+(f.notify?'checked':'')+'>运行失败时提醒我</label><div class="st-preview" id="st-preview" aria-live="polite">'+stPreview(f)+'</div><p class="st-note">计划仅保存在当前浏览器；后台调度、自动运行与消息提醒尚未接入。</p><div class="st-actions"><button class="btn" type="button" data-st-action="cancel">取消</button><button class="btn btn-pri" type="submit">'+(f.id?'保存修改': '创建并启用')+'</button></div></form></section>';}
+ '<label class="st-check"><input name="notify" type="checkbox" '+(f.notify?'checked':'')+'>运行失败时提醒我</label><div class="st-preview" id="st-preview" aria-live="polite">'+stPreview(f)+'</div><p class="st-note">计划仅保存在当前浏览器；后台调度、自动运行与消息提醒还没接入。</p><div class="st-actions"><button class="btn" type="button" data-st-action="cancel">取消</button><button class="btn btn-pri" type="submit">'+(f.id?'保存修改': '创建并启用')+'</button></div></form></section>';}
 function stDetail(){
  const t=ST.items.find(t=>t.id===ST.pick);if(!t)return '<main class="st-main"><button class="st-back" data-go="schedules">返回定时任务</button><h2>请选择一个任务</h2><p>可从左侧选择任务，或新建定时任务。</p></main>';
  const project=DB.projects.find(p=>p.id===t.pid),runs=Array.isArray(t.runs)?t.runs.filter(r=>r&&typeof r.content==='string'):[];
@@ -23218,7 +23253,7 @@ function stSave(){const f={...ST.form,name:ST.form.name.trim(),content:ST.form.c
  if(ST.errors.length){stRenderDialog();document.querySelector('#st-dialog .st-errors')?.focus();return;}
  const old=ST.items.find(t=>t.id===f.id),item={...f,id:f.id||'schedule-'+crypto.randomUUID(),example:false,enabled:old?old.enabled:true,updatedAt:new Date().toISOString()};
  if(!stPersist(old?ST.items.map(t=>t.id===item.id?item:t):[item,...ST.items]))return;
- ST.pick=item.id;LS.set('scheduled_pick',item.id);stCloseDialog();go('scheduledetail');toast(old?'计划修改已保存':'已保存本机计划，后台调度尚未接入');
+ ST.pick=item.id;LS.set('scheduled_pick',item.id);stCloseDialog();go('scheduledetail');toast(old?'计划修改已保存':'已保存本机计划，后台调度还没接入');
 }
 function schedulesBind(root){
  if(!['schedules','schedulenew','scheduledetail'].includes(S.route))return;
@@ -23253,7 +23288,7 @@ function stSampleHTML(sample){
 function stSampleOutput(task){
  const match=/^schedule-example-([0-3])$/.exec(task.id);
  if(task.example&&match)return stSampleHTML(ST_SAMPLES[Number(match[1])]);
- return '<div class="st-output-empty"><img class="st-icon" src="assets/tasks/clock.svg" alt=""><h4>暂无输出内容</h4><p>任务执行后的结果会显示在这里。<br>当前后台调度尚未接入，还没有运行记录。</p></div><details class="st-sample-library"><summary>查看输出样例</summary><p class="st-note">以下样例仅用于预览，不会作为该任务的运行记录保存。</p>'+ST_SAMPLES.map(sample=>'<details class="st-sample-option"><summary>'+esc(sample.title)+'</summary>'+stSampleHTML(sample)+'</details>').join('')+'</details>';
+ return '<div class="st-output-empty"><img class="st-icon" src="assets/tasks/clock.svg" alt=""><h4>暂无输出内容</h4><p>任务执行后的结果会显示在这里。<br>当前后台调度还没接入，还没有运行记录。</p></div><details class="st-sample-library"><summary>查看输出样例</summary><p class="st-note">以下样例仅用于预览，不会作为该任务的运行记录保存。</p>'+ST_SAMPLES.map(sample=>'<details class="st-sample-option"><summary>'+esc(sample.title)+'</summary>'+stSampleHTML(sample)+'</details>').join('')+'</details>';
 }
 
 /* Global navigation groups and settings routes. */
@@ -23300,7 +23335,7 @@ function navigationProjectProgress(p,shared){
   }else return '';
   if(task)at=task.at||'';
  }
- if(kind==='confirm')return '<div class="navigation-progress project-update is-confirm is-mini"><span class="project-update-mini-label"><b class="project-update-count">'+pendingCount+'</b> 项待处理</span><button class="project-update-action" type="button" data-project-progress-pending="'+esc(p.id)+'">处理</button></div>';
+ if(kind==='confirm')return '<div class="navigation-progress project-update is-confirm is-mini"><span class="project-update-mini-label"><b class="project-update-count">'+pendingCount+'</b> 项待处理</span><button class="project-update-action" type="button" data-project-progress-pending="'+esc(p.id)+'" aria-label="处理 '+pendingCount+' 项待处理" title="处理 '+pendingCount+' 项待处理">处理</button></div>';
  const attrs=kind==='confirm'?'data-project-progress-pending="'+esc(p.id)+'"':task?'data-project-progress-task="'+esc(task.key)+'"':p?'data-project-progress-pid="'+esc(p.id)+'"':'data-project-progress-shared="'+esc(shared.id)+'"';
  return '<div class="navigation-progress project-update is-'+kind+'"><div class="project-update-head"><span>'+label+'</span>'+(at?'<time>'+esc(at)+'</time>':'')+'</div><strong>'+esc(title)+'</strong><p>'+esc(detail)+'</p>'+(percent!==null?'<div class="project-task-progress"><span>当前任务进度 '+percent+'%</span><progress value="'+percent+'" max="100" aria-label="当前任务进度 '+percent+'%"></progress></div>':'')+'<button class="project-update-action" type="button" '+attrs+'>'+action+' →</button></div>';
 }
@@ -23455,12 +23490,18 @@ rsMembersDialog=function(){
 const navigationTeamBind=wbBind;
 wbBind=function(root){
  navigationTeamBind(root);
+ /* 待处理角标放进标签行右侧：原来的迷你块只留作数据与处理入口，不再占位 */
+ root.querySelectorAll('.project-card-wrap').forEach(w=>{const mini=w.querySelector(':scope > .project-update.is-mini'),labels=w.querySelector('.pcard-labels');if(!mini||!labels||labels.querySelector('[data-pending-pill]'))return;
+  const n=mini.querySelector('.project-update-count')?.textContent||'';const pill=document.createElement('span');pill.className='project-update-mini-label';pill.setAttribute('data-pending-pill','');pill.setAttribute('role','button');pill.tabIndex=0;pill.title='处理 '+n+' 项待处理';pill.innerHTML='<b class="project-update-count">'+esc(n)+'</b> 项待处理';labels.appendChild(pill);
+  const fire=e=>{e.stopPropagation();e.preventDefault();mini.querySelector('.project-update-action')?.click();};pill.addEventListener('click',fire);pill.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ')fire(e);});});
  /* 课题卡整张可点：点到底栏或迷你卡的空白处也进课题，点到里面的按钮/链接则各归各 */
  root.querySelectorAll('.project-card-wrap:not(.is-shared-project)').forEach(w=>{if(w.dataset.wrapBound)return;w.dataset.wrapBound='1';w.addEventListener('click',e=>{if(e.target.closest('button,a,[data-act],select,input,label'))return;w.querySelector('.pcard')?.click();});});
  root.querySelectorAll('[data-project-clear-query]').forEach(b=>b.onclick=()=>{S.pq='';render();});
  root.querySelectorAll('[data-project-progress-pending]').forEach(button=>button.onclick=()=>{
  const pid=button.dataset.projectProgressPending;
- const tasks=(workbenchData({pid}).tasks||[]).filter(t=>t.pid===pid&&t.isTask!==false&&(t.needsAction||t.status==='failed'));
+ /* 与角标同一口径：先过 wbAttentionTasks，再取失败/待动作，弹窗里的条数才和角标上的数一致 */
+ const base=(workbenchData({pid}).tasks||[]).filter(t=>t.pid===pid&&t.isTask!==false&&t.status!=='canceled');
+ const tasks=(typeof wbAttentionTasks==='function'?wbAttentionTasks(base):base).filter(t=>t.needsAction||t.status==='failed');
  if(tasks.length===1){workbenchOpenTask(tasks[0].key);return;}/* 只有一项就直接进去，不用多点一层 */
  modal('待处理 · '+tasks.length+' 项','<div class="rs-dialog-scroll">'+tasks.map(t=>'<div class="rs-request"><strong>'+esc(t.name||t.id)+'</strong><p class="rs-help">'+esc(t.detail||t.label||'请查看并处理')+'</p><button class="btn" type="button" data-project-pending-task="'+esc(t.key)+'">查看并处理</button></div>').join('')+'</div>','关闭',()=>{});
  document.querySelectorAll('#dlg [data-project-pending-task]').forEach(item=>item.onclick=()=>{document.getElementById('dlg').close();workbenchOpenTask(item.dataset.projectPendingTask);});
@@ -23497,6 +23538,15 @@ V.files=V.materials;
  /* 直接以 #chat / #schedules 打开页面时也一样折叠 */
  setTimeout(()=>{if(THREE_COL.has(S.route)&&!S.collapsed&&!matchMedia('(max-width:860px)').matches){before=0;S.collapsed=1;render();}},0);
 })();
+
+/* 点已经选中的筛选胶囊 / 页签：状态不会变，不该触发整页重绘（会闪）。捕获阶段直接拦下。
+   对话与课题页里的胶囊是多选开关，不在此列。 */
+document.addEventListener('click',e=>{
+ if(['chat','project'].includes(S.route))return;
+ const t=e.target&&e.target.closest&&e.target.closest('#view .pill.is-on,#view .pill.on,#view [role="tab"][aria-selected="true"],#view .seg-i.on');
+ if(!t||t.closest('form,dialog'))return;
+ e.stopPropagation();e.preventDefault();
+},true);
 
 /* 与全部对话共用 SESSIONS / CONV，搜索只刷新列表，不重建正在编辑的正文。 */
 function researchHistoryList(){
@@ -23700,7 +23750,7 @@ function toolPublishDialog(id){
  const r=RS.data.resources.find(r=>r.id===id&&r.kind==='tool'&&r.owner==='me');if(!r||!can('edit'))return;
  const errors=rsResourceErrors(toolPublishForm(r));
  if(Object.keys(errors).length){modal('完善工具后发布','<p>请先完成以下内容：</p><ul>'+Object.values(errors).map(e=>'<li>'+esc(e)+'</li>').join('')+'</ul>','去完善',()=>{rsStartResource('tool',id);RS.form.errors=errors;RS.form.wizardStep=Object.keys(errors).some(k=>['slug','name','description','github','tags'].includes(k))?1:2;render();});return;}
- modal('发布工具','<dl class="rs-details"><dt>工具名称</dt><dd>'+esc(r.name)+'</dd><dt>类型</dt><dd>'+toolListType(r.toolMode||'skill')+'</dd><dt>发布版本</dt><dd>'+esc(r.version)+'</dd><dt>发布位置</dt><dd>市场 · 科研工具</dd></dl><p>提交审核后，通过的版本将出现在科研工具目录中。个人工具列表继续保留此工具，后续修改以新版本发布。</p><p class="rs-help">当前为本机发布流程演示，尚未同步到服务器；发布不会自动执行代码或调用接口。</p>','提交发布审核',()=>rsModalSave(()=>toolSubmitPublication(id)));
+ modal('发布工具','<dl class="rs-details"><dt>工具名称</dt><dd>'+esc(r.name)+'</dd><dt>类型</dt><dd>'+toolListType(r.toolMode||'skill')+'</dd><dt>发布版本</dt><dd>'+esc(r.version)+'</dd><dt>发布位置</dt><dd>市场 · 科研工具</dd></dl><p>提交审核后，通过的版本将出现在科研工具目录中。个人工具列表继续保留此工具，后续修改以新版本发布。</p><p class="rs-help">当前为本机发布流程演示，还没同步到服务器；发布不会自动执行代码或调用接口。</p>','提交发布审核',()=>rsModalSave(()=>toolSubmitPublication(id)));
 }
 const toolPublishDetail=V.resdetail;V.resdetail=()=>{const html=toolPublishDetail(),r=RS.data.resources.find(r=>r.id===RS.resourcePick);if(!r||r.kind!=='tool'||(RS.resourceVersion&&RS.resourceVersion!==r.version))return html;const t=document.createElement('template');t.innerHTML=html;const actions=t.content.querySelector('.rs-head .rs-actions');if(actions){const slot=document.createElement('span');slot.className='tool-publish-actions';slot.innerHTML=toolPublishActions(r);actions.append(slot);}return t.innerHTML;};
 const toolPublishBind=rsBind;rsBind=function(root){toolPublishBind(root);
@@ -23943,7 +23993,7 @@ function alComposerContent(f,readonly=false,legacyExecution=''){
 }
 V.labnew=()=>{
  const f=alForm(),errors=alErrors(f),disabled=can('edit')?'':'disabled';
- const saveStatus=f.dirty?'有未保存的修改':f.savedAt?'本机已保存 '+f.savedAt:'尚未保存';
+ const saveStatus=f.dirty?'有未保存的修改':f.savedAt?'本机已保存 '+f.savedAt:'还没保存';
  return `<div class="page al-page">
   <header class="al-page-head">
    <div><button class="rs-link" data-go="lab">← 实验管理</button><h1>设计实验</h1><p>明确实验方案，系统生成执行编排，预检后创建任务。</p></div>

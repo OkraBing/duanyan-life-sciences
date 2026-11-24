@@ -11,5 +11,5 @@ function stSampleHTML(sample){
 function stSampleOutput(task){
  const match=/^schedule-example-([0-3])$/.exec(task.id);
  if(task.example&&match)return stSampleHTML(ST_SAMPLES[Number(match[1])]);
- return '<div class="st-output-empty"><img class="st-icon" src="assets/tasks/clock.svg" alt=""><h4>暂无输出内容</h4><p>任务执行后的结果会显示在这里。<br>当前后台调度尚未接入，还没有运行记录。</p></div><details class="st-sample-library"><summary>查看输出样例</summary><p class="st-note">以下样例仅用于预览，不会作为该任务的运行记录保存。</p>'+ST_SAMPLES.map(sample=>'<details class="st-sample-option"><summary>'+esc(sample.title)+'</summary>'+stSampleHTML(sample)+'</details>').join('')+'</details>';
+ return '<div class="st-output-empty"><img class="st-icon" src="assets/tasks/clock.svg" alt=""><h4>暂无输出内容</h4><p>任务执行后的结果会显示在这里。<br>当前后台调度还没接入，还没有运行记录。</p></div><details class="st-sample-library"><summary>查看输出样例</summary><p class="st-note">以下样例仅用于预览，不会作为该任务的运行记录保存。</p>'+ST_SAMPLES.map(sample=>'<details class="st-sample-option"><summary>'+esc(sample.title)+'</summary>'+stSampleHTML(sample)+'</details>').join('')+'</details>';
 }

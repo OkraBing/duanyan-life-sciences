@@ -3237,7 +3237,7 @@ function inferFailure(r){
    测定值放在 c.m 里，**按该项目实际测的字段**生成：
    Barstar 亲和力改造 只做亲和力就只有 KD，酶活项目就只有 kcat / Km。 */
 /* 当前项目的变体。读变体一律走这个，不要直接读 DB.cands——
-   那是全部项目的总表，切项目就不会变。 */
+   那是全部课题的总表，切项目就不会变。 */
 function CANDS(pid){const id=pid||S.pid;return DB.cands.filter(c=>c.pid===id)}
 /* 变体谱系。定向进化里最有价值的结构就是谱系：V-081(K27A/R59E) 是从 V-034(K27A) 长出来的，
    这个关系决定了「哪条路走通了、哪条路走死了」。设计页已经在说「最优亲本延伸」，
@@ -3320,7 +3320,7 @@ const S={
   bq:'', bDrawer:null, bTab:'log', checkpointPick:null
 };
 /* 八处代码直接取 p.rounds[len-1]，所以项目必须至少有一轮。
-   产品自己建的项目一定带 Round 1（见新建项目那一段），走不到零轮次；
+   产品自己建的项目一定带 Round 1（见新建课题那一段），走不到零轮次；
    这道保险是给以后可能出现的入口留的——导入、接口、脚本建出来的项目。 */
 const PRJ=()=>{
   const p=DB.projects.find(x=>x.id===S.pid)||DB.projects[0];
@@ -3329,7 +3329,7 @@ const PRJ=()=>{
   return p;
 };
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-/* 轮次状态表。原先缺了 open——而「新建项目」写进去的第一轮就是 open，
+/* 轮次状态表。原先缺了 open——而「新建课题」写进去的第一轮就是 open，
    于是用户建完第一个项目，点进课题详情或本轮，整页崩在这里的解构上。
    查表一律走 stateOf()：表里没有的状态退成「未知状态」，不让一个没登记的值掀翻整页。 */
 const STATE_MAP={open:['未开始','c-mut'],active:['进行中','c-dry'],assay:['送检中','c-wet'],
@@ -3461,11 +3461,11 @@ function mdlBtn(){
 function projBtn(explicit=false){
   const pn=S.bind?((DB.projects.find(x=>x.id===S.bind)||{}).name||''):'';
   return `<button class="ctl ctl-proj" type="button" data-act="bindproj"
-    title="这段对话绑定的项目" aria-label="关联项目">
+    title="这段对话绑定的项目" aria-label="关联课题">
     <svg width="14" height="14" style="width:0.875rem;height:0.875rem" viewBox="0 0 24 24" fill="none" aria-hidden="true"
       stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
       <path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4l2 2.2h7A1.5 1.5 0 0 1 19 9.7v7.8a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 3 17.5z"/></svg>
-    ${explicit?'<span class="research-project-label">关联项目</span>':''}<span class="dd-v">${S.bind?esc(pn)+' · R'+S.round:'选择项目'}</span>
+    ${explicit?'<span class="research-project-label">关联课题</span>':''}<span class="dd-v">${S.bind?esc(pn)+' · R'+S.round:'选择课题'}</span>
     <span class="car" aria-hidden="true"></span></button>`;
 }
 function askTop(withProj){
@@ -3476,7 +3476,7 @@ function askTop(withProj){
     <svg width="14" height="14" style="width:0.875rem;height:0.875rem" viewBox="0 0 24 24" fill="none" aria-hidden="true"
       stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
       <path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4l2 2.2h7A1.5 1.5 0 0 1 19 9.7v7.8a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 3 17.5z"/></svg>
-    <span class="dd-v">${S.bind?esc(pn)+' · R'+S.round:'选择项目'}</span>
+    <span class="dd-v">${S.bind?esc(pn)+' · R'+S.round:'选择课题'}</span>
     <span class="car" aria-hidden="true"></span></button>`);
   const cc=capChip();
   if(!bits.length&&!cc)return '';
@@ -5322,7 +5322,7 @@ function PMODELS(pid){const p=DB.projects.find(x=>x.id===(pid||S.pid));
   if(!p)return [];if(!p.models)p.models=[];return p.models}
 /* 「模型管理」挂在导航的「资源」下，回答的是「我手上一共有哪些模型」，
    不是「本课题里有哪些」——和数据集那一屏同一个道理。所以这三张表跨项目，
-   每行标关联项目，点一下回到那个项目；上面给一个项目筛选器。
+   每行标关联课题，点一下回到那个项目；上面给一个项目筛选器。
    底层存储不动：模型确实是从某个项目长出来的。 */
 function ALL_MODELS(){
   const out=[];
@@ -5380,13 +5380,13 @@ function dsUseCount(id){
   let k=0;DB.projects.forEach(p=>PMODELS(p.id).forEach(m=>{if(m.ds===id)k++}));
   return k;
 }
-/* 关联项目这一格：点一下回到那个项目。筛选交给上面的下拉——
+/* 关联课题这一格：点一下回到那个项目。筛选交给上面的下拉——
    同一个控件既筛选又跳转，点下去会出现两种结果，读不出是哪一种。 */
 function projCell(x){
   return `<td class="t-sm"><button class="lnk" type="button" data-projdw="${esc(x._pid)}"
     title="看项目「${esc(x._pn||'')}」的概况">${esc(x._pn||'—')}</button></td>`;
 }
-/* 列表里点关联项目：先在右边看个概况，要进去再进去——不把人从这张表里带走。 */
+/* 列表里点关联课题：先在右边看个概况，要进去再进去——不把人从这张表里带走。 */
 function projDrawer(pid){
   const p=DB.projects.find(x=>x.id===pid);if(!p)return '';
   const cs=CANDS(pid), fs=projFields(p);
@@ -5527,7 +5527,7 @@ V.labnew=()=>{
           <textarea class="input" rows="3" data-nx="desc"
             placeholder="例如「R3 的 KD 复测偏高，这次换 SPR 验一遍」">${esc(E.desc)}</textarea>
           <span class="t-xs mut2">留空也能提交。写了的话，结果回来时这段话会和数据放在一起</span></label>
-        <label class="field"><span class="label">关联项目</span>
+        <label class="field"><span class="label">关联课题</span>
           <span class="ctl ctl-sel"><select data-nx="pid">${DB.projects.map(x=>
             `<option value="${esc(x.id)}" ${x.id===S.pid?'selected':''}>${esc(x.name)}</option>`).join('')}</select>
             <span class="car" aria-hidden="true"></span></span>
@@ -5775,16 +5775,16 @@ V.dsets=()=>{
       <div class="col grow" style="gap:6px">
         <h1>数据集</h1>
         <p class="mut t-md" style="margin:0;max-width:60ch"
-          >用于模型训练的数据集，可按项目筛选</p>
+          >用于模型训练的数据集，可按课题筛选</p>
       </div>
     </div>
   </div>
 
   <div class="row wrap" style="gap:var(--s3);align-items:center">
     <span class="ctl ctl-sel fbar-sel">
-      <label class="sr" for="dsproj">按项目筛选</label>
+      <label class="sr" for="dsproj">按课题筛选</label>
       <select id="dsproj" data-ic="proj">
-        <option value="all" ${(S.dsProj||'all')==='all'?'selected':''}>全部项目（${ALL_DSETS().length}）</option>
+        <option value="all" ${(S.dsProj||'all')==='all'?'selected':''}>全部课题（${ALL_DSETS().length}）</option>
         ${DB.projects.map(x=>`<option value="${esc(x.id)}" ${S.dsProj===x.id?'selected':''}
           >${esc(x.name)}（${(x.dsets||[]).length}）</option>`).join('')}
       </select><span class="car" aria-hidden="true"></span></span>
@@ -5810,7 +5810,7 @@ function dsBody(){
     ${L.length?`<div class="tbl-wrap is-list"><table>
       <caption class="vh">数据集列表</caption>
       <thead><tr><th scope="col" class="c-nm">数据集名称/ID</th>
-        <th scope="col">关联项目</th><th scope="col">状态</th>
+        <th scope="col">关联课题</th><th scope="col">状态</th>
         <th scope="col">样本量</th><th scope="col">列数</th><th scope="col">目标列</th>
         <th scope="col">特征</th><th scope="col">切分（训/验/留出）</th>
         <th scope="col">训练任务</th><th scope="col">指纹</th>
@@ -6050,9 +6050,9 @@ function mdlBar(tab){
   const A=ALL_MODELS();
   return `<div class="row wrap" style="gap:var(--s3);align-items:center">
     <span class="ctl ctl-sel fbar-sel">
-      <label class="sr" for="mdlproj">按项目筛选</label>
+      <label class="sr" for="mdlproj">按课题筛选</label>
       <select id="mdlproj" data-ic="proj">
-        <option value="all" ${(S.mdlProj||'all')==='all'?'selected':''}>全部项目（${A.length}）</option>
+        <option value="all" ${(S.mdlProj||'all')==='all'?'selected':''}>全部课题</option>
         ${DB.projects.map(x=>`<option value="${esc(x.id)}" ${S.mdlProj===x.id?'selected':''}
           >${esc(x.name)}（${PMODELS(x.id).length}）</option>`).join('')}
       </select><span class="car" aria-hidden="true"></span></span>
@@ -6157,7 +6157,7 @@ function mdlCur(){
     ${L.length?`<div class="tbl-wrap is-list"><table>
       <caption class="vh">训出来的模型</caption>
       <thead><tr><th scope="col" class="c-nm">模型名称/ID</th>
-        <th scope="col">关联项目</th><th scope="col">在线部署</th>
+        <th scope="col">关联课题</th><th scope="col">在线部署</th>
         <th scope="col">预测目标</th>
         <!-- 基础模型从这张表上撑掉：每行都是 Descriptor Baseline，
              一列里每行都一样就不传达任何信息（R176），
@@ -6233,7 +6233,7 @@ function mdlJob(){
     ${L.length?`<div class="tbl-wrap is-list"><table>
       <caption class="vh">训练任务</caption>
       <thead><tr><th scope="col" class="c-nm">任务名称/ID</th>
-        <th scope="col">关联项目</th><th scope="col">状态</th><th scope="col">用时</th>
+        <th scope="col">关联课题</th><th scope="col">状态</th><th scope="col">用时</th>
         <th scope="col">基础模型</th><th scope="col">训练方法</th><th scope="col">参数量</th>
         <th scope="col">训练数据</th>
         <th scope="col">更新时间</th><th scope="col">操作</th></tr></thead>
@@ -6389,7 +6389,7 @@ function jobDrawer(m){
     chip:`<span class="chip ${st[1]}">${st[0]}</span>`,
     body:`<div class="col" style="gap:var(--s4)">
       <div class="col" style="gap:2px">
-        ${row('关联项目',`<button class="lnk" type="button" data-proj="${esc(m._pid)}"
+        ${row('关联课题',`<button class="lnk" type="button" data-proj="${esc(m._pid)}"
           >${esc(m._pn||'—')}</button>`)}
         ${row('预测目标',esc(tgtName(m.target)))}
         ${row('基础模型',esc(m.base||'Descriptor Baseline'))}
@@ -6486,7 +6486,7 @@ function mdlEval(){
     ${L.length?`<div class="tbl-wrap is-list"><table>
       <caption class="vh">每个模型在留出集上的指标</caption>
       <thead><tr><th scope="col" class="c-nm">模型名称/ID</th>
-        <th scope="col">关联项目</th><th scope="col">状态</th>
+        <th scope="col">关联课题</th><th scope="col">状态</th>
         <th scope="col">排序准确度</th><th scope="col">预测误差</th>
         <th scope="col">误差水平</th><th scope="col">评测集</th>
         <th scope="col">前瞻测试</th><th scope="col">操作</th></tr></thead>
@@ -6574,7 +6574,7 @@ function dsManifest(ds,q,sp){
    照 bootcamp 的「新建数据集」排：基本信息 / 数据来源 / 数据配置，底栏取消 + 建立。
    字段逐条对过，哪些留哪些不留：
      数据集名称、数据集描述        留——列表里先被读到的是名字；描述回答「这份是哪一轮、哪一批的」
-     数据来源 本地上传 / 已有文件   留，并改成「本地上传 / 项目文件」——
+     数据来源 本地上传 / 已有文件   留，并改成「本地上传 / 课题文件」——
                                    研究里要建集的表多半已经在项目里（任务产物、服务商回传、归档），
                                    让人先下载一遍再传回来是白绕一圈
      数据集类型 文本/图像/多模态    删——这一版只做单表回归，类型恒定，下拉里只有一个值
@@ -6605,7 +6605,7 @@ V.dsnew=()=>{
       </div>`:'';
   /* 本地上传那一支：文件名和行列指纹都在那张文件卡里，外面只留读不出来的报错，
      否则同一个文件名会在上下两行各出现一次。
-     项目文件那一支是从列表里挑的，挑中哪一份要在下面报清楚。 */
+     课题文件那一支是从列表里挑的，挑中哪一份要在下面报清楚。 */
   const readMeta=q?(n+' 行 × '+q.cols.length+' 列　指纹 '+q.fp):'';
   const readErr=NEWDS.err
     ? `<span class="t-xs" style="color:var(--err)">读不出来：${esc(NEWDS.err)}</span>`:'';
@@ -6638,7 +6638,7 @@ V.dsnew=()=>{
     <div class="fsec-b">
       <div class="field wide"><span class="label">取数方式</span>
         <span class="ctl-seg is-lg" role="radiogroup" aria-label="取数方式">
-          ${[['up','本地上传'],['proj','项目文件']].map(([k,nm])=>
+          ${[['up','本地上传'],['proj','课题文件']].map(([k,nm])=>
           `<button type="button" class="ctl-segi" data-dssrc="${k}" role="radio"
             aria-checked="${NEWDS.src===k?'true':'false'}">${nm}</button>`).join('')}
         </span>
@@ -6895,9 +6895,9 @@ V.chats=()=>{
   <div class="pg-hd"><div class="col" style="gap:6px"><h1>全部对话</h1></div></div>
   <div class="row wrap" style="gap:var(--s3);align-items:center">
       <span class="ctl ctl-sel fbar-sel">
-        <label class="sr" for="cproj">按项目筛选</label>
+        <label class="sr" for="cproj">按课题筛选</label>
         <select id="cproj" data-ic="proj">
-          <option value="all" ${(S.cProj||'all')==='all'?'selected':''}>全部项目（${SESSIONS.length}）</option>
+          <option value="all" ${(S.cProj||'all')==='all'?'selected':''}>全部课题（${SESSIONS.length}）</option>
           <option value="none" ${S.cProj==='none'?'selected':''}>没绑项目（${SESSIONS.filter(x=>!x.pid).length}）</option>
           ${DB.projects.map(x=>`<option value="${esc(x.id)}" ${S.cProj===x.id?'selected':''}
             >${esc(x.name)}（${SESSIONS.filter(y=>y.pid===x.id).length}）</option>`).join('')}
@@ -9724,9 +9724,9 @@ V.projects=()=>`
   <div class="row wrap projects-header" style="align-items:flex-end;gap:var(--s4)">
     <div class="col grow" style="gap:6px"><h1>项目管理</h1>
       <p class="mut t-md" style="margin:0">按靶点归档，跨轮累积</p></div>
-    <label class="fbar-q"><span class="sr">搜索项目</span>${SEARCH_IC}
-      <input id="pq" value="${esc(S.pq||'')}" placeholder="搜索项目名、靶点或目标"></label>
-    <button class="btn btn-pri" type="button" data-act="newproj">新建项目</button>
+    <label class="fbar-q"><span class="sr">搜索课题</span>${SEARCH_IC}
+      <input id="pq" value="${esc(S.pq||'')}" placeholder="搜索课题名、靶点或目标"></label>
+    <button class="btn btn-pri" type="button" data-act="newproj">新建课题</button>
   </div>
   <section>
     <div class="sec-h"><strong>${PLIST().length===DB.projects.length?'全部':'匹配到'} ${PLIST().length} 个</strong></div>
@@ -13554,7 +13554,7 @@ function regDataset(){
    ② api  —— 接了的话走哪个地址
    引用数是端砚页面上的数，不是本产品数出来的，所以标明了出处。 */
 const DATA_SRC_NOTE='名称、简介、大小、引用数与许可抄自端砚「科学数据」页（2026-11-13）；'
-  +'「已接入／未接入」是这个工作台自己的状态，端砚不管这件事。';
+  +'「已接入 / 未接入」是本工作台的接入状态。';
 const DATASRC=[
  {n:'UniProt（Universal Protein Resource）', ab:'UNIPROT', cap:'seq', org:'上海人工智能实验室',
   s:'全球最权威的蛋白质数据库，整合序列、功能注释及结构信息，支持生物医学与蛋白质组学研究。',
@@ -13805,7 +13805,7 @@ function jobList(route,cap,emptyTx,newTx){
   const L=pf==='全部'?L0:L0.filter(t=>t.pid===pf);
   const mode=LS.get('jmode','card');
   return `<div class="fltrow"><span class="t-sm mut2 fltrow-l">项目</span><span class="fltrow-s">
-    ${[['全部','全部项目']].concat(DB.projects.map(p=>[p.id,p.name]))
+    ${[['全部','全部课题']].concat(DB.projects.map(p=>[p.id,p.name]))
       .map(x=>`<button class="pill${pf===x[0]?' is-on':''}" type="button" data-jpf="${esc(x[0])}"
         aria-pressed="${pf===x[0]}">${esc(x[1])}</button>`).join('')}
   </span></div>
@@ -14618,7 +14618,7 @@ function filesNow(){const F=fileFilter();return FILES().filter(x=>fileKeep(x,F))
 function projPick(){
   const pr=DB.projects.find(x=>x.id===S.pid);
   return `<div class="row wrap" style="gap:var(--s2);align-items:center">
-    <span class="t-sm mut2" style="flex:0 0 auto">选择项目</span>
+    <span class="t-sm mut2" style="flex:0 0 auto">选择课题</span>
     <button class="ctl ctl-dd is-fix" type="button" data-projpick="1"
       title="这一次的产物记在哪个项目">
       ${ddIc('db')}<span class="dd-v ell">${esc(pr?pr.name:'未选项目')}</span>
@@ -16943,6 +16943,8 @@ function render(){
       b.setAttribute('aria-expanded',String(!S.collapsed));
     }
 })();
+  /* 只是折叠/展开侧栏：侧栏自己换状态，正文不重建（重建会让整页闪一下） */
+  if(S._sideOnly){S._sideOnly=0;if(typeof paintNav==='function')paintNav(true);return}
   paintNav();paintBanner();paintResearchHistory();
   Object.keys(COPYSRC).forEach(k=>delete COPYSRC[k]);
   /* 滚动位置只在换页时归零。原先每次 render 都归零，
@@ -17240,7 +17242,7 @@ function render(){
   q('[data-dssrc]',b=>b.onclick=()=>{
     if(NEWDS.src===b.dataset.dssrc)return;
     /* 换一条取数路径就把读进来的那份清掉：
-       留着的话，界面停在「项目文件」上，底下却还挂着刚才上传的那张表。 */
+       留着的话，界面停在「课题文件」上，底下却还挂着刚才上传的那张表。 */
     NEWDS.src=b.dataset.dssrc;NEWDS.from='';NEWDS.fileName='';NEWDS.text='';
     NEWDS.parsed=null;NEWDS.err='';NEWDS.target='';NEWDS.feats=null;render()});
   q('[data-dsf]',b=>b.onclick=()=>{
@@ -17437,11 +17439,11 @@ function render(){
     if(!d){toast('找不到这个数据集');return}
     render();toast(d.id+' 已发布');});
   q('[data-projpick]',b=>b.onclick=()=>{
-    searchMenu(b,'选择项目','搜项目名或靶点',
+    searchMenu(b,'选择课题','搜项目名或靶点',
       DB.projects.map(p=>({k:p.name,n:p.name,s:p.target?('靶点 '+p.target):''})),
       (DB.projects.find(x=>x.id===S.pid)||{}).name,
       n=>{const p=DB.projects.find(x=>x.name===n);if(!p)return;
-        S.pid=p.id;fixRound();render();toast('已选择项目「'+p.name+'」')},1);
+        S.pid=p.id;fixRound();render();toast('已选择课题「'+p.name+'」')},1);
   });
   q('[data-nodepick]',b=>b.onclick=()=>{
     const [cap,id]=b.dataset.nodepick.split('.'),nd=pipeNode(cap,id);
@@ -18161,7 +18163,7 @@ function act(a,el){
     const seed=parseInt(NEWDS.seed,10)||20260113;
     const sp=makeSplit(q.rows.length,[tr,va,1-tr-va],seed);
     const ds=addDset(S.pid,{name:NEWDS.name||NEWDS.fileName,
-      src:NEWDS.src==='proj'?'项目文件':'上传',desc:NEWDS.desc||'',file:NEWDS.fileName,
+      src:NEWDS.src==='proj'?'课题文件':'上传',desc:NEWDS.desc||'',file:NEWDS.fileName,
       rows:q.rows,cols:q.cols,target:NEWDS.target,feats:feats,task:'回归',
       split:sp,ratio:[tr,va,+(1-tr-va).toFixed(2)],seed:seed,fp:q.fp});
     emit(S.pid,[dsManifest(ds,q,sp)]);
@@ -18369,18 +18371,18 @@ function act(a,el){
   if(a==='kbclose'){S.kbPick=null;render();return}
   if(a==='kbadd'){const el=document.getElementById('kbfile');if(el)el.click();return}
   if(a==='newproj'){
-    modal('新建项目',`<div class="col" style="gap:var(--s4)">
-      <div class="field"><div class="row"><label class="label grow" for="pn">项目名称
+    modal('新建课题',`<div class="col" style="gap:var(--s4)">
+      <div class="field"><div class="row"><label class="label grow" for="pn">课题名称
             <span style="color:var(--err)">*</span></label>
           <span class="t-sm mut2 num" data-count="pn"></span></div>
         <input id="pn" class="input" maxlength="50" placeholder="例：Barnase–Barstar 结合界面 热稳定性改造"></div>
-      <div class="field"><div class="row"><label class="label grow" for="pd">项目描述</label>
+      <div class="field"><div class="row"><label class="label grow" for="pd">课题描述</label>
           <span class="t-sm mut2 num" data-count="pd"></span></div>
         <textarea id="pd" class="input" maxlength="200" style="min-height:4.75rem"
           placeholder="目标、关键问题或方法"></textarea></div>
     </div>`,'创建',()=>{
       const n=(document.getElementById('pn').value||'').trim();
-      if(!n){toast('项目名称必填');return false}
+      if(!n){toast('课题名称必填');return false}
       if(DB.projects.some(x=>x.name===n)){toast('已经有同名项目');return false}
       /* 研究对象和研究类型不在这儿问：现在只有蛋白这一包是全的，
          类型先按通用建，进了课题再随目标细化。 */
@@ -18397,7 +18399,7 @@ function act(a,el){
       go('pw');toast(`已创建「${n}」`);
     });return}
   if(a==='askfile'){const el=document.getElementById('askfile');if(el)el.click();return}
-  if(a==='side'){S.collapsed=S.collapsed?0:1;LS.set('collapsed',S.collapsed);render();return}
+  if(a==='side'){S.collapsed=S.collapsed?0:1;LS.set('collapsed',S.collapsed);S._sideOnly=1;render();return}
   if(a==='mdlimport'){
     modal('导入模型',`<div class="col" style="gap:var(--s4)">
       <div class="field"><div class="row"><label class="label grow" for="imn">模型名称
@@ -19416,7 +19418,7 @@ const WB_DATA = (function () {
   const isProject = id => list(DB.projects).some(p => p.id === id);
   const projectName = id => {
     const p = list(DB.projects).find(x => x.id === id);
-    return p ? p.name : (id ? '关联项目已删除' : '未关联项目');
+    return p ? p.name : (id ? '关联课题已删除' : '未关联课题');
   };
   const modelOpts = (tab, pid, extra) => Object.assign({
     mtab: tab, mdlProj: isProject(pid) ? pid : 'all', mq: '', bq: '',
@@ -19443,7 +19445,7 @@ const WB_DATA = (function () {
     return out;
   };
   function record(o) {
-    return Object.assign({ pid: null, project: '未关联项目', projectName: '未关联项目',
+    return Object.assign({ pid: null, project: '未关联课题', projectName: '未关联课题',
       progress: null, done: false, ongoing: false, terminal: false,
       isTask: true, needsAction: false, at: '', detail: '' }, o,
       { project: projectName(o.pid), projectName: projectName(o.pid), statusText: o.label });
@@ -20083,7 +20085,7 @@ function labSummary(b){
  return {status,label:labStatusLabels[status],done,total:steps.length,current,detail,progress:steps.length?Math.round(done/steps.length*100):null,ready,fails,active};
 }
 function labValidate(f,draft=false){
- const errors={};if(!f.name.trim())errors.name='请填写实验名称';if(!DB.projects.some(p=>p.id===f.pid))errors.pid='请选择关联项目';
+ const errors={};if(!f.name.trim())errors.name='请填写实验名称';if(!DB.projects.some(p=>p.id===f.pid))errors.pid='请选择关联课题';
  if(draft)return errors;
  if(!f.samples.split(/[\s,，;；]+/).some(x=>x.trim()))errors.samples='填写样本编号清单，明确每个实体样品';
  if(!f.sourceRef.trim())errors.sourceRef='填写样本清单／数据集版本或交接记录';
@@ -20100,7 +20102,7 @@ function labValidate(f,draft=false){
 }
 function labPersist(){
  try{localStorage.setItem('dy_lab_workflow_v1',JSON.stringify({schema:1,batches:BATCHES.filter(b=>b.localLab||b.workflow).map(b=>b.localLab?b:{id:b.id,workflow:b.workflow})}));return true;}
- catch(e){toast('本机存储失败，记录尚未保存。请导出备份或释放存储空间。');return false;}
+ catch(e){toast('本机存储失败，记录还没保存。请导出备份或释放存储空间。');return false;}
 }
 function labPersistMutation(b,previous){
  const oldStatus=b.status,oldResults=b.results;
@@ -20207,7 +20209,7 @@ function labStageConfig(s){
 }
 V.labnew=()=>{
  const f=labForm(),errors=Object.values(LABUI.errors);
- return `<div class="page lv"><header class="lv-head"><div><button type="button" class="lv-link" data-go="lab">← 实验管理</button><h1>${f.editing?'编辑实验草稿':'发起新实验'}</h1><p>先定义样品与检测目标，再为每个环节选择设备。</p></div><span class="lv-ref">本机实验方案 · 未下发设备</span></header>${errors.length?`<div class="lv-error-summary" role="alert">请补全 ${errors.length} 项信息：${errors.map(esc).join('；')}</div>`:''}<div class="lv-plan"><div><section class="lv-panel"><h2>01　实验与样品</h2><div class="lv-fields"><label class="lv-field"><span>关联项目 <i class="lv-required">*</i></span><select class="input" data-lv-field="pid" ${labInvalid('pid')}>${DB.projects.map(p=>`<option value="${esc(p.id)}" ${f.pid===p.id?'selected':''}>${esc(p.name)}</option>`).join('')}</select>${labError('pid')}</label><label class="lv-field"><span>实验模板</span><select class="input" data-lv-field="template">${Object.entries(LAB_TEMPLATES).map(([k,t])=>`<option value="${k}" ${f.template===k?'selected':''}>${t.name}</option>`).join('')}</select></label><label class="lv-field wide"><span>实验名称 <i class="lv-required">*</i></span><input class="input" id="lv-experiment-name" data-lv-field="name" value="${esc(f.name)}" placeholder="例如：R5 候选蛋白亲和力与热稳定性验证" ${labInvalid('name')}>${labError('name')}</label><label class="lv-field wide"><span>研究目标／判定标准</span><textarea class="input" id="lv-description" data-lv-field="desc" placeholder="这次实验要验证什么？用什么证据判定？">${esc(f.desc)}</textarea></label><label class="lv-field wide"><span>样本编号清单 <i class="lv-required">*</i></span><textarea class="input" id="lv-sample-ids" data-lv-field="samples" placeholder="每行一个实体样本编号，或使用逗号分隔" ${labInvalid('samples')}>${esc(f.samples)}</textarea><span class="lv-small">按编号去重；序列数据集不等同于实体样品已到位。</span>${labError('samples')}</label><label class="lv-field wide"><span>样本来源／数据版本 <i class="lv-required">*</i></span><input class="input" id="lv-source-ref" data-lv-field="sourceRef" value="${esc(f.sourceRef)}" placeholder="如：样本交接清单 v2 / 项目数据集 D001 v3" ${labInvalid('sourceRef')}>${labError('sourceRef')}</label></div></section><section class="lv-panel"><h2>02　表征目标与编排</h2><div class="lv-field"><span>需要哪些表征？</span><div class="lv-choices">${['affinity','stability','activity'].map(k=>`<label class="lv-choice"><input type="checkbox" data-lv-assay="${k}" ${f.assays.includes(k)?'checked':''}>${labStage(k).title}</label>`).join('')}</div>${labError('assays')}</div><div class="lv-field" style="margin-top:20px"><span>表征环节执行关系</span><div class="lv-choices">${[['parallel','并行表征'],['serial','依次表征']].map(([k,n])=>`<label class="lv-choice"><input type="radio" name="lv-mode" data-lv-mode="${k}" ${f.mode===k?'checked':''}>${n}</label>`).join('')}</div><p class="lv-small">前处理依次执行。并行表征在质控后分支，各分支都完成后再复核结论；依次表征也使用独立分样。</p></div>${f.mode==='parallel'&&f.assays.length>1?`<label class="lv-field"><span>分样与交接安排 <i class="lv-required">*</i></span><textarea class="input" id="lv-aliquot" data-lv-field="aliquot" placeholder="分别分配哪些样本／板位给各分支？确认样品余量与交接责任。" ${labInvalid('aliquot')}>${esc(f.aliquot)}</textarea>${labError('aliquot')}</label>`:''}${labError('graph')}</section><section class="lv-panel"><h2>03　环节设备与输入输出</h2><p class="lv-small">默认型号是能力参考，可按方法更换。设备实例与 SOP 未绑定时，这份方案还不是可执行的自动化程序。</p>${f.steps.map(labStageConfig).join('')}</section></div><aside class="lv-panel lv-preview"><h2>本次实验流程</h2><p class="lv-small">${LAB_TEMPLATES[f.template].name} · ${f.steps.length} 个环节<br>进度按完成环节计数，不代表时间或工作量。</p>${labFlowHTML(f.steps,f.mode,f.assays,false)}<div class="lv-note" style="margin-bottom:0">${f.mode==='parallel'?'独立分样 → 并行检测 → 汇总证据':'按前置依赖顺序执行'}<br>设备实例重复时需调整排期；本机暂不预约或控制设备。</div></aside></div><div class="lv-form-actions"><span class="lv-small">自动化下发尚未接入；创建后可由研究员逐环节记录。</span><button class="btn" type="button" data-lv-save="draft">保存草稿</button><button class="btn btn-pri" type="button" data-lv-save="ready">创建实验方案</button></div></div>`;
+ return `<div class="page lv"><header class="lv-head"><div><button type="button" class="lv-link" data-go="lab">← 实验管理</button><h1>${f.editing?'编辑实验草稿':'发起新实验'}</h1><p>先定义样品与检测目标，再为每个环节选择设备。</p></div><span class="lv-ref">本机实验方案 · 未下发设备</span></header>${errors.length?`<div class="lv-error-summary" role="alert">请补全 ${errors.length} 项信息：${errors.map(esc).join('；')}</div>`:''}<div class="lv-plan"><div><section class="lv-panel"><h2>01　实验与样品</h2><div class="lv-fields"><label class="lv-field"><span>关联课题 <i class="lv-required">*</i></span><select class="input" data-lv-field="pid" ${labInvalid('pid')}>${DB.projects.map(p=>`<option value="${esc(p.id)}" ${f.pid===p.id?'selected':''}>${esc(p.name)}</option>`).join('')}</select>${labError('pid')}</label><label class="lv-field"><span>实验模板</span><select class="input" data-lv-field="template">${Object.entries(LAB_TEMPLATES).map(([k,t])=>`<option value="${k}" ${f.template===k?'selected':''}>${t.name}</option>`).join('')}</select></label><label class="lv-field wide"><span>实验名称 <i class="lv-required">*</i></span><input class="input" id="lv-experiment-name" data-lv-field="name" value="${esc(f.name)}" placeholder="例如：R5 候选蛋白亲和力与热稳定性验证" ${labInvalid('name')}>${labError('name')}</label><label class="lv-field wide"><span>研究目标／判定标准</span><textarea class="input" id="lv-description" data-lv-field="desc" placeholder="这次实验要验证什么？用什么证据判定？">${esc(f.desc)}</textarea></label><label class="lv-field wide"><span>样本编号清单 <i class="lv-required">*</i></span><textarea class="input" id="lv-sample-ids" data-lv-field="samples" placeholder="每行一个实体样本编号，或使用逗号分隔" ${labInvalid('samples')}>${esc(f.samples)}</textarea><span class="lv-small">按编号去重；序列数据集不等同于实体样品已到位。</span>${labError('samples')}</label><label class="lv-field wide"><span>样本来源／数据版本 <i class="lv-required">*</i></span><input class="input" id="lv-source-ref" data-lv-field="sourceRef" value="${esc(f.sourceRef)}" placeholder="如：样本交接清单 v2 / 项目数据集 D001 v3" ${labInvalid('sourceRef')}>${labError('sourceRef')}</label></div></section><section class="lv-panel"><h2>02　表征目标与编排</h2><div class="lv-field"><span>需要哪些表征？</span><div class="lv-choices">${['affinity','stability','activity'].map(k=>`<label class="lv-choice"><input type="checkbox" data-lv-assay="${k}" ${f.assays.includes(k)?'checked':''}>${labStage(k).title}</label>`).join('')}</div>${labError('assays')}</div><div class="lv-field" style="margin-top:20px"><span>表征环节执行关系</span><div class="lv-choices">${[['parallel','并行表征'],['serial','依次表征']].map(([k,n])=>`<label class="lv-choice"><input type="radio" name="lv-mode" data-lv-mode="${k}" ${f.mode===k?'checked':''}>${n}</label>`).join('')}</div><p class="lv-small">前处理依次执行。并行表征在质控后分支，各分支都完成后再复核结论；依次表征也使用独立分样。</p></div>${f.mode==='parallel'&&f.assays.length>1?`<label class="lv-field"><span>分样与交接安排 <i class="lv-required">*</i></span><textarea class="input" id="lv-aliquot" data-lv-field="aliquot" placeholder="分别分配哪些样本／板位给各分支？确认样品余量与交接责任。" ${labInvalid('aliquot')}>${esc(f.aliquot)}</textarea>${labError('aliquot')}</label>`:''}${labError('graph')}</section><section class="lv-panel"><h2>03　环节设备与输入输出</h2><p class="lv-small">默认型号是能力参考，可按方法更换。设备实例与 SOP 未绑定时，这份方案还不是可执行的自动化程序。</p>${f.steps.map(labStageConfig).join('')}</section></div><aside class="lv-panel lv-preview"><h2>本次实验流程</h2><p class="lv-small">${LAB_TEMPLATES[f.template].name} · ${f.steps.length} 个环节<br>进度按完成环节计数，不代表时间或工作量。</p>${labFlowHTML(f.steps,f.mode,f.assays,false)}<div class="lv-note" style="margin-bottom:0">${f.mode==='parallel'?'独立分样 → 并行检测 → 汇总证据':'按前置依赖顺序执行'}<br>设备实例重复时需调整排期；本机暂不预约或控制设备。</div></aside></div><div class="lv-form-actions"><span class="lv-small">自动化下发尚未接入；创建后可由研究员逐环节记录。</span><button class="btn" type="button" data-lv-save="draft">保存草稿</button><button class="btn btn-pri" type="button" data-lv-save="ready">创建实验方案</button></div></div>`;
 };
 function labCounts(pid='all'){const list=BATCHES.filter(b=>pid==='all'||b.pid===pid).map(labSummary);return {normal:list.filter(s=>s.status==='normal').length,exception:list.filter(s=>s.status==='exception').length,conclusion:list.filter(s=>s.status==='conclusion').length,draft:list.filter(s=>s.status==='draft').length};}
 function labStats(workbench=false,pid='all'){const c=labCounts(pid);return `<div class="lv-stats">${['exception','normal','conclusion'].map(k=>`<button type="button" class="lv-stat" ${workbench?'data-lv-wb-status':'data-lv-filter'}="${k}" aria-label="查看${labStatusLabels[k]}实验">${labBadge(k)}<strong>${c[k]}</strong></button>`).join('')}</div>`;}
@@ -20278,12 +20280,12 @@ function rsShared(){return RS.data.shared.find(p=>p.id===RS.sharedPick);}
 function rsProjectShared(pid){return RS.data.shared.find(s=>s.projectId===pid);}
 function rsCopyIcon(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></svg>';}
 function rsProjectCopyError(p){
- if(!RS.ready)return '正在读取本机项目';if(RS.error)return RS.error;if(!can('edit'))return '当前身份没有创建权限';if(!p)return '找不到来源项目';
+ if(!RS.ready)return '正在读取本机项目';if(RS.error)return RS.error;if(!can('edit'))return '当前身份没有创建权限';if(!p)return '找不到来源课题';
  if((p.ownerId||'me')!=='me')return '仅项目所有者可以复制整个项目';const shared=rsProjectShared(p.id);if(shared&&shared.owner!=='me')return '仅共享课题所有者可以复制整个项目，请通过资产申请获取所需内容';return '';
 }
 function rsProjectCopyAction(p,place='header'){const error=rsProjectCopyError(p);return '<button class="'+(place==='card'?'project-copy-trigger':'btn pjx-copy')+'" type="button" data-rs-copy-project="'+esc(p.id)+'" aria-label="创建项目副本：'+esc(p.name)+'" aria-haspopup="dialog" title="'+esc(error||'创建项目副本')+'" '+(error?'disabled':'')+'>'+rsCopyIcon()+'创建项目副本'+'</button>';}
 function rsCopyProjectName(p){let i=1,name;do{const suffix=' - 副本'+(i===1?'':' '+i);name=p.name.slice(0,50-suffix.length)+suffix;i++;}while(DB.projects.some(x=>x.name===name));return name;}
-function rsCopyProjectNameError(name){return name.length<2||name.length>50?'项目名称须为 2–50 个字符':DB.projects.some(p=>p.name===name)?'已有同名项目，请换一个名称':'';}
+function rsCopyProjectNameError(name){return name.length<2||name.length>50?'课题名称须为 2–50 个字符':DB.projects.some(p=>p.name===name)?'已有同名项目，请换一个名称':'';}
 function rsCopyableModels(pid){const records=workbenchData({pid}).modelTasks.filter(t=>t.kind==='train'&&t.status==='done');return PMODELS(pid).filter(m=>inLib(m)&&records.some(t=>t.id===m.id)).map(m=>({model:m,record:records.find(t=>t.id===m.id)}));}
 async function rsCopyProject(pid,options={}){
  const source=rsProject(pid),error=rsProjectCopyError(source);if(error)throw new Error(error);const name=String(options.name||'').trim(),nameError=rsCopyProjectNameError(name);if(nameError)throw new Error(nameError);
@@ -20298,7 +20300,7 @@ async function rsCopyProject(pid,options={}){
 }
 function rsCopyProjectDialog(pid){
  const p=rsProject(pid),error=rsProjectCopyError(p);if(error){toast(error);return;}const models=rsCopyableModels(pid),dsets=p.dsets||[],archives=(p.arch||[]).filter(a=>typeof a.body==='string');
- modal('创建项目副本','<p class="rs-copy-summary">以「'+esc(p.name)+'」为起点，创建一个属于自己的独立我的课题。</p><label class="rs-field"><span>副本名称 <b>*</b></span><input class="input" id="rs-copy-name" value="'+esc(rsCopyProjectName(p))+'" maxlength="50" aria-describedby="rs-copy-name-error"><span class="rs-copy-name-error" id="rs-copy-name-error" role="alert"></span></label><strong class="label">副本内容</strong><div class="rs-copy-scopes"><label class="rs-copy-option"><input type="checkbox" checked disabled><span><strong>项目设置</strong><small>研究对象、目标约束与项目描述，始终保留。</small></span></label><label class="rs-copy-option"><input type="checkbox" id="rs-copy-knowledge" checked><span><strong>知识库与归档文件</strong><small>'+((p.kb||[]).length)+' 个已保存条目、'+archives.length+' 份已有归档。目录条目沿用原文件引用。</small></span></label><label class="rs-copy-option"><input type="checkbox" id="rs-copy-tools" checked><span><strong>工具引用</strong><small>'+((p.tools||[]).length)+' 个项目工具，不复制账号凭证。</small></span></label><label class="rs-copy-option"><input type="checkbox" id="rs-copy-assets" checked><span><strong>数据集与可用模型</strong><small>'+dsets.length+' 个数据集、'+models.length+' 个模型产物。新建独立编号；数据集为草稿，模型标记为导入。</small></span></label></div><p class="rs-copy-note">副本从第 1 轮开始。共享成员、权限申请、对话、任务和实验运行记录保留在原项目中；复制不会触发模型训练或实验执行。</p>','创建项目副本',()=>{
+ modal('创建项目副本','<p class="rs-copy-summary">以「'+esc(p.name)+'」为起点，创建一个属于自己的独立我的课题。</p><label class="rs-field"><span>副本名称 <b>*</b></span><input class="input" id="rs-copy-name" value="'+esc(rsCopyProjectName(p))+'" maxlength="50" aria-describedby="rs-copy-name-error"><span class="rs-copy-name-error" id="rs-copy-name-error" role="alert"></span></label><strong class="label">副本内容</strong><div class="rs-copy-scopes"><label class="rs-copy-option"><input type="checkbox" checked disabled><span><strong>项目设置</strong><small>研究对象、目标约束与课题描述，始终保留。</small></span></label><label class="rs-copy-option"><input type="checkbox" id="rs-copy-knowledge" checked><span><strong>知识库与归档文件</strong><small>'+((p.kb||[]).length)+' 个已保存条目、'+archives.length+' 份已有归档。目录条目沿用原文件引用。</small></span></label><label class="rs-copy-option"><input type="checkbox" id="rs-copy-tools" checked><span><strong>工具引用</strong><small>'+((p.tools||[]).length)+' 个项目工具，不复制账号凭证。</small></span></label><label class="rs-copy-option"><input type="checkbox" id="rs-copy-assets" checked><span><strong>数据集与可用模型</strong><small>'+dsets.length+' 个数据集、'+models.length+' 个模型产物。新建独立编号；数据集为草稿，模型标记为导入。</small></span></label></div><p class="rs-copy-note">副本从第 1 轮开始。共享成员、权限申请、对话、任务和实验运行记录保留在原项目中；复制不会触发模型训练或实验执行。</p>','创建项目副本',()=>{
  const name=document.getElementById('rs-copy-name').value.trim(),issue=rsCopyProjectNameError(name),input=document.getElementById('rs-copy-name');document.getElementById('rs-copy-name-error').textContent=issue;input.setAttribute('aria-invalid',String(!!issue));if(issue){input.focus();return false;}
  const options={name,knowledge:document.getElementById('rs-copy-knowledge').checked,tools:document.getElementById('rs-copy-tools').checked,assets:document.getElementById('rs-copy-assets').checked};
  return rsModalSave(async()=>{const copied=await rsCopyProject(pid,options);S.pid=copied.id;S.round=1;S.bind=copied.id;S.pq='';go('project');toast('已创建独立副本「'+copied.name+'」');});
@@ -20378,12 +20380,12 @@ function rsCandidates(pid){
 }
 function rsAssetLabel(k){return {knowledge:'知识条目',tool:'工具',dataset:'数据集',model:'模型',evaluation:'评测报告',experiment:'实验记录',conclusion:'实验结论',sampleSheet:'样本清单',inference:'推理记录'}[k]||k;}
 async function rsCreateShared(input){
- if(!can('edit'))throw new Error('当前身份没有编辑权限');const name=input.name.trim();if(name.length<2||name.length>50)throw new Error('项目名称须为 2–50 个字符');
+ if(!can('edit'))throw new Error('当前身份没有编辑权限');const name=input.name.trim();if(name.length<2||name.length>50)throw new Error('课题名称须为 2–50 个字符');
  if(input.mode!=='existing'&&RS.data.shared.some(p=>p.name===name))throw new Error('已有同名共享课题');const next=rsClone(RS.data);let p;
  if(input.mode==='existing'){p=rsProject(input.pid);if(!p||(p.ownerId||'me')!=='me')throw new Error('请选择自己的项目');if(next.shared.some(s=>s.projectId===p.id))throw new Error('该项目已开启共享');}
  else {p=rsBlankProject(name,input.goal||'');next.projects.push(p);}
  const candidates=input.mode==='existing'?rsCandidates(p.id):[];
- const record={id:rsId('shared'),projectId:p.id,name,goal:input.goal||p.desc||'',owner:'me',members:[{id:'me',name:'ZHANG',email:'',role:'owner',status:'active',at:nowStamp()}],assets:candidates.filter(a=>input.assets.includes(a.id)),requests:[],events:[{at:nowStamp(),by:'me',text:input.mode==='existing'?'从已有项目开启共享，保留原项目 ID':'创建共享课题'}],at:nowStamp()};
+ const record={id:rsId('shared'),projectId:p.id,name,goal:input.goal||p.desc||'',owner:'me',members:[{id:'me',name:'ZHANG',email:'',role:'owner',status:'active',at:nowStamp()}],assets:candidates.filter(a=>input.assets.includes(a.id)),requests:[],events:[{at:nowStamp(),by:'me',text:input.mode==='existing'?'从已有课题开启共享，保留原项目 ID':'创建共享课题'}],at:nowStamp()};
  next.shared.unshift(record);await rsSave(next);RS.sharedPick=record.id;LS.set('rs_shared_pick',record.id);RS.actor='me';RS.tab='assets';go('shareddetail');return record;
 }
 async function rsInvite(sid,email,name,role,institute=''){
@@ -20438,7 +20440,7 @@ V.sharednew=()=>{
  const gate=rsGate();if(gate)return gate;const f=RS.sharedForm||{mode:'existing',pid:rsPersonalProjects('me')[0]?.id||'',name:'',goal:'',assets:null};RS.sharedForm=f;
  const source=rsProject(f.pid);if(!f.initialized){f.name=f.mode==='existing'?source?.name||'':'';f.goal=f.mode==='existing'?source?.desc||'':'';f.initialized=true;}const candidates=f.mode==='existing'?rsCandidates(f.pid):[];
  if(f.assets===null)f.assets=candidates.map(a=>a.id);
- return '<div class="page rs rs-framed-form">'+rsHeader('新建共享课题','选择研究起点，再确定本次共享的资产范围。','<button class="btn" type="button" data-go="shared">返回</button>')+'<div class="rs-form-layout rs-form-layout-single"><div class="rs-form-card"><div class="rs-form-scroll" data-rs-form-scroll="shared"><h2>项目设置</h2><div class="rs-choice-row">'+[['existing','从已有项目开启共享'],['blank','创建空白共享课题']].map(([v,n])=>'<label class="rs-choice"><input type="radio" name="sharedmode" data-rs-shared-mode="'+v+'" '+(f.mode===v?'checked':'')+'>'+n+'</label>').join('')+'</div>'+
+ return '<div class="page rs rs-framed-form">'+rsHeader('新建共享课题','选择研究起点，再确定本次共享的资产范围。','<button class="btn" type="button" data-go="shared">返回</button>')+'<div class="rs-form-layout rs-form-layout-single"><div class="rs-form-card"><div class="rs-form-scroll" data-rs-form-scroll="shared"><h2>项目设置</h2><div class="rs-choice-row">'+[['existing','从已有课题开启共享'],['blank','创建空白共享课题']].map(([v,n])=>'<label class="rs-choice"><input type="radio" name="sharedmode" data-rs-shared-mode="'+v+'" '+(f.mode===v?'checked':'')+'>'+n+'</label>').join('')+'</div>'+
  (f.mode==='existing'?'<label class="rs-field"><span>选择我的课题</span><select class="input" data-rs-shared-source aria-label="选择我的课题">'+rsPersonalProjects('me').map(p=>'<option value="'+esc(p.id)+'" '+(p.id===f.pid?'selected':'')+'>'+esc(p.name)+'</option>').join('')+'</select></label>':'')+
  '<label class="rs-field"><span>共享课题名称 <b>*</b></span><input class="input" id="rs-shared-name" data-rs-shared-field="name" value="'+esc(f.name)+'" maxlength="50" placeholder="2–50 个字符"></label><label class="rs-field"><span>研究目标</span><textarea class="input" data-rs-shared-field="goal" rows="3" maxlength="500">'+esc(f.goal)+'</textarea></label><h2>共享资产范围</h2><p class="rs-help">仅共享所选内容，科研对话不共享。</p>'+
  (candidates.length?'<div class="rs-select-assets">'+candidates.map(a=>'<label class="rs-select-asset"><input type="checkbox" data-rs-publish-pick="'+esc(a.id)+'" '+(f.assets.includes(a.id)?'checked':'')+'><span><strong>'+esc(a.name)+'</strong><small>'+rsAssetLabel(a.kind)+' · '+esc(a.version)+' · '+esc(a.description)+'</small></span></label>').join('')+'</div>':'<div class="rs-soft-empty">创建后可以继续发布资产，并邀请成员。</div>')+'</div><div class="rs-form-footer"><p class="rs-dialog-error" id="rs-create-error" role="alert"></p><button class="btn" type="button" data-go="shared">取消</button><button class="btn btn-pri" type="button" data-rs-create-shared>创建共享课题</button></div></div></div></div>';
@@ -20467,7 +20469,7 @@ function rsRequestDialog(id,draft={}){
  create.onclick=()=>{
   const saved={reason:d.querySelector('#rs-request-reason').value,target:d.querySelector('#rs-target').value};d.close();
   setTimeout(()=>{
-   modal('新建我的课题','<label class="rs-field"><span>项目名称</span><input class="input" id="rs-personal-name" maxlength="50"></label>','创建',()=>rsModalSave(async()=>{
+   modal('新建我的课题','<label class="rs-field"><span>课题名称</span><input class="input" id="rs-personal-name" maxlength="50"></label>','创建',()=>rsModalSave(async()=>{
     const name=d.querySelector('#rs-personal-name').value.trim();if(name.length<2)throw new Error('名称至少 2 个字符');
     const next=rsClone(RS.data),target=rsBlankProject(name,'共享资产的接收项目',RS.actor);next.projects.push(target);await rsSave(next);
     setTimeout(()=>rsRequestDialog(id,{...saved,target:target.id}),30);
@@ -20500,7 +20502,7 @@ function rsPublishModelDialog(id){
  </dl><p class="rs-help">发布后会保存一份模型版本快照。当前 Demo 将共享记录保存在本机。</p>`;
  if(!shared){
    if(!can('edit')||(project.ownerId||'me')!=='me'){toast('需要课题所有者先开启共享');return}
-   modal('发布模型',info+'<p class="rs-help">该课题尚未开启共享。继续后可确认项目名称与共享内容。</p>','设置课题共享',()=>{
+   modal('发布模型',info+'<p class="rs-help">该课题尚未开启共享。继续后可确认课题名称与共享内容。</p>','设置课题共享',()=>{
      RS.sharedForm={mode:'existing',pid:project.id,name:project.name,goal:project.desc||'',assets:[asset.id],initialized:true};
      go('sharednew');
    });
