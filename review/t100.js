@@ -96,7 +96,7 @@ const SUBS=[
  [14,'str','把这条序列折出来',false],
  [15,'des','在这个界面上设计一批结合蛋白',false],
  [16,'lab','把这批候选送去测亲和力',false],
- [17,'train','用这个项目的实测数据训一个打分模型',false],
+ [17,'train','用本课题的实测数据训一个打分模型',false],
  [18,'seek','检索和这条序列同源的条目',false]];
 SUBS.forEach(([id,cap,q,needFile])=>C(id,'A','表单跑通 · '+cap,async(pg,h)=>{
   await h.go();await h.say(q,1800);
@@ -315,7 +315,7 @@ C(50,'B','数据集能接到训练',async(pg,h)=>{await h.go('#dsets');
   if(await h.ev(()=>ALL_MODELS().length)!==before)return '打开训练表单就自动创建了模型';});
 
 /* ============ C 训练（51–70） ============ */
-const toTrain=async(pg,h)=>{await h.go();await h.say('用这个项目的实测数据训一个打分模型',1900);
+const toTrain=async(pg,h)=>{await h.go();await h.say('用本课题的实测数据训一个打分模型',1900);
   const cs=await h.cards();return cs.find(c=>c.t==='form')||null};
 
 C(51,'C','训练表单出得来，字段齐',async(pg,h)=>{const f=await toTrain(pg,h);
@@ -380,12 +380,12 @@ C(63,'C','未接入的基础模型不能被选中就跑',async(pg,h)=>{await h.g
     const f=(c.fields||[]).find(f=>f.k==='base');
     return f?(f.opts||[]).join('|'):''});
   if(p&&!/未接入/.test(p))return '未接入的基础模型在下拉里没有标注';});
-C(64,'C','训练目标只能是这个项目有的字段',async(pg,h)=>{await h.go();
+C(64,'C','训练目标只能是本课题有的字段',async(pg,h)=>{await h.go();
   const r=await h.ev(()=>{S.pid='p1';const c=FLOW.train({}).find(c=>c.t==='form');
     const f=(c.fields||[]).find(f=>f.k==='target');
     return {opts:f?f.opts:[],fields:projFields(DB.projects.find(p=>p.id==='p1'))}});
   const extra=(r.opts||[]).filter(o=>r.fields.indexOf(o)<0);
-  if(extra.length)return '目标里有本项目没有的字段：'+extra.join(',');});
+  if(extra.length)return '目标里有本课题没有的字段：'+extra.join(',');});
 C(65,'C','训练数据直接写明引用了哪份数据集',async(pg,h)=>{await h.go();
   const c=await h.ev(()=>{S.pid='p1';const c=FLOW.train({}).find(c=>c.t==='form');
     return JSON.stringify((c.fields||[]).concat(c.adv||[]))});
@@ -467,7 +467,7 @@ C(77,'D','留出 ρ 必须在 [-1,1]',async(pg,h)=>{await h.go();
   const bad=await h.ev(()=>{const o=[];DB.projects.forEach(p=>PMODELS(p.id).forEach(m=>{
     if(typeof m.rho==='number'&&(m.rho<-1||m.rho>1||isNaN(m.rho)))o.push(m.id+':'+m.rho)}));return o});
   if(bad.length)return '越界的 ρ：'+bad.join(',');});
-/* 不是每个模型都来自某份已发布的数据集：拿本项目实测值直接训的那一类，
+/* 不是每个模型都来自某份已发布的数据集：拿本课题实测值直接训的那一类，
    ds 本来就该是空的。要守的是「说得出数据从哪来」，不是「必须有 ds」。 */
 C(78,'D','每个模型都说得出数据从哪来、预测什么',async(pg,h)=>{await h.go('#models');
   const bad=await h.ev(()=>{const o=[];
@@ -596,7 +596,7 @@ C(96,'E','项目页进去有开场白且数是真的',async(pg,h)=>{await h.go('
   if(!/条/.test(v))return '开场白里没有任何计数';
   if(/NaN|undefined/.test(v))return '开场白里有 NaN/undefined';});
 C(97,'E','文件卡能展开能下载',async(pg,h)=>{await h.go();
-  await h.say('这个项目里都有哪些文件',2200);
+  await h.say('本课题里都有哪些文件',2200);
   const n=await pg.$$eval('.kard [data-fbox]',e=>e.length).catch(()=>0);
   if(!n)return '文件卡里没有可展开的行';
   await pg.$$eval('.kard [data-fbox]',e=>e[0].click());
@@ -621,7 +621,7 @@ C(99,'E','整轮走下来没有未捕获错误',async(pg,h)=>{await h.go();
   await h.say('比一下处理组和对照组哪些基因变了',1800);
   await h.nav('projects');await h.proj('p1');
   await h.nav('data');await h.nav('chat');
-  await h.say('这个项目里都有哪些文件',1800);
+  await h.say('本课题里都有哪些文件',1800);
   return null;});
 C(100,'E','界面上不出现开发期用语',async(pg,h)=>{await h.go();
   const bad=[];

@@ -3116,14 +3116,14 @@ const DB={
      /* 结构化目标：主目标 + 约束。项目页显示的目标文字由它推导，不再手写。 */
      tcp:{primary:{k:'dTm',cmp:'>=',v:5},
           /* 野生型 KD 0.011 pM 在 SPR 可靠区间之外，「不劣于野生型」这条判据
-             用本项目的测定方法根本判不了。判据只能卡在测得出来的地方：
+             用本课题的测定方法根本判不了。判据只能卡在测得出来的地方：
              SPR 可靠下限 1 pM，等于允许界面最多松约 90 倍。 */
           constraints:[{k:'kd',cmp:'<=',v:1.0,n:'KD 不弱于 SPR 可靠下限'},
                        {k:'dev',cmp:'>=',v:0.60,n:'可开发性达标'},
                        {k:'cys',cmp:'==',v:0,n:'不引入游离半胱氨酸'}]},
      desc:'在 barnase–barstar 的界面上做半理性设计：热点残基来自 1BRS 的界面分析，'
          +'目标是把热稳定性推上去而亲和力不掉。这两件事会互相拉扯，所以一个当主目标、一个当约束。',
-     /* 项目资源：挂在这个项目上的文献与工具。以前是空的，于是卡上永远写「还没有资源」。 */
+     /* 项目资源：挂在本课题上的文献与工具。以前是空的，于是卡上永远写「还没有资源」。 */
      kb:['PNAS 2020, 117(31):18456.pdf','J. Mol. Biol. 2019, 431(4):812.pdf',
          'Protein Eng. Des. Sel. 2021, 34:gzab009.pdf','1BRS 界面残基清单.csv'],
      tools:['ProteinMPNN','Protenix','ThermoMPNN','自主实验网络'],
@@ -3148,7 +3148,7 @@ const DB={
           constraints:[{k:'dev',cmp:'>=',v:0.60,n:'可开发性达标'},
                        {k:'cys',cmp:'==',v:0,n:'不引入游离半胱氨酸'}]},
      desc:'只动 barstar 这一侧，看在不改 barnase 的前提下能把结合做到多紧。'
-         +'只测 KD。这个体系的野生型已经在 SPR 量程之外，能不能分辨是这个项目的第一个问题。',
+         +'只测 KD。这个体系的野生型已经在 SPR 量程之外，能不能分辨是本课题的第一个问题。',
      kb:['Nat. Commun. 2023, 14:3425.pdf'],
      tools:['ProteinMPNN','自主实验网络'],
      arch:[],
@@ -3714,9 +3714,9 @@ function dcov(d){
 function MOCK(){try{return !navigator.webdriver}catch(e){return true}}
 const SESSIONS=[
  {id:'S-09',title:'用实测数据训一个 ΔTm 打分器',pid:'p1',at:'今天 10:12',
-  q:'用这个项目的实测数据训一个打分模型'},
+  q:'用本课题的实测数据训一个打分模型'},
  {id:'S-08',title:'给 R5 候选排序',pid:'p1',at:'今天 09:30',
-  q:'用 M-001 给这个项目的候选打一遍分'},
+  q:'用 M-001 给本课题的候选打一遍分'},
  {id:'S-07',title:'Barstar 第二轮送检',pid:'p2',at:'11-11 16:40',
   q:'把这批候选送去测亲和力'},
  {id:'S-06',title:'检索同源序列',pid:'p1',at:'11-11 11:05',
@@ -3785,7 +3785,7 @@ const SITE_ANN={
 
 const EV_LEVEL={yes:['有依据','c-dry'],no:['不利','c-err'],none:['无信息','c-mut']};
 
-/* 一个位点的四类证据 + 本项目历史。全部从现有数据推，推不出来就说推不出来。 */
+/* 一个位点的四类证据 + 本课题历史。全部从现有数据推，推不出来就说推不出来。 */
 function siteEvidence(pid,pos){
   const P=DB.projects.find(x=>x.id===pid)||PRJ();
   const ann=(SITE_ANN[pid]||{})[pos]||{};
@@ -3827,18 +3827,18 @@ function siteEvidence(pid,pos){
       say:U?`UniProt ${U.acc} 没有这个位点的天然变异条目；位点在同源序列里的频率要接上 MSA 才算得出`
           :'位点频率与天然变异分布要查同源序列或变异库，两者都未接入',
       src:U?`已查 UniProt ${U.acc}（取回于 ${UNIP_AT}），未查 MSA`:''});
-  /* 5 本项目历史：这一列是我们自己有的 */
+  /* 5 本课题历史：这一列是我们自己有的 */
   out.push(M.length
-    ?{k:'本项目历史',lv:good?'yes':'no',
+    ?{k:'本课题历史',lv:good?'yes':'no',
       say:`这个位点做过 ${L.length} 条设计，${M.length} 条有结果，${good} 条达成主目标`}
-    :{k:'本项目历史',lv:'none',
+    :{k:'本课题历史',lv:'none',
       say:L.length?`这个位点做过 ${L.length} 条设计，但一条结果都还没回来`:'这个位点还没有设计过'});
   return out;
 }
 function siteRows(pid){
   const id=pid||S.pid, P=DB.projects.find(x=>x.id===id)||PRJ();
   const wt=(PRJ_WT[id]||'');
-  /* 位点来源：已发表注释里的，加上本项目已经改过的 */
+  /* 位点来源：已发表注释里的，加上本课题已经改过的 */
   const fromAnn=Object.keys(SITE_ANN[id]||{}).map(Number);
   const fromHist=[...new Set(CANDS(id).flatMap(c=>(c.muts||[c.mut]).map(posOfMut)))];
   const pos=[...new Set(fromAnn.concat(fromHist))].sort((a,b)=>a-b);
@@ -3853,14 +3853,14 @@ function siteRows(pid){
 
 /* ================= 路线对比 =================
    参考流程第 3 步：围绕「理性设计 vs 定向进化」形成候选路线并给推荐。
-   七个维度里有四个能从本项目自己的历史算出来——这才是我们该给的东西，
+   七个维度里有四个能从本课题自己的历史算出来——这才是我们该给的东西，
    而不是一张写死的教科书对照表。算不出来的如实写算不出来，并说明要测什么才算得出。 */
 const ROUTES=[
  {k:'rational', n:'纯理性设计', d:'只按结构与机理挑位点，一次做几十条'},
  {k:'semi',     n:'半理性设计', d:'结构与机理框定范围，范围内做饱和或组合突变'},
  {k:'directed', n:'纯定向进化', d:'大库随机突变 + 高通量筛选，不预设位点'},
  {k:'combo',    n:'组合路线',   d:'先定向进化探边界，再理性设计收敛'}];
-/* 本项目实际走的是哪条——命中率这类数只对自己走过的路线算得出来 */
+/* 本课题实际走的是哪条——命中率这类数只对自己走过的路线算得出来 */
 const ROUTE_OF={p1:'semi',p2:'semi',p3:'semi'};
 
 function routeMatrix(pid){
@@ -3873,30 +3873,30 @@ function routeMatrix(pid){
   const rounds=(P.rounds||[]).filter(r=>r.state==='done').length;
 
   /* 每一格标明它是哪来的：
-     calc  从本项目数据算出来的；def 路线本身的定义，不是对我们数据的断言；
+     calc  从本课题数据算出来的；def 路线本身的定义，不是对我们数据的断言；
      none  算不出，并说清要测什么才算得出。 */
   const calc=(v,from)=>({v:v,kind:'calc',from:from});
   const def =(v,from)=>({v:v,kind:'def', from:from});
   const none=(why)  =>({v:null,kind:'none',from:why});
-  const NOTRUN='本项目没有走过这条路线。这一格要有数，得真做一轮并把结果回流回来';
+  const NOTRUN='本课题没有走过这条路线。这一格要有数，得真做一轮并把结果回流回来';
   const row=(r)=>{
     const self=r.k===mine;
     return {
      r:r,self:self,
      cells:[
       {n:'命中率', ...(self&&st.measured
-        ? calc(pct(st.byMeasured),`本项目 ${st.measured} 条有结果里命中 ${st.hits} 条`)
+        ? calc(pct(st.byMeasured),`本课题 ${st.measured} 条有结果里命中 ${st.hits} 条`)
         : none(NOTRUN))},
       {n:'样本规模', ...(self&&st.byMeasured>0
-        ? calc(Math.ceil(1/st.byMeasured)+' 条 / 命中 1 条',`按本项目命中率 ${pct(st.byMeasured)} 折算`)
+        ? calc(Math.ceil(1/st.byMeasured)+' 条 / 命中 1 条',`按本课题命中率 ${pct(st.byMeasured)} 折算`)
         : none(NOTRUN))},
       {n:'可分辨效应', ...(self&&det&&det.sigma!=null
         ? calc((det.log?('×'+det.fold.toFixed(2)):('±'+det.delta.toFixed(2)+(FIELD[pk].unit||''))),
-               `主目标 ${FIELD[pk].n}，σ 取自本项目重复测量，n=3，α=0.05 双侧，功效 80%`)
+               `主目标 ${FIELD[pk].n}，σ 取自本课题重复测量，n=3，α=0.05 双侧，功效 80%`)
         : self?none((det&&det.why)||'要算可分辨效应，先得有重复测量'):none(NOTRUN))},
       {n:'单轮板数', ...(self&&nSel
         ? calc(Math.ceil(nSel*3/88)+' 块 96 孔板',
-               `本项目已送检 ${nSel} 条 × n=3，每板 88 个可用孔`)
+               `本课题已送检 ${nSel} 条 × n=3，每板 88 个可用孔`)
         : none(self?'还没有送检记录'
                    :'板数随样本规模走，样本规模算不出，板数也算不出'))},
       {n:'周期', ...(function(){
@@ -3906,14 +3906,14 @@ function routeMatrix(pid){
         const run=BATCHES.filter(b=>b.pid===id&&b.status!=='done'&&b.status!=='canceled');
         const tail=run.length?`；在途 ${run.length} 个，最久的已走 ${fmtDays(Math.max.apply(null,run.map(batchAgeDays)))}`:'';
         return calc(fmtDays(T.med)+' / 轮',
-          `本项目 ${T.n} 个走完的批次，建单到出结果的中位数（${fmtDays(T.min)}–${fmtDays(T.max)}）${tail}`);
+          `本课题 ${T.n} 个走完的批次，建单到出结果的中位数（${fmtDays(T.min)}–${fmtDays(T.max)}）${tail}`);
       })()},
       {n:'数据依赖', ...(r.k==='directed'
         ? def('不依赖已有数据','随机库不预设位点，这是这条路线的定义')
         : def('需要结构与位点证据','要先知道改哪里，这是这条路线的定义'))},
       {n:'实验资源', ...(self
         ? calc((P.rounds[0]&&P.rounds[0].plan&&P.rounds[0].plan.assay||[]).join(' / ')||'—',
-               '取自本项目轮次计划里登记的测定方法')
+               '取自本课题轮次计划里登记的测定方法')
         : r.k==='directed'||r.k==='combo'
           ? none('高通量筛选平台的产能与排期这里没有，要问实验室')
           : none(NOTRUN))}
@@ -4512,7 +4512,7 @@ function toolIc(t){
    这两块真正该出现的地方是「这一轮要回答什么」：决定走哪条路线、凭什么这么定，
    本来就是定假设的那一步在做的事。
 
-   文献这一层不自建，这里只登记本项目引用了什么、支撑了哪些位点。 */
+   文献这一层不自建，这里只登记本课题引用了什么、支撑了哪些位点。 */
 function litRows(pid){
   const L=CANDS(pid).filter(c=>c.src==='文献推断'&&c.ref);
   const by={};
@@ -4526,7 +4526,7 @@ function litRows(pid){
    看到的永远是此刻的数据。 */
 function routePanel(){
   const M=routeMatrix(), L=litRows(S.pid);
-  const KIND={calc:'本项目算出',def:'路线定义',none:'算不出'};
+  const KIND={calc:'本课题算出',def:'路线定义',none:'算不出'};
   const DIMS7=(M.rows[0]||{cells:[]}).cells.map(c=>c.n);
   const nCalc=M.rows.reduce((a,r)=>a+r.cells.filter(c=>c.kind==='calc').length,0);
   const whys=[...new Set(M.rows.flatMap(r=>r.cells.filter(c=>c.kind==='none').map(c=>c.from)))];
@@ -4534,7 +4534,7 @@ return `
   <section class="card"><div class="card-b col" style="gap:var(--s4)">
     <div class="row wrap" style="gap:var(--s3)">
       <strong class="t-md grow">这一轮走哪条路线</strong>
-      <span class="t-sm mut2 num">${nCalc} 格有本项目的数</span>
+      <span class="t-sm mut2 num">${nCalc} 格有本课题的数</span>
     </div>
     <p class="t-sm mut" style="margin:0;max-width:66ch">每一格标明它是哪来的。
       <strong>不给一张填满的表</strong>——填满意味着大部分是从教科书抄的，对这个靶点不成立。</p>
@@ -4543,7 +4543,7 @@ return `
       <tbody>${M.rows.map(r=>`<tr${r.self?' class="grp"':''}>
         <td><div class="col" style="gap:2px;min-width:0">
           <span class="row" style="gap:6px"><strong class="t-md">${esc(r.r.n)}</strong>
-            ${r.self?'<span class="chip c-dry">本项目走的</span>':''}</span>
+            ${r.self?'<span class="chip c-dry">本课题走的</span>':''}</span>
           <span class="t-xs mut2">${esc(r.r.d)}</span></div></td>
         ${r.cells.map(c=>`<td>${c.v!=null
           ? `<div class="col" style="gap:2px"><span class="num t-md">${esc(String(c.v))}</span>
@@ -4554,7 +4554,7 @@ return `
       <div class="why-b col" style="gap:4px">${whys.map(w=>`<span class="t-sm mut">· ${esc(w)}</span>`).join('')}</div>
     </details>`:''}
     ${L.length?`<div class="col" style="gap:var(--s2);padding-top:var(--s4);border-top:1px solid var(--line-2)">
-      <span class="lbl">本项目引用过的文献</span>
+      <span class="lbl">本课题引用过的文献</span>
       ${L.map(x=>`<div class="row wrap" style="gap:var(--s3)">
         <span class="t-md num grow">${esc(x.ref)}</span>
         <span class="t-sm mut2">支撑 ${x.n} 条变体 · 位点 ${x.pos.join('、')}</span>
@@ -4585,18 +4585,18 @@ return `
 const ABIL=[
  {id:'deg', n:'差异表达', hue:'dry', when:'手上有两组表达量要比，想知道哪些基因变了。',
  eg:'比一下处理组和对照组哪些基因变了',
-  say:'请确认差异表达分析的设置。',
+  say:'确认差异表达设置。',
   obj:['差异表达','deg','火山图','表达矩阵','rna-seq','转录组','倍数变化','log2fc','padj',
        '处理组','对照组'],
   kw:['上调','下调','比一比','比一下']},
  {id:'seek', n:'序列检索', hue:'dry', when:'手上有一条序列或一个登录号，要去公共库里找同源条目。',
  eg:'检索和这条序列同源的条目',
-  say:'请确认检索设置。',
+  say:'确认检索设置。',
   obj:['同源','blast','uniprot','登录号'],
   kw:['检索','搜索','比对','找序列','相似','查一下','查查','查一查']},
  {id:'str', n:'结构预测', hue:'dry', when:'要把一条序列折成结构，或者问某一段可不可信。',
  eg:'把这条序列折出来，看看哪一段可信',
-  say:'请确认结构预测的设置。',
+  say:'确认结构预测设置。',
   obj:['结构','构象','pdb','plddt','alphafold','esmfold'],
   kw:['折叠','折出来','预测结构','折一下']},
  /* 「亲和力」「热稳」是要测的性质，不是要设计——它们原先挂在设计上，
@@ -4604,17 +4604,17 @@ const ABIL=[
     「候选」也不留在设计的对象里：「排一下这批候选的实验」里它指的是实验的材料。 */
  {id:'des', n:'蛋白质设计', hue:'dry', when:'要生成一批新的序列或变体去试。',
  eg:'在这个界面上设计一批结合蛋白',
-  say:'请确认设计任务的设置。',
+  say:'确认设计设置。',
   obj:['binder','结合蛋白','结合剂','新的变体'],
   kw:['设计','生成候选','改造','序列设计']},
  {id:'lab', n:'实验管理', hue:'wet', when:'要把东西送去做湿实验，或者管已经在跑的批次、看回传结果。',
  eg:'把这批候选送去测亲和力',
-  say:'请确认这次实验的安排。',
+  say:'确认实验安排。',
   obj:['实验','亲和力','热稳','配方','protocol','实验室','孔板','报价','ki','kd'],
   kw:['送检','送去','送','测','测定','实测','湿实验','外包','回流']},
  {id:'primer', n:'引物设计', hue:'dry', when:'要给一段模板设计 PCR 引物。',
  eg:'给这段模板设一对 PCR 引物',
-  say:'请确认引物设计的设置。',
+  say:'确认引物设计设置。',
   /* 不要 'tm'：这个产品里 'tm' 是别人的词。
      ΔTm（热稳定性，整个种子数据的主目标）和 ipTM（AlphaFold 界面置信度，
      结构预测的指标）里都含 'tm'，于是「训一个 ΔTm 打分器」路到了引物设计。
@@ -4623,13 +4623,13 @@ const ABIL=[
   kw:[]},
  {id:'sgrna', n:'sgRNA 设计', hue:'dry', when:'要在一段序列上选 CRISPR 向导 RNA。',
  eg:'在这段序列上选 sgRNA',
-  say:'请确认 sgRNA 设计的设置。',
+  say:'确认 sgRNA 设计设置。',
   obj:['sgrna','grna','guide','crispr','cas9','cas12','pam','向导rna'],
   kw:['敲除','编辑','基因编辑']},
  {id:'rank', n:'批量打分', hue:'dry',
   when:'已经有训好的打分器，要拿它给一批候选打分并排序，不是要训新的。',
- eg:'用 M-001 给这个项目的候选打一遍分',
-  say:'请选择模型和候选范围。',
+ eg:'用 M-001 给本课题的候选打一遍分',
+  say:'确认打分器和候选范围。',
   /* 「打分」两个字不能单独当关键词：「训一个打分器」里也有它，
      而那句话是要**训**一个，不是拿现成的去打。所以这里只收
      已经带了批量动作的词组，让「训／微调」那条路自己留住它的句子。 */
@@ -4642,19 +4642,19 @@ const ABIL=[
  /* 不要 '排一下'：它藏在「安排一下」里。跟刚撑掉的 'tm' 是同一类错——
     短词做关键词要先问一句「它会不会是别的词的一截」。 */,
  {id:'train', n:'模型', hue:'dry', when:'要拿已有的实测数据训一个打分器出来。',
- eg:'用这个项目的实测数据训一个打分模型',
-  say:'请确认训练设置。',
+ eg:'用本课题的实测数据训一个打分模型',
+  say:'确认训练设置。',
   obj:['打分模型','预测器','回归模型'],
   kw:['训练','训一个','模型管理','微调','回归','留出','训模型']},
  {id:'dset', n:'建数据集', hue:'ink', when:'手上有一份表格或 CSV，要把它建成能用来训练的数据集。',
  eg:'上传一份数据建成数据集',
-  say:'请上传数据并确认数据集设置。',
+  say:'上传数据并确认数据集设置。',
   /* 「训练集」比「训练」长，而且它是对象不是动作，所以带「训练集」的句子归这里。 */
   obj:['数据集','训练集','样本表','csv'],
   kw:['建数据集','上传数据','训练数据','导入表','建一个集','传上来','传一份','上传表']},
- {id:'file', n:'文件与资料', hue:'ink', when:'要找、看、下载这个项目里已经有的文件。',
- eg:'这个项目里都有哪些文件',
-  say:'以下是这个项目中的文件。',
+ {id:'file', n:'文件与资料', hue:'ink', when:'要找、看、下载本课题里已经有的文件。',
+ eg:'本课题里都有哪些文件',
+  say:'本课题的文件：',
   obj:['文件','资料','知识库','文献','产物'],
   kw:['上传','下载','归档']}];
 const ABIL_OF=id=>ABIL.find(a=>a.id===id)||null;
@@ -4915,7 +4915,7 @@ CARD.form=c=>c.done?`<div class="kard-h is-done">
         <span class="car" aria-hidden="true"></span>高级参数
         <span class="num">${c.adv.length}</span></button>
       ${c.advOpen?`<div class="kform kadv-b">${c.adv.map(f=>fieldHTML(c,f)).join('')}</div>`
-        :`<span class="t-xs mut2">都有公认的默认值，不改也能跑</span>`}
+        :`<span class="t-xs mut2">保持默认即可</span>`}
     </div>`:''}
     <!-- 卡底的操作条做成一段，不再混在卡身里。
          原来头、身、操作条三段一样白，整张卡读起来是一摄。 -->
@@ -5104,12 +5104,12 @@ const AT={open:false,q:'',i:0,list:[],pos:null,mode:'cap'};
 function atSkills(){
   /* 能用的技能 = 产品自己的能力 + 自己训的、已启用的模型 + 注册表里已启用的工具。
      三类分开标，因为它们不是一回事：能力唤起一整段流程，工具是流程里的一步，
-     我的模型是这个项目自己攒出来的打分器——它的来历（训在哪、留出 ρ 多少）
+     我的模型是本课题自己攒出来的打分器——它的来历（训在哪、留出 ρ 多少）
      要写在条目上，不然看的人没法判断该不该用它。 */
   const on=ENABLED();
   return ABIL.map(a=>({k:'cap:'+a.id,n:a.n,s:a.eg,kind:'能力',hue:a.hue}))
     .concat(MY_TOOLS().map(m=>({k:'mdl:'+m.id,n:m.name||m.id,
-      s:m.id+'　训在 '+(m.ds||'本项目实测')+'　留出 ρ '+m.rho.toFixed(3),
+      s:m.id+'　训在 '+(m.ds||'本课题实测')+'　留出 ρ '+m.rho.toFixed(3),
       kind:'我的模型',hue:'dry'})))
     .concat(on.map(n=>{const t=toolBy(n);
       return {k:'tool:'+n,n:n,s:(t&&t.s)||'',kind:'工具',hue:(t&&t.cap==='wet')?'wet':'dry'}}));
@@ -5314,7 +5314,7 @@ function toolMenu(btn){
 function PMODELS(pid){const p=DB.projects.find(x=>x.id===(pid||S.pid));
   if(!p)return [];if(!p.models)p.models=[];return p.models}
 /* 「模型管理」挂在导航的「资源」下，回答的是「我手上一共有哪些模型」，
-   不是「这个项目里有哪些」——和数据集那一屏同一个道理。所以这三张表跨项目，
+   不是「本课题里有哪些」——和数据集那一屏同一个道理。所以这三张表跨项目，
    每行标关联项目，点一下回到那个项目；上面给一个项目筛选器。
    底层存储不动：模型确实是从某个项目长出来的。 */
 function ALL_MODELS(){
@@ -5423,7 +5423,7 @@ function mdlReport(m){
   w('# 留出集评测报告　'+m.id);
   w('');
   w('- 模型：'+m.id+'（预测 '+m.target+'）');
-  w('- 训练数据：'+(m.ds||'本项目实测'));
+  w('- 训练数据：'+(m.ds||'本课题实测'));
   w('- 基础模型：'+(m.base||'Descriptor Baseline'));
   w('- 训练方法：'+(m.method||'SFT')+'　参数更新：'+(m.upd||'—'));
   w('- 解法：'+((methodOf(m.method)||{}).algo||'—')+'　用时：'+(m.ms==null?'—':m.ms+' ms'));
@@ -5524,7 +5524,7 @@ V.labnew=()=>{
           <span class="ctl ctl-sel"><select data-nx="pid">${DB.projects.map(x=>
             `<option value="${esc(x.id)}" ${x.id===S.pid?'selected':''}>${esc(x.name)}</option>`).join('')}</select>
             <span class="car" aria-hidden="true"></span></span>
-          <span class="t-xs mut2">结果回流会写进这个项目的变体库</span></label>
+          <span class="t-xs mut2">结果回流会写进本课题的变体库</span></label>
         <label class="field"><span class="label">实验类型 <i style="color:var(--err);font-style:normal">*</i></span>
           <span class="ctl ctl-sel"><select data-nx="proto">${P.map(x=>
             `<option value="${esc(x.n)}" ${x.n===E.proto?'selected':''}>${esc(x.n)}</option>`).join('')}</select>
@@ -5832,7 +5832,7 @@ function dsBody(){
 `
     :(F!=='all'&&ALL.length
       ?`<div class="empty" style="padding:var(--s6)"><div class="col" style="gap:4px">
-         <strong class="t-md" style="color:var(--ink)">这个项目下还没有数据集</strong>
+         <strong class="t-md" style="color:var(--ink)">本课题下还没有数据集</strong>
          <span class="t-sm">别的项目一共有 ${ALL.length} 个。</span></div>
          <button class="btn" type="button" data-dsproj="all">看全部</button></div>`
       :`<div class="empty" style="padding:var(--s6)"><div class="col" style="gap:4px">
@@ -5886,7 +5886,7 @@ function srcDetail(ab){
       ${row('许可',d.lic,/未核实|Other/.test(d.lic))}
       ${row('接口',d.api,/未接入/.test(d.api))}
       ${row('接入状态',d.wired?'已接入':'未接入')}
-      ${row('本项目',d.wired?(dsSrcOn(d.ab)?'已启用':'未启用'):'未接入')}
+      ${row('本课题',d.wired?(dsSrcOn(d.ab)?'已启用':'未启用'):'未接入')}
     </div>
     <span class="t-xs mut2">写「未核实」的格子，是我没有逐条核对过发布方的条款或口径，
       不是它没有——把任何一条数据用于训练或对外交付之前，请先核实。</span>
@@ -5923,7 +5923,7 @@ const MDL_SUB={
    不启用就 @ 不到、排序任务里也选不着，而界面上看不出「它还没被挂上去」。
    所以这三步里真正要写的是那一步。 */
 const TRAIN_STEPS=[
-  ['选训练数据','用这个项目已回流的实测值，或选一份已发布的数据集。数据集发布后内容锁定，训练引用的才是确定的那一版。'],
+  ['选训练数据','用本课题已回流的实测值，或选一份已发布的数据集。数据集发布后内容锁定，训练引用的才是确定的那一版。'],
   ['配置并训练','选基础模型和训练方法。闭式解一次算完，同时在留出集上评一次，并和两条基线比。'],
   ['启用后才能被调用','去「模型库」部署模型。启用之后对话里 @ 得到，设计任务排序时也能选它；不启用它只是一条记录。']];
 /* 两件事各有一张表单页：发起训练要同时看基础模型、方法、数据和切分；
@@ -6066,14 +6066,14 @@ function mdlBar(tab){
         <span class="t-sm mut">${esc(d)}</span></span></div>`).join('')}
   </div></div>`:''}`;
 }
-/* 筛到某个项目、这个项目下又什么都没有时，不能说「还没有」——
+/* 筛到某个项目、本课题下又什么都没有时，不能说「还没有」——
    别的项目下有，只是被筛掉了。而且要留一个回到全部的出口，不然是条死路。 */
 /* n 要按这张表自己的口径数：评测表不列跑挂的任务，
    拿全量去说「别的项目一共有几个」会多报。 */
 function mdlEmpty(what,zero,note,n){
   const F=S.mdlProj||'all';
   if(F!=='all'&&n)return `<div class="empty" style="padding:var(--s6)"><div class="col" style="gap:4px">
-    <strong class="t-md" style="color:var(--ink)">这个项目下还没有${esc(what)}</strong>
+    <strong class="t-md" style="color:var(--ink)">本课题下还没有${esc(what)}</strong>
     <span class="t-sm">别的项目一共有 ${n} 个。</span></div>
     <button class="btn" type="button" data-mdlproj="all">看全部</button></div>`;
   return `<div class="empty" style="padding:var(--s6)"><div class="col" style="gap:4px">
@@ -6189,7 +6189,7 @@ function mdlCur(){
 /* 权重文件按模型记录现算：字段和训练当时存进项目文档的那一份是同一套。 */
 function mdlWeightsJson(m){
   return JSON.stringify({model:m.id,name:m.name||null,kind:'ridge',
-    target:m.target,dataset:m.ds||null,dataset_note:m.ds?null:'本项目实测',
+    target:m.target,dataset:m.ds||null,dataset_note:m.ds?null:'本课题实测',
     base_model:m.base||'Descriptor Baseline',method:m.method||'SFT',
     algo:(methodOf(m.method)||{}).algo||null,
     features:m.cols||null,weights:(m.w||[]).map(x=>+x.toFixed(6)),
@@ -6654,7 +6654,7 @@ V.dsnew=()=>{
             <input type="file" hidden id="dsfile" accept=".csv,.tsv,.txt"></label>`}
           <div class="row wrap" style="gap:var(--s2);margin-top:var(--s2)">
             <button class="btn-tool" type="button" data-act="dstpl">下载模板</button>
-            <button class="btn-tool" type="button" data-act="dsdemo">填入本项目变体表</button></div>
+            <button class="btn-tool" type="button" data-act="dsdemo">填入本课题变体表</button></div>
           ${readErr}</div>`
         : `<div class="field wide"><span class="label">选一份文件</span>
           ${PF.length?`<div class="col" style="gap:var(--s2)">${PF.map((e,i)=>
@@ -6728,9 +6728,9 @@ V.dsnew=()=>{
      基础模型                          留——Descriptor Baseline / ESM-2 两档（未接入，灰着）
      训练阶段 SFT / RL                 留——和 Intern 对齐。能跑的是 SFT 那一支；它的解法是闭式解的
                                    岭回归，记在 TRAIN_METHOD 的 algo 里，报告和详情里照原样写
-     训练数据                          留——本项目实测，或已发布的数据集
+     训练数据                          留——本课题实测，或已发布的数据集
      参数更新 LoRA / 全量更新          删——闭式解整组权重一次解出来，没有「哪些参数动」这回事
-     验证数据 训练集拆分 / 指定数据     改——不是选项，是事实：本项目实测按下面的比例拆，
+     验证数据 训练集拆分 / 指定数据     改——不是选项，是事实：本课题实测按下面的比例拆，
                                         数据集的切分在建集那一刻就定死了，这里只能读不能改
      学习率 / 轮数 / batch             删——闭式解没有这三样
      任务环境                          删——那是 RL 的概念
@@ -6796,7 +6796,7 @@ V.trainnew=()=>{
     <div class="fsec-b">
       <div class="field"><label class="label" for="trds">训练数据 <i style="color:var(--err);font-style:normal">*</i></label>
         <span class="ctl ctl-sel"><select id="trds" class="input">
-          <option value="self" ${NEWTR.ds==='self'?'selected':''}>本项目实测（${nSelf} 条有实测值）</option>
+          <option value="self" ${NEWTR.ds==='self'?'selected':''}>本课题实测（${nSelf} 条有实测值）</option>
           ${DS.map(x=>`<option value="${esc(x.id)}" ${NEWTR.ds===x.id?'selected':''}
             >${esc(x.id)}　${esc(x.name)}（${x.rows.length} 行）</option>`).join('')}
         </select><span class="car" aria-hidden="true"></span></span>
@@ -6818,7 +6818,7 @@ V.trainnew=()=>{
             >${esc((FIELD[k]||{}).n||k)}（${CANDS().filter(c=>mv(c,k)!=null).length} 条有值）</option>`).join('')}
         </select><span class="car" aria-hidden="true"></span></span>
         <span class="t-xs mut2">只列够训的字段：至少要 8 条有实测值</span>`
-        :`<span class="t-sm" style="color:var(--err)">这个项目还没有哪个字段攒够 8 条实测值。先排一次实验，结果回来之后才能训。</span>`}</div>
+        :`<span class="t-sm" style="color:var(--err)">本课题还没有哪个字段攒够 8 条实测值。先排一次实验，结果回来之后才能训。</span>`}</div>
       <div class="field"><label class="label" for="trtr">训练集占比　<span class="num">${(tr*100).toFixed(0)}%</span></label>
         <input id="trtr" type="range" min="0.5" max="0.9" step="0.05" value="${tr}">
         <span class="t-xs mut2">剩下的 ${((1-tr)*100).toFixed(0)}% 全部是留出集，不参与任何一步。λ 在训练集内部做 5 折选</span></div>`}
@@ -7125,7 +7125,7 @@ function featOf(c,wt){
   return f.every(isFinite)?f:null;
 }
 const FEAT_N2=['截距','ipTM','自洽 RMSD','可开发性','Δ疏水性','Δ体积','Δ净电荷','突变个数'];
-/* 用这个项目已经测出来的数据训一个打分器，并在留出集上报真指标。
+/* 用本课题已经测出来的数据训一个打分器，并在留出集上报真指标。
    特征两部分：
    ① 理化变化量（疏水性、体积、净电荷）、突变个数、平均位置；
    ② 位点身份——同一个位点上的突变往往同涨同落，这是蛋白工程里真正带信息的一维。
@@ -7457,7 +7457,7 @@ function dsPublish(id){
 const DS_ST={draft:['草稿','c-wet'],pub:['已发布','c-ok']};
 function dsSt(d){return DS_ST[d&&d.st]||DS_ST.draft}
 /* 跨项目的全部数据集，每条带上它从哪个项目来。
-   DSETS(pid) 仍然按项目取——建集、训练那几条路要的就是本项目那一份。 */
+   DSETS(pid) 仍然按项目取——建集、训练那几条路要的就是本课题那一份。 */
 function ALL_DSETS(){
   const out=[];
   DB.projects.forEach(p=>(p.dsets||[]).forEach(d=>out.push(Object.assign({_pid:p.id,_pn:p.name},d))));
@@ -7814,7 +7814,7 @@ const PEND={};
    第一条不是模型，是「不接主干」这条路；原先叫「Descriptor Baseline」，
    用「没有什么」给一个选项命名，读的人得先否定一次才知道它是什么。 */
 const BASE_MODELS=[
- {id:'none', n:'Descriptor Baseline', ck:'本项目特征表', where:'浏览器', ok:1,
+ {id:'none', n:'Descriptor Baseline', ck:'本课题特征表', where:'浏览器', ok:1,
   d:'手工描述子直接入模：用候选身上已有的计算量（ipTM、自洽 RMSD、可开发性）当特征。特征少、样本少的时候，这条路通常不输给更复杂的。'},
  {id:'esm2-8m', n:'ESM-2 8M', ck:'facebook/esm2_t6_8M_UR50D', where:'算力后端', ok:0,
   d:'ESM-2 系列里最小的一档，6 层，在 UniRef50 上做掩码预训练。', why:'要先把序列跑一遍拿 embedding，浏览器里跑不动'},
@@ -7848,7 +7848,7 @@ function tgtName(t){
   return (FIELD[t]||FIELD[k]||{}).n||k;
 }
 function dsLabel(m){
-  if(!m.ds)return esc('本项目实测');
+  if(!m.ds)return esc('本课题实测');
   const h=(typeof dsFind==='function')?dsFind(m.ds):null;
   return esc(h?(m.ds+'　'+h.d.name):m.ds);
 }
@@ -7861,7 +7861,7 @@ function SCORERS(){
 }
 function SCORER_HINT(){
   const all=PMODELS(), ok=all.filter(canScore);
-  if(!all.length)return '还没有模型。可以说「用这个项目的实测数据训一个打分模型」';
+  if(!all.length)return '还没有模型。可以说「用本课题的实测数据训一个打分模型」';
   const no=all.length-ok.length;
   const win=ok.filter(m=>m.winS).length;
   return (ok.length?ok.length+' 个能用于排序'+(win?('，其中 '+win+' 个排序赢过基线'):'，但没有一个排序赢过基线——用它排不一定比不用强'):'没有能用于排序的模型')
@@ -7870,19 +7870,19 @@ function SCORER_HINT(){
 const FLOW={};
 
 FLOW.dset=f=>{
-  return [mkCard('form',{cap:'dset',title:'建一个数据集',sub:'读文件 · 认列',
+  return [mkCard('form',{cap:'dset',title:'新建数据集',sub:'',
     fields:[
       {k:'file',label:'数据文件',v:null,ty:'file',wide:1,accept:'.csv,.tsv,.txt',
        ph:'一行一个样本：第一列 ID，中间是特征，最后一列是要预测的目标',
        acts:[{a:'tpl:tab',n:'下载模板'},{a:'demotab',n:'填入示例数据'}],
-       hint:'选中之后这里会写出行数、列数和内容指纹'},
+       hint:'选中后显示行数、列数和指纹'},
       /* 占位符只放例子。「留空就用文件名」是规则，不是例子，
          放在占位符里既读不完（框 203px、这句要 270px），
          一打字还会跟着消失——规则该常驻在说明行里。 */
       {k:'name',label:'数据集名称',v:'',ty:'text',ph:'R4 亲和力实测',
        hint:'留空就用文件名'}],
-    go:'读这份文件',
-    foot:'文件只在这个浏览器里解析，不上传到任何地方'})];
+    go:'读取文件',
+    foot:'文件只在本机解析，不上传'})];
 };
 
 FLOW.deg=f=>{
@@ -7891,27 +7891,26 @@ FLOW.deg=f=>{
       {k:'file',label:'表达矩阵',v:null,ty:'file',wide:1,accept:'.csv,.tsv,.txt',
        ph:'第一列是基因 ID，其余每列一个样本，格子里是原始计数',
        acts:[{a:'tpl:mx',n:'下载模板'},{a:'demomx',n:'填入示例数据'}],
-       hint:'选中之后这里会写出行数和列数。分组在下一步指定'}],
-    go:'读矩阵',
-    foot:'没有接 DESeq2：它用的是负二项 GLM 和离散度收缩，浏览器里没有实现。'
-      +'这里跑的是 CPM 归一 + log2 + Welch t 检验 + BH 校正，方法会写在结果上'})];
+       hint:'选中后显示行数和列数；分组在下一步指定'}],
+    go:'读取矩阵',
+    foot:'方法：CPM 归一 + log2 + Welch t 检验 + BH 校正，会写在结果上；未接 DESeq2'})];
 };
 
 FLOW.sgrna=f=>{
   const bt=backTranslate(PRJ_WT[S.pid]||'');
-  return [mkCard('form',{cap:'sgrna',title:'sgRNA 设计',sub:'PAM 扫描 · 本地',
+  return [mkCard('form',{cap:'sgrna',title:'sgRNA 设计',sub:'PAM 扫描',
     fields:[
       {k:'seq',label:'靶区序列',v:f.dna||'',ty:'area',wide:1,rows:4,req:1,
        ph:'DNA 序列，可直接粘 FASTA',
        acts:bt?[{a:'btfill',n:'填入示例数据'}]:[],
-       hint:'没有参考基因组，所以只能在你给的这一段里找位点，脱靶也只在这一段里查'},
+       hint:'没有参考基因组：位点和脱靶都只在这段序列内查'},
       {k:'pam',label:'PAM',v:'NGG',ty:'sel',
        opts:['NGG','NG','NGA','NNGRRT','TTTV'],
        hint:'NGG 对 SpCas9；TTTV 对 Cas12a，此时 protospacer 在 PAM 下游'},
       {k:'glen',label:'protospacer 长度',v:20,ty:'step',min:16,max:24},
       {k:'n',label:'返回条数',v:10,ty:'step',min:1,max:40}],
     go:'开始扫描',
-    foot:'在靶打分模型（Rule Set 2 / Azimuth）这里没有权重，所以不给在靶分'})];
+    foot:'未接入在靶打分模型（Rule Set 2 / Azimuth），不给在靶分'})];
 };
 
 FLOW.primer=f=>{
@@ -7926,8 +7925,8 @@ FLOW.primer=f=>{
       {k:'tpl',label:'模板序列',v:tpl,ty:'area',wide:1,rows:4,req:1,
        ph:'DNA 模板，可直接粘 FASTA',
        acts:bt?[{a:'btfill',n:'填入示例数据'}]:[],
-       hint:'示例数据是按大肠杆菌高频密码子回译本项目野生型得到的编码序列'
-         +(bt?'（'+bt.length+' bp）':'')+'，不是数据库里的天然基因'},
+       hint:'示例是按大肠杆菌高频密码子回译的本课题野生型编码序列'
+         +(bt?'（'+bt.length+' bp）':'')+'，不是天然基因'},
       {k:'tgs',label:'目标区间起点',v:mid?mid-30:0,ty:'text',num:1,hint:'从 0 起算'},
       {k:'tgl',label:'目标区间长度',v:60,ty:'step',min:10,max:400,
        hint:'引物对必须把这一段夹在中间'},
@@ -7946,7 +7945,7 @@ FLOW.primer=f=>{
       {k:'div',label:'二价盐（mM）',v:1.5,ty:'text',num:1,hint:'按 SantaLucia 折成等效一价'},
       {k:'dntp',label:'dNTP（mM）',v:0.6,ty:'text',num:1}],
     go:'设计引物',
-    foot:bt?'':'模板留空就跑不了：项目里没有 DNA 序列可以替你填'})];
+    foot:bt?'':'需要模板序列；本课题没有 DNA 序列可自动填入'})];
 };
 
 FLOW.seek=f=>{
@@ -7954,23 +7953,23 @@ FLOW.seek=f=>{
   return [mkCard('form',{cap:'seek',title:'检索同源序列',sub:'Smith–Waterman 局部比对',
     fields:[
       {k:'seq',label:'查询序列',v:seq,ty:'area',wide:1,req:1,ph:'单字母氨基酸序列，可直接粘 FASTA',
-       hint:'默认填的是当前项目的野生型序列'},
+       hint:'默认是本课题的野生型序列'},
       {k:'db',label:'检索库',v:'内置样本库',ty:'sel',opts:Object.keys(SEEK_DBS).map(k=>SEEK_DBS[k].n)},
       {k:'top',label:'取前几条',v:8,ty:'step',min:1,max:50}],
-    go:'开始检索',foot:'比对在本地算，不发往外部'})];
+    go:'开始检索',foot:'在本机比对，不发往外部'})];
 };
 
 FLOW.str=f=>{
   const seq=f.seq||PRJ_WT[S.pid]||'';
   return [
-    mkCard('steps',{title:'这一次会跑',note:'一段',steps:[
-      {n:'折叠模型',d:'用 蛋白序列 .fasta 产出 结构 .cif 与置信度',tool:nodePick('str','fold')}]}),
+    mkCard('steps',{title:'执行步骤',note:'1 步',steps:[
+      {n:'折叠模型',d:'输入蛋白序列 .fasta，输出结构 .cif 与置信度',tool:nodePick('str','fold')}]}),
     mkCard('form',{cap:'str',title:'结构预测',sub:'单链',
       fields:[
         {k:'seq',label:'蛋白序列',v:seq,ty:'area',wide:1,req:1,ph:'单字母氨基酸序列'},
         {k:'model',label:'折叠模型',v:nodePick('str','fold'),ty:'sel',
          opts:nodeTools('str','fold').map(t=>t.n)},
-        {k:'samples',label:'采样条数',v:PF.samples,ty:'step',min:1,max:20,hint:'一次出几个构象'}],
+        {k:'samples',label:'采样条数',v:PF.samples,ty:'step',min:1,max:20,hint:'每次输出的构象数'}],
       adv:[
         {k:'recycle',label:'循环轮数',v:PF.recycle,ty:'step',min:1,max:48,
          hint:'轮数越多越稳，耗时线性增加'},
@@ -7982,27 +7981,27 @@ FLOW.str=f=>{
 FLOW.des=f=>{
   const n=f.n||dfN();
   return [
-    mkCard('steps',{title:'这一次会跑',note:'三段',steps:(PIPE.des||[]).map(nd=>({
+    mkCard('steps',{title:'执行步骤',note:'3 步',steps:(PIPE.des||[]).map(nd=>({
       n:nd.n,d:nd.d,opt:nd.opt,tool:nodePick('des',nd.id)}))}),
     mkCard('form',{cap:'des',title:'蛋白质设计',sub:'结合蛋白候选',
       fields:[
         /* 项目本身就记着靶点登录号，没有理由让人再查一遍再敲进来 */
         {k:'acc',label:'靶点编号',v:f.pdb||f.acc||DF.acc||(UNIP[S.pid]||{}).acc||'',
          ty:'text',req:1,ph:'PDB ID 或 UniProt 登录号',
-         hint:(UNIP[S.pid]||{}).acc?'默认填的是本项目的靶点':''},
+         hint:(UNIP[S.pid]||{}).acc?'默认是本课题的靶点':''},
         {k:'blen',label:'binder 长度',v:DF.blen,ty:'range',min:20,max:200,stepv:5,unit:'AA'},
-        {k:'n',label:'候选条数',v:n,ty:'step',min:1,max:400,hint:'这一轮要生成几条'},
+        {k:'n',label:'生成条数',v:n,ty:'step',min:1,max:400,hint:'本轮要生成的候选数'},
         /* 训出来的模型如果没地方用，它就不该存在。这里就是它的用处。 */
-        {k:'rank',label:'用哪个打分器排序',v:SCORERS()[0],ty:'sel',opts:SCORERS(),
+        {k:'rank',label:'排序打分器',v:SCORERS()[0],ty:'sel',opts:SCORERS(),
          hint:SCORER_HINT()}],
       adv:[
         {k:'temp',label:'采样温度',v:0.1,ty:'range',min:0.01,max:1,stepv:0.01,
          hint:'越高越多样，也越容易出不可折叠的序列'},
         {k:'props',label:'要一起算的性质',v:['可开发性','净电荷'],ty:'chips',
          opts:['可开发性','净电荷','疏水性','游离半胱氨酸','聚集倾向'],
-         hint:'算出来的值会写进候选表，可以直接当闸门用'},
-        {k:'fix',label:'锁定不改的位点',v:'',ty:'text',ph:'如 27,58,73　留空表示不锁',
-         hint:'界面上的关键残基通常要锁住'}],
+         hint:'结果写入候选表，可作为筛选条件'},
+        {k:'fix',label:'锁定不改的位点',v:'',ty:'text',ph:'如 27,58,73',
+         hint:'留空不锁；界面上的关键残基通常要锁住'}],
       go:'发起设计'})];
 };
 
@@ -8011,9 +8010,9 @@ FLOW.lab=f=>{
   const fit=protoAll().filter(p=>fs.indexOf(p.f)>=0);
   const P=(fit[0]||protoAll()[0]);
   return [
-    mkCard('note',{title:'这个项目要测的字段',
-      text:fs.map(k=>(FIELD[k]||{}).n||k).join('、')+'　配方按字段匹配，下面默认选的是对得上的那一个。'}),
-    mkCard('form',{cap:'lab',title:'排一次实验',sub:'配方 + 实验节点 + 条数',
+    mkCard('note',{title:'本课题要测的字段',
+      text:fs.map(k=>(FIELD[k]||{}).n||k).join('、')+'。配方按字段匹配，默认选中匹配的那一个。'}),
+    mkCard('form',{cap:'lab',title:'安排实验',sub:'',
       fields:[
         {k:'proto',label:'配方',v:P.n,ty:'sel',opts:protoAll().map(x=>x.n),hint:P.d},
         /* 这一栏填的是「送到哪儿做」，不是「用哪个工具生成单子」。
@@ -8026,7 +8025,7 @@ FLOW.lab=f=>{
          hint:'板位容量 '+plateCap()+' 条'},
         {k:'reps',label:'重复数',v:P.rep,ty:'sel',opts:['n = 2','n = 3','n = 4']}],
       adv:[
-        {k:'ctrl',label:'带对照',v:true,ty:'switch',note:'野生型 + 空白，占掉板上 8 个孔'},
+        {k:'ctrl',label:'带对照',v:true,ty:'switch',note:'野生型与空白，占 8 孔'},
         {k:'rush',label:'加急',v:false,ty:'switch',note:'周期压缩，费用另算'}],
       go:'生成送检单',foot:'周期参考 '+P.days})];
 };
@@ -8039,25 +8038,24 @@ FLOW.rank=f=>{
     const any=ALL_MODELS().filter(m=>m.st!=='failed'&&canScore(m));
     return [mkCard('note',{title:'还没有能用的打分器',
       text:any.length
-        ?('有 '+any.length+' 个训好的模型，但一个都没启用。去「模型 → 模型库」'
-          +'把要用的那个打开——启用之后这里和设计任务里才选得到它。')
-        :'请先训练一个模型，例如说「用这个项目的实测数据训一个打分模型」。'})];
+        ?('有 '+any.length+' 个训好的模型，都还没启用。在「模型 → 模型库」启用后才能在这里选。')
+        :'还没有模型。先训练一个，例如说「用本课题实测数据训一个打分模型」。'})];
   }
   const named=f.mdl&&T.find(m=>m.id===String(f.mdl).toUpperCase());
   const opts=T.map(m=>m.id+'　'+(m.name||tgtName(m.target))+'　'+(m._pn||''));
   const pr=PRJ();
-  const SELF='本项目全部候选（'+CANDS().length+' 条）';
+  const SELF='本课题全部候选（'+CANDS().length+' 条）';
   const rOpts=pr.rounds.map(r=>'第 '+r.i+' 轮（'+CANDS().filter(c=>(c.firstRound||1)===r.i).length+' 条）');
   return [
-    mkCard('form',{cap:'rank',title:'批量打分',sub:'拿一个打分器把一批候选排一遍',
+    mkCard('form',{cap:'rank',title:'批量打分',sub:'',
       fields:[
         {k:'mdl',label:'打分器',v:named?(named.id+'　'+(named.name||tgtName(named.target))
             +'　'+(named._pn||'')):opts[0],ty:'sel',opts:opts,
-         hint:'只列启用过、而且真能打分的。启用在「模型 → 模型库」'},
-        {k:'who',label:'给哪一批打',v:SELF,ty:'sel',opts:[SELF].concat(rOpts),
-         hint:'打分器训练时见过的那些候选会单独标出来——给它们打分不叫预测'},
-        {k:'n',label:'表里先看几条',v:'10',ty:'num',hint:'完整结果在产出的 CSV 里'}
-      ]})
+         hint:'只列已启用的打分器；启用在「模型 → 模型库」'},
+        {k:'who',label:'候选范围',v:SELF,ty:'sel',opts:[SELF].concat(rOpts),
+         hint:'训练时用过的候选会单独标出，不算预测'},
+        {k:'n',label:'预览条数',v:'10',ty:'num',hint:'完整结果在产出的 CSV 里'}
+      ],go:'开始打分'})
   ];
 };
 FLOW.train=f=>{
@@ -8069,46 +8067,44 @@ FLOW.train=f=>{
   /* 一句话里点名了数据集，就直接用那一个，不再问一遍 */
   const named=f.ds&&DS.find(d=>d.id===String(f.ds).toUpperCase());
   const dsOpts=DS.map(d=>d.id+'　'+d.name+'（'+d.rows.length+' 行）');
-  const SELF='本项目实测（'+pr.name+'）';
+  const SELF='本课题实测（'+pr.name+'）';
   if(named||DS.length){
     const cur=named?(named.id+'　'+named.name+'（'+named.rows.length+' 行）'):SELF;
     return [
       mkCard('note',{title:'训练集',
-        text:'留出集从头到尾不参与任何一步：标准化、λ、特征选择都只用训练集和验证集。'
-          +'评测的时候会和两条基线比：永远猜均值的，和只用一个特征的。'}),
-      mkCard('form',{cap:'train',title:'模型',sub:'训练打分模型',
+        text:'留出集不参与标准化、λ 和特征选择。评测时与两条基线比：猜均值的，和只用一个特征的。'}),
+      mkCard('form',{cap:'train',title:'训练打分模型',sub:'',
         fields:[
           {k:'ds',label:'数据集',v:cur,ty:'sel',opts:[SELF].concat(dsOpts),
-           hint:nDraft?(nDraft+' 个草稿没列进来：草稿还能改，改完发布才能拿来训——'
-             +'不然同一个编号在两次训练之间悄悄变了，两个模型都说训在同一版上，其实不是。')
-             :'说「上传一份数据建成数据集」可以再建一个'},
+           hint:nDraft?(nDraft+' 个草稿未列出：发布后才能用于训练，避免同一编号在两次训练之间变化')
+             :'要用别的数据，先在数据集页新建'},
           {k:'target',label:'预测目标',v:fs[0]||'kd',ty:'sel',opts:fs.length?fs:['kd'],
-           hint:'只对「本项目实测」生效；数据集的目标列在建集时就定了'},
+           hint:'仅对「本课题实测」生效；数据集的目标列在建集时已定'},
           {k:'base',label:'基础模型',v:BASE_MODELS[0].n,ty:'sel',
            opts:BASE_MODELS.map(x=>x.n+(x.ok?'':'（未接入）')),
            hint:'标「未接入」的选项无法运行'},
           {k:'method',label:'训练方法',v:TRAIN_METHOD[0].n,ty:'sel',
            opts:TRAIN_METHOD.map(x=>x.n+(x.ok?'':'（未接入）')),
-           hint:'训练方法和基础模型是两件事：换方法不等于换模型'},
+           hint:'换方法不等于换基础模型'},
           {k:'upd',label:'参数更新',v:PARAM_UPD[0].n,ty:'sel',
            opts:PARAM_UPD.map(x=>x.n+(x.ok?'':'（未接入）')),
-           hint:'哪些参数会动。闭式解整组权重一起解出来，所以是「—」'},
+           hint:'闭式解一次解出全部权重，所以显示「—」'},
           {k:'ratio',label:'训练集占比',v:0.75,ty:'range',min:0.5,max:0.9,stepv:0.05,
-           hint:'只对「本项目实测」生效；数据集的切分在建集时就定了'}],
+           hint:'仅对「本课题实测」生效；数据集的切分在建集时已定'}],
         adv:[
           {k:'lam',label:'正则 λ',v:'自动',ty:'sel',opts:['自动','0.1','1','10','100'],
            hint:'自动＝有验证集就在验证集上选，没有就在训练集内部做 5 折'},
-          {k:'seed',label:'随机种子',v:'20260113',ty:'text',num:1,hint:'写死才能复现同一次切分'}],
+          {k:'seed',label:'随机种子',v:'20260113',ty:'text',num:1,hint:'固定种子可复现同一次切分'}],
         go:'开始训练'})];
   }
   return [
-    mkCard('note',{title:'训练集来自这个项目已经测出来的数据',
+    mkCard('note',{title:'训练集：本课题实测数据',
       text:'共 '+CANDS().length+' 条候选，其中有实测值的会进训练集。'}),
-    mkCard('form',{cap:'train',title:'模型',sub:'用本项目数据训练打分模型',
+    mkCard('form',{cap:'train',title:'训练打分模型',sub:'',
       fields:[
-        {k:'ds',label:'数据集',v:'本项目实测（'+pr.name+'）',ty:'sel',
-         opts:['本项目实测（'+pr.name+'）'],
-         hint:'还没有别的数据集。说「上传一份数据建成数据集」可以建一个'},
+        {k:'ds',label:'数据集',v:'本课题实测（'+pr.name+'）',ty:'sel',
+         opts:['本课题实测（'+pr.name+'）'],
+         hint:'还没有数据集；可在数据集页新建'},
         {k:'base',label:'基础模型',v:BASE_MODELS[0].n,ty:'sel',
          opts:BASE_MODELS.map(x=>x.n+(x.ok?'':'（未接入）')),
          hint:'标「未接入」的选项无法运行'},
@@ -8118,17 +8114,17 @@ FLOW.train=f=>{
         {k:'target',label:'预测目标',v:fs[0]||'kd',ty:'sel',opts:fs.length?fs:['kd'],
          hint:'模型学的是这个字段'},
         {k:'ratio',label:'训练集占比',v:0.75,ty:'range',min:0.5,max:0.9,stepv:0.05,
-         hint:'剩下的全部留作留出集，不参与任何一步'}],
+         hint:'其余作为留出集，不参与训练'}],
       adv:[
         {k:'lam',label:'正则 λ',v:'自动',ty:'sel',opts:['自动','0.1','1','10','100'],
-         hint:'用留出集挑 λ 等于偷看答案，所以自动是在训练集内部做 5 折'},
-        {k:'seed',label:'随机种子',v:'20260113',ty:'text',num:1,hint:'写死才能复现同一次切分'}],
+         hint:'自动＝在训练集内部做 5 折，不用留出集'},
+        {k:'seed',label:'随机种子',v:'20260113',ty:'text',num:1,hint:'固定种子可复现同一次切分'}],
       go:'开始训练'})];
 };
 
 FLOW.file=f=>{
   const L=FILES(S.pid);
-  return [mkCard('flist',{title:'这个项目里的文件',files:L.slice(0,12),total:L.length})];
+  return [mkCard('flist',{title:'本课题里的文件',files:L.slice(0,12),total:L.length})];
 };
 
 /* ---- 对话产出的文档：留在项目里，项目页右栏能看见 ---- */
@@ -8808,7 +8804,7 @@ SUBMIT.train=(c,v)=>{
       nTrain:r.nTrain,nTest:r.nTest,lam:r.lam,n:r.n,ms:ms,trainIds:r.trainIds||null,
       lib:false,
       base:v.base,method:v.method,upd:v.upd,lamBy:r.lamBy,bl:r.base,
-      seed:+v.seed,src:'本项目已回流的实测值（'+r.n+' 条）',
+      seed:+v.seed,src:'本课题已回流的实测值（'+r.n+' 条）',
       kind:'proj',w:r.w,mu:r.mu,sg:r.sg,sites:r.sites,cols:r.cols},verdictOf(r)));
     cur.arts=emit(S.pid,[{name:'模型_'+mdl.id+'_'+slug(v.target)+'_ridge.json',n:'模型权重',
       note:'留出 ρ='+r.rho.toFixed(3)+'　RMSE='+r.rmse.toFixed(3),kind:'dat',
@@ -9297,7 +9293,7 @@ CARD.cot=c=>`<div class="cot">
     aria-expanded="${c.open?'true':'false'}">
     <span class="car" aria-hidden="true"></span>执行过程
     <span class="t-xs mut2">${c.steps.length} 步${(()=>{const t=traceMs(c.steps);
-      return t==null?'':'　'+t+' ms'})()}</span></button>
+      return t==null||t<1?'':'　'+t+' ms'})()}</span></button>
   ${c.open?`<div class="cot-b">${c.steps.map(cotRow).join('')}</div>`:''}
 </div>`;
 /* @ 挂上来的可能是一条能力，也可能是注册表里的一个工具。
@@ -9556,15 +9552,15 @@ function bindChat(view){
       return;
     }
     if(a==='demotab'){
-      /* 示例数据用这个项目自己的变体表——真数据，不是随机数。
+      /* 示例数据用本课题自己的变体表——真数据，不是随机数。
          它正好也是用户最可能第一次拿来建集的那份东西。 */
       const txt=artVariantsCsv(S.pid,CANDS());
       const q=parseTable(txt,'variants.csv');
       if(!q.ok){toast('还没有候选');return}
-      f.v='本项目变体表.csv';f.text=txt;f.file=null;f.demo=0;
+      f.v='本课题变体表.csv';f.text=txt;f.file=null;f.demo=0;
       f.hint=q.rows.length+' 行 × '+q.cols.length+' 列　指纹 '+q.fp
-        +'　这是本项目自己的实测表';
-      render();toast('已填入本项目的变体表：'+q.rows.length+' 行');
+        +'　这是本课题自己的实测表';
+      render();toast('已填入本课题的变体表：'+q.rows.length+' 行');
       return;
     }
     if(a==='demomx'){
@@ -10183,7 +10179,7 @@ function batchLegs(b){const L=b.log||[];
     return {k:x[0],n:st.n,phase:st.phase,at:x[1],
       days:term?null:(t1-t0)/864e5, open:i===L.length-1&&!term}})}
 const fmtDays=d=>d==null?'—':(d<1?Math.max(1,Math.round(d*24))+' 小时':(d<10?d.toFixed(1):Math.round(d))+' 天');
-/* 本项目历史周转的中位数。只数真正走完的批次——在途的那条算进去会把中位数拉低。 */
+/* 本课题历史周转的中位数。只数真正走完的批次——在途的那条算进去会把中位数拉低。 */
 function turnaround(pid){
   const L=BATCHES.filter(b=>b.pid===(pid||S.pid)&&b.status==='done')
     .map(batchSpanDays).filter(v=>v!=null).sort((a,b)=>a-b);
@@ -10255,7 +10251,7 @@ function evCoverage(c){
 /* 评审七维，口径对齐端砚的评审智能体（E2）：
    需求完成度、正确性、证据与来源、可复现性、产物质量、工具执行、历史审查。
 
-   为什么要在产品里立这个面板：这个项目到现在没有任何第三方评审——
+   为什么要在产品里立这个面板：本课题到现在没有任何第三方评审——
    实现、验收、走查都是同一方做的。平台恰好有一个独立评审能力，
    那就应该把它的七个维度摆在产品里，而不是自己另造一套「自验证」。
 
@@ -10271,7 +10267,7 @@ const REVIEW_DIMS=[
  {k:'history',n:'历史审查', what:'上一轮遗留问题是否复查', local:false}];
 function reviewSelfCheck(){
   const P=PRJ(), st=hitStats(CANDS(),P), t=tcpOf(P);
-  const goal=t&&t.primary?ruleText(t.primary):'（本项目未设结构化目标）';
+  const goal=t&&t.primary?ruleText(t.primary):'（本课题未设结构化目标）';
   const cov=CLAIMS.map(evCoverage);
   const full=cov.filter(x=>!x.missing.length).length;
   const keyKinds=['数据','代码'];
@@ -10351,10 +10347,10 @@ function evidenceFor(h){
   out.push({k:'结构',v:rel.length?(fold/rel.length>=0.5?'支持':'不支持'):'无信息',
     say:rel.length?`${rel.length} 条里 ${fold} 条过准入闸门（${pct(fold/rel.length)}）`:'还没有这些位点的设计',
     n:rel.length});
-  // 4 本项目历史
+  // 4 本课题历史
   const k=h.effect.k;
   const good=measured.filter(c=>ruleOk({k:k,cmp:h.effect.dir,v:h.effect.v},c)).length;
-  out.push({k:'本项目历史',v:!measured.length?'无信息':(good/measured.length>=0.15?'支持':'不支持'),
+  out.push({k:'本课题历史',v:!measured.length?'无信息':(good/measured.length>=0.15?'支持':'不支持'),
     say:measured.length?`${measured.length} 条有结果，其中 ${good} 条达到 ${ruleText({k:k,cmp:h.effect.dir,v:h.effect.v})}（${pct(good/measured.length)}）`
                        :'这些位点还没有回流数据',
     n:measured.length});
@@ -10376,13 +10372,13 @@ function hypoVerdict(h){
 
 /* ---- 设计实验（一）：可检出效应 ----
    两样本均值比较，α=0.05 双侧，功效 80%：δ = 2.80 · σ · √(2/n)
-   σ 必须来自本项目自己的重复数据。没有重复数据就给不出来——
+   σ 必须来自本课题自己的重复数据。没有重复数据就给不出来——
    这时候要说「先测重复」，而不是编一个 σ。 */
 function detectable(k,nrep){
   const f=FIELD[k];if(!f)return null;
   const L=CANDS().filter(c=>c.disposition==='measured'&&sdOf(c,k)!=null);
   if(!L.length)return {sigma:null,k:k,
-    why:`本项目的 ${f.n} 没有重复测量的标准差，算不出可检出效应。先在一批里对同一条变体做重复，才知道这个测定能分辨多小的差。`};
+    why:`本课题的 ${f.n} 没有重复测量的标准差，算不出可检出效应。先在一批里对同一条变体做重复，才知道这个测定能分辨多小的差。`};
   const sd=L.map(c=>sdOf(c,k)).sort((a,b)=>a-b);
   const sigma=sd[Math.floor(sd.length/2)];
   const n=Math.max(1,nrep||3);
@@ -10510,7 +10506,7 @@ const BUILTIN={
    既没有出处也盖不全。这里改成按 UniProt 的特征表来，并解决一个真问题：
 
    **编号基准不一致。** UniProt 用前体编号（含信号肽与前肽），
-   蛋白工程文献与本项目用成熟链编号。barnase 的 CHAIN 是 48–157，偏移 47：
+   蛋白工程文献与本课题用成熟链编号。barnase 的 CHAIN 是 48–157，偏移 47：
    UniProt 的 ACT_SITE 120 / 149，换算过来正是文献里的 Glu73 与 His102。
    不换算就会把活性位点标到错误的残基上——这是这个领域最常见的一类错。
    偏移不是我们估的，是 UniProt 自己的 CHAIN 特征给的。
@@ -10538,7 +10534,7 @@ function unipFeats(pid,pos){
   return (u.feats||[]).filter(f=>f.at-off===pos)
     .map(f=>Object.assign({},f,{mature:f.at-off}));
 }
-/* 这个项目正在改的位点里，有几个落在功能注释上。 */
+/* 本课题正在改的位点里，有几个落在功能注释上。 */
 function unipClash(pid){
   const u=UNIP[pid];if(!u||!(u.feats||[]).length)return [];
   const off=unipOffset(pid);
@@ -10702,7 +10698,7 @@ function applyMuts(wt,muts){
    iptm:ip,rmsd:rmsd,dev:dev,liab:L,liabNew:LA,
    cys:LA.some(x=>x.k==='freecys'),                      // 这个突变新引入的游离 Cys，从序列查出来的
    m:m,                                                  // 测定值；没测的字段根本不存在，不是 0
-   src:lit?'文献推断':'本项目计算',
+   src:lit?'文献推断':'本课题计算',
    ref:lit?REFS[Math.floor(r()*REFS.length)]:null,
    firstRound:rounds[Math.floor(r()*rounds.length)],
    batch:null,
@@ -11428,7 +11424,7 @@ function artUseCount(f){return artConsumers(f).length+artSinks(f).length}
 function artHandoff(a,fromTask){
   /* 记下它是在哪个项目里接上的。此前不记：在 p1 上把结构接到设计，
      切到 p2 的设计页仍然显示「输入已接上」，而那是 p1 的结构——
-     按下发起设计就是拿另一个项目的结构跑这个项目，不报错，只出错的结果。 */
+     按下发起设计就是拿另一个项目的结构跑本课题，不报错，只出错的结果。 */
   S.feed={f:a.f,name:a.name,from:fromTask,at:nowStamp(),pid:S.pid};
 }
 function feedNote(cap){
@@ -11557,7 +11553,7 @@ function archive(a,from,note){
 }
 
 /* ---- 轮次报告：研究员真正要交出去的那一份 ----
-   全部从本项目的真实数据算。算不出的那几项照实写「算不出」，
+   全部从本课题的真实数据算。算不出的那几项照实写「算不出」，
    因为一份把局限藏起来的报告，比没有报告更糟。 */
 function artReportMd(pid,round){
   const P=DB.projects.find(x=>x.id===pid)||PRJ(); if(!P)return '';
@@ -11579,7 +11575,7 @@ function artReportMd(pid,round){
   w('');
   w('生成于 '+nowStamp()+'　项目 '+P.id+'　靶点 '+(P.target||'—'));
   w('');
-  w('> 这份报告由产品从本项目的数据现算后冻存。每一节都标明数据来自哪里；');
+  w('> 这份报告由产品从本课题的数据现算后冻存。每一节都标明数据来自哪里；');
   w('> 算不出的照实写「算不出」，并说明缺什么。');
   w('');
   w('## 一 · 这一轮要回答什么');
@@ -11639,7 +11635,7 @@ function artReportMd(pid,round){
     w('孔板：'+plateNote()+'，可放 '+plateCap()+' 条变体。');
   }else w('这一轮还没有批次。');
   w('');
-  if(T.n)w('本项目历史周转中位 '+fmtDays(T.med)+'（'+fmtDays(T.min)+'–'+fmtDays(T.max)+'，'+T.n+' 个走完的批次）。');
+  if(T.n)w('本课题历史周转中位 '+fmtDays(T.med)+'（'+fmtDays(T.min)+'–'+fmtDays(T.max)+'，'+T.n+' 个走完的批次）。');
   w('');
 
   w('## 五 · 结果');
@@ -11689,7 +11685,7 @@ function artReportMd(pid,round){
   const U2=UNIP[P.id];
   if(U2&&unipClash(P.id).length){
     const hard=unipClash(P.id).filter(x=>x.f.t==='ACT_SITE'||x.f.t==='BINDING');
-    if(hard.length)w('- 本项目有 '+hard.length+' 个位点改在功能注释上（'
+    if(hard.length)w('- 本课题有 '+hard.length+' 个位点改在功能注释上（'
       +hard.map(x=>x.mature).join('、')+'）。这些变体还有没有原来的活性要单独测，不能从结合数据里推。');
   }
   w('- 免疫原性、糖基化位点变化、体内寡聚：当前环境没有可用模型，未预测。');
@@ -11704,7 +11700,7 @@ function archCard(){
   const L=p.arch||[];
   const rounds=(p.rounds||[]).map(r=>r.i);
   return `<section class="card">
-    <div class="card-h"><strong>本项目的归档</strong><span class="grow"></span>
+    <div class="card-h"><strong>本课题的归档</strong><span class="grow"></span>
       <span class="t-sm mut2">${L.length} 件</span>
       <button class="btn btn-gh" type="button" data-mkreport="${S.round}"
         style="min-height:1.5rem;padding:0 9px;font-size:.75rem">生成 Round ${S.round} 报告</button></div>
@@ -11828,7 +11824,7 @@ function draftTargetOf(t){
 /* ---- 轮次必须属于当前项目 ----
    S.round 是全局的：7 个改 S.pid 的地方里有 2 个（侧栏的项目链接）没同步它，
    于是从侧栏切到 p2（只有第 1、2 轮）之后，页头仍写着「Round 4 进行中」——
-   那一轮在这个项目里不存在，底下按 S.round 过滤的东西也就全是空的。
+   那一轮在本课题里不存在，底下按 S.round 过滤的东西也就全是空的。
    不在 7 个调用点逐个补，在每次渲染前夹一次：不变量只写一遍，以后新增入口也不会漏。 */
 function fixRound(){
   const pr=DB.projects.find(x=>x.id===S.pid);
@@ -12251,7 +12247,7 @@ function parseMut(m){const t=String(m).match(/^([A-Z])(\d+)([A-Z])$/);
 function variantDiff(){
   const pr=PRJ();
   const pool=CANDS().filter(c=>c.disposition==='measured').slice(0,40);
-  if(!pool.length)return `<p class="t-sm mut" style="margin:0">这个项目还没有实测变体，没有可比的对象。</p>`;
+  if(!pool.length)return `<p class="t-sm mut" style="margin:0">本课题还没有实测变体，没有可比的对象。</p>`;
   const cur=pool.find(c=>c.id===S.vdiff)||pool[0];
   const ms=mutsOf(cur).map(parseMut).sort((a,b)=>a.pos-b.pos);
   const L=(VW.per&&VW.per.length)?VW.per[VW.per.length-1].resi:0;
@@ -12385,19 +12381,19 @@ const ZS={bands:[['A 档','前 15%','var(--dry)',13],['B 档','中间 70%','var(
 
    没有命中判定，这个闭环就没有成功指标：研究员答不出「第四轮比第三轮好了吗」，
    而 M6-F02 的裁决整条论证都建立在命中率上。 */
-/* 野生型基准。ΔTm 是本项目对照孔实测的，KD 不是——
+/* 野生型基准。ΔTm 是本课题对照孔实测的，KD 不是——
    barnase–barstar 是已知最紧的蛋白质-蛋白质复合物之一，KD ≈ 1×10⁻¹⁴ M，
-   远在 SPR 可靠区间之下，拿本项目的 SPR 去"测"它只会得到一个假数。
+   远在 SPR 可靠区间之下，拿本课题的 SPR 去"测"它只会得到一个假数。
    所以 KD 的野生型值取文献停流动力学值，并且标明它不是我们测的。 */
 const WT={kd:WT_KD_PM, dTm:0,
   src:'B-2411 野生型对照孔实测（仅 ΔTm）',
-  kdSrc:'文献值：Schreiber & Fersht 1993 / Hartley 1993，停流动力学，非本项目实测',
+  kdSrc:'文献值：Schreiber & Fersht 1993 / Hartley 1993，停流动力学，非本课题实测',
   kdNote:'低于 SPR 可靠下限 1 pM，不作为判据基准'};
 
 /* 目标候选画像（Target Candidate Profile，概念取自 Cradle 平台页，E2）：
    一个**主目标**加若干**约束**。命中 = 主目标达成且约束全部满足。
    不做成「几项加权求和」：那等于替研究员定权重，而我们没有依据定（同 M5-F06）。
-   分主次的理由很实在：这个项目的目标是「Tm +5℃ 且 KD 不劣于野生型」，
+   分主次的理由很实在：本课题的目标是「Tm +5℃ 且 KD 不劣于野生型」，
    四轮下来 Tm 在涨而 KD 在掉。单条 AND 规则只给出一个 0%，
    分开给才看得出是哪一项卡住、是不是两个目标在互相拉扯。
 
@@ -12410,7 +12406,7 @@ const WT={kd:WT_KD_PM, dTm:0,
    两类字段分清楚：
      assay  湿实验测出来的，**不同测定产出不同字段**，按项目声明
      calc   干实验算出来的，所有项目都有（ipTM、自洽 RMSD、可开发性）
-   混在一起就会出现「这个项目为什么有 ΔTm 这一列」——因为它根本没做热稳定性测定。 */
+   混在一起就会出现「本课题为什么有 ΔTm 这一列」——因为它根本没做热稳定性测定。 */
 const FIELD={
   // —— 测定字段 ——
   dTm:   {n:'ΔTm', unit:' ℃',  better:'high',dec:1,kind:'assay',sign:true, from:['DSF','nanoDSF']},
@@ -12488,7 +12484,7 @@ function hitStats(list,pr){
 }
 const pct=v=>v==null?'—':(v*100).toFixed(1)+'%';
 
-/* C1 送检前的预期命中。做法上有两条路：训一个校准模型，或者用本项目历史实测外推。
+/* C1 送检前的预期命中。做法上有两条路：训一个校准模型，或者用本课题历史实测外推。
    我们没有校准数据，所以走后者，并且把这件事写在界面上——
    一个来历不明的「预期命中率 18%」比没有更糟。 */
 function forecast(n,pr){
@@ -12612,13 +12608,13 @@ const WET={type:'affinity', status:'in_production', results:'partial',
      在送检页把重复数改成 5，报价跟着变，孔板容量却纹丝不动。
      现在送检页的选择器直接改本轮计划，全站只读 repsNow()。 */
   enzyme:'', method:'spr', partial:{n:3,why:'拟合质量不达标'}};
-/* 跟踪面板跟的是本项目**在途的那个批次**，不是一个凭空的状态机。
+/* 跟踪面板跟的是本课题**在途的那个批次**，不是一个凭空的状态机。
    状态流水、已经走了多久、预计还要多久，全部从这个批次的 log 算。 */
 function wetBatch(){
   const L=BATCHES.filter(b=>b.pid===S.pid);
   return L.find(b=>b.status!=='done'&&b.status!=='canceled')||L[L.length-1]||null;
 }
-/* 预计还要多久：用本项目走完批次的中位周转减去已经走的时间。
+/* 预计还要多久：用本课题走完批次的中位周转减去已经走的时间。
    没有走完过批次就给不出——不编一个「预计 14 天」。 */
 function wetETA(b){
   const T=turnaround(b?b.pid:S.pid);
@@ -12626,7 +12622,7 @@ function wetETA(b){
   if(!T.n)return {med:null,why:'走完一个批次才有预计时间'};
   const age=batchAgeDays(b), left=T.med-age;
   return {med:T.med,age:age,left:left,n:T.n,min:T.min,max:T.max,
-    why:`按本项目 ${T.n} 个走完批次的中位周转 ${fmtDays(T.med)}（${fmtDays(T.min)}–${fmtDays(T.max)}）折算`};
+    why:`按本课题 ${T.n} 个走完批次的中位周转 ${fmtDays(T.med)}（${fmtDays(T.min)}–${fmtDays(T.max)}）折算`};
 }
 
 
@@ -12725,7 +12721,7 @@ function SEEK_CORPUS(){
    研究员找库时问的是「有没有突变效应的实测集」，不是「这个属于功能预测还是结构」。
    取值从每条数据源自己的 mode 字段归一。 */
 const DB_KINDS=[['seq','序列'],['struct','结构'],['pred','预测结构'],
-  ['mut','突变效应'],['bench','基准'],['ab','抗体'],['own','本项目实测']];
+  ['mut','突变效应'],['bench','基准'],['ab','抗体'],['own','本课题实测']];
 function dbKind(d){const m=d.mode||'';
   if(/抗体/.test(m))return 'ab';
   if(/变体 · 实测|实测/.test(m))return 'own';
@@ -13171,7 +13167,7 @@ function seekResult(){
     <div class="lbl">这次检索做了什么</div>
     <p class="t-sm mut" style="margin:0">方法：Smith-Waterman 局部比对，BLOSUM62，空位罚分 11 / 1。Score 为比对原始得分，一致度 = 相同残基 ÷ 比对长度。</p>
     <p class="t-sm mut2" style="margin:0">未提供 E 值：本库没有做 Karlin-Altschul 统计标定。</p>
-    <p class="t-sm mut2" style="margin:0">本项目的变体只存突变记法（如 R59K），没有整条序列，
+    <p class="t-sm mut2" style="margin:0">本课题的变体只存突变记法（如 R59K），没有整条序列，
       拼不出序列就进不了比对库——要让它们可检索，得先补上野生型全长序列。</p>
   </div></section>
 </div>`;
@@ -13205,7 +13201,7 @@ function designAssets(){
 
   if(!all.length)return `
     <section class="card"><div class="card-b col" style="gap:var(--s3)">
-      <strong class="t-md">这个项目还没有任何变体</strong>
+      <strong class="t-md">本课题还没有任何变体</strong>
       <p class="t-md mut">这里汇总整个项目跨轮的设计与实测结果。第一轮结果回流后开始有数据，测定失败的样本也会保留。</p>
       <div class="row" style="gap:var(--s2)"><button class="btn btn-pri" type="button" data-go="intake">去输入序列</button>
         <button class="btn btn-gh" type="button" data-act="addfail">录入已有的失败样本</button></div>
@@ -13249,7 +13245,7 @@ return `<div class="col" style="gap:var(--s5)">
   </section>
 
   <div class="row wrap"><div class="col grow" style="gap:6px">
-      <h2 style="font-size:1rem;letter-spacing:-.02em">本项目的变体</h2>
+      <h2 style="font-size:1rem;letter-spacing:-.02em">本课题的变体</h2>
       <p class="mut t-md">变体是项目级资产，不属于任何一轮</p></div>
     <button class="btn" type="button" data-act="addfail">录入失败样本</button></div>
 
@@ -13408,7 +13404,7 @@ function taskRow(t){const st=TASK_ST[t.st]||['—',''];
 
 /* 全部任务：Protenix Server 的形状——任务名、状态、创建时间、输入、输出。
    不进左侧导航：它是从新建对话页进去的记录，不是一条并行的功能线。 */
-/* 项目工作台：左边是这个项目的材料（知识库 / 工具 / 阶段），右边是绑在项目里的对话。
+/* 项目工作台：左边是本课题的材料（知识库 / 工具 / 阶段），右边是绑在项目里的对话。
    形状取自端砚的课题空间。进来时把主导航折起来——这一屏要的是宽度。 */
 const CAP_ROUTE={str:'models',des:'design',wet:'wet'};
 function reuseTask(id,edit){
@@ -13516,14 +13512,14 @@ function regDataset(){
       登记后其他成员可以看到，能否取用由可见范围决定。</p>
     <div class="fgrid">
       ${fRow('数据集名称',1,`<input id="rgn" class="input" maxlength="40" value="${esc(p.name)} 训练集">`)}
-      ${fRow('冻结版本',0,`<span class="t-md num">${ver}</span>`,'按本项目已登记次数与轮次生成')}
+      ${fRow('冻结版本',0,`<span class="t-md num">${ver}</span>`,'按本课题已登记次数与轮次生成')}
       ${fRow('记录数',0,`<span class="t-md num">${train.length}</span>`,
         `参与重训的变体；未测与查重排除的 ${all.length-train.length} 条不计入`)}
       ${fRow('可见范围',1,`<span class="ctl ctl-sel" style="height:2rem">
         <label class="sr" for="rgs">可见范围</label>
         <select id="rgs">
-          <option>仅本项目成员</option><option>本工作区可见</option><option>本工作区可取用</option>
-        </select><span class="car" aria-hidden="true"></span></span>`,'默认只给本项目成员；放开需要负责人确认')}
+          <option>仅本课题成员</option><option>本工作区可见</option><option>本工作区可取用</option>
+        </select><span class="car" aria-hidden="true"></span></span>`,'默认只给本课题成员；放开需要负责人确认')}
       ${fRow('用途声明',1,`<span class="ctl ctl-sel" style="height:2rem">
         <label class="sr" for="rgu">用途</label>
         <select id="rgu">
@@ -13594,7 +13590,7 @@ const DATASRC=[
  {n:'maize-AMES', ab:'MAIZE-AMES', cap:'seq', org:'上海人工智能实验室',
   s:'包含全球玉米种质资源的遗传多样性数据集，用于玉米性状遗传研究与育种改良。',
   mode:'基因', size:'2.3GB', cite:'13', lic:'Other', wired:0, api:'未接入'},
- /* 下面两条不在端砚的生命科学清单里，是本项目自己要用的实测集。
+ /* 下面两条不在端砚的生命科学清单里，是本课题自己要用的实测集。
     来源和许可都写「未核实」——没逐条核对过发布方的条款，就不假装核对过。 */
  {n:'SKEMPI 2.0', ab:'SKEMPI', cap:'func', org:'未核实', own:1,
   s:'突变对蛋白—蛋白结合自由能影响的实测集，用于训练与校验亲和力预测。',
@@ -14287,7 +14283,7 @@ function pipeRow(cap,opt){
         ${nd.opt?`<button class="btn btn-gh pipe-skip" type="button" data-nodeskip="${cap}.${nd.id}"
           >${sk?'启用':'跳过'}</button>`:''}
         ${nd.fixed
-          ? `<span class="t-sm mut2" title="不需要工具，直接从本项目的轮次与批次算">${esc(nd.fixed)}</span>`
+          ? `<span class="t-sm mut2" title="不需要工具，直接从本课题的轮次与批次算">${esc(nd.fixed)}</span>`
           : sk ? ''
           : asText.indexOf(nd.id)>=0
             ? `<span class="t-sm mut2" title="在上面的「模型」里换">${esc(cur)}</span>`
@@ -14317,12 +14313,12 @@ function jobMini(L,route){
    为什么排队、排在第几、预计多久、这次花多少。
    这里把 MSA 那套推广到每一类任务，而且每个数都从真实来源取：
      队列位置 ← 当前 queued 的任务数
-     预计时长 ← 本项目同类已完成任务的耗时中位数（没有历史就说没有，不编）
+     预计时长 ← 本课题同类已完成任务的耗时中位数（没有历史就说没有，不编）
      墨点     ← 按同类历史任务的机时折算
-   没有历史的那一类，界面明说「这是本项目第一个这类任务，给不出预计」。 */
+   没有历史的那一类，界面明说「这是本课题第一个这类任务，给不出预计」。 */
 function tookMin(t){
   const s=String(t||'');
-  if(!/\d/.test(s))return null;                       // 「即时（全部从本项目已有数据算）」这种
+  if(!/\d/.test(s))return null;                       // 「即时（全部从本课题已有数据算）」这种
   const h=+(/(\d+)\s*小时/.exec(s)||[0,0])[1];
   const m=+(/(\d+)\s*分/.exec(s)||[0,0])[1];
   const sec=+(/(\d+)\s*秒/.exec(s)||[0,0])[1];
@@ -14345,7 +14341,7 @@ function runPlan(cap){
   if(cap==='wet')return '';                   // 湿实验的周期在批次那边算，不是机时
   const H=histRun(cap), q=queueAhead(), run=runningNow();
   /* 只在真有话说的时候才占一行。
-     「排队 无排队」「本项目还没有跑完过这一类任务，给不出预计」「跑完一个就有了」——
+     「排队 无排队」「本课题还没有跑完过这一类任务，给不出预计」「跑完一个就有了」——
      这三句都是在用一整行告诉你「没有信息」，读一次就够了，不该每次都摆在那。 */
   const bits=[];
   if(q)bits.push(`排队第 <span class="num">${q+1}</span> 位`);
@@ -14356,10 +14352,10 @@ function runPlan(cap){
   }
   if(!bits.length)return '';
   const src=!H.n?''
-    :(E&&E.base)?`按本项目${H.n===1?'唯一一个':' '+H.n+' 个'}同类任务的耗时，再按候选条数折算（那一次 ${E.base} 条，这一次 ${dfN()} 条）`
-    :H.n===1?'按本项目唯一一个同类任务的耗时'
-    :`按本项目 ${H.n} 个同类任务的耗时中位数`;
-  /* 来源原先整句写在界面上（「按本项目唯一一个同类任务的耗时，再按候选条数折算
+    :(E&&E.base)?`按本课题${H.n===1?'唯一一个':' '+H.n+' 个'}同类任务的耗时，再按候选条数折算（那一次 ${E.base} 条，这一次 ${dfN()} 条）`
+    :H.n===1?'按本课题唯一一个同类任务的耗时'
+    :`按本课题 ${H.n} 个同类任务的耗时中位数`;
+  /* 来源原先整句写在界面上（「按本课题唯一一个同类任务的耗时，再按候选条数折算
      （那一次 88 条，这一次 12 条）」）——那是算法说明，不是研究员此刻要读的。
      收进 title，鼠标停上去才出现。 */
   return `<span class="runplan" ${src?`title="${esc(src)}"`:''}>
@@ -14934,7 +14930,7 @@ function dfName(){return DF.name||('design_'+(DF._n||(DF._n=rid(8))))}
 
    现在两个模式只差一件能算出来的事：这一批出多少条。条数一变，
    耗时与墨点按任务配置页同一口径线性跟着变。
-     快速预览 ← 让闸门之上期望有 3 条所需的最小生成量 = ⌈3 ÷ 本项目闸门通过率⌉
+     快速预览 ← 让闸门之上期望有 3 条所需的最小生成量 = ⌈3 ÷ 本课题闸门通过率⌉
      完整批次 ← 板位容量 = (板型 − 对照孔) ÷ 重复数
    没有闸门数据的项目不给预览条数，照实说算不出，让研究员自己填。 */
 const PREVIEW_HITS=3;      // 预览问的是「闸门之上有几条可看」，不是「生成几条」
@@ -14950,7 +14946,7 @@ function dfN(){return DF.n||dfModeN(DF.mode)||plateCap()}
 /* 设计任务的耗时与候选条数成正比，所以历史耗时要按这一次的条数折算，
    否则 12 条的快速预览与 29 条的完整批次会在同一个发射台上显示同一个预计值。
    折算的基数是历史任务自己记下来的候选数，不是估的；记不到候选数就不折算。
-   这里不另立公式：发射台上的预计一直是「本项目同类任务的耗时中位数」，
+   这里不另立公式：发射台上的预计一直是「本课题同类任务的耗时中位数」，
    再多一个 0.077 小时/条 的常数就成了同一屏上两个互相打架的估算器。 */
 function desBaseN(){
   const ns=TASKS.filter(t=>t.cap==='des'&&t.st==='done'&&t.pid===S.pid&&tookMin(t.took)!=null)
@@ -14966,7 +14962,7 @@ function desEst(){
 }
 function dfWhy(k){
   if(k==='preview'){const g=gateRate();
-    return g?`本项目 ${g.n} 条候选里 ${g.pass} 条过闸门（${Math.round(g.r*100)}%），`
+    return g?`本课题 ${g.n} 条候选里 ${g.pass} 条过闸门（${Math.round(g.r*100)}%），`
             +`要让闸门之上期望有 ${PREVIEW_HITS} 条，至少生成 ${Math.ceil(PREVIEW_HITS/g.r)} 条`
             :'没有过闸门的候选，先自己填一个条数——自己填一个';}
   return plateNote()+` → ${plateCap()} 条`;
@@ -14980,7 +14976,7 @@ function dfModeName(){
   return '自定义';
 }
 const DMODES=[
- ['preview','快速预览','先探这个靶点好不好做：按本项目的闸门通过率，只出刚够让闸门之上有几条的量'],
+ ['preview','快速预览','先探这个靶点好不好做：按本课题的闸门通过率，只出刚够让闸门之上有几条的量'],
  ['extended','完整批次','按板位容量产出：一块板装得下多少就出多少，供湿实验挑条']];
 
 function designForm(){
@@ -15931,7 +15927,7 @@ function inferSend(){
     if(c.sid==='mine'){const m=mdlFind(c.name);
       c.a[t]={t:m?('「'+(m.name||m.id)+'」是打分模型，预测目标是 '+tgtName(m.target)+'，留出集排序准确度 '
         +(typeof m.rho==='number'?m.rho.toFixed(3):'—')+'。它给候选打分，不做文本回答。'
-        +'要用它，在对话里说「用 '+m.id+' 给这个项目的候选打一遍分」。')
+        +'要用它，在对话里说「用 '+m.id+' 给本课题的候选打一遍分」。')
         :'该模型已不在「我的模型」中，请重新选择。',err:m?0:1};return null}
     if(c.sid!=='proxy'&&c.sid!=='legacy'&&!msFind(c.sid)){
       c.a[t]={t:'该模型系列已删除，请重新选择模型。',err:1};return null}
@@ -17343,7 +17339,7 @@ function render(){
   q('[data-ptool]',b=>b.onclick=()=>{const p=PRJ();p.tools=p.tools||[];
     const i=p.tools.indexOf(b.dataset.ptool);
     if(i>=0)p.tools.splice(i,1);else p.tools.push(b.dataset.ptool);
-    render();toast(i>=0?`已从本项目移除 ${b.dataset.ptool}`:`已添加到本项目 ${b.dataset.ptool}`)});
+    render();toast(i>=0?`已从本课题移除 ${b.dataset.ptool}`:`已添加到本课题 ${b.dataset.ptool}`)});
   q('#askfile',el=>el.onchange=()=>{S.askFiles=(S.askFiles||[]).concat([...el.files].map(f=>f.name));render()});
   q('[data-rmfile]',b=>b.onclick=()=>{S.askFiles.splice(+b.dataset.rmfile,1);render()});
   q('[data-rmdoc]',b=>b.onclick=()=>{(S.useDocs||[]).splice(+b.dataset.rmdoc,1);render()});
@@ -17592,7 +17588,7 @@ function render(){
       `<p class="t-md mut" style="margin:0;line-height:1.7">${
         k==='arch'?'这是项目归档件，内容是存入那一刻冻住的那一份。删掉之后，'
           +'凡是引用过它的地方（轮次报告、决策依据）都只剩现算的产出，而现算的是今天的数。'
-        :k==='kb'?'这是上传到项目知识库的文件。删掉之后，本项目的提问不再用它作依据。'
+        :k==='kb'?'这是上传到项目知识库的文件。删掉之后，本课题的提问不再用它作依据。'
         :'这是本会话的下载记录。删掉只是清掉这条记录，已经下到本地的文件不受影响。'}</p>
        <p class="hint" style="margin-top:var(--s3)">删除不可撤销。</p>`,
       '删除',()=>{
@@ -18054,7 +18050,7 @@ function act(a,el){
       st:'queued',pg:0,at:'刚刚',pid:p.id,r:S.round||p.rounds[p.rounds.length-1].i,
       in:(S.askFiles||[]).length?S.askFiles.join('、'):'对话输入',out:'—'});
     S.chat[p.id].push({role:'sys',html:`已建任务 <strong class="num">${id}</strong>`
-      +(c?`，能力：${esc(c.n)}`:'')+`。它绑在本项目，可在「全部任务」里追踪。`
+      +(c?`，能力：${esc(c.n)}`:'')+`。它绑在本课题，可在「全部任务」里追踪。`
       +((S.askFiles||[]).length?`<br>附件：${esc(S.askFiles.join('、'))}`:'')});
     S.ask='';S.capPick=null;S.askFiles=[];render();return}
   if(a==='readall'){markAllRead();render();toast('已全部标为已读');return}
@@ -18144,8 +18140,8 @@ function act(a,el){
       r==='saved'?t.n+' 已保存':r==='declined'?'已取消':'下载失败'));return}
   if(a==='dsdemo'){const txt=artVariantsCsv(S.pid,CANDS());
     if(!txt){toast('还没有候选');return}
-    dsRead(txt,'本项目变体表.csv');render();
-    toast('已填入本项目的变体表：'+(NEWDS.parsed?NEWDS.parsed.rows.length:0)+' 行');return}
+    dsRead(txt,'本课题变体表.csv');render();
+    toast('已填入本课题的变体表：'+(NEWDS.parsed?NEWDS.parsed.rows.length:0)+' 行');return}
   if(a==='dsclear'){NEWDS.fileName='';NEWDS.text='';NEWDS.parsed=null;NEWDS.err='';
     NEWDS.target='';NEWDS.feats=null;render();return}
   if(a==='dsmake'){
@@ -18815,7 +18811,7 @@ function act(a,el){
     const items=[
       ['plate','整板失败检查',ctlOk?`${OUR_CONTROLS.length} 类对照都有信号，不是整板失败`:'对照孔无信号，疑似整板失败',ctlOk],
       ['outlier','离群值',outliers.length?`${outliers.length} 条 ${FIELD[PK].n} 超出 3 倍中位绝对偏差（${outliers.slice(0,4).map(c=>c.id).join('、')}${outliers.length>4?' 等':''}）`:`没有 ${FIELD[PK].n} 超出 3 倍中位绝对偏差的测定值`,!outliers.length],
-      ['rep','重复一致性',!sdFields.length?'本项目的测定字段不带对数标准差，这一项自查不了'
+      ['rep','重复一致性',!sdFields.length?'本课题的测定字段不带对数标准差，这一项自查不了'
         :(noisy.length?`${noisy.length} 条的对数标准差大于 0.25，重复之间离散`:'全部变体的对数标准差都在 0.25 以内'),
         sdFields.length?!noisy.length:false],
       ['miss','缺失原因可归因',unattrib.length?`${unattrib.length} 条测定失败，从质量字段看不出原因，要人工确认`:'每条测定失败都能从 expression / fit_quality / rmse 归因',!unattrib.length]];
@@ -19010,7 +19006,7 @@ function act(a,el){
     /* 空单元格在下游是歧义的：pandas 读成 NaN，Excel 读成空，没人分得清
        「没测过」和「测了但没拿到值」。所以数值缺失一律写 NA，
        并把处置与推断出的缺失原因作为独立两列带上。
-       测定列按**本项目实际测的字段**出，不写死 KD / ΔTm——
+       测定列按**本课题实际测的字段**出，不写死 KD / ΔTm——
        酶活项目导出一列空的 kd_pm，下游只会被误导。 */
     const F=projFields();
     const colName=k=>({dTm:'delta_tm_c',kd:'kd_pm',ec50:'ec50_nm',kcat:'kcat_per_s',
@@ -19163,7 +19159,7 @@ function act(a,el){
         <div class="field" style="width:120px"><label class="label" for="tc_${k}">阈值</label>
           <input class="input num" id="tc_${k}" type="number" step="0.01" value="${r.v}"></div>
       </div>`}).join('')}
-      <p class="hint">可选的指标只有本项目实际测的那几个，加上计算字段。
+      <p class="hint">可选的指标只有本课题实际测的那几个，加上计算字段。
         要用一个没测过的指标，先去实验上下文里加上能测它的方法。</p>
     </div>`,'保存',()=>{
       const before=goalText(P);
@@ -19213,7 +19209,7 @@ document.querySelectorAll('#side [data-nav],#top [data-nav]').forEach(
   b=>b.onclick=()=>go(b.dataset.nav));
 /* 侧栏里的 data-go（左下角的用户名）不在 #view 里，render() 那一轮绑不到它，这里单独绑一次。 */
 document.querySelectorAll('#side [data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));
-/* 开页时给每个项目种上数据集：内容就是这个项目自己的变体表——
+/* 开页时给每个项目种上数据集：内容就是本课题自己的变体表——
    真行真列真指纹，不是造出来的数。一份发布（能拿去训），一份留草稿（演示锁定之前的状态）。 */
 (function seedDsets(){
   const was=S.pid;
@@ -19235,7 +19231,7 @@ document.querySelectorAll('#side [data-go]').forEach(b=>b.onclick=()=>go(b.datas
       const feats=q.nums.filter(c=>c!==x.col);
       if(!feats.length)return;
       const sp=makeSplit(q.rows.length,ratio,seed);
-      const d=addDset(p.id,{name:name,src:'本项目变体表',file:'variants.csv',
+      const d=addDset(p.id,{name:name,src:'本课题变体表',file:'variants.csv',
         rows:q.rows,cols:q.cols,target:x.col,feats:feats,task:'回归',
         split:sp,ratio:ratio.map(v=>+v.toFixed(2)),seed:seed,fp:q.fp});
       if(pub){d.st='pub';d.pubAt=d.at}
@@ -19290,7 +19286,7 @@ document.querySelectorAll('#side [data-go]').forEach(b=>b.onclick=()=>go(b.datas
         /* 种子和数据来源要跟着模型走。少了它们，这个模型就复现不了，
            而「每个模型都能追溯到它依据的数据集版本」是这个产品立项时写的话。 */
         seed:seed,
-        src:d?(d.id+'　'+d.name):('本项目已回流的实测值（'+r.n+' 条）'),
+        src:d?(d.id+'　'+d.name):('本课题已回流的实测值（'+r.n+' 条）'),
         kind:d?'ds':'proj',
         mu:r.mu,sg:r.sg,featK:r.featK||null,trainIds:r.trainIds||null,lib:true,
         rho:r.rho,rmse:r.rmse,sd:r.sd,
@@ -19665,7 +19661,7 @@ const WB_DATA = (function () {
   }
   function openProject(pid) {
     const p = list(DB.projects).find(x => x.id === pid);
-    if (!p) { toast('找不到这个项目'); return false; }
+    if (!p) { toast('找不到这个课题'); return false; }
     const rounds = list(p.rounds), r = rounds[rounds.length - 1];
     LS.set('collapsed', 1);
     go('project', Object.assign({ pid: p.id, collapsed: 1, projDw: null,
