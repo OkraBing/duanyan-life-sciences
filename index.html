@@ -4147,6 +4147,25 @@ body[data-route="set"] .tbl-wrap td:nth-child(4),body[data-route="set"] .tbl-wra
 .pcard-labels [data-pending-pill]:focus-visible{outline:2px solid var(--dry);outline-offset:2px}
 @media(max-width:600px){.pcard-labels [data-pending-pill]{min-height:44px;padding:0 14px 0 12px}}
 .st-list-head h1{margin-right:auto!important}
+/* 课题详情「实验」页签卡片：两行紧凑行——标题 + 状态；编号 · 指标 · 数据，时间靠右。不再是四格标签网格 */
+.pjx-card{padding:10px 12px!important;gap:4px!important;border-color:var(--line-2)!important;border-radius:10px!important;box-shadow:none!important}
+.pjx-card:hover{border-color:var(--ink-4)!important;background:var(--surface-2)}
+.pjx-card-n{font-weight:500!important}
+.pjx-card-row2{display:flex;align-items:baseline;gap:8px;padding-left:32px;min-width:0;font-size:11px;line-height:18px;color:var(--ink-3)}
+.pjx-card-m{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pjx-card-m b{font-weight:600;color:var(--ink-2)}
+.pjx-card-at{flex:none;color:var(--ink-4)}
+.pjx-exps .pjx-card+.pjx-card{margin-top:6px}
+/* 折叠侧栏底部：消息数叠在头像右上角，账户行保持一行高，「设置」位置与展开时一致 */
+#side[data-collapsed="1"] .side-foot{padding:var(--s4) var(--s2) var(--s4)!important}
+#side[data-collapsed="1"] .acct-row{position:relative;flex-direction:row!important;justify-content:center;height:28px;gap:0}
+#side[data-collapsed="1"] .acct-row .bell{position:absolute;top:-8px;right:4px;width:22px;height:22px;min-height:0;padding:0;border:0;background:none}
+#side[data-collapsed="1"] .acct-row .bell svg{display:none}
+#side[data-collapsed="1"] .acct-row .bell .nav-n{position:static}
+.pjx-card{overflow:hidden;align-items:stretch!important}
+.pjx-card-h,.pjx-card-row2{width:100%;box-sizing:border-box}
+.pjx-card-h .pjx-card-n{flex:1 1 auto!important}
+.pjx-card-h .chip{flex:none;margin-left:auto}
 
 
 /* 项目卡标题被挤成两行、断在「结合界 / 面」：标题被写死 max-width:calc(100% - 55px)，
@@ -10947,11 +10966,9 @@ function pjExpTab(p){
         <span class="pjx-card-ic is-dry">${ICON_TRAIN}</span>
         <span class="pjx-card-n">${esc(m.name||(m.target?'打分器 · '+tgtName(m.target):'训练任务'))}</span>
         <span class="chip ${st[1]}">${st[0]}</span></span>
-      <span class="pjx-card-kv">
-        <span><i>编号</i><b class="num">${esc(m.id)}</b></span>
-        <span><i>留出 ρ</i><b class="num">${failed||rho==null?'—':rho.toFixed(3)}</b></span>
-        <span><i>训练数据</i><b class="num">${dsLabel(m)}</b></span>
-        <span><i>更新</i><b class="num">${esc(m.at||'—')}</b></span>
+      <span class="pjx-card-row2">
+        <span class="pjx-card-m"><span class="num">${esc(m.id)}</span> · 留出 ρ <b class="num">${failed||rho==null?'—':rho.toFixed(3)}</b></span>
+        <time class="pjx-card-at num" title="${esc(m.at||'')}">${esc(/^\d{4}-/.test(String(m.at||''))?String(m.at).slice(5,16):(m.at||'—'))}</time>
       </span>
       ${failed&&m.why?`<span class="t-xs" style="color:var(--err)">${esc(m.why)}</span>`
         :(rho!=null&&rho<=0?'<span class="t-xs" style="color:var(--err)">排序方向相反，暂不建议用于筛选</span>':'')}
@@ -10964,10 +10981,8 @@ function pjExpTab(p){
         <span class="pjx-card-ic is-wet">${ICON_FLASK}</span>
         <span class="pjx-card-n num">${esc(b.id)}</span>
         ${batchChips(b)}</span>
-      <span class="pjx-card-kv">
-        <span><i>轮次</i><b class="num">R${b.round}</b></span>
-        <span><i>条数</i><b class="num">${b.n}</b></span>
-        <span><i>实验节点</i><b>${esc(b.vendor)}</b></span>
+      <span class="pjx-card-row2">
+        <span class="pjx-card-m"><span class="num">R${b.round}</span> · <span class="num">${b.n}</span> 条 · ${esc(b.vendor)}</span>
       </span>
     </button>`};
   return `<div class="pjx-side-b pjx-exps">
@@ -20907,13 +20922,23 @@ function wbPaperMeta(r,pid,query){
     relevance:'按课题关注关键词检索的近期研究，相关性与适用条件请以论文原文为准。',
     description:clean(r.abstract||'').slice(0,360)||[clean((r['container-title']||[])[0]),parts[0]+' 年','摘要暂缺'].filter(Boolean).join(' · '),source:'Crossref',doi,isPreprint:r.type==='posted-content'};
 }
+/* 文献请求开始/结束只影响「课题相关发现」这一块：只换这一块，不重绘整页（整页重绘会闪，还会打断正在进行的操作） */
+function wbPapersPaint(){
+  const cur=document.querySelector('#view .rh-discoveries');
+  if(!cur||typeof V.workbench!=='function'){render();return}
+  try{const t=document.createElement('template');t.innerHTML=V.workbench();const next=t.content.querySelector('.rh-discoveries');
+    if(!next){render();return}
+    if(next.innerHTML===cur.innerHTML)return;
+    cur.replaceWith(next);if(typeof wbBind==='function')wbBind(next);
+  }catch(e){render()}
+}
 async function wbLoadPapers(scope){
   if(WB.papersBusy){WB.paperPending=true;return}
   WB.paperPending=false;const requestSignature=JSON.stringify(wbSubscriptions());WB.querySignature=requestSignature;
   WB.papersBusy=true;WB.papersError='';
   const wanted=typeof scope==='string'?scope:WB.newsProject;
   const subs=wbSubscriptions().filter(x=>(wanted==='all'||x.pid===wanted)&&x.query.trim());
-  subs.forEach(s=>WB.paperStates[s.pid]='loading');if(S.route==='workbench')render();
+  subs.forEach(s=>WB.paperStates[s.pid]='loading');if(S.route==='workbench')wbPapersPaint();
   const until=wbToday(),from=(+until.slice(0,4)-2)+until.slice(4);
   const results=await Promise.allSettled(subs.map(async s=>{
     const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),15000);
@@ -20950,7 +20975,7 @@ async function wbLoadPapers(scope){
   if(failed)WB.papersError=ok.length?'部分课题暂未更新，已保留可用结果与文献精选。':'资讯暂时无法更新，已保留上次结果与已核实精选。稍后可再试。';
   if(!subs.length)WB.papersError='尚未设置关注关键词，请补充课题名称或研究对象。';
   WB.papersBusy=false;const pending=WB.paperPending;WB.paperPending=false;
-  if(S.route==='workbench')render();if(pending)return wbLoadPapers();
+  if(S.route==='workbench')wbPapersPaint();if(pending)return wbLoadPapers();
 }
 function wbAsk(pid,question){const p=DB.projects.find(x=>x.id===pid);if(!p)return;
   newChat();S.pid=p.id;S.bind=p.id;S.round=p.rounds?.slice(-1)[0]?.i||1;S.ask=question;render();

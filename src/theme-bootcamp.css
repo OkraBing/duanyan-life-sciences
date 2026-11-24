@@ -256,3 +256,22 @@ body[data-route="set"] .tbl-wrap td:nth-child(4),body[data-route="set"] .tbl-wra
 .pcard-labels [data-pending-pill]:focus-visible{outline:2px solid var(--dry);outline-offset:2px}
 @media(max-width:600px){.pcard-labels [data-pending-pill]{min-height:44px;padding:0 14px 0 12px}}
 .st-list-head h1{margin-right:auto!important}
+/* 课题详情「实验」页签卡片：两行紧凑行——标题 + 状态；编号 · 指标 · 数据，时间靠右。不再是四格标签网格 */
+.pjx-card{padding:10px 12px!important;gap:4px!important;border-color:var(--line-2)!important;border-radius:10px!important;box-shadow:none!important}
+.pjx-card:hover{border-color:var(--ink-4)!important;background:var(--surface-2)}
+.pjx-card-n{font-weight:500!important}
+.pjx-card-row2{display:flex;align-items:baseline;gap:8px;padding-left:32px;min-width:0;font-size:11px;line-height:18px;color:var(--ink-3)}
+.pjx-card-m{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pjx-card-m b{font-weight:600;color:var(--ink-2)}
+.pjx-card-at{flex:none;color:var(--ink-4)}
+.pjx-exps .pjx-card+.pjx-card{margin-top:6px}
+/* 折叠侧栏底部：消息数叠在头像右上角，账户行保持一行高，「设置」位置与展开时一致 */
+#side[data-collapsed="1"] .side-foot{padding:var(--s4) var(--s2) var(--s4)!important}
+#side[data-collapsed="1"] .acct-row{position:relative;flex-direction:row!important;justify-content:center;height:28px;gap:0}
+#side[data-collapsed="1"] .acct-row .bell{position:absolute;top:-8px;right:4px;width:22px;height:22px;min-height:0;padding:0;border:0;background:none}
+#side[data-collapsed="1"] .acct-row .bell svg{display:none}
+#side[data-collapsed="1"] .acct-row .bell .nav-n{position:static}
+.pjx-card{overflow:hidden;align-items:stretch!important}
+.pjx-card-h,.pjx-card-row2{width:100%;box-sizing:border-box}
+.pjx-card-h .pjx-card-n{flex:1 1 auto!important}
+.pjx-card-h .chip{flex:none;margin-left:auto}
