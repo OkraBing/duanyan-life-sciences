@@ -4235,8 +4235,15 @@ function newChat(){
   go('chat');paintNav(1);
 }
 function openSession(x){
+  const samePid=!x.pid||S.pid===x.pid,L0=convOf(x.id);
   S.sid=x.id;S.bind=x.pid||null;S.outOpen=false;S.ask='';S.useTools=[];S.useDocs=[];
   if(x.pid)S.pid=x.pid;
+  /* 已经在对话页、这条又只是预填一句话（示例对话没有正文）：不整页重绘，
+     只换选中态和输入框——整页重绘会让首页领域条跟着闪一下 */
+  if(S.route==='chat'&&samePid&&!L0.length&&x.q&&document.getElementById('ask')){
+    const ta=document.getElementById('ask');ta.value=x.q;S.ask=x.q;ta.focus();
+    LS.set('pid',S.pid);if(typeof paintResearchHistory==='function')paintResearchHistory();return;
+  }
   go('chat');
   // 旧示例只有问题时仅预填，继续提问由用户主动发送。
   const L=convOf(x.id);

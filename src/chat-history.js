@@ -5,12 +5,16 @@ function researchHistoryList(){
   const sessions=SESSIONS.filter(x=>!x.arch);
   const today=nowStamp().slice(0,10), yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
   const yd=[yesterday.getFullYear(),String(yesterday.getMonth()+1).padStart(2,'0'),String(yesterday.getDate()).padStart(2,'0')].join('-');
-  const group=x=>x.pin?'置顶':String(x.at||'').startsWith(today)||String(x.at||'').startsWith('今天')?'今天':String(x.at||'').startsWith(yd)||String(x.at||'').startsWith('昨天')?'昨天':'更早';
+  /* 时间戳两种来源：示例是「今天 10:12」「11-11 16:40」，新建的是「2026-11-24 11:42」。
+     统一成可比较的键再排序，显示时今天/昨天只给时分，更早给月-日 时:分。 */
+  const key=x=>{const at=String(x.at||'');if(at.startsWith('今天'))return today+' '+at.slice(2).trim();if(at.startsWith('昨天'))return yd+' '+at.slice(2).trim();if(/^\d{4}-/.test(at))return at;if(/^\d{2}-\d{2}/.test(at))return today.slice(0,5)+at;return at;};
+  const when=x=>{const k=key(x);if(k.startsWith(today))return '今天 '+k.slice(11,16);if(k.startsWith(yd))return '昨天 '+k.slice(11,16);return k.slice(5,16);};
+  const group=x=>x.pin?'置顶':key(x).startsWith(today)?'今天':key(x).startsWith(yd)?'昨天':'更早';
   host.innerHTML=['置顶','今天','昨天','更早'].map(g=>{
-    const rows=sessions.filter(x=>group(x)===g).sort((a,b)=>String(b.at||'').localeCompare(String(a.at||'')));
+    const rows=sessions.filter(x=>group(x)===g).sort((a,b)=>key(b).localeCompare(key(a)));
     return rows.length?`<h3 class="history-group">${g}</h3>`+rows.map(x=>{
       const project=DB.projects.find(p=>p.id===x.pid);
-      return `<div class="history-item${S.sid===x.id?' is-current':''}"><button type="button" class="history-open" data-history-open="${esc(x.id)}" ${S.sid===x.id?'aria-current="page"':''} title="${esc(x.title||'未命名对话')}"><span class="history-title">${esc(x.title||'未命名对话')}</span><span class="history-meta"><span class="history-meta-name">${esc(project?project.name:'未关联课题')}</span><span class="history-meta-at">${esc(x.at||'')}</span></span></button><button type="button" class="history-more" data-history-more="${esc(x.id)}" aria-label="更多：${esc(x.title||'未命名对话')}">···</button></div>`;
+      return `<div class="history-item${S.sid===x.id?' is-current':''}"><button type="button" class="history-open" data-history-open="${esc(x.id)}" ${S.sid===x.id?'aria-current="page"':''} title="${esc(x.title||'未命名对话')}"><span class="history-title">${esc(x.title||'未命名对话')}</span><span class="history-meta"><span class="history-meta-name">${esc(project?project.name:'未关联课题')}</span><span class="history-meta-at">${esc(when(x))}</span></span></button><button type="button" class="history-more" data-history-more="${esc(x.id)}" aria-label="更多：${esc(x.title||'未命名对话')}">···</button></div>`;
     }).join(''):'';
   }).join('')||`<p class="history-empty">暂无历史对话，发送问题后会自动保存在这里。</p>`;
   host.scrollTop=scroll;
