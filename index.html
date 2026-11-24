@@ -3069,6 +3069,20 @@ body[data-route=workbench] #view{padding-block:0 var(--s8);padding-inline:max(va
 .rh-activities-wrap .rh-project-toolbar,.rh-projects .rh-project-toolbar,.rh-discoveries-wrap .rh-project-toolbar{padding:0 0 14px!important;min-height:0}
 .rh-discoveries{margin-top:0!important}
 .rh-discover-heading{min-height:48px!important;padding-top:0!important}
+/* 近期研究动态：改成设计稿里的细线条带——上下各一条线、三栏之间一条竖线，不再是一张带框的卡；
+   头像缩成 24 的描边小圆，标题 14，次行是「课题　时间」两段。只动这一条，工作台其它部分不变。 */
+.rh-activities{background:none!important;border:0!important;border-top:1px solid var(--line)!important;border-bottom:1px solid var(--line)!important;border-radius:0!important;box-shadow:none!important;padding:0!important;min-height:0!important}
+.rh-activities .rh-activity-grid{gap:0!important;margin:0!important}
+.rh-activity{align-items:flex-start!important;gap:12px!important;padding:12px 16px 12px 0!important;border-right:0!important;border-radius:0!important}
+.rh-activity+.rh-activity{padding-left:16px!important;border-left:1px solid var(--line-2)!important}
+.rh-activity:hover{background:var(--surface-2)!important;border-radius:0!important}
+.rh-activity .rh-avatar{width:24px!important;height:24px!important;font-size:12px!important;font-weight:400!important;line-height:1;background:var(--surface-2)!important;border:1px solid var(--line);color:var(--ink-2)!important;margin-top:2px}
+.rh-activities .rh-activity-copy{gap:2px!important}
+.rh-activity-copy strong{font-size:14px!important;font-weight:500!important;line-height:22px}
+.rh-activity-copy small{display:flex;flex-wrap:wrap;gap:0 12px;font-size:12px!important;line-height:16px;color:var(--ink-4)!important;white-space:normal!important}
+.rh-activity-copy small span{white-space:nowrap}
+.rh-activity-copy small span:first-child{overflow:hidden;text-overflow:ellipsis;min-width:0}
+@media(max-width:1100px){.rh-activity+.rh-activity{padding-left:0!important;border-left:0!important;border-top:1px solid var(--line-2)!important}}
 
 body[data-route="materials"] #view,body[data-route="files"] #view,body[data-route="shared"] #view{padding:0;background:var(--surface)}
 .ms-shell{display:grid;grid-template-columns:240px minmax(0,1fr);min-height:calc(100vh - 48px);color:var(--ink)}
@@ -23149,7 +23163,7 @@ function researchActivities(){
  if(entries.length){const rank=a=>{const m=String(a.at||'').match(/(今天|昨天)\s*(\d{1,2}):(\d{2})/);return m?(m[1]==='今天'?1440:0)+Number(m[2])*60+Number(m[3]):0;};return entries.sort((a,b)=>rank(b)-rank(a));}
  return workbenchData().tasks.filter(t=>t.at&&t.isTask!==false).slice(0,8).map(t=>({id:t.key,title:t.name+' · '+t.statusText,by:'记录',at:t.at,pid:t.pid,project:t.projectName}));
 }
-function researchActivityHTML(a,i){return '<button class="rh-activity" type="button" data-wb-project="'+esc(a.pid)+'"><span class="rh-avatar color-'+i%3+'" title="'+esc(a.by)+'">'+esc(a.by.slice(0,1))+'</span><span class="rh-activity-copy"><strong title="'+esc(a.title)+'">'+esc(a.title)+'</strong><small>'+esc(a.project)+' · '+esc(researchTime(a.at))+'</small></span></button>';}
+function researchActivityHTML(a,i){return '<button class="rh-activity" type="button" data-wb-project="'+esc(a.pid)+'"><span class="rh-avatar color-'+i%3+'" title="'+esc(a.by)+'">'+esc(a.by.slice(0,1))+'</span><span class="rh-activity-copy"><strong title="'+esc(a.title)+'">'+esc(a.title)+'</strong><small><span>'+esc(a.project)+'</span><span>'+esc(researchTime(a.at))+'</span></small></span></button>';}
 function researchResources(projects){
  return researchPublished(projects).concat(researchCatalog(projects));
 }

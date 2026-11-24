@@ -23,7 +23,7 @@ function researchActivities(){
  if(entries.length){const rank=a=>{const m=String(a.at||'').match(/(今天|昨天)\s*(\d{1,2}):(\d{2})/);return m?(m[1]==='今天'?1440:0)+Number(m[2])*60+Number(m[3]):0;};return entries.sort((a,b)=>rank(b)-rank(a));}
  return workbenchData().tasks.filter(t=>t.at&&t.isTask!==false).slice(0,8).map(t=>({id:t.key,title:t.name+' · '+t.statusText,by:'记录',at:t.at,pid:t.pid,project:t.projectName}));
 }
-function researchActivityHTML(a,i){return '<button class="rh-activity" type="button" data-wb-project="'+esc(a.pid)+'"><span class="rh-avatar color-'+i%3+'" title="'+esc(a.by)+'">'+esc(a.by.slice(0,1))+'</span><span class="rh-activity-copy"><strong title="'+esc(a.title)+'">'+esc(a.title)+'</strong><small>'+esc(a.project)+' · '+esc(researchTime(a.at))+'</small></span></button>';}
+function researchActivityHTML(a,i){return '<button class="rh-activity" type="button" data-wb-project="'+esc(a.pid)+'"><span class="rh-avatar color-'+i%3+'" title="'+esc(a.by)+'">'+esc(a.by.slice(0,1))+'</span><span class="rh-activity-copy"><strong title="'+esc(a.title)+'">'+esc(a.title)+'</strong><small><span>'+esc(a.project)+'</span><span>'+esc(researchTime(a.at))+'</span></small></span></button>';}
 function researchResources(projects){
  return researchPublished(projects).concat(researchCatalog(projects));
 }
