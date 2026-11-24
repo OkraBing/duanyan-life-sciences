@@ -111,6 +111,8 @@ function contrast(a,b){const lum=c=>c.slice(0,3).map(v=>(v/=255)<=.04045?v/12.92
  });
 
  await check('09 搜索只筛课题，搜不到时给出可恢复的说明',async p=>{
+  // 课题不超过 6 个时不出搜索框（4 个课题一眼看完，搜索是多余控件）；超过才出
+  if(!await p.locator('[data-rh-search]').count()){const n=await p.evaluate(()=>workbenchData().projects.length);assert(n<=6,'课题 '+n+' 个却没有搜索框');return;}
   await p.locator('[data-rh-search]').fill('不可能匹配的课题名');await settle(p);
   assert.equal(await p.locator('.rh-project').count(),0);
   assert.match(await p.locator('.rh-projects .rh-empty').innerText(),/搜索词|没有匹配/);

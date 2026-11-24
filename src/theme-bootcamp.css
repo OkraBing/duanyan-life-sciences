@@ -177,3 +177,51 @@ body[data-route="set"] .tbl-wrap td:nth-child(4),body[data-route="set"] .tbl-wra
 #side[data-collapsed="1"] .nav-group{padding:0 12px 8px!important;margin:0!important}
 #side[data-collapsed="1"] .nav-group.is-sep{padding-top:12px!important;margin-top:0!important;border-top:1px solid var(--line)!important}
 #side{position:relative}
+/* 课题卡「待处理」：与工作台角标同一种描边圆点胶囊，右侧文字链接，不再是一个带框的表单行 */
+.project-update.is-mini{border:0!important;background:none!important;padding:0!important;margin:0 20px 14px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;min-height:28px;height:auto!important}
+.project-update-mini-label{display:inline-flex;align-items:center;gap:6px;border:1px solid color-mix(in srgb,var(--err) 35%,var(--line));border-radius:999px;padding:2px 9px 2px 8px;font-size:12px;line-height:18px;color:var(--err);font-weight:500;background:var(--surface)}
+.project-update-mini-label::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--err);flex:none}
+.project-update-count{background:none!important;color:inherit!important;padding:0!important;min-width:0!important;width:auto!important;height:auto!important;border-radius:0!important;font-weight:600;font-family:var(--mono)}
+.project-update.is-mini .project-update-action{border:0!important;background:none!important;color:var(--dry-ink)!important;padding:0 4px!important;min-height:28px!important;margin:0!important;font-size:12px!important;font-weight:500}
+.project-update.is-mini .project-update-action::after{content:' →'}
+.project-update.is-mini .project-update-action:hover{text-decoration:underline}
+/* 发起研究中间页 */
+.rh-start-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:4px 0 8px}
+.rh-start-opt{display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:18px;border:1px solid var(--line);border-radius:12px;background:var(--surface);text-align:left;cursor:pointer;font:inherit;color:var(--ink);min-height:132px}
+.rh-start-opt:hover{border-color:var(--ink-4);background:var(--surface-2)}
+.rh-start-opt:focus-visible{outline:2px solid var(--dry);outline-offset:2px}
+.rh-start-ic{display:grid;place-items:center;width:40px;height:40px;border-radius:10px;background:var(--dry-soft);color:var(--dry-ink)}
+.rh-start-opt strong{font-size:14px;font-weight:600}
+.rh-start-opt small{font-size:12px;line-height:1.6;color:var(--ink-3)}
+@media(max-width:600px){.rh-start-grid{grid-template-columns:1fr}}
+/* 定时任务：版式与弹窗对齐全站（标题 22/600、分组标签 12、卡片 20 内边距、控件 36 高、弹窗圆角 12） */
+.st-list-head h1{font-size:22px!important;font-weight:600!important;line-height:1.4}
+.st-list h2{font-size:12px!important;font-weight:500!important;color:var(--ink-4)!important;letter-spacing:.04em;margin:18px 0 6px!important}
+.st-new{font-size:13px!important;font-weight:500!important;margin:12px 0 4px!important;padding:8px 10px!important;border:1px solid var(--line)!important;border-radius:8px;background:var(--surface)!important;justify-content:center}
+.st-new:hover{background:var(--surface-2)!important}
+.st-item strong,.st-list .ms-nav strong{font-size:13px!important}.st-item small,.st-list .ms-nav small{font-size:11px!important}
+.st-note{font-size:11px!important;margin-top:16px!important}
+.st-home{padding-top:40px!important}
+.st-intro{margin-bottom:28px!important}.st-intro>img{width:40px!important;height:40px!important}
+.st-intro h2{font-size:22px!important;margin:10px 0 4px!important}.st-intro p{font-size:13px!important}
+.st-grid{max-width:none!important;gap:16px!important}
+.st-card{padding:18px 20px!important;min-height:0!important;gap:14px!important;border-radius:10px!important}
+.st-card strong{font-size:14px!important;font-weight:600!important}.st-card p{font-size:12px!important;margin-top:4px!important;line-height:1.6!important}
+.st-main>h2{font-size:22px!important;margin:12px 0 4px!important}.st-subtitle{font-size:13px!important;margin-bottom:16px!important}
+.st-detail dl{font-size:13px}.st-detail h3{font-size:15px!important}
+.st-dialog{border-radius:12px!important;box-shadow:var(--sh-2)}
+.st-modal-body{padding:20px 24px!important}.st-modal-head h2{font-size:16px!important;font-weight:600}.st-modal-head p{font-size:12px!important;color:var(--ink-3)}
+.st-form{gap:12px!important}.st-field{font-size:13px!important;gap:6px!important}.st-field>span,.st-field legend,.st-period legend{font-size:12px!important;font-weight:500!important;color:var(--ink-2)}
+.st-form .input{min-height:36px!important;padding:6px 10px!important;font-size:13px!important}.st-form textarea{min-height:76px!important}
+.st-period-options span{padding:6px 14px!important;font-size:13px!important}
+.st-check{font-size:13px!important}.st-preview{font-size:13px}.st-preview p{font-size:12px!important}
+.st-actions .btn{min-height:32px!important;padding:0 14px!important;font-size:13px!important;border-radius:8px!important}
+.st-dialog .st-actions{padding:12px 24px 16px!important;margin:0 -24px -20px!important}
+.st-errors{font-size:12px!important}
+/* 侧栏分组之间不画整条横线：折叠时去掉，展开时只留浅色短线 */
+#side .nav-group.is-sep{border-top-color:var(--line-2)!important;margin-inline:12px!important}
+#side[data-collapsed="1"] .nav-group.is-sep{border-top-color:transparent!important}
+.st-dialog .input,.st-dialog input.input,.st-dialog select.input,.st-dialog textarea.input{font-size:13px!important;min-height:36px!important;padding:6px 10px!important;line-height:1.5}
+.st-dialog textarea.input{min-height:76px!important}
+.st-period-options span{line-height:1.4}
+#side[data-collapsed="1"] .nav-group.is-sep{margin-inline:0!important;padding:12px 12px 8px!important}

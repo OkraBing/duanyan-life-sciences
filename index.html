@@ -3063,6 +3063,12 @@ body[data-route=workbench] #view{padding-block:0 var(--s8);padding-inline:max(va
 .rh-activities,.rh-discoveries{flex:none}
 @media(min-width:1101px) and (min-height:650px){.rh-discoveries-wrap{margin-top:0}.rh-discoveries{overflow:visible}}
 .rh-discover-heading{gap:0}
+/* 走查：三个区块同一套节奏——标题到内容 14，区块之间 32；课题区去掉渐变底与额外上留白；发现卡页签行不再空一大截 */
+.rh-projects{margin-top:32px!important;padding-top:0!important;background:none!important}
+.rh-discoveries-wrap{margin-top:32px!important}
+.rh-activities-wrap .rh-project-toolbar,.rh-projects .rh-project-toolbar,.rh-discoveries-wrap .rh-project-toolbar{padding:0 0 14px!important;min-height:0}
+.rh-discoveries{margin-top:0!important}
+.rh-discover-heading{min-height:48px!important;padding-top:0!important}
 
 body[data-route="materials"] #view,body[data-route="files"] #view,body[data-route="shared"] #view{padding:0;background:var(--surface)}
 .ms-shell{display:grid;grid-template-columns:240px minmax(0,1fr);min-height:calc(100vh - 48px);color:var(--ink)}
@@ -4062,6 +4068,54 @@ body[data-route="set"] .tbl-wrap td:nth-child(4),body[data-route="set"] .tbl-wra
 #side[data-collapsed="1"] .nav-group{padding:0 12px 8px!important;margin:0!important}
 #side[data-collapsed="1"] .nav-group.is-sep{padding-top:12px!important;margin-top:0!important;border-top:1px solid var(--line)!important}
 #side{position:relative}
+/* 课题卡「待处理」：与工作台角标同一种描边圆点胶囊，右侧文字链接，不再是一个带框的表单行 */
+.project-update.is-mini{border:0!important;background:none!important;padding:0!important;margin:0 20px 14px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;min-height:28px;height:auto!important}
+.project-update-mini-label{display:inline-flex;align-items:center;gap:6px;border:1px solid color-mix(in srgb,var(--err) 35%,var(--line));border-radius:999px;padding:2px 9px 2px 8px;font-size:12px;line-height:18px;color:var(--err);font-weight:500;background:var(--surface)}
+.project-update-mini-label::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--err);flex:none}
+.project-update-count{background:none!important;color:inherit!important;padding:0!important;min-width:0!important;width:auto!important;height:auto!important;border-radius:0!important;font-weight:600;font-family:var(--mono)}
+.project-update.is-mini .project-update-action{border:0!important;background:none!important;color:var(--dry-ink)!important;padding:0 4px!important;min-height:28px!important;margin:0!important;font-size:12px!important;font-weight:500}
+.project-update.is-mini .project-update-action::after{content:' →'}
+.project-update.is-mini .project-update-action:hover{text-decoration:underline}
+/* 发起研究中间页 */
+.rh-start-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:4px 0 8px}
+.rh-start-opt{display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:18px;border:1px solid var(--line);border-radius:12px;background:var(--surface);text-align:left;cursor:pointer;font:inherit;color:var(--ink);min-height:132px}
+.rh-start-opt:hover{border-color:var(--ink-4);background:var(--surface-2)}
+.rh-start-opt:focus-visible{outline:2px solid var(--dry);outline-offset:2px}
+.rh-start-ic{display:grid;place-items:center;width:40px;height:40px;border-radius:10px;background:var(--dry-soft);color:var(--dry-ink)}
+.rh-start-opt strong{font-size:14px;font-weight:600}
+.rh-start-opt small{font-size:12px;line-height:1.6;color:var(--ink-3)}
+@media(max-width:600px){.rh-start-grid{grid-template-columns:1fr}}
+/* 定时任务：版式与弹窗对齐全站（标题 22/600、分组标签 12、卡片 20 内边距、控件 36 高、弹窗圆角 12） */
+.st-list-head h1{font-size:22px!important;font-weight:600!important;line-height:1.4}
+.st-list h2{font-size:12px!important;font-weight:500!important;color:var(--ink-4)!important;letter-spacing:.04em;margin:18px 0 6px!important}
+.st-new{font-size:13px!important;font-weight:500!important;margin:12px 0 4px!important;padding:8px 10px!important;border:1px solid var(--line)!important;border-radius:8px;background:var(--surface)!important;justify-content:center}
+.st-new:hover{background:var(--surface-2)!important}
+.st-item strong,.st-list .ms-nav strong{font-size:13px!important}.st-item small,.st-list .ms-nav small{font-size:11px!important}
+.st-note{font-size:11px!important;margin-top:16px!important}
+.st-home{padding-top:40px!important}
+.st-intro{margin-bottom:28px!important}.st-intro>img{width:40px!important;height:40px!important}
+.st-intro h2{font-size:22px!important;margin:10px 0 4px!important}.st-intro p{font-size:13px!important}
+.st-grid{max-width:none!important;gap:16px!important}
+.st-card{padding:18px 20px!important;min-height:0!important;gap:14px!important;border-radius:10px!important}
+.st-card strong{font-size:14px!important;font-weight:600!important}.st-card p{font-size:12px!important;margin-top:4px!important;line-height:1.6!important}
+.st-main>h2{font-size:22px!important;margin:12px 0 4px!important}.st-subtitle{font-size:13px!important;margin-bottom:16px!important}
+.st-detail dl{font-size:13px}.st-detail h3{font-size:15px!important}
+.st-dialog{border-radius:12px!important;box-shadow:var(--sh-2)}
+.st-modal-body{padding:20px 24px!important}.st-modal-head h2{font-size:16px!important;font-weight:600}.st-modal-head p{font-size:12px!important;color:var(--ink-3)}
+.st-form{gap:12px!important}.st-field{font-size:13px!important;gap:6px!important}.st-field>span,.st-field legend,.st-period legend{font-size:12px!important;font-weight:500!important;color:var(--ink-2)}
+.st-form .input{min-height:36px!important;padding:6px 10px!important;font-size:13px!important}.st-form textarea{min-height:76px!important}
+.st-period-options span{padding:6px 14px!important;font-size:13px!important}
+.st-check{font-size:13px!important}.st-preview{font-size:13px}.st-preview p{font-size:12px!important}
+.st-actions .btn{min-height:32px!important;padding:0 14px!important;font-size:13px!important;border-radius:8px!important}
+.st-dialog .st-actions{padding:12px 24px 16px!important;margin:0 -24px -20px!important}
+.st-errors{font-size:12px!important}
+/* 侧栏分组之间不画整条横线：折叠时去掉，展开时只留浅色短线 */
+#side .nav-group.is-sep{border-top-color:var(--line-2)!important;margin-inline:12px!important}
+#side[data-collapsed="1"] .nav-group.is-sep{border-top-color:transparent!important}
+.st-dialog .input,.st-dialog input.input,.st-dialog select.input,.st-dialog textarea.input{font-size:13px!important;min-height:36px!important;padding:6px 10px!important;line-height:1.5}
+.st-dialog textarea.input{min-height:76px!important}
+.st-period-options span{line-height:1.4}
+#side[data-collapsed="1"] .nav-group.is-sep{margin-inline:0!important;padding:12px 12px 8px!important}
 
 
 /* 项目卡标题被挤成两行、断在「结合界 / 面」：标题被写死 max-width:calc(100% - 55px)，
@@ -6874,9 +6928,9 @@ function dsBody(){
 `
     :(F!=='all'&&ALL.length
       ?`<div class="empty" style="padding:var(--s6)"><div class="col" style="gap:4px">
-         <strong class="t-md" style="color:var(--ink)">本课题下还没有数据集</strong>
-         <span class="t-sm">别的项目一共有 ${ALL.length} 个。</span></div>
-         <button class="btn" type="button" data-dsproj="all">看全部</button></div>`
+         <strong class="t-md" style="color:var(--ink)">「${esc((DB.projects.find(p=>p.id===F)||{}).name||'本课题')}」还没有数据集</strong>
+         <span class="t-sm">上传实测数据新建一个；其他课题已有 ${ALL.length} 个数据集。</span></div>
+         <div class="row" style="gap:8px"><button class="btn btn-pri" type="button" data-act="dsnew">新建数据集</button><button class="btn" type="button" data-dsproj="all">查看全部课题</button></div></div>`
       :`<div class="empty" style="padding:var(--s6)"><div class="col" style="gap:4px">
          <strong class="t-md" style="color:var(--ink)">还没有数据集</strong>
          <span class="t-sm">上传外部数据并发布后，可在模型训练中引用该数据集版本。</span></div>
@@ -7115,9 +7169,9 @@ function mdlBar(tab){
 function mdlEmpty(what,zero,note,n){
   const F=S.mdlProj||'all';
   if(F!=='all'&&n)return `<div class="empty" style="padding:var(--s6)"><div class="col" style="gap:4px">
-    <strong class="t-md" style="color:var(--ink)">本课题下还没有${esc(what)}</strong>
-    <span class="t-sm">别的项目一共有 ${n} 个。</span></div>
-    <button class="btn" type="button" data-mdlproj="all">看全部</button></div>`;
+    <strong class="t-md" style="color:var(--ink)">「${esc((DB.projects.find(p=>p.id===F)||{}).name||'本课题')}」还没有${esc(what)}</strong>
+    <span class="t-sm">其他课题已有 ${n} 个。</span></div>
+    <button class="btn" type="button" data-mdlproj="all">查看全部课题</button></div>`;
   return `<div class="empty" style="padding:var(--s6)"><div class="col" style="gap:4px">
     <strong class="t-md" style="color:var(--ink)">${esc(zero)}</strong>
     <span class="t-sm">${esc(note)}</span></div>
@@ -22956,7 +23010,7 @@ function researchActivities(){
  if(entries.length){const rank=a=>{const m=String(a.at||'').match(/(今天|昨天)\s*(\d{1,2}):(\d{2})/);return m?(m[1]==='今天'?1440:0)+Number(m[2])*60+Number(m[3]):0;};return entries.sort((a,b)=>rank(b)-rank(a));}
  return workbenchData().tasks.filter(t=>t.at&&t.isTask!==false).slice(0,8).map(t=>({id:t.key,title:t.name+' · '+t.statusText,by:'记录',at:t.at,pid:t.pid,project:t.projectName}));
 }
-function researchActivityHTML(a,i){return '<button class="rh-activity" type="button" data-wb-project="'+esc(a.pid)+'"><span class="rh-avatar color-'+i%3+'">'+esc(a.by.slice(0,1))+'</span><span class="rh-activity-copy"><strong title="'+esc(a.by)+' · '+esc(a.title)+'">'+esc(a.by)+' · '+esc(a.title)+'</strong><small>'+esc(a.project)+' · '+esc(researchTime(a.at))+'</small></span></button>';}
+function researchActivityHTML(a,i){return '<button class="rh-activity" type="button" data-wb-project="'+esc(a.pid)+'"><span class="rh-avatar color-'+i%3+'" title="'+esc(a.by)+'">'+esc(a.by.slice(0,1))+'</span><span class="rh-activity-copy"><strong title="'+esc(a.title)+'">'+esc(a.title)+'</strong><small>'+esc(a.project)+' · '+esc(researchTime(a.at))+'</small></span></button>';}
 function researchResources(projects){
  return (RS.data.resources||[]).filter(r=>r.state==='published'&&r.visibility==='public').map(r=>{
   const terms=[r.name,r.description,...(r.tags||[])].join(' ').toLowerCase();
@@ -22978,19 +23032,31 @@ V.workbench=()=>{
  const start=Math.min(RESEARCH_HOME.start,Math.max(0,Math.ceil(ps.length/3)-1)*3);RESEARCH_HOME.start=start;
  const items=ps.slice(start,start+3),activities=researchActivities(),rows=researchDiscoveries(all);
  const date=new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'short',timeZone:'Asia/Shanghai'}),resources=researchResources(all);
- return '<div class="page wb wb-workstation"><header class="rh-header"><div><h1>工作台</h1><p>聚焦课题进展，推进下一步研究</p></div><div class="rh-header-actions"><time>'+esc(date)+'</time><button class="rh-new" data-wb-create-project type="button">＋ 发起研究</button></div></header><section class="rh-activities-wrap" aria-labelledby="rh-activity-title"><div class="rh-project-toolbar"><h2 id="rh-activity-title">'+rhIcon('calendar')+'近期研究动态</h2><button class="rh-link" data-rh-activities type="button">查看全部 '+rhIcon('right')+'</button></div><div class="rh-activities"><div class="rh-activity-grid">'+activities.slice(0,3).map(researchActivityHTML).join('')+(!activities.length?'<p class="rh-empty">暂无研究动态，进入课题开始记录研究。</p>':'')+'</div></div></section><section class="rh-projects" aria-labelledby="rh-projects-title"><div class="rh-project-toolbar"><h2 id="rh-projects-title">'+rhIcon('layers')+'我的课题 <span>('+all.length+')</span></h2>'+(ps.length>3?'<button class="rh-link rh-shuffle" type="button" data-rh-project-shuffle aria-label="换一批课题">换一批</button>':'')+'<label class="rh-search">'+rhIcon('search')+'<input type="search" aria-label="搜索课题名称或关键词" placeholder="搜索课题名称或关键词" value="'+esc(RESEARCH_HOME.query)+'" data-rh-search></label><button class="rh-link" data-rh-projects type="button">查看全部 '+rhIcon('right')+'</button></div><div class="rh-project-grid">'+items.map(researchCard).join('')+(!items.length?'<div class="rh-empty"><p>'+(all.length?'没有匹配课题，请调整搜索词。':'还没有课题，创建第一个研究课题。')+'</p><button class="rh-new" data-wb-create-project type="button">新建课题</button></div>':'')+'</div>'+'</section><section class="rh-discoveries-wrap" aria-labelledby="rh-discover-title"><div class="rh-project-toolbar"><h2 id="rh-discover-title">'+rhIcon('book')+'课题相关发现</h2></div><div class="rh-discoveries"><div class="rh-discover-heading"><div class="rh-tabs" role="tablist" aria-label="相关发现类型">'+[['papers','文献'],['news','学术资讯'],['resources','平台资源更新']].map(([k,n])=>'<button id="rh-tab-'+k+'" role="tab" aria-selected="'+(RESEARCH_HOME.tab===k)+'" aria-controls="rh-feed" tabindex="'+(RESEARCH_HOME.tab===k?'0':'-1')+'" data-rh-tab="'+k+'" type="button">'+n+(k==='resources'?'<span>'+resources.length+'</span>':'')+'</button>').join('')+'</div></div><div id="rh-feed" role="tabpanel" aria-labelledby="rh-tab-'+RESEARCH_HOME.tab+'">'+rows.slice(0,2).join('')+(!rows.length?'<p class="rh-empty">'+(RESEARCH_HOME.tab==='news'?'暂无学术资讯，相关研究论文可在“文献”中查看。':RESEARCH_HOME.tab==='resources'?'暂无与课题匹配的已发布平台资源更新。':'暂无匹配文献。')+'</p>':'')+'</div></div>'+'</section></div>';
+ return '<div class="page wb wb-workstation"><header class="rh-header"><div><h1>工作台</h1><p>聚焦课题进展，推进下一步研究</p></div><div class="rh-header-actions"><button class="rh-new" data-wb-start type="button">＋ 发起研究</button></div></header><section class="rh-activities-wrap" aria-labelledby="rh-activity-title"><div class="rh-project-toolbar"><h2 id="rh-activity-title">'+rhIcon('calendar')+'近期研究动态</h2><button class="rh-link" data-rh-activities type="button">查看全部 '+rhIcon('right')+'</button></div><div class="rh-activities"><div class="rh-activity-grid">'+activities.slice(0,3).map(researchActivityHTML).join('')+(!activities.length?'<p class="rh-empty">暂无研究动态，进入课题开始记录研究。</p>':'')+'</div></div></section><section class="rh-projects" aria-labelledby="rh-projects-title"><div class="rh-project-toolbar"><h2 id="rh-projects-title">'+rhIcon('layers')+'我的课题 <span>('+all.length+')</span></h2>'+(ps.length>3?'<button class="rh-link rh-shuffle" type="button" data-rh-project-shuffle aria-label="换一批课题">换一批</button>':'')+''+(all.length>6||RESEARCH_HOME.query?'<label class="rh-search">'+rhIcon('search')+'<input type="search" aria-label="搜索课题名称或关键词" placeholder="搜索课题名称或关键词" value="'+esc(RESEARCH_HOME.query)+'" data-rh-search></label>':'')+'<button class="rh-link" data-rh-projects type="button">查看全部 '+rhIcon('right')+'</button></div><div class="rh-project-grid">'+items.map(researchCard).join('')+(!items.length?'<div class="rh-empty"><p>'+(all.length?'没有匹配课题，请调整搜索词。':'还没有课题，创建第一个研究课题。')+'</p><button class="rh-new" data-wb-create-project type="button">新建课题</button></div>':'')+'</div>'+'</section><section class="rh-discoveries-wrap" aria-labelledby="rh-discover-title"><div class="rh-project-toolbar"><h2 id="rh-discover-title">'+rhIcon('book')+'课题相关发现</h2></div><div class="rh-discoveries"><div class="rh-discover-heading"><div class="rh-tabs" role="tablist" aria-label="相关发现类型">'+[['papers','文献'],['news','学术资讯'],['resources','平台资源更新']].map(([k,n])=>'<button id="rh-tab-'+k+'" role="tab" aria-selected="'+(RESEARCH_HOME.tab===k)+'" aria-controls="rh-feed" tabindex="'+(RESEARCH_HOME.tab===k?'0':'-1')+'" data-rh-tab="'+k+'" type="button">'+n+(k==='resources'?'<span>'+resources.length+'</span>':'')+'</button>').join('')+'</div></div><div id="rh-feed" role="tabpanel" aria-labelledby="rh-tab-'+RESEARCH_HOME.tab+'">'+rows.slice(0,2).join('')+(!rows.length?'<p class="rh-empty">'+(RESEARCH_HOME.tab==='news'?'暂无学术资讯，相关研究论文可在“文献”中查看。':RESEARCH_HOME.tab==='resources'?'暂无与课题匹配的已发布平台资源更新。':'暂无匹配文献。')+'</p>':'')+'</div></div>'+'</section></div>';
 };
 const researchOriginalBind=wbBind;
 wbBind=function(root){
  researchOriginalBind(root);if(S.route!=='workbench')return;wbLayoutObserver?.disconnect();
- const allActivities=()=>{const entries=researchActivities();modal('近期研究动态',entries.length?'<div class="rh-activity-history">'+entries.map((a,i)=>'<p><strong>'+esc(a.by)+' · '+esc(a.title)+'</strong><br>'+esc(a.project)+' · '+esc(researchTime(a.at))+'</p>').join('')+'</div>':'暂无研究记录。','关闭',()=>true);};
+ const allActivities=()=>{const entries=researchActivities();modal('近期研究动态',entries.length?'<div class="rh-activity-history">'+entries.map((a,i)=>'<p><strong>'+esc(a.title)+'</strong><br>'+esc(a.project)+' · '+esc(researchTime(a.at))+'</p>').join('')+'</div>':'暂无研究记录。','关闭',()=>true);};
  root.querySelectorAll('[data-rh-activities],[data-rh-notifications]').forEach(b=>b.onclick=allActivities);
  root.querySelector('[data-rh-projects]')?.addEventListener('click',()=>go('projects'));
+ root.querySelectorAll('[data-wb-start]').forEach(b=>b.onclick=()=>rhStartDialog());
  const search=root.querySelector('[data-rh-search]');search?.addEventListener('input',()=>{const pos=search.selectionStart;RESEARCH_HOME.query=search.value;RESEARCH_HOME.start=0;render();const next=view.querySelector('[data-rh-search]');next.focus();try{next.setSelectionRange(pos,pos)}catch(e){}});
  root.querySelectorAll('[data-rh-tab]').forEach(b=>{b.onclick=()=>{RESEARCH_HOME.tab=b.dataset.rhTab;RESEARCH_HOME.feedPage=0;render();view.querySelector('[data-rh-tab="'+RESEARCH_HOME.tab+'"]')?.focus();};b.onkeydown=e=>{const keys=['papers','news','resources'];let i=keys.indexOf(RESEARCH_HOME.tab);if(e.key==='ArrowRight')i=(i+1)%3;else if(e.key==='ArrowLeft')i=(i+2)%3;else if(e.key==='Home')i=0;else if(e.key==='End')i=2;else return;e.preventDefault();RESEARCH_HOME.tab=keys[i];RESEARCH_HOME.feedPage=0;render();view.querySelector('[data-rh-tab="'+keys[i]+'"]')?.focus();};});
  root.querySelector('[data-rh-project-shuffle]')?.addEventListener('click',()=>{const total=workbenchData().projects.length;RESEARCH_HOME.start=(RESEARCH_HOME.start+3>=total)?0:RESEARCH_HOME.start+3;render();});
  root.querySelectorAll('[data-rh-resource]').forEach(b=>b.onclick=()=>{if(b.dataset.rhRoute==='resdetail'){RS.resourcePick=b.dataset.rhResource;RS.resourceVersion=null;go('resdetail');}else if(b.dataset.rhRoute==='mdl')go('mdl',{pid:b.dataset.rhPid,mdlProj:b.dataset.rhPid,mtab:'cur'});else go('dsets',{pid:b.dataset.rhPid,dsProj:b.dataset.rhPid});});
 };
+
+/* 「发起研究」中间页：两条路——自由探索去对话，新建课题去建课题 */
+function rhStartDialog(){
+ const ic={chat:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5v9a1.5 1.5 0 0 1-1.5 1.5H9l-4.5 4v-4H5.5A1.5 1.5 0 0 1 4 14.5z"/><path d="M12 7.5v5M9.5 10h5"/></svg>',
+  project:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 7.5A1.5 1.5 0 0 1 5 6h4l2 2h8a1.5 1.5 0 0 1 1.5 1.5v8A1.5 1.5 0 0 1 19 19H5a1.5 1.5 0 0 1-1.5-1.5z"/></svg>'};
+ modal('发起研究','<div class="rh-start-grid"><button type="button" class="rh-start-opt" data-rh-start="chat"><span class="rh-start-ic">'+ic.chat+'</span><strong>自由探索</strong><small>直接提问，先不建课题；对话随时可以关联课题</small></button><button type="button" class="rh-start-opt" data-rh-start="project"><span class="rh-start-ic">'+ic.project+'</span><strong>新建课题</strong><small>定下研究目标，资料、任务、对话都归在课题下</small></button></div>','关闭',()=>true);
+ const d=document.getElementById('dlg');const cancel=d.querySelector('button[value="cancel"]');if(cancel)cancel.hidden=true;
+ d.querySelectorAll('[data-rh-start]').forEach(b=>b.onclick=()=>{const k=b.dataset.rhStart;d.close();
+  if(k==='chat'){go('chat');setTimeout(()=>document.getElementById('ask')?.focus(),60);}
+  else{go('projects');const nb=document.querySelector('[data-act="newproj"]');act('newproj',nb);}});
+}
 
 /* 课题名称、成员与归档状态从现有课题派生；文件字节保存在本机 IndexedDB。 */
 const MATERIALS={tab:'all',space:'',type:'all',query:'',grid:LS.get('materials_grid',false),sort:'new',records:[],ready:false,error:'',busy:false};
@@ -23234,7 +23300,7 @@ function navigationProjectProgress(p,shared){
   }else return '';
   if(task)at=task.at||'';
  }
- if(kind==='confirm')return '<div class="navigation-progress project-update is-confirm is-mini"><span class="project-update-mini-label">待处理<b class="project-update-count">'+pendingCount+'</b></span><button class="project-update-action" type="button" data-project-progress-pending="'+esc(p.id)+'">处理</button></div>';
+ if(kind==='confirm')return '<div class="navigation-progress project-update is-confirm is-mini"><span class="project-update-mini-label"><b class="project-update-count">'+pendingCount+'</b> 项待处理</span><button class="project-update-action" type="button" data-project-progress-pending="'+esc(p.id)+'">处理</button></div>';
  const attrs=kind==='confirm'?'data-project-progress-pending="'+esc(p.id)+'"':task?'data-project-progress-task="'+esc(task.key)+'"':p?'data-project-progress-pid="'+esc(p.id)+'"':'data-project-progress-shared="'+esc(shared.id)+'"';
  return '<div class="navigation-progress project-update is-'+kind+'"><div class="project-update-head"><span>'+label+'</span>'+(at?'<time>'+esc(at)+'</time>':'')+'</div><strong>'+esc(title)+'</strong><p>'+esc(detail)+'</p>'+(percent!==null?'<div class="project-task-progress"><span>当前任务进度 '+percent+'%</span><progress value="'+percent+'" max="100" aria-label="当前任务进度 '+percent+'%"></progress></div>':'')+'<button class="project-update-action" type="button" '+attrs+'>'+action+' →</button></div>';
 }

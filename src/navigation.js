@@ -42,7 +42,7 @@ function navigationProjectProgress(p,shared){
   }else return '';
   if(task)at=task.at||'';
  }
- if(kind==='confirm')return '<div class="navigation-progress project-update is-confirm is-mini"><span class="project-update-mini-label">待处理<b class="project-update-count">'+pendingCount+'</b></span><button class="project-update-action" type="button" data-project-progress-pending="'+esc(p.id)+'">处理</button></div>';
+ if(kind==='confirm')return '<div class="navigation-progress project-update is-confirm is-mini"><span class="project-update-mini-label"><b class="project-update-count">'+pendingCount+'</b> 项待处理</span><button class="project-update-action" type="button" data-project-progress-pending="'+esc(p.id)+'">处理</button></div>';
  const attrs=kind==='confirm'?'data-project-progress-pending="'+esc(p.id)+'"':task?'data-project-progress-task="'+esc(task.key)+'"':p?'data-project-progress-pid="'+esc(p.id)+'"':'data-project-progress-shared="'+esc(shared.id)+'"';
  return '<div class="navigation-progress project-update is-'+kind+'"><div class="project-update-head"><span>'+label+'</span>'+(at?'<time>'+esc(at)+'</time>':'')+'</div><strong>'+esc(title)+'</strong><p>'+esc(detail)+'</p>'+(percent!==null?'<div class="project-task-progress"><span>当前任务进度 '+percent+'%</span><progress value="'+percent+'" max="100" aria-label="当前任务进度 '+percent+'%"></progress></div>':'')+'<button class="project-update-action" type="button" '+attrs+'>'+action+' →</button></div>';
 }

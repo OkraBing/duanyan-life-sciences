@@ -80,3 +80,9 @@ body[data-route=workbench] #view{padding-block:0 var(--s8);padding-inline:max(va
 .rh-activities,.rh-discoveries{flex:none}
 @media(min-width:1101px) and (min-height:650px){.rh-discoveries-wrap{margin-top:0}.rh-discoveries{overflow:visible}}
 .rh-discover-heading{gap:0}
+/* 走查：三个区块同一套节奏——标题到内容 14，区块之间 32；课题区去掉渐变底与额外上留白；发现卡页签行不再空一大截 */
+.rh-projects{margin-top:32px!important;padding-top:0!important;background:none!important}
+.rh-discoveries-wrap{margin-top:32px!important}
+.rh-activities-wrap .rh-project-toolbar,.rh-projects .rh-project-toolbar,.rh-discoveries-wrap .rh-project-toolbar{padding:0 0 14px!important;min-height:0}
+.rh-discoveries{margin-top:0!important}
+.rh-discover-heading{min-height:48px!important;padding-top:0!important}

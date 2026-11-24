@@ -5839,9 +5839,9 @@ function dsBody(){
 `
     :(F!=='all'&&ALL.length
       ?`<div class="empty" style="padding:var(--s6)"><div class="col" style="gap:4px">
-         <strong class="t-md" style="color:var(--ink)">本课题下还没有数据集</strong>
-         <span class="t-sm">别的项目一共有 ${ALL.length} 个。</span></div>
-         <button class="btn" type="button" data-dsproj="all">看全部</button></div>`
+         <strong class="t-md" style="color:var(--ink)">「${esc((DB.projects.find(p=>p.id===F)||{}).name||'本课题')}」还没有数据集</strong>
+         <span class="t-sm">上传实测数据新建一个；其他课题已有 ${ALL.length} 个数据集。</span></div>
+         <div class="row" style="gap:8px"><button class="btn btn-pri" type="button" data-act="dsnew">新建数据集</button><button class="btn" type="button" data-dsproj="all">查看全部课题</button></div></div>`
       :`<div class="empty" style="padding:var(--s6)"><div class="col" style="gap:4px">
          <strong class="t-md" style="color:var(--ink)">还没有数据集</strong>
          <span class="t-sm">上传外部数据并发布后，可在模型训练中引用该数据集版本。</span></div>
@@ -6080,9 +6080,9 @@ function mdlBar(tab){
 function mdlEmpty(what,zero,note,n){
   const F=S.mdlProj||'all';
   if(F!=='all'&&n)return `<div class="empty" style="padding:var(--s6)"><div class="col" style="gap:4px">
-    <strong class="t-md" style="color:var(--ink)">本课题下还没有${esc(what)}</strong>
-    <span class="t-sm">别的项目一共有 ${n} 个。</span></div>
-    <button class="btn" type="button" data-mdlproj="all">看全部</button></div>`;
+    <strong class="t-md" style="color:var(--ink)">「${esc((DB.projects.find(p=>p.id===F)||{}).name||'本课题')}」还没有${esc(what)}</strong>
+    <span class="t-sm">其他课题已有 ${n} 个。</span></div>
+    <button class="btn" type="button" data-mdlproj="all">查看全部课题</button></div>`;
   return `<div class="empty" style="padding:var(--s6)"><div class="col" style="gap:4px">
     <strong class="t-md" style="color:var(--ink)">${esc(zero)}</strong>
     <span class="t-sm">${esc(note)}</span></div>
