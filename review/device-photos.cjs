@@ -16,7 +16,7 @@ const checks=[],errors=[],requests=[];let browser;
  for(const entry of source){
   const card=page.locator('[data-lv-device="'+entry.id+'"]'),img=card.locator('img');await card.scrollIntoViewIfNeeded();await img.evaluate(e=>e.decode());
   const data=await img.evaluate(e=>({width:e.naturalWidth,height:e.naturalHeight,fit:getComputedStyle(e).objectFit,filter:getComputedStyle(e).filter,src:e.getAttribute('src')}));
-  assert(data.width>100&&data.height>100,entry.id+' decode');assert.equal(data.fit,'contain');assert.equal(data.filter,'none');assert.equal(data.src,'assets/device-photos/'+entry.file);assert.equal(await img.getAttribute('alt'),entry.alt);
+  assert(data.width>100&&data.height>100,entry.id+' decode');assert.equal(data.fit,'contain');assert.equal(data.filter,'none');assert(data.src==='assets/device-photos/'+entry.file||data.src==='assets/device-photos/thumb/'+entry.file,entry.id+' src '+data.src);/* 列表用 360px 缩略图（有更小的缩略图时），否则原图 */assert.equal(await img.getAttribute('alt'),entry.alt);
   await card.focus();await page.keyboard.press('Enter');await page.locator('.device-detail .device-photo').evaluate(e=>e.decode());assert.equal(await page.locator('.device-detail .device-photo').getAttribute('src'),data.src);await page.locator('[data-go="devices"]').click();
  }
  checks.push('12 个设备的列表与详情产品图均成功解码、型号映射一致、使用完整比例显示');

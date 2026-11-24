@@ -296,3 +296,35 @@ body[data-route="chat"]:has(.chat-history.is-collapsed) #view>.page:not(.is-land
 }
 body[data-route="chat"]:has(.chat-history:not([hidden])) .research-home .research-top>strong{display:none!important}
 body[data-route="chat"]:has(.chat-history:not([hidden])) .research-home .research-top{min-height:0;height:0;margin:0;padding:0;overflow:hidden}
+/* 发现区行：hover 只换底色（圆角、左右留边），标题和次行都不加下划线；行间不画线 */
+.rh-discovery-row,.rh-discovery-row:hover,.rh-discovery-row:hover *{text-decoration:none!important}
+#rh-feed{display:flex;flex-direction:column;gap:2px;padding:6px 0 8px}
+.rh-discovery-row{border-bottom:0!important;border-radius:8px!important;padding:10px 12px!important;margin:0 -12px;width:calc(100% + 24px)!important;box-sizing:border-box}
+.rh-discovery-row:hover{background:var(--surface-2)!important}
+.rh-discovery-row:focus-visible{outline:2px solid var(--dry);outline-offset:-2px}
+.rh-shuffle{display:inline-flex!important;align-items:center;gap:5px}
+.rh-shuffle:hover{text-decoration:none!important;color:var(--ink)}
+/* 对话首页领域条：hover/选中是贴合条形的胶囊，不是被容器裁掉一角的方块 */
+.research-domain{border-radius:999px!important;margin:0 3px;border-right:0!important;position:relative}
+.research-domain+.research-domain::before{content:'';position:absolute;left:-4px;top:22%;bottom:22%;width:1px;background:var(--line)}
+.research-domain:hover{background:var(--surface-2)!important}
+.research-domain:hover::before,.research-domain:hover+.research-domain::before,.research-domain[aria-pressed="true"]::before,.research-domain[aria-pressed="true"]+.research-domain::before{background:transparent}
+.research-domain[aria-pressed="true"]{border-radius:999px!important}
+/* 待处理弹窗：行式列表 */
+.pending-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px;max-height:60vh;overflow:auto}
+.pending-row{display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;border:0;border-radius:8px;background:none;text-align:left;font:inherit;color:var(--ink);cursor:pointer}
+.pending-row:hover{background:var(--surface-2)}
+.pending-row:focus-visible{outline:2px solid var(--dry);outline-offset:-2px}
+.pending-main{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}
+.pending-main strong{font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pending-main small{font-size:12px;line-height:1.6;color:var(--ink-3);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.pending-row .chip{flex:none}.pending-row svg{flex:none;color:var(--ink-4)}
+#dlg:has(.pending-list) .card-b{padding:8px 12px}
+/* 资料空间列表：去掉「更新者」列；操作一行排开——收藏 / 共享 / 复制 / 删除 */
+@media(min-width:601px){.ms-file,.ms-table-head{grid-template-columns:minmax(180px,2.3fr) minmax(100px,1.2fr) 112px 188px!important}}
+.ms-row-actions{display:flex!important;flex-direction:row!important;flex-wrap:nowrap;align-items:center;gap:2px;justify-content:flex-start}
+.ms-row-actions button{border:0;background:none;font:inherit;font-size:12px!important;color:var(--ink-3);padding:0 6px!important;min-height:28px;min-width:0!important;border-radius:6px;cursor:pointer;white-space:nowrap}
+.ms-row-actions button:hover{background:var(--surface-2);color:var(--ink)}
+.ms-row-actions button[aria-pressed="true"]{color:var(--dry-ink)}
+.ms-row-actions button.is-danger:hover{color:var(--err);background:var(--err-soft,var(--surface-2))}
+@media(max-width:600px){.ms-row-actions{flex-wrap:wrap}.ms-row-actions button{min-height:44px;padding:0 10px!important}}

@@ -142,7 +142,7 @@ function alFlowPreview(f,readonly,legacy){
   <button class="btn" type="button" data-al-view="execution">${legacy?'查看历史执行编排':'展开完整编排'} →</button>
  </aside>`;
 }
-function alImage(id){const p=DEVICE_PHOTOS[id];return p?'<img src="'+esc(p.src)+'" alt="'+esc(p.alt)+'">':'<span class="al-capability">'+(id?'待匹配能力':'流程节点')+'</span>';}
+function alImage(id){const p=DEVICE_PHOTOS[id];return p?devicePhotoImg(id,'',64,64):'<span class="al-capability">'+(id?'待匹配能力':'流程节点')+'</span>';}
 function alGraph(f,readonly=false){
  const steps=alPlan(f),positions={},construct=f.origin==='construct',branchesY=construct?534:330;
  if(construct){['receive','expression','harvest','lysis','clarify','purify'].forEach((k,i)=>positions[k]=[18+i*175,48]);['buffer','qc','gate','aliquot'].forEach((k,i)=>positions[k]=[893-i*225,288]);}
@@ -209,9 +209,10 @@ function alNavigatePlanStep(index){
  if(!Number.isInteger(index)||index<0||index>=AL_PLAN_STEPS.length)return;
  ALUI.tab='protocol';
  ALUI.planStep=index;
- render();
- const progress=view.querySelector('.al-plan-progress');
- progress?.scrollIntoView({block:'start'});
+ const keepY=view.scrollTop;render();
+  /* 切环节不挪视线：步骤条还在屏内就保持原滚动位置；被滚出去了才把它带回来，并在上方留 16px */
+  const progress=view.querySelector('.al-plan-progress');view.scrollTop=keepY;
+  if(progress){const top=progress.getBoundingClientRect().top-view.getBoundingClientRect().top;if(top<0||top>view.clientHeight-120)view.scrollTop+=top-16;}
  progress?.querySelector('[aria-current=step]')?.focus({preventScroll:true});
 }
 function alComposerContent(f,readonly=false,legacyExecution=''){

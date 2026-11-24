@@ -143,7 +143,7 @@ function iterationConnectionTag(id){
 }
 function iterationEquipmentArt(d){
  const photo=DEVICE_PHOTOS[d.id];
- if(photo)return '<img class="device-photo" src="'+esc(photo.src)+'" alt="'+esc(photo.alt)+'" loading="lazy" decoding="async" width="160" height="150">';
+ if(photo)return devicePhotoImg(d.id,'device-photo',160,150);
  const tube='<path d="M33 15h22v8l-3 3v32c0 15-16 15-16 0V26l-3-3zM36 41h16"/>';
  const chassis='<path d="M14 20h59v62H14zM14 39h59M20 26h12M58 27h9M20 72h47M22 82v5M65 82v5"/><path d="M24 45h39v22H24z"/>';
  const shaker='<path d="M12 24h64v58H12zM17 30h54v34H17zM18 72h17M61 72h8M24 51l6-16 6 16zM44 51l6-16 6 16zM18 82v4M68 82v4"/>';

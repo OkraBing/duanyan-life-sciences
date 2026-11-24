@@ -210,7 +210,10 @@ wbBind=function(root){
  const base=(workbenchData({pid}).tasks||[]).filter(t=>t.pid===pid&&t.isTask!==false&&t.status!=='canceled');
  const tasks=(typeof wbAttentionTasks==='function'?wbAttentionTasks(base):base).filter(t=>t.needsAction||t.status==='failed');
  if(tasks.length===1){workbenchOpenTask(tasks[0].key);return;}/* 只有一项就直接进去，不用多点一层 */
- modal('待处理 · '+tasks.length+' 项','<div class="rs-dialog-scroll">'+tasks.map(t=>'<div class="rs-request"><strong>'+esc(t.name||t.id)+'</strong><p class="rs-help">'+esc(t.detail||t.label||'请查看并处理')+'</p><button class="btn" type="button" data-project-pending-task="'+esc(t.key)+'">查看并处理</button></div>').join('')+'</div>','关闭',()=>{});
+ /* 待处理弹窗：一行一项，整行可点；不再每项配一个「查看并处理」按钮，页脚只留一个关闭 */
+ const brief=t=>String(t.detail||t.label||'').replace(/\s*·\s*演示流程\s*$/,'').trim();
+ modal(tasks.length+' 项待处理','<ul class="pending-list">'+tasks.map(t=>'<li><button class="pending-row" type="button" data-project-pending-task="'+esc(t.key)+'"><span class="pending-main"><strong>'+esc(t.name||t.id)+'</strong>'+(brief(t)?'<small title="'+esc(brief(t))+'">'+esc(brief(t))+'</small>':'')+'</span><span class="chip '+(t.status==='failed'?'c-err':'c-mut')+'">'+(t.status==='failed'?'异常':'待确认')+'</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button></li>').join('')+'</ul>','关闭',()=>{});
+ (()=>{const d=document.getElementById('dlg'),c=d.querySelector('button[value="cancel"]'),ok=d.querySelector('button[value="ok"]');if(c)c.hidden=true;if(ok)ok.classList.remove('btn-pri');})();
  document.querySelectorAll('#dlg [data-project-pending-task]').forEach(item=>item.onclick=()=>{document.getElementById('dlg').close();workbenchOpenTask(item.dataset.projectPendingTask);});
  });
  root.querySelectorAll('[data-project-progress-task]').forEach(button=>button.onclick=()=>workbenchOpenTask(button.dataset.projectProgressTask));
